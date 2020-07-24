@@ -1255,7 +1255,7 @@ module.exports.selectPlayerToExecute = (passport, game, data, socket) => {
 			},
 			{ text: ' selects to execute ' },
 			{
-				text: game.general.blindMode ? `{${playerIndex + 1}}` : `${selectedPlayer.userName} {${playerIndex + 1}}`,
+				text: game.general.blindMode ? `{${playerIndex + 1}}` : `${selectedPlayer ? selectedPlayer.userName : null} {${playerIndex + 1}}`,
 				type: 'player'
 			},
 			{ text: '.' }
