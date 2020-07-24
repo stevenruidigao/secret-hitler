@@ -1137,7 +1137,7 @@ module.exports.selectSpecialElection = (passport, game, data, socket) => {
 				chat: [
 					{ text: 'You choose to special-elect ' },
 					{
-						text: game.general.blindMode ? `{${playerIndex + 1}}` : `${seatedPlayers[playerIndex].userName} {${playerIndex + 1}}`,
+						text: game.general.blindMode ? `{${playerIndex + 1}}` : `${seatedPlayers[playerIndex] ? seatedPlayers[playerIndex].userName : null} {${playerIndex + 1}}`,
 						type: 'player'
 					},
 					{ text: ' as president.' }
