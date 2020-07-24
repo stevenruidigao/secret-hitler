@@ -1120,7 +1120,7 @@ module.exports.selectSpecialElection = (passport, game, data, socket) => {
 						},
 						{ text: ' has chosen to special elect ' },
 						{
-							text: game.general.blindMode ? `{${playerIndex + 1}}` : `${seatedPlayers[playerIndex].userName} {${playerIndex + 1}}`,
+							text: game.general.blindMode ? `{${playerIndex + 1}}` : `${seatedPlayers[playerIndex] ? seatedPlayers[playerIndex].userName : null} {${playerIndex + 1}}`,
 							type: 'player'
 						},
 						{ text: ' as president.' }
@@ -1305,6 +1305,7 @@ module.exports.selectPlayerToExecute = (passport, game, data, socket) => {
 			player.notificationStatus = '';
 		});
 
+		if (!publicSelectedPlayer) return;
 		publicSelectedPlayer.cardStatus.cardDisplayed = true;
 		publicSelectedPlayer.cardStatus.cardFront = 'secretrole';
 		publicSelectedPlayer.notificationStatus = 'danger';
