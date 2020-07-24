@@ -145,6 +145,7 @@ module.exports.startElection = (game, specialElectionPresidentIndex) => {
 	sendGameList();
 	game.general.status = `Election #${game.general.electionCount}: president to select chancellor.`;
 	if (!experiencedMode && !game.general.disableGamechat) {
+		if (!pendingPresidentPlayer) return;
 		pendingPresidentPlayer.gameChats.push({
 			gameChat: true,
 			timestamp: new Date(),
