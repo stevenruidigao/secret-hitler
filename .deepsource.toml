@@ -3,3 +3,6 @@ version = 1
 [[analyzers]]
 name = "javascript"
 enabled = true
+exclude_patterns = [
+  "**/Semantic-UI-CSS-master/"
+]
