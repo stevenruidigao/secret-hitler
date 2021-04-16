@@ -1,0 +1,12 @@
+version = 1
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+exclude_patterns = [
+  "/scripts/**",
+  "/public/styles/Semantic-UI-CSS-master/**"
+]
+
+  [analyzers.meta]
+  plugins = ["react"]
