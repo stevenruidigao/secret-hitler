@@ -258,6 +258,7 @@ export default class Creategame extends React.Component {
 			{ value: 'sa', label: 'Saudi Arabia' },
 			{ value: 'gb sct', label: 'Scotland' },
 			{ value: 'sn', label: 'Senegal' },
+			{ value: 'cs', label: 'Serbia' },
 			{ value: 'rs', label: 'Serbia' },
 			{ value: 'sc', label: 'Seychelles' },
 			{ value: 'sl', label: 'Sierra Leone' },

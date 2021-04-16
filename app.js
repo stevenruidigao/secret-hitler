@@ -77,12 +77,6 @@ app.use(
 	})
 );
 
-// Opts out of Google's FLoC - https://plausible.io/blog/google-floc
-app.use((req, res, next) => {
-	res.set('Permissions-Policy', 'interest-cohort=()');
-	next();
-});
-
 const sessionSettings = {
 	secret: process.env.SECRETSESSIONKEY || 'hunter2',
 	cookie: {

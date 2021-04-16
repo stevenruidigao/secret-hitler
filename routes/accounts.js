@@ -108,8 +108,7 @@ const checkIP = config => {
 		const checkFragban = ban => {
 			return (
 				(new Date() < ban.bannedDate && doesIPMatchCIDR(ban.ip, signupIP)) ||
-				(new Date() < ban.bannedDate &&
-				!ban.ip.includes('/') &&
+				(!ban.ip.includes('/') &&
 				ban.ip.includes('.') &&
 				signupIP.includes('.') && // backwards compatability
 					(ban.ip ===
