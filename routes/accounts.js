@@ -112,7 +112,7 @@ const checkIP = (config) => {
 				(new Date() < ban.bannedDate &&
 					!ban.ip.includes('/') &&
 					ban.ip.includes('.') &&
-					signupIP.includes('.') && // backwards compatability
+					signupIP.includes('.') && // backwards compatibility
 					(ban.ip === signupIP.split('.').slice(0, 3).join('.') || ban.ip === signupIP.split('.').slice(0, 2).join('.')))
 			);
 		};
