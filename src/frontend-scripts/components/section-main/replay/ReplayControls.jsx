@@ -8,19 +8,19 @@ import GameText from '../../reusable/GameText.jsx';
 
 const TurnNav = ({ position, size, toTurn }) => {
 	const marks = Map(
-		Range(1, size + 1).map(i => [
+		Range(1, size + 1).map((i) => [
 			i,
 			{
 				label: i,
-				style: { fontSize: '16px' }
-			}
+				style: { fontSize: '16px' },
+			},
 		])
 	).toObject();
 
 	return (
 		<div className="turn-nav">
 			<h1>Turn</h1>
-			<Slider onChange={value => toTurn(value - 1)} className="slider" min={1} max={size} value={position + 1} marks={marks} dots />
+			<Slider onChange={(value) => toTurn(value - 1)} className="slider" min={1} max={size} value={position + 1} marks={marks} dots />
 		</div>
 	);
 };
@@ -29,17 +29,17 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 	const nav = OrderedMap({
 		election: List(['candidacy', 'nomination', 'election']),
 		legislation: List(['presidentLegislation', 'chancellorLegislation', 'topDeck', 'veto', 'policyEnaction']),
-		action: List(['investigation', 'policyPeek', 'specialElection', 'execution'])
+		action: List(['investigation', 'policyPeek', 'specialElection', 'execution']),
 	});
 
-	const localize = s => {
+	const localize = (s) => {
 		const custom = Map({
 			presidentLegislation: 'President',
 			chancellorLegislation: 'Chancellor',
 			topDeck: 'Top Deck',
 			policyEnaction: 'Policy Enaction',
 			policyPeek: 'Policy Peek',
-			specialElection: 'Special Election'
+			specialElection: 'Special Election',
 		});
 
 		return fromNullable(custom.get(s)).valueOrElse(capitalize(s));
@@ -48,20 +48,20 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 	const events = Map({
 		election: toElection,
 		legislation: toLegislation,
-		action: toAction
+		action: toAction,
 	});
 
 	const disabled = Map({
 		election: false,
 		legislation: !hasLegislation,
-		action: !hasAction
+		action: !hasAction,
 	});
 
 	const Step = ({ title, description, isFilled, isDisabled, onClick }) => {
 		const classes = classnames(
 			{
 				filled: isFilled,
-				disabled: isDisabled
+				disabled: isDisabled,
 			},
 			'step'
 		);
@@ -84,15 +84,15 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 
 	const filled = (() => {
 		const phases = nav.valueSeq().flatten();
-		const i = phases.findIndex(p => p === phase);
+		const i = phases.findIndex((p) => p === phase);
 
 		const maxIndexes = Map({
 			election: 2,
 			legislation: 6,
-			action: 7
+			action: 7,
 		});
 
-		const filled = maxIndexes.map(max => max <= i);
+		const filled = maxIndexes.map((max) => max <= i);
 
 		return filled;
 	})();
@@ -133,7 +133,7 @@ const Description = ({ description }) => {
 };
 
 const Playback = ({ hasNext, hasPrev, next, prev, forward, backward, beginning, end }) => {
-	const onKeyDown = event => {
+	const onKeyDown = (event) => {
 		// ignore typing in textboxes
 		if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 		const char = String.fromCharCode(event.keyCode);
@@ -197,7 +197,7 @@ const ReplayControls = ({ turnsSize, turnNum, phase, description, playback }) =>
 		toElection,
 		toLegislation,
 		toAction,
-		toTurn
+		toTurn,
 	} = playback;
 
 	return (
