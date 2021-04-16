@@ -4,6 +4,6 @@ version = 1
 name = "javascript"
 enabled = true
 exclude_patterns = [
-  "**/scripts/",
-  "**/Semantic-UI-CSS-master/"
+  "**/scripts/**",
+  "**/Semantic-UI-CSS-master/**"
 ]
