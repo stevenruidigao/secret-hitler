@@ -5,5 +5,5 @@ name = "javascript"
 enabled = true
 exclude_patterns = [
   "/scripts/**",
-  "/public/Semantic-UI-CSS-master/**"
+  "/public/styles/Semantic-UI-CSS-master/**"
 ]
