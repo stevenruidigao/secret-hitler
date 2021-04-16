@@ -9,10 +9,10 @@ import { processEmotes } from '../../emotes';
 
 export class GamesList extends React.Component {
 	state = {
-		filtersVisible: false
+		filtersVisible: false,
 	};
 
-	toggleFilter = value => {
+	toggleFilter = (value) => {
 		const { gameFilter, changeGameFilter } = this.props;
 
 		gameFilter[value] = !gameFilter[value];
@@ -166,7 +166,7 @@ export class GamesList extends React.Component {
 			}
 		};
 
-		const thisUser = userInfo.userName && userList.list && userList.list.find(u => u.userName == userInfo.userName);
+		const thisUser = userInfo.userName && userList.list && userList.list.find((u) => u.userName == userInfo.userName);
 		const sortTypeThenName = (a, b) => {
 			const isRainbow = thisUser && !thisUser.isPrivate && thisUser.wins + thisUser.losses >= 50;
 			const isPrivate = thisUser && thisUser.isPrivate;
@@ -192,7 +192,7 @@ export class GamesList extends React.Component {
 
 		if (gameList.length) {
 			return gameList
-				.filter(game => {
+				.filter((game) => {
 					const { pub, priv, unstarted, inprogress, completed, timedMode, rainbow, standard, customgame, casualgame } = this.props.gameFilter;
 
 					return !(
@@ -228,8 +228,8 @@ export class GamesList extends React.Component {
 
 	render() {
 		const toggleFilter = () => {
-			this.setState(state => ({
-				filtersVisible: !state.filtersVisible
+			this.setState((state) => ({
+				filtersVisible: !state.filtersVisible,
 			}));
 		};
 
@@ -279,7 +279,7 @@ export class GamesList extends React.Component {
 GamesList.defaultProps = {
 	gameFilter: {},
 	userInfo: {},
-	gameList: []
+	gameList: [],
 };
 
 GamesList.propTypes = {
@@ -291,7 +291,7 @@ GamesList.propTypes = {
 	gameFilter: PropTypes.object,
 	changeGameFilter: PropTypes.func,
 	generalChats: PropTypes.object,
-	allEmotes: PropTypes.object
+	allEmotes: PropTypes.object,
 };
 
 export default GamesList;
