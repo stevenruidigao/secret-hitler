@@ -202,20 +202,20 @@ class Changelog extends React.Component {
 					and then press enter or tab to have it fill the chat input, or you can continue to type and it will filter that list down to match. All emotes have
 					been changed - they all now start and end with : (a colon), and they are all lowercase.
 				</p>
-				<img src="../images/1.7.0-images/1-7EmoteSelector.gif" alt="Emote Selector GIF" style={{ width: '50%', alignSelf: 'center' }}></img>
+				<img src="../images/1.7.0-images/1-7EmoteSelector.gif" alt="Emote Selector GIF" style={{ width: '50%', alignSelf: 'center' }} />
 				<p>
 					<strong style={{ fontSize: '1.1em', color: 'darkmagenta' }}>Practice Game Mode</strong> - a casual game mode (no stat/Elo changes), but gameplay rules
 					are enforced. This allows for games just for fun, but with basic gameplay rules enforced. As a result, casual games now have no gameplay rules
 					enforced.
 				</p>
-				<img src="../images/1.7.0-images/1-7GameMode.png" alt="Game Mode Selection" style={{ width: '25%', alignSelf: 'center' }}></img>
+				<img src="../images/1.7.0-images/1-7GameMode.png" alt="Game Mode Selection" style={{ width: '25%', alignSelf: 'center' }} />
 				<p>
 					<strong style={{ fontSize: '1.1em', color: 'darkmagenta' }}>Timer UI Improvements</strong> - the timer in-game will be hidden by default, and will
 					only show up in the last 15 seconds or if you click its button. Click the timer to hide it. There is also a new sound when 15 seconds are remaining.
 				</p>
 				<div style={{ width: '75%', display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
-					<img src="../images/1.7.0-images/1-7TimerIcon.png" alt="Timer UI Hidden" style={{ marginRight: '35px' }}></img>
-					<img src="../images/1.7.0-images/1-7Timer.png" alt="Timer UI Shown"></img>
+					<img src="../images/1.7.0-images/1-7TimerIcon.png" alt="Timer UI Hidden" style={{ marginRight: '35px' }} />
+					<img src="../images/1.7.0-images/1-7Timer.png" alt="Timer UI Shown" />
 				</div>
 				<p>
 					<strong style={{ fontSize: '1.1em', color: 'darkmagenta' }}>Terms of Use Version 1.5</strong> - a new version of the Terms of Use has been published
@@ -226,7 +226,7 @@ class Changelog extends React.Component {
 					(nothing major, you likely won't even notice). Elo rewards at the end of the game are now sorted by role, and are more readable.
 				</p>
 
-				<img src="../images/1.7.0-images/1-7EloChanges.png" alt="Elo Changes" style={{ maxWidth: '65%', alignSelf: 'center' }}></img>
+				<img src="../images/1.7.0-images/1-7EloChanges.png" alt="Elo Changes" style={{ maxWidth: '65%', alignSelf: 'center' }} />
 				<p>
 					<strong style={{ fontSize: '1.1em', color: 'darkmagenta' }}>Remake URLs have changed</strong> - remaking a game will no longer simply add "Remake" to
 					the end of the URL, it will instead update a number. e.g. OriginalUID, OriginalUIDRemake1, OriginalUIDRemake2.
@@ -240,22 +240,22 @@ class Changelog extends React.Component {
 					src="../images/1.7.0-images/1-7ClaimTypeLegacy.png"
 					alt="Deck Customizations (legacy)"
 					style={{ width: '50%', marginBottom: '5px', alignSelf: 'center' }}
-				></img>
+				 />
 				<img
 					src="../images/1.7.0-images/1-7ClaimTypeShort.png"
 					alt="Deck Customizations (short)"
 					style={{ maxWidth: '50%', marginBottom: '5px', alignSelf: 'center' }}
-				></img>
+				 />
 				<img
 					src="../images/1.7.0-images/1-7ClaimTypeFull.png"
 					alt="Deck Customizations (full)"
 					style={{ maxWidth: '50%', marginBottom: '15px', alignSelf: 'center' }}
-				></img>
+				 />
 				<p>
 					<strong style={{ fontSize: '1.1em', color: 'darkmagenta' }}>New Disable Observer Chat in-game-only option</strong> - observer chat has gained a new
 					option to disable observer chat only during the game. You can still disable observer chat completely as well.
 				</p>
-				<img src="../images/1.7.0-images/1-7Observer.png" alt="Observer Chat Selector" style={{ maxWidth: '35%', alignSelf: 'center' }}></img>
+				<img src="../images/1.7.0-images/1-7Observer.png" alt="Observer Chat Selector" style={{ maxWidth: '35%', alignSelf: 'center' }} />
 				<h3>Minor Changes:</h3>
 				<p>
 					<strong style={{ fontSize: '1em', color: 'darkmagenta' }}>Fixed Multiple Discord Login Issues</strong>
