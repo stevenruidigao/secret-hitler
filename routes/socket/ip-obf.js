@@ -1,24 +1,24 @@
 const ipv4 = require('./ip-obfuscator-v4').obfIP;
 const ipv6 = require('./ip-obfuscator-v6').obfIP;
 
-const is0to999 = val => {
+const is0to999 = (val) => {
 	const num = parseInt(val);
 	if (isNaN(num)) return false;
 	return num >= 0 && num <= 999;
 };
 
-const isValidBlockCount = ip => {
+const isValidBlockCount = (ip) => {
 	const data = ip.split('.');
 	return data.every(is0to999) && [2, 3, 4].indexOf(data.length) !== -1;
 };
 
-const isIPv4 = ip => {
+const isIPv4 = (ip) => {
 	const data = ip.split('.');
 	if (data.length !== 4) return false;
 	return is0to999(data[0]) && is0to999(data[1]) && is0to999(data[2]) && is0to999(data[3]);
 };
 
-module.exports.expandAndSimplify = ip => {
+module.exports.expandAndSimplify = (ip) => {
 	if (ip && ip.includes(':')) {
 		if (ip.startsWith('::ffff:')) {
 			const shortened = ip.substring(7);
@@ -29,7 +29,7 @@ module.exports.expandAndSimplify = ip => {
 		const output = ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0000'];
 		const missing = 8 - data.length;
 		let hitExpander = false;
-		const pad = val => {
+		const pad = (val) => {
 			while (val.length < 4) val = '0' + val;
 			return val;
 		};
@@ -43,11 +43,11 @@ module.exports.expandAndSimplify = ip => {
 	return ip; // IPv4
 };
 
-const ipToBinaryArray = ip => {
+const ipToBinaryArray = (ip) => {
 	if (ip.includes(':')) {
 		return ip
 			.split(':')
-			.map(block =>
+			.map((block) =>
 				parseInt(block, 16) // ipv6
 					.toString(2)
 					.padStart(16, '0')
@@ -58,7 +58,7 @@ const ipToBinaryArray = ip => {
 
 	return ip
 		.split('.')
-		.map(block =>
+		.map((block) =>
 			parseInt(block) // ipv4
 				.toString(2)
 				.padStart(8, '0')
@@ -68,7 +68,7 @@ const ipToBinaryArray = ip => {
 };
 
 // checks to see if an IP has a valid CIDR suffix
-const validateCIDR = ip => {
+const validateCIDR = (ip) => {
 	if (!ip) return false;
 	const ipSections = ip.split('/');
 	if (ipSections.length !== 2) return false;
@@ -89,7 +89,7 @@ module.exports.doesIPMatchCIDR = (cidr, ip) => {
 };
 
 const obfCache = {};
-module.exports.obfIP = ip => {
+module.exports.obfIP = (ip) => {
 	if (obfCache[ip]) return obfCache[ip];
 	const ip2 = module.exports.expandAndSimplify(ip);
 	if (isValidBlockCount(ip2)) return (obfCache[ip] = ipv4(ip2));

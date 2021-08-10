@@ -11,7 +11,7 @@ import {
 	updateGeneralChats,
 	updateVersion,
 	fetchProfile,
-	fetchReplay
+	fetchReplay,
 } from '../actions/actions.js';
 import socket from '../socket';
 import PropTypes from 'prop-types';
@@ -21,21 +21,21 @@ import DevHelpers from './DevHelpers.jsx';
 import '../../scss/style-dark.scss';
 import * as Swal from 'sweetalert2';
 
-const select = state => state;
+const select = (state) => state;
 
 class TopLevelErrorBoundary extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			error: null,
-			errorInfo: null
+			errorInfo: null,
 		};
 	}
 
 	componentDidCatch(error, errorInfo) {
 		this.setState({
 			error,
-			errorInfo
+			errorInfo,
 		});
 	}
 
@@ -60,7 +60,7 @@ class TopLevelErrorBoundary extends React.Component {
 }
 
 TopLevelErrorBoundary.propTypes = {
-	children: PropTypes.object
+	children: PropTypes.object,
 };
 
 export class App extends React.Component {
@@ -79,11 +79,11 @@ export class App extends React.Component {
 			notesValue: '',
 			alertMsg: {
 				type: null,
-				data: null
+				data: null,
 			},
 			forceMountRightSidebar: false,
 			warnings: null,
-			allEmotes: {}
+			allEmotes: {},
 		};
 
 		this.prevHash = '';
@@ -108,7 +108,7 @@ export class App extends React.Component {
 				verified: window.verified,
 				staffRole: window.staffRole,
 				hasNotDismissedSignupModal: window.hasNotDismissedSignupModal,
-				isTournamentMod: window.isTournamentMod
+				isTournamentMod: window.isTournamentMod,
 			};
 
 			socket.emit('getUserGameSettings');
@@ -130,41 +130,41 @@ export class App extends React.Component {
 			dispatch(updateUser(info));
 		}
 
-		socket.on('touChange', changeList => {
+		socket.on('touChange', (changeList) => {
 			this.setState({
 				alertMsg: {
 					type: 'tou',
-					data: changeList
-				}
+					data: changeList,
+				},
 			});
 		});
 
-		socket.on('warningPopup', warning => {
+		socket.on('warningPopup', (warning) => {
 			if (this.state.alertMsg.type === null) {
 				this.setState({
 					alertMsg: {
 						type: 'warning',
-						data: warning
-					}
+						data: warning,
+					},
 				});
 			}
 		});
 
 		socket.on('preOpenModDMs', () => {
 			this.setState({
-				forceMountRightSidebar: true
+				forceMountRightSidebar: true,
 			});
 		});
 
 		socket.on('postCloseModDMs', () => {
 			this.setState({
-				forceMountRightSidebar: false
+				forceMountRightSidebar: false,
 			});
 		});
 
-		socket.on('sendWarnings', warningData => {
+		socket.on('sendWarnings', (warningData) => {
 			this.setState({
-				warnings: warningData
+				warnings: warningData,
 			});
 		});
 
@@ -172,16 +172,16 @@ export class App extends React.Component {
 			this.setState({
 				alertMsg: {
 					type: null,
-					data: null
-				}
+					data: null,
+				},
 			});
 		});
 
-		socket.on('emoteList', allEmotes => {
+		socket.on('emoteList', (allEmotes) => {
 			this.setState({ allEmotes });
 		});
 
-		socket.on('feedbackResponse', data => {
+		socket.on('feedbackResponse', (data) => {
 			Swal.fire(data.message, '', data.status);
 		});
 
@@ -189,7 +189,7 @@ export class App extends React.Component {
 			window.location.pathname = '/logout';
 		});
 
-		socket.on('manualReplayRequest', uid => {
+		socket.on('manualReplayRequest', (uid) => {
 			window.location.hash = uid ? `#/replay/${uid}` : '#/';
 		});
 
@@ -197,7 +197,7 @@ export class App extends React.Component {
 			window.location.reload();
 		});
 
-		socket.on('gameSettings', settings => {
+		socket.on('gameSettings', (settings) => {
 			const { userInfo } = this.props;
 
 			userInfo.gameSettings = settings;
@@ -205,15 +205,15 @@ export class App extends React.Component {
 			this.forceUpdate(); // dunno why I need this to make it work I'm bad at this.
 		});
 
-		socket.on('gameList', list => {
+		socket.on('gameList', (list) => {
 			dispatch(updateGameList(list));
 		});
 
-		socket.on('version', v => {
+		socket.on('version', (v) => {
 			dispatch(updateVersion(v));
 		});
 
-		socket.on('joinGameRedirect', uid => {
+		socket.on('joinGameRedirect', (uid) => {
 			dispatch(updateMidsection('game'));
 			window.location.hash = `#/table/${uid}`;
 		});
@@ -228,7 +228,7 @@ export class App extends React.Component {
 			}
 		});
 
-		socket.on('playerChatUpdate', chat => {
+		socket.on('playerChatUpdate', (chat) => {
 			const { gameInfo } = this.props;
 			const _game = Object.assign({}, gameInfo);
 
@@ -236,7 +236,7 @@ export class App extends React.Component {
 			dispatch(updateGameInfo(_game));
 		});
 
-		socket.on('gameModChat', chat => {
+		socket.on('gameModChat', (chat) => {
 			const { gameInfo } = this.props;
 			const _game = _.cloneDeep(gameInfo);
 
@@ -248,7 +248,7 @@ export class App extends React.Component {
 			socket.emit('sendUser', this.props.userInfo);
 		});
 
-		socket.on('userList', list => {
+		socket.on('userList', (list) => {
 			dispatch(updateUserList(list));
 			const now = new Date();
 			const since = now - this.lastReconnectAttempt;
@@ -256,7 +256,7 @@ export class App extends React.Component {
 				this.lastReconnectAttempt = now;
 				const { userInfo } = this.props;
 				if (userInfo && userInfo.userName) {
-					if (!list.list.map(user => user.userName).includes(userInfo.userName)) {
+					if (!list.list.map((user) => user.userName).includes(userInfo.userName)) {
 						console.log('Detected own user not in list, attempting to reconnect...');
 						socket.emit('getUserGameSettings');
 					}
@@ -271,24 +271,24 @@ export class App extends React.Component {
 			dispatch(updateUser(userInfo));
 		});
 
-		socket.on('generalChats', chats => {
+		socket.on('generalChats', (chats) => {
 			dispatch(updateGeneralChats(chats));
 		});
 
-		socket.on('reportUpdate', reportStatus => {
+		socket.on('reportUpdate', (reportStatus) => {
 			const { userInfo } = this.props;
 
 			userInfo.gameSettings.newReport = reportStatus;
 			dispatch(updateUser(userInfo));
 		});
 
-		socket.on('sendAlert', data => {
+		socket.on('sendAlert', (data) => {
 			Swal.fire({
-				html: data
+				html: data,
 			});
 		});
 
-		socket.on('toLobby', uid => {
+		socket.on('toLobby', (uid) => {
 			if (window.location.hash === '/table/' + uid)
 				// only eject the player from their current state if they are in the now-deleted game
 				window.location.hash = '#/';
@@ -338,7 +338,7 @@ export class App extends React.Component {
 			userInfo.userName &&
 			userInfo.isSeated &&
 			gameInfo.publicPlayersState.length &&
-			gameInfo.publicPlayersState.find(player => player.userName === userInfo.userName)
+			gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName)
 		) {
 			if (hash === '#/') {
 				this.handleLeaveGame();
@@ -412,7 +412,7 @@ export class App extends React.Component {
 			blindMode: false,
 			timedMode: false,
 			casualGame: false,
-			privatePassword: false
+			privatePassword: false,
 		};
 
 		this.props.socket.emit('addNewGame', data);
@@ -424,7 +424,7 @@ export class App extends React.Component {
 		const { gameInfo } = this.props;
 		const data = {
 			uid: gameInfo.general.uid,
-			password
+			password,
 		};
 
 		socket.emit('updateSeatedUser', data);
@@ -440,19 +440,19 @@ export class App extends React.Component {
 
 		socket.emit('leaveGame', {
 			userName: userInfo.userName,
-			uid: manualLeaveGame || gameInfo.general.uid
+			uid: manualLeaveGame || gameInfo.general.uid,
 		});
 	}
 
 	changeNotesValue(value) {
 		this.setState({
-			notesValue: value
+			notesValue: value,
 		});
 	}
 
 	changePlayerNotesValue(value) {
 		this.setState({
-			playerNotesValue: value
+			playerNotesValue: value,
 		});
 	}
 
@@ -477,7 +477,7 @@ export class App extends React.Component {
 							? gameSettings.fontFamily
 								? `'${gameSettings.fontFamily}', Lato, sans-serif`
 								: '"Comfortaa", Lato, sans-serif'
-							: '"Comfortaa", Lato, sans-serif'
+							: '"Comfortaa", Lato, sans-serif',
 					}}
 				>
 					{this.props.notesActive && <Gamenotes value={this.state.notesValue} changeNotesValue={this.changeNotesValue} />}
@@ -497,7 +497,7 @@ export class App extends React.Component {
 											background: 'var(--theme-background-1)',
 											width: '100vw',
 											height: '100vh',
-											display: 'flex'
+											display: 'flex',
 										}}
 									>
 										<div
@@ -506,7 +506,7 @@ export class App extends React.Component {
 												padding: '5px',
 												border: '1px solid var(--theme-text-1)',
 												borderRadius: '10px',
-												background: 'var(--theme-background-1)'
+												background: 'var(--theme-background-1)',
 											}}
 										>
 											<h2 style={{ fontFamily: '"Comfortaa", Lato, sans-serif' }}>
@@ -520,7 +520,7 @@ export class App extends React.Component {
 													borderRadius: '5px',
 													background: 'var(--theme-background-3)',
 													padding: '3px',
-													overflowY: 'scroll'
+													overflowY: 'scroll',
 												}}
 											>
 												{this.state.alertMsg.data.map((change, index) => {
@@ -558,7 +558,7 @@ export class App extends React.Component {
 														borderRadius: '5px',
 														fontFamily: '"Comfortaa", Lato, sans-serif',
 														fontWeight: 'bold',
-														cursor: 'pointer'
+														cursor: 'pointer',
 													}}
 													id="touButton"
 												/>
@@ -576,7 +576,7 @@ export class App extends React.Component {
 											background: 'var(--theme-background-1)',
 											width: '100vw',
 											height: '100vh',
-											display: 'flex'
+											display: 'flex',
 										}}
 									>
 										<div
@@ -585,7 +585,7 @@ export class App extends React.Component {
 												padding: '5px',
 												border: '1px solid var(--theme-text-1)',
 												borderRadius: '10px',
-												background: 'var(--theme-background-1)'
+												background: 'var(--theme-background-1)',
 											}}
 										>
 											<h2 style={{ fontFamily: '"Roboto", sans-serif', textAlign: 'center' }}>Moderator Warning</h2>
@@ -604,7 +604,7 @@ export class App extends React.Component {
 													border: '1px solid var(--theme-background-1)',
 													borderRadius: '5px',
 													background: 'var(--theme-background-3)',
-													padding: '5px'
+													padding: '5px',
 												}}
 											>
 												<div>
@@ -633,7 +633,7 @@ export class App extends React.Component {
 														borderRadius: '5px',
 														fontFamily: '"Roboto", sans-serif',
 														fontWeight: 'bold',
-														cursor: 'pointer'
+														cursor: 'pointer',
 													}}
 													id="warningButton"
 												/>
@@ -653,7 +653,7 @@ export class App extends React.Component {
 								background: 'var(--theme-background-1)',
 								width: '100vw',
 								height: '100vh',
-								display: 'flex'
+								display: 'flex',
 							}}
 						>
 							<div
@@ -662,7 +662,7 @@ export class App extends React.Component {
 									padding: '5px',
 									border: '1px solid var(--theme-text-1)',
 									borderRadius: '10px',
-									background: 'var(--theme-background-1)'
+									background: 'var(--theme-background-1)',
 								}}
 							>
 								<h2 style={{ fontFamily: '"Roboto", sans-serif', textAlign: 'center' }}>Warnings log</h2>
@@ -680,10 +680,10 @@ export class App extends React.Component {
 										borderRadius: '5px',
 										background: 'var(--theme-background-3)',
 										padding: '5px',
-										overflowY: 'scroll'
+										overflowY: 'scroll',
 									}}
 								>
-									{this.state.warnings.warnings.map(warning => {
+									{this.state.warnings.warnings.map((warning) => {
 										return (
 											<div key={warning}>
 												<p style={{ fontFamily: '"Roboto", sans-serif' }}>
@@ -711,7 +711,7 @@ export class App extends React.Component {
 										borderRadius: '5px',
 										fontFamily: '"Roboto", sans-serif',
 										fontWeight: 'bold',
-										cursor: 'pointer'
+										cursor: 'pointer',
 									}}
 									id="warningLogButton"
 									onClick={() => this.setState({ warnings: null })}
@@ -785,7 +785,7 @@ App.propTypes = {
 	userList: PropTypes.object,
 	version: PropTypes.object,
 	socket: PropTypes.object,
-	notesActive: PropTypes.bool
+	notesActive: PropTypes.bool,
 };
 
 export default connect(select)(App);

@@ -4,7 +4,7 @@ const { newStaff } = require('./models');
  * @param {object} game - game to act on.
  * @return {object} game
  */
-const secureGame = game => {
+const secureGame = (game) => {
 	const _game = Object.assign({}, game);
 
 	delete _game.private;
@@ -14,7 +14,7 @@ const secureGame = game => {
 
 const combineInProgressChats = (game, userName) =>
 	userName && game.gameState.isTracksFlipped
-		? game.private.seatedPlayers.find(player => player.userName === userName).gameChats.concat(game.chats)
+		? game.private.seatedPlayers.find((player) => player.userName === userName).gameChats.concat(game.chats)
 		: game.private.unSeatedGameChats.concat(game.chats);
 
 /**
@@ -27,27 +27,29 @@ module.exports.sendInProgressGameUpdate = (game, noChats) => {
 	}
 
 	// DEBUG ONLY
-	// console.log(game.general.status, 'TimedMode:', game.gameState.timedModeEnabled, 'TimerId:', game.private.timerId ? 'exists' : 'null');
+	// console.log(game.general.status, 'TimedMode:',
+	// game.gameState.timedModeEnabled, 'TimerId:', game.private.timerId ?
+	// 'exists' : 'null');
 
-	const seatedPlayerNames = game.publicPlayersState.map(player => player.userName);
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const seatedPlayerNames = game.publicPlayersState.map((player) => player.userName);
+	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map((sockedId) => io.sockets.connected[sockedId]);
 	const playerSockets = roomSockets.filter(
-		socket =>
+		(socket) =>
 			socket &&
 			socket.handshake.session.passport &&
 			Object.keys(socket.handshake.session.passport).length &&
 			seatedPlayerNames.includes(socket.handshake.session.passport.user)
 	);
 	const observerSockets = roomSockets.filter(
-		socket => (socket && !socket.handshake.session.passport) || (socket && !seatedPlayerNames.includes(socket.handshake.session.passport.user))
+		(socket) => (socket && !socket.handshake.session.passport) || (socket && !seatedPlayerNames.includes(socket.handshake.session.passport.user))
 	);
 
-	playerSockets.forEach(sock => {
+	playerSockets.forEach((sock) => {
 		const _game = Object.assign({}, game);
 		const { user } = sock.handshake.session.passport;
 
 		if (!game.gameState.isCompleted && game.gameState.isTracksFlipped) {
-			const privatePlayer = _game.private.seatedPlayers.find(player => user === player.userName);
+			const privatePlayer = _game.private.seatedPlayers.find((player) => user === player.userName);
 
 			if (!_game || !privatePlayer) {
 				return;
@@ -71,7 +73,7 @@ module.exports.sendInProgressGameUpdate = (game, noChats) => {
 		chatWithHidden = [...chatWithHidden, ...game.private.hiddenInfoChat];
 	}
 	if (observerSockets.length) {
-		observerSockets.forEach(sock => {
+		observerSockets.forEach((sock) => {
 			const _game = Object.assign({}, game);
 			const user = sock.handshake.session.passport ? sock.handshake.session.passport.user : null;
 
@@ -96,10 +98,10 @@ module.exports.sendInProgressModChatUpdate = (game, chat, specificUser) => {
 		return;
 	}
 
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map((sockedId) => io.sockets.connected[sockedId]);
 
 	if (roomSockets.length) {
-		roomSockets.forEach(sock => {
+		roomSockets.forEach((sock) => {
 			if (sock && sock.handshake && sock.handshake.passport && sock.handshake.passport.user) {
 				const { user } = sock.handshake.session.passport;
 				if (game.private.hiddenInfoSubscriptions.includes(user)) {
@@ -109,7 +111,7 @@ module.exports.sendInProgressModChatUpdate = (game, chat, specificUser) => {
 						sock.emit('gameModChat', chat);
 					} else if (specificUser === user) {
 						// list of messages
-						chat.forEach(msg => sock.emit('gameModChat', msg));
+						chat.forEach((msg) => sock.emit('gameModChat', msg));
 					}
 				}
 			}
@@ -122,9 +124,9 @@ module.exports.sendPlayerChatUpdate = (game, chat) => {
 		return;
 	}
 
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map((sockedId) => io.sockets.connected[sockedId]);
 
-	roomSockets.forEach(sock => {
+	roomSockets.forEach((sock) => {
 		if (sock) {
 			sock.emit('playerChatUpdate', chat);
 		}
@@ -164,7 +166,7 @@ module.exports.sendInProgressModDMUpdate = (dm, modUserNames, editorUserNames, a
 		try {
 			io.sockets.sockets[
 				Object.keys(io.sockets.sockets).find(
-					socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === user
+					(socketId) => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === user
 				)
 			].emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
 		} catch (e) {
@@ -176,10 +178,11 @@ module.exports.sendInProgressModDMUpdate = (dm, modUserNames, editorUserNames, a
 const avg = (accounts, accessor) => accounts.reduce((prev, curr) => prev + accessor(curr), 0) / accounts.length;
 
 // Calculates the bias in elo points
-const probToEloPoints = p => -400 * Math.log10(1 / p - 1);
+const probToEloPoints = (p) => -400 * Math.log10(1 / p - 1);
 
-// The probability of this team winning in this game size, given perfectly equal teams, in terms of elo points
-const winnerBiasPoints = game => {
+// The probability of this team winning in this game size, given perfectly equal
+// teams, in terms of elo points
+const winnerBiasPoints = (game) => {
 	const liberalBias = game.gameState.isCompleted === 'liberal' ? 1 : -1;
 	const fascistBias = game.gameState.isCompleted === 'liberal' ? -1 : 1;
 	if (game.general.rebalance6p) {
@@ -210,7 +213,8 @@ const winnerBiasPoints = game => {
 
 module.exports.rateEloGame = (game, accounts, winningPlayerNames) => {
 	const size = game.general.playerCount;
-	// The default starting elo is 1600 (totally arbitrary but now we are stuck with it)
+	// The default starting elo is 1600 (totally arbitrary but now we are stuck
+	// with it)
 	const defaultELO = 1600;
 	// The maximum change for rainbow games is rk
 	const rk = 9;
@@ -219,29 +223,31 @@ module.exports.rateEloGame = (game, accounts, winningPlayerNames) => {
 	// Choose the right factor
 	const k = size * (game.general.rainbowgame ? rk : nk); // non-rainbow games are capped at k/r
 	// Sort the players into winners and losers
-	const winningAccounts = accounts.filter(account => winningPlayerNames.includes(account.username));
+	const winningAccounts = accounts.filter((account) => winningPlayerNames.includes(account.username));
 	const winningSize = winningPlayerNames.length;
-	const losingAccounts = accounts.filter(account => !winningPlayerNames.includes(account.username));
+	const losingAccounts = accounts.filter((account) => !winningPlayerNames.includes(account.username));
 	const losingSize = size - winningSize;
 	// Construct some basic statistics for each team
-	const averageRatingWinners = avg(winningAccounts, a => a.eloOverall || defaultELO);
-	const averageRatingWinnersSeason = avg(winningAccounts, a => a.eloSeason || defaultELO);
-	const averageRatingLosers = avg(losingAccounts, a => a.eloOverall || defaultELO);
-	const averageRatingLosersSeason = avg(losingAccounts, a => a.eloSeason || defaultELO);
+	const averageRatingWinners = avg(winningAccounts, (a) => a.eloOverall || defaultELO);
+	const averageRatingWinnersSeason = avg(winningAccounts, (a) => a.eloSeason || defaultELO);
+	const averageRatingLosers = avg(losingAccounts, (a) => a.eloOverall || defaultELO);
+	const averageRatingLosersSeason = avg(losingAccounts, (a) => a.eloSeason || defaultELO);
 	// Elo Formula
 	const bias = winnerBiasPoints(game);
 	const winFactor = k / winningSize;
 	const loseFactor = -k / losingSize;
-	// P is the degree to which the new win surprised us, given our current ratings
-	// Bias is applied within the sigmoid to ensure that elo is conserved even in situations with huge team differences
+	// P is the degree to which the new win surprised us, given our current
+	// ratings Bias is applied within the sigmoid to ensure that elo is conserved
+	// even in situations with huge team differences
 	const p = 1 / (1 + Math.pow(10, (averageRatingWinners - averageRatingLosers + bias) / 400));
 	const pSeason = 1 / (1 + Math.pow(10, (averageRatingWinnersSeason - averageRatingLosersSeason + bias) / 400));
 	// Now we will use our 'supprisedness' p to correct the player rankings
 	const ratingUpdates = {};
-	accounts.forEach(account => {
+	accounts.forEach((account) => {
 		const eloOverall = account.eloOverall ? account.eloOverall : defaultELO;
 		const eloSeason = account.eloSeason ? account.eloSeason : defaultELO;
-		// If this player won, use the win factor. If they lost, use the lost factor.
+		// If this player won, use the win factor. If they lost, use the lost
+		// factor.
 		const factor = winningPlayerNames.includes(account.username) ? winFactor : loseFactor;
 		const change = p * factor;
 		const changeSeason = pSeason * factor;
@@ -251,10 +257,11 @@ module.exports.rateEloGame = (game, accounts, winningPlayerNames) => {
 		ratingUpdates[account.username] = { change, changeSeason };
 	});
 	return ratingUpdates;
-	// Future work: Someone should make this a single function, applied twice: once to overall and once to seasonal.
+	// Future work: Someone should make this a single function, applied twice:
+	// once to overall and once to seasonal.
 };
 
-module.exports.destroySession = username => {
+module.exports.destroySession = (username) => {
 	if (process.env.NODE_ENV !== 'production') {
 		const Mongoclient = require('mongodb').MongoClient;
 
@@ -271,7 +278,7 @@ module.exports.destroySession = username => {
 		mongoClient
 			.db('secret-hitler-app')
 			.collection('sessions')
-			.findOneAndDelete({ 'session.passport.user': username }, err => {
+			.findOneAndDelete({ 'session.passport.user': username }, (err) => {
 				if (err) {
 					try {
 						console.log(err, 'err in logoutuser');
@@ -282,7 +289,8 @@ module.exports.destroySession = username => {
 };
 
 // tacks on "/64" to IPv6 ips; needed to properly ban IPv6 ips
-module.exports.handleDefaultIPv6Range = ip => {
-	// check if there is NOT a : or there IS a / (ie. it's not IPv6 or it already has a CIDR range)
+module.exports.handleDefaultIPv6Range = (ip) => {
+	// check if there is NOT a : or there IS a / (ie. it's not IPv6 or it already
+	// has a CIDR range)
 	return ip.indexOf(':') === -1 || ip.indexOf('/') !== -1 ? ip : ip + '/64';
 };

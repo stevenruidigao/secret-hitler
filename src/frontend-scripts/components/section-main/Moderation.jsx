@@ -24,40 +24,40 @@ export default class Moderation extends React.Component {
 		nonSeasonalSetStats: false,
 		logSort: {
 			type: 'date',
-			direction: 'descending'
+			direction: 'descending',
 		},
 		userSort: {
 			type: 'username',
-			direction: 'descending'
+			direction: 'descending',
 		},
 		gameSort: {
 			type: 'username',
-			direction: 'descending'
+			direction: 'descending',
 		},
 		showActions: true,
 		filterModalVisibility: false,
 		filterValue: '',
 		showGameIcons: true,
 		lagMeterStatus: '',
-		tableCollapsed: false
+		tableCollapsed: false,
 	};
 
 	componentDidMount() {
 		const self = this;
 		const { socket } = this.props;
 
-		socket.on('lagTestResults', data => {
+		socket.on('lagTestResults', (data) => {
 			this.setState({
-				lagMeterStatus: `Average lag: ${data} ms`
+				lagMeterStatus: `Average lag: ${data} ms`,
 			});
 		});
 
-		socket.on('modInfo', info => {
+		socket.on('modInfo', (info) => {
 			this.setState({
 				userList: info.userList,
 				gameList: info.gameList,
 				log: info.modReports,
-				showActions: info.showActions || false
+				showActions: info.showActions || false,
 			});
 
 			$(this.toggleIpbans).checkbox(info.ipbansNotEnforced.status ? 'set checked' : 'set unchecked');
@@ -76,7 +76,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled account creation',
-					action: 'disableAccountCreation'
+					action: 'disableAccountCreation',
 				});
 			},
 			onUnchecked() {
@@ -85,9 +85,9 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled account creation',
-					action: 'enableAccountCreation'
+					action: 'enableAccountCreation',
 				});
-			}
+			},
 		});
 
 		$(this.toggleBypassVPNCheck).checkbox({
@@ -97,7 +97,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled VPN Check',
-					action: 'disableVPNCheck'
+					action: 'disableVPNCheck',
 				});
 			},
 			onUnchecked() {
@@ -106,9 +106,9 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled VPN Check',
-					action: 'enableVPNCheck'
+					action: 'enableVPNCheck',
 				});
-			}
+			},
 		});
 
 		$(this.toggleIpbans).checkbox({
@@ -118,7 +118,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled all IP bans',
-					action: 'disableIpbans'
+					action: 'disableIpbans',
 				});
 			},
 			onUnchecked() {
@@ -127,9 +127,9 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled all IP bans',
-					action: 'enableIpbans'
+					action: 'enableIpbans',
 				});
-			}
+			},
 		});
 
 		$(this.toggleGameCreation).checkbox({
@@ -139,7 +139,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled game creation',
-					action: 'disableGameCreation'
+					action: 'disableGameCreation',
 				});
 			},
 			onUnchecked() {
@@ -148,9 +148,9 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled game creation',
-					action: 'enableGameCreation'
+					action: 'enableGameCreation',
 				});
-			}
+			},
 		});
 
 		$(this.toggleGameCreation).checkbox({
@@ -160,7 +160,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled game creation',
-					action: 'disableGameCreation'
+					action: 'disableGameCreation',
 				});
 			},
 			onUnchecked() {
@@ -169,9 +169,9 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled game creation',
-					action: 'enableGameCreation'
+					action: 'enableGameCreation',
 				});
-			}
+			},
 		});
 
 		$(this.toggleLimitNewPlayers).checkbox({
@@ -181,7 +181,7 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Enabled limiting new players',
-					action: 'enableLimitNewPlayers'
+					action: 'enableLimitNewPlayers',
 				});
 			},
 			onUnchecked() {
@@ -190,22 +190,22 @@ export default class Moderation extends React.Component {
 					userName: '',
 					ip: '',
 					comment: self.state.actionTextValue || 'Disabled limiting new players',
-					action: 'disableLimitNewPlayers'
+					action: 'disableLimitNewPlayers',
 				});
-			}
+			},
 		});
 
 		$(this.toggleSeasonalSetstats).checkbox({
 			onChecked() {
 				self.setState({
-					nonSeasonalSetStats: true
+					nonSeasonalSetStats: true,
 				});
 			},
 			onUnchecked() {
 				self.setState({
-					nonSeasonalSetStats: false
+					nonSeasonalSetStats: false,
 				});
-			}
+			},
 		});
 	}
 
@@ -220,19 +220,19 @@ export default class Moderation extends React.Component {
 		if (this.state.playerListState < 2) {
 			this.setState({
 				playerListState: this.state.playerListState + 1,
-				selectedUser: ''
+				selectedUser: '',
 			});
 		} else {
 			this.setState({
 				playerListState: 0,
 				selectedUser: '',
-				playerInputText: ''
+				playerInputText: '',
 			});
 		}
 	};
 
 	renderPlayerInput() {
-		const playerInputKeyup = e => {
+		const playerInputKeyup = (e) => {
 			this.setState({ playerInputText: `${e.target.value}` });
 		};
 
@@ -252,14 +252,14 @@ export default class Moderation extends React.Component {
 	}
 
 	renderUserlist() {
-		const radioChange = userName => {
+		const radioChange = (userName) => {
 			this.setState({ selectedUser: userName });
 		};
 		const { userList, userSort } = this.state;
-		const ips = userList.map(user => user.ip);
-		const bannedips = this.state.log.filter(log => log.actionTaken === 'ban' || log.actionTaken === 'timeOut').map(log => log.ip);
-		const timednames = this.state.log.filter(log => log.actionTaken === 'timeOut2').map(log => log.userActedOn);
-		const splitIP = ip => {
+		const ips = userList.map((user) => user.ip);
+		const bannedips = this.state.log.filter((log) => log.actionTaken === 'ban' || log.actionTaken === 'timeOut').map((log) => log.ip);
+		const timednames = this.state.log.filter((log) => log.actionTaken === 'timeOut2').map((log) => log.userActedOn);
+		const splitIP = (ip) => {
 			let idx = ip.lastIndexOf('.');
 
 			if (idx === -1) {
@@ -269,7 +269,7 @@ export default class Moderation extends React.Component {
 
 			return [ip.substring(0, idx), ip.substring(idx + 1)];
 		};
-		const renderStatus = user => {
+		const renderStatus = (user) => {
 			const status = user.status;
 			if (!status || status.type === 'none') {
 				return <i className={'status unclickable icon'} />;
@@ -289,14 +289,14 @@ export default class Moderation extends React.Component {
 					observing: 'This player is observing a game.',
 					rainbow: 'This player is playing in a experienced-player-only game.',
 					replay: 'This player is watching a replay.',
-					private: 'This player is playing in a private game.'
+					private: 'This player is playing in a private game.',
 				};
 				const onClick = {
 					playing: this.routeToGame,
 					observing: this.routeToGame,
 					rainbow: this.routeToGame,
 					replay: this.props.fetchReplay,
-					private: this.routeToGame
+					private: this.routeToGame,
 				};
 
 				return (
@@ -310,7 +310,7 @@ export default class Moderation extends React.Component {
 			}
 		};
 		const IPdata = {};
-		ips.forEach(ip => {
+		ips.forEach((ip) => {
 			const data = splitIP(ip);
 			if (!IPdata[data[0]]) IPdata[data[0]] = { unique: 0 };
 			if (!IPdata[data[0]][data[1]]) {
@@ -319,25 +319,25 @@ export default class Moderation extends React.Component {
 			}
 			IPdata[data[0]][data[1]]++;
 		});
-		const getIPType = user => {
+		const getIPType = (user) => {
 			const data = splitIP(user.ip);
 			if (IPdata[data[0]][data[1]] > 1) return 'multi';
 			if (IPdata[data[0]].unique > 1) return 'multi2';
 			return '';
 		};
-		const getUserType = user => {
+		const getUserType = (user) => {
 			if (user.isTor) return 'istor';
 			if (bannedips.includes(user.ip)) return 'isbannedbefore';
 			if (timednames.includes(user.userName)) return 'istimedbefore';
 			return '';
 		};
-		const checkEmail = email => {
+		const checkEmail = (email) => {
 			if (email.startsWith('-')) return 'emailunverified';
 			return '';
 		};
 
 		return userList
-			.filter(user => {
+			.filter((user) => {
 				if (this.state.playerInputText) {
 					return user.userName.indexOf(this.state.playerInputText) === 0;
 				} else {
@@ -379,11 +379,11 @@ export default class Moderation extends React.Component {
 	}
 
 	renderGameList() {
-		const gameRadioChange = game => {
+		const gameRadioChange = (game) => {
 			this.setState({ playerInputText: game.uid });
 		};
 		const { gameList, gameSort } = this.state;
-		const getGameType = game => {
+		const getGameType = (game) => {
 			if (game.unlisted) return 'unlistedGame';
 			if (game.custom) return 'custom';
 			if (game.casual) return 'casual';
@@ -423,7 +423,7 @@ export default class Moderation extends React.Component {
 	}
 
 	renderGameButtons() {
-		const takeModAction = action => {
+		const takeModAction = (action) => {
 			if (action) {
 				this.props.socket.emit('updateModAction', {
 					modName: this.props.userInfo.userName,
@@ -433,15 +433,15 @@ export default class Moderation extends React.Component {
 							: action === 'resetGameName'
 							? `RESETGAMENAME${this.state.playerInputText}`
 							: this.state.playerInputText || this.state.selectedUser,
-					ip: this.state.playerInputText ? '' : this.state.selectedUser ? this.state.userList.find(user => user.userName === this.state.selectedUser).ip : '',
+					ip: this.state.playerInputText ? '' : this.state.selectedUser ? this.state.userList.find((user) => user.userName === this.state.selectedUser).ip : '',
 					comment: this.state.actionTextValue,
-					action
+					action,
 				});
 			}
 			this.setState({
 				selectedUser: '',
 				actionTextValue: '',
-				playerInputText: ''
+				playerInputText: '',
 			});
 		};
 
@@ -474,11 +474,11 @@ export default class Moderation extends React.Component {
 	renderButtons() {
 		const { socket, userInfo } = this.props;
 		const { playerInputText, selectedUser, userList, actionTextValue, lagMeterStatus } = this.state;
-		const takeModAction = action => {
+		const takeModAction = (action) => {
 			if (action === 'lagMeter') {
 				this.setState(
 					{
-						lagMeterStatus: 'Pending...'
+						lagMeterStatus: 'Pending...',
 					},
 					() => {
 						let count = 0;
@@ -487,10 +487,10 @@ export default class Moderation extends React.Component {
 								socket.emit('updateModAction', {
 									modName: userInfo.userName,
 									userName: playerInputText || selectedUser,
-									ip: playerInputText ? '' : selectedUser ? userList.find(user => user.userName === selectedUser).ip : '',
+									ip: playerInputText ? '' : selectedUser ? userList.find((user) => user.userName === selectedUser).ip : '',
 									comment: actionTextValue,
 									action,
-									frontEndTime: Date.now()
+									frontEndTime: Date.now(),
 								});
 								count++;
 							} else {
@@ -510,14 +510,14 @@ export default class Moderation extends React.Component {
 							: action === 'resetGameName'
 							? `RESETGAMENAME${playerInputText}`
 							: playerInputText || selectedUser,
-					ip: playerInputText ? '' : selectedUser ? userList.find(user => user.userName === selectedUser).ip : '',
+					ip: playerInputText ? '' : selectedUser ? userList.find((user) => user.userName === selectedUser).ip : '',
 					comment: actionTextValue,
-					action
+					action,
 				});
 				this.setState({
 					selectedUser: '',
 					actionTextValue: '',
-					playerInputText: ''
+					playerInputText: '',
 				});
 			}
 		};
@@ -572,7 +572,7 @@ export default class Moderation extends React.Component {
 						this.setState({
 							selectedUser: '',
 							actionTextValue: '',
-							playerInputText: ''
+							playerInputText: '',
 						});
 					}}
 				>
@@ -750,7 +750,7 @@ export default class Moderation extends React.Component {
 					<h4 className="ui header">Disable account creation</h4>
 					<div
 						className="ui fitted toggle checkbox"
-						ref={c => {
+						ref={(c) => {
 							this.toggleAccountCreation = c;
 						}}
 					>
@@ -773,7 +773,7 @@ export default class Moderation extends React.Component {
 					<h4 className="ui header">Disable game creation</h4>
 					<div
 						className="ui fitted toggle checkbox"
-						ref={c => {
+						ref={(c) => {
 							this.toggleGameCreation = c;
 						}}
 					>
@@ -796,7 +796,7 @@ export default class Moderation extends React.Component {
 					<h4 className="ui header">Disable VPN Check</h4>
 					<div
 						className="ui fitted toggle checkbox"
-						ref={c => {
+						ref={(c) => {
 							this.toggleBypassVPNCheck = c;
 						}}
 					>
@@ -817,7 +817,7 @@ export default class Moderation extends React.Component {
 					onClick={() => {
 						takeModAction({
 							type: `setWins${this.state.actionTextValue}`,
-							isNonSeason: this.state.nonSeasonalSetStats
+							isNonSeason: this.state.nonSeasonalSetStats,
 						});
 					}}
 				>
@@ -832,7 +832,7 @@ export default class Moderation extends React.Component {
 					onClick={() => {
 						takeModAction({
 							type: `setLosses${this.state.actionTextValue}`,
-							isNonSeason: this.state.nonSeasonalSetStats
+							isNonSeason: this.state.nonSeasonalSetStats,
 						});
 					}}
 				>
@@ -847,7 +847,7 @@ export default class Moderation extends React.Component {
 					onClick={() => {
 						takeModAction({
 							type: `setRWins${this.state.actionTextValue}`,
-							isNonSeason: this.state.nonSeasonalSetStats
+							isNonSeason: this.state.nonSeasonalSetStats,
 						});
 					}}
 				>
@@ -862,7 +862,7 @@ export default class Moderation extends React.Component {
 					onClick={() => {
 						takeModAction({
 							type: `setRLosses${this.state.actionTextValue}`,
-							isNonSeason: this.state.nonSeasonalSetStats
+							isNonSeason: this.state.nonSeasonalSetStats,
 						});
 					}}
 				>
@@ -872,7 +872,7 @@ export default class Moderation extends React.Component {
 					<h4 className="ui header">Above actions apply only to non seasonal.</h4>
 					<div
 						className="ui fitted toggle checkbox"
-						ref={c => {
+						ref={(c) => {
 							this.toggleSeasonalSetstats = c;
 						}}
 					>
@@ -1135,20 +1135,20 @@ export default class Moderation extends React.Component {
 
 	renderModLog() {
 		const { logSort, logCount } = this.state;
-		const clickSort = type => {
+		const clickSort = (type) => {
 			this.setState({
 				logSort: {
 					type,
-					direction: this.state.logSort.direction === 'descending' && type === logSort.type ? 'ascending' : 'descending'
-				}
+					direction: this.state.logSort.direction === 'descending' && type === logSort.type ? 'ascending' : 'descending',
+				},
 			});
 		};
-		const modRetrieveClick = e => {
+		const modRetrieveClick = (e) => {
 			e.preventDefault();
 
 			this.setState(
 				{
-					logCount: this.state.logCount + 1
+					logCount: this.state.logCount + 1,
 				},
 				() => {
 					this.props.socket.emit('getModInfo', logCount);
@@ -1210,7 +1210,7 @@ export default class Moderation extends React.Component {
 			makeBypass: 'Create Bypass Key',
 			bypassKeyUsed: 'Consume Bypass Key',
 			resetServer: 'Server Restart',
-			regatherAEMList: 'Refresh AEM List'
+			regatherAEMList: 'Refresh AEM List',
 		};
 
 		return (
@@ -1271,12 +1271,12 @@ export default class Moderation extends React.Component {
 					<tbody>
 						{this.state.log
 							.filter(
-								report =>
+								(report) =>
 									(report.userActedOn && report.userActedOn.includes(name)) ||
 									(report.modUserName && report.modUserName.includes(name)) ||
 									(report.ip && report.ip.includes(name))
 							)
-							.filter(entry => (this.state.modLogToday ? new Date(entry.date).toDateString() === new Date().toDateString() : true))
+							.filter((entry) => (this.state.modLogToday ? new Date(entry.date).toDateString() === new Date().toDateString() : true))
 							.sort((a, b) => {
 								const { logSort } = this.state;
 								const aDate = new Date(a.date);
@@ -1327,20 +1327,20 @@ export default class Moderation extends React.Component {
 	}
 
 	renderActionText() {
-		const handleTextChange = e => {
+		const handleTextChange = (e) => {
 			this.setState({ actionTextValue: `${e.target.value}` });
 		};
 
 		return <textarea placeholder="Comment" value={this.state.actionTextValue} onChange={handleTextChange} spellCheck="false" />;
 	}
 
-	broadcastClick = e => {
+	broadcastClick = (e) => {
 		e.preventDefault();
 
 		$(this.bModal).modal('show');
 	};
 
-	handleBroadcastSubmit = e => {
+	handleBroadcastSubmit = (e) => {
 		e.preventDefault();
 		$(this.bModal).modal('hide');
 
@@ -1348,36 +1348,36 @@ export default class Moderation extends React.Component {
 			modName: this.props.userInfo.userName,
 			comment: this.state.broadcastText,
 			action: 'broadcast',
-			isSticky: $('#broadcast-sticky').is(':checked')
+			isSticky: $('#broadcast-sticky').is(':checked'),
 		});
 
 		this.setState({
-			broadcastText: ''
+			broadcastText: '',
 		});
 	};
 
 	render() {
 		const { userSort, showActions } = this.state;
 
-		const broadcastKeyup = e => {
+		const broadcastKeyup = (e) => {
 			this.setState({
-				broadcastText: e.target.value
+				broadcastText: e.target.value,
 			});
 		};
-		const toggleModLogToday = e => {
+		const toggleModLogToday = (e) => {
 			const { modLogToday } = this.state;
 			e.preventDefault();
 
 			this.setState({
-				modLogToday: !modLogToday
+				modLogToday: !modLogToday,
 			});
 		};
-		const clickSort = type => {
+		const clickSort = (type) => {
 			this.setState({
 				userSort: {
 					type,
-					direction: this.state.userSort.direction === 'descending' && type === userSort.type ? 'ascending' : 'descending'
-				}
+					direction: this.state.userSort.direction === 'descending' && type === userSort.type ? 'ascending' : 'descending',
+				},
 			});
 		};
 
@@ -1396,7 +1396,7 @@ export default class Moderation extends React.Component {
 					className="gameIcons"
 					onClick={() =>
 						this.setState({
-							showGameIcons: !this.state.showGameIcons
+							showGameIcons: !this.state.showGameIcons,
 						})
 					}
 				>
@@ -1572,7 +1572,7 @@ export default class Moderation extends React.Component {
 								style={{ padding: '5px' }}
 								onSubmit={() => {
 									this.setState({
-										filterModalVisibility: false
+										filterModalVisibility: false,
 									});
 
 									if (!this.state.filterValue) {
@@ -1583,7 +1583,7 @@ export default class Moderation extends React.Component {
 											userName: '',
 											ip: '',
 											comment: this.state.filterValue,
-											action: 'getFilteredData'
+											action: 'getFilteredData',
 										});
 									}
 								}}
@@ -1595,9 +1595,9 @@ export default class Moderation extends React.Component {
 										<input
 											autoFocus
 											value={this.state.filterValue}
-											onChange={e => {
+											onChange={(e) => {
 												this.setState({
-													filterValue: e.target.value
+													filterValue: e.target.value,
 												});
 											}}
 										/>
@@ -1609,7 +1609,7 @@ export default class Moderation extends React.Component {
 										onClick={() => {
 											this.setState({
 												filterModalVisibility: false,
-												filterValue: ''
+												filterValue: '',
 											});
 											this.props.socket.emit('getModInfo', 1);
 										}}
@@ -1624,7 +1624,7 @@ export default class Moderation extends React.Component {
 				</div>
 				<div
 					className="ui basic fullscreen modal broadcastmodal"
-					ref={c => {
+					ref={(c) => {
 						this.bModal = c;
 					}}
 				>
@@ -1638,7 +1638,7 @@ export default class Moderation extends React.Component {
 								className="broadcast-input"
 								autoFocus
 								value={this.state.broadcastText}
-								ref={c => {
+								ref={(c) => {
 									this.broadcastText = c;
 								}}
 								style={{ height: '20vh', width: '100%' }}
@@ -1661,5 +1661,5 @@ export default class Moderation extends React.Component {
 Moderation.propTypes = {
 	userInfo: PropTypes.object,
 	socket: PropTypes.object,
-	fetchReplay: PropTypes.func
+	fetchReplay: PropTypes.func,
 };

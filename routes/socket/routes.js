@@ -27,7 +27,7 @@ const {
 	handleOpenChat,
 	handleCloseChat,
 	handleUnsubscribeChat,
-	handleAddNewModDMChat
+	handleAddNewModDMChat,
 } = require('./user-events');
 const { handleAEMMessages } = require('./util');
 const {
@@ -44,7 +44,7 @@ const {
 	sendSignups,
 	sendAllSignups,
 	sendPrivateSignups,
-	updateUserStatus
+	updateUserStatus,
 } = require('./user-requests');
 const { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } = require('./game/election');
 const { selectChancellor } = require('./game/election-util');
@@ -55,7 +55,7 @@ const {
 	selectPlayerToExecute,
 	selectPartyMembershipInvestigateReverse,
 	selectOnePolicy,
-	selectBurnCard
+	selectBurnCard,
 } = require('./game/policy-powers');
 const { saveAndDeleteGame } = require('./game/end-game');
 const { games, emoteList, cloneSettingsFromRedis, modDMs } = require('./models');
@@ -71,7 +71,7 @@ let modUserNames = [],
 
 const gamesGarbageCollector = () => {
 	const currentTime = new Date();
-	Object.keys(games).forEach(gameName => {
+	Object.keys(games).forEach((gameName) => {
 		let toDelete = false;
 		const currentGame = games[gameName];
 		if (!currentGame) return;
@@ -90,7 +90,8 @@ const gamesGarbageCollector = () => {
 		const abandonedTimer = currentGame.general && currentGame.general.timeAbandoned && new Date(currentGame.general.timeAbandoned.getTime() + 1000 * 60 * 2);
 
 		// To come maybe later
-		// const modDeleteTimer = games[gameName].general.modDeleteDelay && new Date(games[gameName].general.modDeleteDelay.getTime() + 900000);
+		// const modDeleteTimer = games[gameName].general.modDeleteDelay && new
+		// Date(games[gameName].general.modDeleteDelay.getTime() + 900000);
 
 		// DEBUG
 		// console.log(
@@ -121,7 +122,7 @@ const gamesGarbageCollector = () => {
 		if (toDelete && currentGame.publicPlayersState) {
 			for (let affectedPlayerNumber = 0; affectedPlayerNumber < currentGame.publicPlayersState.length; affectedPlayerNumber++) {
 				const affectedSocketId = Object.keys(io.sockets.sockets).find(
-					socketId =>
+					(socketId) =>
 						io.sockets.sockets[socketId].handshake.session.passport &&
 						io.sockets.sockets[socketId].handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
 				);
@@ -129,7 +130,8 @@ const gamesGarbageCollector = () => {
 					continue;
 				}
 
-				// I'm entirely unsure why socketio seems to misbehave with these combined so often - probably just bad timing
+				// I'm entirely unsure why socketio seems to misbehave with these
+				// combined so often - probably just bad timing
 				if (io.sockets.sockets && io.sockets.sockets[affectedSocketId]) io.sockets.sockets[affectedSocketId].emit('toLobby', currentGame.uid);
 				if (io.sockets.sockets && io.sockets.sockets[affectedSocketId]) io.sockets.sockets[affectedSocketId].leave(gameName);
 			}
@@ -142,7 +144,7 @@ const gamesGarbageCollector = () => {
 	cloneSettingsFromRedis();
 };
 
-const ensureAuthenticated = socket => {
+const ensureAuthenticated = (socket) => {
 	if (socket.handshake && socket.handshake.session) {
 		const { passport } = socket.handshake.session;
 
@@ -150,7 +152,7 @@ const ensureAuthenticated = socket => {
 	}
 };
 
-const findGame = data => {
+const findGame = (data) => {
 	if (games && data && data.uid) {
 		return games[data.uid];
 	}
@@ -158,7 +160,7 @@ const findGame = data => {
 
 const ensureInGame = (passport, game) => {
 	if (game && game.publicPlayersState && game.gameState && passport && passport.user) {
-		const player = game.publicPlayersState.find(player => player.userName === passport.user);
+		const player = game.publicPlayersState.find((player) => player.userName === passport.user);
 
 		return Boolean(player);
 	}
@@ -166,12 +168,12 @@ const ensureInGame = (passport, game) => {
 
 const gatherStaffUsernames = () => {
 	Account.find({ staffRole: { $exists: true } })
-		.then(accounts => {
-			modUserNames = accounts.filter(account => account.staffRole === 'moderator').map(account => account.username);
-			editorUserNames = accounts.filter(account => account.staffRole === 'editor').map(account => account.username);
-			adminUserNames = accounts.filter(account => account.staffRole === 'admin').map(account => account.username);
+		.then((accounts) => {
+			modUserNames = accounts.filter((account) => account.staffRole === 'moderator').map((account) => account.username);
+			editorUserNames = accounts.filter((account) => account.staffRole === 'editor').map((account) => account.username);
+			adminUserNames = accounts.filter((account) => account.staffRole === 'admin').map((account) => account.username);
 		})
-		.catch(err => {
+		.catch((err) => {
 			console.log(err, 'err in finding staffroles');
 		});
 };
@@ -181,7 +183,7 @@ module.exports.socketRoutes = () => {
 
 	gatherStaffUsernames();
 
-	io.on('connection', socket => {
+	io.on('connection', (socket) => {
 		checkUserStatus(socket, () => {
 			socket.emit('version', { current: version });
 
@@ -206,7 +208,7 @@ module.exports.socketRoutes = () => {
 			let isTourneyMod = false;
 
 			if (authenticated && passport && passport.user) {
-				Account.findOne({ username: passport.user }).then(account => {
+				Account.findOne({ username: passport.user }).then((account) => {
 					if (
 						account.staffRole &&
 						account.staffRole.length > 0 &&
@@ -229,9 +231,9 @@ module.exports.socketRoutes = () => {
 
 			let isRestricted = true;
 
-			const checkRestriction = account => {
+			const checkRestriction = (account) => {
 				if (!account || !passport || !passport.user || !socket) return;
-				const parseVer = ver => {
+				const parseVer = (ver) => {
 					const vals = ver.split('.');
 					vals.forEach((v, i) => (vals[i] = parseInt(v)));
 					return vals;
@@ -248,7 +250,7 @@ module.exports.socketRoutes = () => {
 				if (account.touLastAgreed && account.touLastAgreed.length) {
 					const changesSince = [];
 					const myVer = parseVer(account.touLastAgreed);
-					TOU_CHANGES.forEach(change => {
+					TOU_CHANGES.forEach((change) => {
 						if (!firstVerNew(myVer, parseVer(change.changeVer))) changesSince.push(change);
 					});
 					if (changesSince.length) {
@@ -259,7 +261,7 @@ module.exports.socketRoutes = () => {
 					socket.emit('touChange', [TOU_CHANGES[TOU_CHANGES.length - 1]]);
 					return true;
 				}
-				const warnings = account.warnings.filter(warning => !warning.acknowledged);
+				const warnings = account.warnings.filter((warning) => !warning.acknowledged);
 				if (warnings.length > 0) {
 					const { moderator, acknowledged, ...firstWarning } = warnings[0]; // eslint-disable-line no-unused-vars
 					socket.emit('warningPopup', firstWarning);
@@ -271,20 +273,21 @@ module.exports.socketRoutes = () => {
 			};
 
 			if (passport && passport.user && authenticated) {
-				Account.findOne({ username: passport.user }).then(account => {
+				Account.findOne({ username: passport.user }).then((account) => {
 					isRestricted = checkRestriction(account);
 				});
 			}
 
 			// Instantly sends the userlist as soon as the websocket is created.
-			// For some reason, sending the userlist before this happens actually doesn't work on the client. The event gets in, but is not used.
+			// For some reason, sending the userlist before this happens actually
+			// doesn't work on the client. The event gets in, but is not used.
 			socket.conn.on('upgrade', () => {
 				sendUserList(socket);
 				socket.emit('emoteList', emoteList);
 
 				// sockets should not be unauthenticated but let's make sure anyway
 				if (passport.user) {
-					const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
+					const dmID = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
 					if (dmID) {
 						socket.emit('preOpenModDMs');
 						socket.emit('openModDMs', handleAEMMessages(modDMs[dmID], passport.user, modUserNames, editorUserNames, adminUserNames));
@@ -293,14 +296,14 @@ module.exports.socketRoutes = () => {
 			});
 
 			socket.on('receiveRestrictions', () => {
-				Account.findOne({ username: passport.user }).then(account => {
+				Account.findOne({ username: passport.user }).then((account) => {
 					isRestricted = checkRestriction(account);
 				});
 			});
 
-			socket.on('seeWarnings', username => {
+			socket.on('seeWarnings', (username) => {
 				if (isAEM) {
-					Account.findOne({ username: username }).then(account => {
+					Account.findOne({ username: username }).then((account) => {
 						if (account) {
 							if (account.warnings && account.warnings.length > 0) {
 								socket.emit('sendWarnings', { username, warnings: account.warnings });
@@ -322,7 +325,7 @@ module.exports.socketRoutes = () => {
 				handleSocketDisconnect(socket);
 			});
 
-			socket.on('sendUser', user => {
+			socket.on('sendUser', (user) => {
 				if (authenticated && isAEM) {
 					sendSpecificUserList(socket, 'moderator');
 				} else {
@@ -330,29 +333,30 @@ module.exports.socketRoutes = () => {
 				}
 			});
 
-			socket.on('feedbackForm', data => {
+			socket.on('feedbackForm', (data) => {
 				if (!(passport && passport.user && authenticated)) {
 					socket.emit('feedbackResponse', { status: 'error', message: 'You are not logged in.' });
 					return;
 				}
 
 				if (!(data && data.feedback)) {
-					socket.emit('feedbackResponse', { status: 'error', message: 'You cannot submit empty feedback.' });
+					socket.emit('feedbackResponse', {
+						status: 'error',
+						message: 'You cannot submit empty feedback.',
+					});
 					return;
 				}
 
 				if (data.feedback.length <= 1900) {
-					Account.findOne({ username: passport.user }).then(account => {
+					Account.findOne({ username: passport.user }).then((account) => {
 						if (!account.feedbackSubmissions) account.feedbackSubmissions = [];
-						const newFeedback = {
-							date: new Date(),
-							feedback: data.feedback
-						};
+						const newFeedback = { date: new Date(), feedback: data.feedback };
 
 						if (account.feedbackSubmissions.length >= 2) {
 							const secondMostRecentIndex = account.feedbackSubmissions.length - 2;
 							if (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date > 1000 * 60 * 60 * 24) {
-								// if it's been 24 hours since the *2nd* most recent feedback submission
+								// if it's been 24 hours since the *2nd* most recent feedback
+								// submission
 								account.feedbackSubmissions.push(newFeedback);
 							} else {
 								socket.emit('feedbackResponse', {
@@ -360,7 +364,7 @@ module.exports.socketRoutes = () => {
 									message:
 										'You can only submit feedback twice a day. You can submit feedback again in ' +
 										moment.duration(24 * 60 * 60 * 1000 - (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
-										'.'
+										'.',
 								});
 								return;
 							}
@@ -371,7 +375,7 @@ module.exports.socketRoutes = () => {
 						let feedback = {
 							content: `__**Player**__: ${passport.user}\n__**Feedback**__: ${data.feedback}`,
 							username: 'Feedback',
-							allowed_mentions: { parse: [] }
+							allowed_mentions: { parse: [] },
 						};
 
 						try {
@@ -382,11 +386,14 @@ module.exports.socketRoutes = () => {
 								method: 'POST',
 								headers: {
 									'Content-Type': 'application/json',
-									'Content-Length': Buffer.byteLength(feedback)
-								}
+									'Content-Length': Buffer.byteLength(feedback),
+								},
 							});
 							req.end(feedback);
-							socket.emit('feedbackResponse', { status: 'success', message: 'Thank you for submitting feedback!' });
+							socket.emit('feedbackResponse', {
+								status: 'success',
+								message: 'Thank you for submitting feedback!',
+							});
 						} catch (e) {
 							console.log(e);
 							socket.emit('feedbackResponse', { status: 'error', message: 'An unknown error occurred.' });
@@ -399,7 +406,7 @@ module.exports.socketRoutes = () => {
 				}
 			});
 
-			socket.on('flappyEvent', data => {
+			socket.on('flappyEvent', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
@@ -437,25 +444,25 @@ module.exports.socketRoutes = () => {
 				}
 			});
 
-			socket.on('aemOpenChat', data => {
+			socket.on('aemOpenChat', (data) => {
 				if (authenticated && isAEM) {
 					handleOpenChat(socket, data, modUserNames, editorUserNames, adminUserNames);
 				}
 			});
 
-			socket.on('aemCloseChat', data => {
+			socket.on('aemCloseChat', (data) => {
 				if (authenticated && isAEM) {
 					handleCloseChat(socket, data, modUserNames, editorUserNames, adminUserNames);
 				}
 			});
 
-			socket.on('aemUnsubscribeChat', data => {
+			socket.on('aemUnsubscribeChat', (data) => {
 				if (authenticated && isAEM) {
 					handleUnsubscribeChat(socket, data, modUserNames, editorUserNames, adminUserNames);
 				}
 			});
 
-			socket.on('modDMsAddChat', data => {
+			socket.on('modDMsAddChat', (data) => {
 				if (authenticated) {
 					handleAddNewModDMChat(socket, passport, data, modUserNames, editorUserNames, adminUserNames);
 				}
@@ -463,7 +470,7 @@ module.exports.socketRoutes = () => {
 
 			socket.on('confirmTOU', () => {
 				if (authenticated && isRestricted) {
-					Account.findOne({ username: passport.user }).then(account => {
+					Account.findOne({ username: passport.user }).then((account) => {
 						account.touLastAgreed = TOU_CHANGES[0].changeVer;
 						account.save();
 						isRestricted = checkRestriction(account);
@@ -473,76 +480,76 @@ module.exports.socketRoutes = () => {
 
 			socket.on('acknowledgeWarning', () => {
 				if (authenticated && isRestricted) {
-					Account.findOne({ username: passport.user }).then(acc => {
-						acc.warnings[acc.warnings.findIndex(warning => !warning.acknowledged)].acknowledged = true;
+					Account.findOne({ username: passport.user }).then((acc) => {
+						acc.warnings[acc.warnings.findIndex((warning) => !warning.acknowledged)].acknowledged = true;
 						acc.markModified('warnings');
 						acc.save(() => (isRestricted = checkRestriction(acc)));
 					});
 				}
 			});
 
-			socket.on('handleUpdatedPlayerNote', data => {
+			socket.on('handleUpdatedPlayerNote', (data) => {
 				handleUpdatedPlayerNote(socket, passport, data);
 			});
 
-			socket.on('handleUpdatedTheme', data => {
+			socket.on('handleUpdatedTheme', (data) => {
 				handleUpdatedTheme(socket, passport, data);
 			});
 
-			socket.on('updateModAction', data => {
+			socket.on('updateModAction', (data) => {
 				if (authenticated && isAEM) {
 					handleModerationAction(socket, passport, data, false, modUserNames, editorUserNames.concat(adminUserNames));
 				}
 			});
-			socket.on('addNewClaim', data => {
+			socket.on('addNewClaim', (data) => {
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					handleAddNewClaim(socket, passport, game, data);
 				}
 			});
-			socket.on('updateGameWhitelist', data => {
+			socket.on('updateGameWhitelist', (data) => {
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					handleUpdateWhitelist(passport, game, data);
 				}
 			});
-			socket.on('updateTruncateGame', data => {
+			socket.on('updateTruncateGame', (data) => {
 				handleUpdatedTruncateGame(data);
 			});
-			socket.on('addNewGameChat', data => {
+			socket.on('addNewGameChat', (data) => {
 				const game = findGame(data);
 				if (isRestricted) return;
 				if (authenticated) {
 					handleAddNewGameChat(socket, passport, data, game, modUserNames, editorUserNames, adminUserNames, handleAddNewClaim, isTourneyMod);
 				}
 			});
-			socket.on('updateReportGame', data => {
+			socket.on('updateReportGame', (data) => {
 				try {
 					handleUpdatedReportGame(socket, data);
 				} catch (e) {
 					console.log(e, 'err in player report');
 				}
 			});
-			socket.on('addNewGame', data => {
+			socket.on('addNewGame', (data) => {
 				if (isRestricted) return;
 				if (authenticated) {
 					handleAddNewGame(socket, passport, data);
 				}
 			});
-			socket.on('updateGameSettings', data => {
+			socket.on('updateGameSettings', (data) => {
 				if (authenticated) {
 					handleUpdatedGameSettings(socket, passport, data);
 				}
 			});
 
-			socket.on('addNewGeneralChat', data => {
+			socket.on('addNewGeneralChat', (data) => {
 				if (isRestricted) return;
 
 				if (authenticated) {
 					handleNewGeneralChat(socket, passport, data, modUserNames, editorUserNames, adminUserNames);
 				}
 			});
-			socket.on('leaveGame', data => {
+			socket.on('leaveGame', (data) => {
 				const game = findGame(data);
 
 				if (game && io.sockets.adapter.rooms[game.general.uid] && socket) {
@@ -553,7 +560,7 @@ module.exports.socketRoutes = () => {
 					handleUserLeaveGame(socket, game, data, passport);
 				}
 			});
-			socket.on('updateSeatedUser', data => {
+			socket.on('updateSeatedUser', (data) => {
 				if (isRestricted) return;
 				if (authenticated) {
 					updateSeatedUser(socket, passport, data);
@@ -570,26 +577,26 @@ module.exports.socketRoutes = () => {
 					handlePlayerReportDismiss();
 				}
 			});
-			socket.on('updateRemake', data => {
+			socket.on('updateRemake', (data) => {
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					handleUpdatedRemakeGame(passport, game, data, socket);
 				}
 			});
-			socket.on('updateBio', data => {
+			socket.on('updateBio', (data) => {
 				if (authenticated) {
 					handleUpdatedBio(socket, passport, data);
 				}
 			});
 			// user-requests
 
-			socket.on('getPlayerNotes', data => {
+			socket.on('getPlayerNotes', (data) => {
 				sendPlayerNotes(socket, data);
 			});
 			socket.on('getGameList', () => {
 				sendGameList(socket);
 			});
-			socket.on('getGameInfo', uid => {
+			socket.on('getGameInfo', (uid) => {
 				sendGameInfo(socket, uid);
 			});
 			socket.on('getUserList', () => {
@@ -601,29 +608,29 @@ module.exports.socketRoutes = () => {
 			socket.on('getUserGameSettings', () => {
 				sendUserGameSettings(socket);
 			});
-			socket.on('selectedChancellorVoteOnVeto', data => {
+			socket.on('selectedChancellorVoteOnVeto', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectChancellorVoteOnVeto(passport, game, data);
 				}
 			});
-			socket.on('getModInfo', count => {
+			socket.on('getModInfo', (count) => {
 				if (authenticated && (isAEM || isTrial)) {
 					sendModInfo(games, socket, count, isTrial, isAEM);
 				}
 			});
-			socket.on('subscribeModChat', uid => {
+			socket.on('subscribeModChat', (uid) => {
 				const game = findGame({ uid });
 				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 					if (game && game.private && game.private.seatedPlayers) {
-						const players = game.private.seatedPlayers.map(player => player.userName);
-						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then(accounts => {
+						const players = game.private.seatedPlayers.map((player) => player.userName);
+						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then((accounts) => {
 							const staff = accounts
-								.filter(acc => {
+								.filter((acc) => {
 									acc.staffRole && acc.staffRole.length > 0 && players.includes(acc.username);
 								})
-								.map(acc => acc.username);
+								.map((acc) => acc.username);
 							if (staff.length) {
 								socket.emit('sendAlert', `AEM members are present: ${JSON.stringify(staff)}`);
 								return;
@@ -633,7 +640,7 @@ module.exports.socketRoutes = () => {
 					} else socket.emit('sendAlert', 'Game is missing.');
 				}
 			});
-			socket.on('modPeekVotes', data => {
+			socket.on('modPeekVotes', (data) => {
 				if (!data) return;
 				const uid = data.uid;
 				const game = findGame({ uid });
@@ -645,7 +652,7 @@ module.exports.socketRoutes = () => {
 					}
 				}
 			});
-			socket.on('modGetRemakes', data => {
+			socket.on('modGetRemakes', (data) => {
 				if (!data) return;
 				const uid = data.uid;
 				const game = findGame({ uid });
@@ -657,7 +664,7 @@ module.exports.socketRoutes = () => {
 					}
 				}
 			});
-			socket.on('modFreezeGame', data => {
+			socket.on('modFreezeGame', (data) => {
 				const uid = data.uid;
 				const game = findGame({ uid });
 				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
@@ -681,40 +688,40 @@ module.exports.socketRoutes = () => {
 					updateUserStatus(passport);
 				}
 			});
-			socket.on('getReplayGameData', uid => {
+			socket.on('getReplayGameData', (uid) => {
 				sendReplayGameData(socket, uid);
 			});
 			// election
 
-			socket.on('presidentSelectedChancellor', data => {
+			socket.on('presidentSelectedChancellor', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectChancellor(socket, passport, game, data);
 				}
 			});
-			socket.on('selectedVoting', data => {
+			socket.on('selectedVoting', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectVoting(passport, game, data, socket);
 				}
 			});
-			socket.on('selectedPresidentPolicy', data => {
+			socket.on('selectedPresidentPolicy', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectPresidentPolicy(passport, game, data, false, socket);
 				}
 			});
-			socket.on('selectedChancellorPolicy', data => {
+			socket.on('selectedChancellorPolicy', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectChancellorPolicy(passport, game, data, false, socket);
 				}
 			});
-			socket.on('selectedPresidentVoteOnVeto', data => {
+			socket.on('selectedPresidentVoteOnVeto', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
@@ -722,21 +729,21 @@ module.exports.socketRoutes = () => {
 				}
 			});
 			// policy-powers
-			socket.on('selectPartyMembershipInvestigate', data => {
+			socket.on('selectPartyMembershipInvestigate', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigate(passport, game, data, socket);
 				}
 			});
-			socket.on('selectPartyMembershipInvestigateReverse', data => {
+			socket.on('selectPartyMembershipInvestigateReverse', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigateReverse(passport, game, data, socket);
 				}
 			});
-			socket.on('selectedPolicies', data => {
+			socket.on('selectedPolicies', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
@@ -744,21 +751,21 @@ module.exports.socketRoutes = () => {
 					else selectPolicies(passport, game, socket);
 				}
 			});
-			socket.on('selectedPresidentVoteOnBurn', data => {
+			socket.on('selectedPresidentVoteOnBurn', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectBurnCard(passport, game, data, socket);
 				}
 			});
-			socket.on('selectedPlayerToExecute', data => {
+			socket.on('selectedPlayerToExecute', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {
 					selectPlayerToExecute(passport, game, data, socket);
 				}
 			});
-			socket.on('selectedSpecialElection', data => {
+			socket.on('selectedSpecialElection', (data) => {
 				if (isRestricted) return;
 				const game = findGame(data);
 				if (authenticated && ensureInGame(passport, game)) {

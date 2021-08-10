@@ -2,11 +2,7 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 const { Schema } = mongoose;
 const Account = new Schema({
-	username: {
-		type: String,
-		required: true,
-		unique: true
-	},
+	username: { type: String, required: true, unique: true },
 	password: String,
 	isLocal: Boolean,
 	staffRole: String,
@@ -58,23 +54,16 @@ const Account = new Schema({
 			casualgame: Boolean,
 			timedMode: Boolean,
 			standard: Boolean,
-			rainbow: Boolean
+			rainbow: Boolean,
 		},
-		gameNotes: {
-			top: Number,
-			left: Number,
-			width: Number,
-			height: Number
-		},
+		gameNotes: { top: Number, left: Number, width: Number, height: Number },
 		playerNotes: Array,
 		ignoreIPBans: Boolean,
 		truncatedSize: Number,
 		claimCharacters: String,
-		claimButtons: String
+		claimButtons: String,
 	},
-	verification: {
-		email: String
-	},
+	verification: { email: String },
 	signupIP: String,
 	lastConnectedIP: String,
 	ipHistory: Array,
@@ -163,14 +152,15 @@ const Account = new Schema({
 	discordUID: String,
 	githubUsername: String,
 	githubMFA: Boolean,
-	warnings: Array, // {text: String, moderator: String, time: Date, acknowledged: Boolean},
+	warnings: Array, // {text: String, moderator: String, time: Date,
+	// acknowledged: Boolean},
 	feedbackSubmissions: Array, // { time: Date, text: String }
 	primaryColor: String,
 	secondaryColor: String,
 	tertiaryColor: String,
 	backgroundColor: String,
 	textColor: String,
-	isTournamentMod: Boolean
+	isTournamentMod: Boolean,
 });
 
 Account.plugin(passportLocalMongoose);

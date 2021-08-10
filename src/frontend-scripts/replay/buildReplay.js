@@ -2,12 +2,14 @@
 import { fromJS, List } from 'immutable';
 
 export default function buildReplay(game) {
-	// iterates through a game stepwise by phase, generating a list of snapshots along the way
+	// iterates through a game stepwise by phase, generating a list of snapshots
+	// along the way
 	function traverse(tick, list) {
 		return tick.gameOver ? list.push(snapshot(tick)) : traverse(step(tick), list.push(snapshot(tick)));
 	}
 
-	// given the current turn and phase, returns a slice of that turn showing the game at that instant in time
+	// given the current turn and phase, returns a slice of that turn showing the
+	// game at that instant in time
 	function snapshot(tick) {
 		const { turnNum, phase, gameOver } = tick;
 
@@ -40,7 +42,7 @@ export default function buildReplay(game) {
 			policyPeek,
 			policyPeekClaim,
 			specialElection,
-			deckState
+			deckState,
 		} = game.turns.get(turnNum);
 
 		const afterDeckState = deckState && deckState.slice(deckState.size - afterDeckSize);
@@ -52,17 +54,17 @@ export default function buildReplay(game) {
 			track: beforeTrack,
 			deckSize: beforeDeckSize,
 			players: beforePlayers,
-			electionTracker: beforeElectionTracker
+			electionTracker: beforeElectionTracker,
 		};
 
-		const add = middleware => obj => Object.assign({}, base, middleware, obj);
+		const add = (middleware) => (obj) => Object.assign({}, base, middleware, obj);
 
 		const preEnactionAdd = add({
 			players: beforePlayers,
 			track: beforeTrack,
 			electionTracker: beforeElectionTracker,
 			deckSize: beforeDeckSize,
-			deckState
+			deckState,
 		});
 
 		const midEnactionAdd = add({
@@ -72,7 +74,7 @@ export default function buildReplay(game) {
 			track: beforeTrack,
 			electionTracker: afterElectionTracker,
 			deckSize: afterDeckSize,
-			deckState: afterDeckState
+			deckState: afterDeckState,
 		});
 
 		const postEnactionAdd = add({
@@ -82,7 +84,7 @@ export default function buildReplay(game) {
 			track: afterTrack,
 			electionTracker: afterElectionTracker,
 			deckSize: afterDeckSize,
-			deckState: afterDeckState
+			deckState: afterDeckState,
 		});
 
 		switch (phase) {
@@ -95,7 +97,7 @@ export default function buildReplay(game) {
 					presidentId,
 					chancellorId,
 					votes,
-					electionTracker: afterElectionTracker
+					electionTracker: afterElectionTracker,
 				});
 			case 'topDeck':
 				return midEnactionAdd({});
@@ -103,44 +105,34 @@ export default function buildReplay(game) {
 				return midEnactionAdd({
 					presidentClaim,
 					presidentHand: presidentHand.value(),
-					presidentDiscard: presidentDiscard.value()
+					presidentDiscard: presidentDiscard.value(),
 				});
 			case 'chancellorLegislation':
 				return midEnactionAdd({
 					chancellorClaim,
 					chancellorDiscard,
-					chancellorHand: chancellorHand.value()
+					chancellorHand: chancellorHand.value(),
 				});
 			case 'veto':
 				return midEnactionAdd({
 					isVetoSuccessful,
 					presidentVeto,
-					chancellorVeto: chancellorVeto.value()
+					chancellorVeto: chancellorVeto.value(),
 				});
 			case 'policyEnaction':
-				return postEnactionAdd({
-					players: beforePlayers,
-					enactedPolicy: enactedPolicy.value()
-				});
+				return postEnactionAdd({ players: beforePlayers, enactedPolicy: enactedPolicy.value() });
 			case 'investigation':
 				return postEnactionAdd({
 					investigatorId: investigatorId._value === undefined ? undefined : investigatorId.value(),
 					investigationId: investigationId.value(),
-					investigationClaim: investigationClaim
+					investigationClaim: investigationClaim,
 				});
 			case 'policyPeek':
-				return postEnactionAdd({
-					policyPeek: policyPeek.value(),
-					policyPeekClaim: policyPeekClaim
-				});
+				return postEnactionAdd({ policyPeek: policyPeek.value(), policyPeekClaim: policyPeekClaim });
 			case 'specialElection':
-				return postEnactionAdd({
-					specialElection: specialElection.value()
-				});
+				return postEnactionAdd({ specialElection: specialElection.value() });
 			case 'execution':
-				return postEnactionAdd({
-					execution: execution.value()
-				});
+				return postEnactionAdd({ execution: execution.value() });
 		}
 	}
 
@@ -159,16 +151,12 @@ export default function buildReplay(game) {
 			isExecution,
 			isHitlerKilled,
 			isVeto,
-			isVetoSuccessful
+			isVetoSuccessful,
 		} = game.turns.get(turnNum);
 
-		const next = nextPhase => ({ turnNum, phase: nextPhase, gameOver: false });
+		const next = (nextPhase) => ({ turnNum, phase: nextPhase, gameOver: false });
 
-		const jump = () => ({
-			turnNum: turnNum + 1,
-			phase: 'candidacy',
-			gameOver: false
-		});
+		const jump = () => ({ turnNum: turnNum + 1, phase: 'candidacy', gameOver: false });
 
 		const gameOver = () => {
 			return Object.assign({}, tick, { gameOver: true });

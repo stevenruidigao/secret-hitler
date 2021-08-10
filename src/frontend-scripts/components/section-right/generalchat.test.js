@@ -1,5 +1,6 @@
-import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
+import React from 'react'; // eslint-disable-line
+
 import Generalchat from './Generalchat';
 
 describe('Generalchat', () => {
@@ -15,7 +16,7 @@ describe('Generalchat', () => {
 			emoteColonIndex: -1,
 			excludedColonIndices: [],
 			genchat: true,
-			modDMs: null
+			modDMs: null,
 		};
 
 		const component = shallow(<Generalchat />);

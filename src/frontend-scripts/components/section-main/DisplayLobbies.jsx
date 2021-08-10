@@ -3,7 +3,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { PLAYERCOLORS } from '../../constants';
 
-const DisplayLobbies = props => {
+const DisplayLobbies = (props) => {
 	const { game, userInfo, userList } = props;
 	const gameClasses = () => {
 		let classes = 'browser-row';
@@ -25,15 +25,15 @@ const DisplayLobbies = props => {
 		return classes;
 	};
 
-	const playerCount = game => {
+	const playerCount = (game) => {
 		const availableSeatCounts = new Array(game.maxPlayersCount)
 			.fill(true)
 			.map((el, i) => (game.excludedPlayerCount.includes(i + 1) || i + 1 < game.minPlayersCount ? false : i + 1))
-			.filter(el => el);
+			.filter((el) => el);
 
 		let str = '';
 
-		availableSeatCounts.forEach(el => {
+		availableSeatCounts.forEach((el) => {
 			if (availableSeatCounts.includes(el)) {
 				if (el === game.maxPlayersCount) {
 					str = `${str}${el}`;
@@ -309,11 +309,11 @@ const DisplayLobbies = props => {
 			return null;
 		}
 
-		game.userNames.forEach(el => players.push({ userName: game.private ? '' : el }));
+		game.userNames.forEach((el) => players.push({ userName: game.private ? '' : el }));
 		game.customCardback.forEach((el, index) => (players[index].customCardback = el));
 		game.customCardbackUid.forEach((el, index) => (players[index].customCardbackUid = el));
 		players.forEach((player, index) => {
-			const userStats = userList.list ? userList.list.find(el => el.userName === player.userName) : null;
+			const userStats = userList.list ? userList.list.find((el) => el.userName === player.userName) : null;
 
 			if (userStats) {
 				players[index].wins = userStats.wins;
@@ -327,7 +327,7 @@ const DisplayLobbies = props => {
 			}
 		});
 
-		players.forEach(player => {
+		players.forEach((player) => {
 			const classes = PLAYERCOLORS(player, !(gameSettings && gameSettings.disableSeasonal), 'player-small-cardback');
 
 			if (player.customCardback && (!userInfo.userName || !(userInfo.userName && userInfo.gameSettings && userInfo.gameSettings.disablePlayerCardbacks))) {
@@ -405,7 +405,7 @@ const DisplayLobbies = props => {
 				progressIcons = (
 					<div className="progress-icons">
 						<div className="liberal-count">
-							{_.range(1, 6).map(num => (
+							{_.range(1, 6).map((num) => (
 								<div
 									key={num}
 									className={num <= game.enactedLiberalPolicyCount ? 'leftsidebar box liberal-box filled' : 'leftsidebar box liberal-box unfilled'}
@@ -413,7 +413,7 @@ const DisplayLobbies = props => {
 							))}
 						</div>
 						<div className="fascist-count">
-							{_.range(1, 7).map(num => (
+							{_.range(1, 7).map((num) => (
 								<div
 									key={num}
 									className={num <= game.enactedFascistPolicyCount ? 'leftsidebar box fascist-box filled' : ' leftsidebar box fascist-box unfilled'}
@@ -495,14 +495,14 @@ DisplayLobbies.defaultProps = {
 	game: {},
 	socket: {},
 	userInfo: {},
-	userList: {}
+	userList: {},
 };
 
 DisplayLobbies.propTypes = {
 	game: PropTypes.object,
 	socket: PropTypes.object,
 	userInfo: PropTypes.object,
-	userList: PropTypes.object
+	userList: PropTypes.object,
 };
 
 export default DisplayLobbies;

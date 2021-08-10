@@ -1,13 +1,13 @@
 import {
+	sendGameInfo,
+	sendGameList,
+	sendGeneralChats,
 	sendModInfo,
-	sendUserList,
-	sendUserGameSettings,
 	sendPlayerNotes,
 	sendReplayGameData,
-	sendGameList,
+	sendUserGameSettings,
+	sendUserList,
 	sendUserReports,
-	sendGeneralChats,
-	sendGameInfo
 } from '../../../../routes/socket/user-requests';
 
 describe('user requests', () => {
