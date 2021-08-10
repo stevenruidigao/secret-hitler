@@ -3,7 +3,7 @@ import Playerlist from './Playerlist.jsx';
 import Generalchat from './Generalchat.jsx';
 import PropTypes from 'prop-types';
 
-const RightSidebar = props => {
+const RightSidebar = (props) => {
 	let classes = 'ui section-right transition';
 	if (props.midSection === 'game') {
 		classes += ' game';
@@ -32,7 +32,7 @@ RightSidebar.propTypes = {
 	userList: PropTypes.object,
 	midSection: PropTypes.string,
 	allEmotes: PropTypes.object,
-	forceMounted: PropTypes.bool
+	forceMounted: PropTypes.bool,
 };
 
 export default RightSidebar;

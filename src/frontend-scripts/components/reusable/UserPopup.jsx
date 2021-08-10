@@ -2,19 +2,19 @@ import React, { useState } from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { Popup, List, Grid, Button, Form } from 'semantic-ui-react';
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
 const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 	const defaultOptions = ['Abusive chat', 'Other']; // outside started games.
 	const casualOptions = ['AFK/Leaving Game', 'Abusive chat', 'Other'];
 	const ratedOptions = ['AFK/Leaving Game', 'Abusive chat', 'Cheating', 'Gamethrowing', 'Stalling', 'Other'];
 
-	const inGame = gameInfo?.gameState && gameInfo?.publicPlayersState?.find(p => p.userName === reportedPlayer);
+	const inGame = gameInfo?.gameState && gameInfo?.publicPlayersState?.find((p) => p.userName === reportedPlayer);
 	const inStartedGame = inGame && gameInfo.gameState.isStarted;
 	const casualGame = inGame && gameInfo.general?.casualGame;
 	let uid = '';
 	if (gameInfo?.general?.uid) uid = gameInfo.general.uid;
-	const userInList = userList?.list?.find(u => u.userName === reportedPlayer);
+	const userInList = userList?.list?.find((u) => u.userName === reportedPlayer);
 	if (userInList?.status?.type === 'playing') {
 		uid = userInList.status.gameId;
 	}
@@ -34,7 +34,7 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 		}
 		setSubmittingReport(true);
 
-		const index = inStartedGame ? gameInfo.publicPlayersState.findIndex(player => player.userName === reportedPlayer) : undefined;
+		const index = inStartedGame ? gameInfo.publicPlayersState.findIndex((player) => player.userName === reportedPlayer) : undefined;
 		socket.emit(
 			'playerReport',
 			{
@@ -42,9 +42,9 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 				userName: userInfo.userName || 'from replay',
 				reportedPlayer: `${inStartedGame && index + 1 ? `{${index + 1}}` : ''} ${reportedPlayer}`,
 				reason: reason,
-				comment: comment
+				comment: comment,
 			},
-			response => {
+			(response) => {
 				if (response.success) {
 					setSuccessMessage('Report submitted successfully.');
 				} else {
@@ -69,7 +69,7 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 						placeholder="Reason"
 						fluid
 						selection
-						options={opt.map(option => ({ text: option, key: option, value: option.toLowerCase() }))}
+						options={opt.map((option) => ({ text: option, key: option, value: option.toLowerCase() }))}
 						onChange={(_event, props) => setReason(props.value)}
 					/>
 					<Form.TextArea placeholder="Comment" onChange={(_event, props) => setComment(props.value)} />
@@ -87,7 +87,7 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 
 const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, position, index }) => {
 	const [reportVisible, setReportVisible] = useState(false);
-	const user = userList && userList.list && userList.list.find(play => play.userName === userName);
+	const user = userList && userList.list && userList.list.find((play) => play.userName === userName);
 	const { gameSettings } = userInfo;
 
 	const toggleBlacklist = () => {
@@ -105,7 +105,7 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 		socket.emit('sendUser', userInfo); // To force a new playerlist pull
 	};
 
-	const checkStaffRole = staffRole => staffRole === 'admin' || staffRole === 'editor' || staffRole === 'moderator';
+	const checkStaffRole = (staffRole) => staffRole === 'admin' || staffRole === 'editor' || staffRole === 'moderator';
 
 	const gameStarted = gameInfo?.gameState?.isStarted;
 	const isTracksFlipped = gameInfo?.gameState?.isTracksFlipped;
@@ -116,7 +116,7 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 	const isAEM = checkStaffRole(userInfo?.staffRole);
 	const areTheyAEM = checkStaffRole(user?.staffRole);
 
-	const openChat = userName => {
+	const openChat = (userName) => {
 		socket.emit('aemOpenChat', { userName, aemMember: userInfo?.userName });
 	};
 
@@ -160,8 +160,8 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 								size="small"
 								onClick={() =>
 									socket.emit('addNewGameChat', {
-										chat: `ping${gameInfo.publicPlayersState.findIndex(player => player.userName === userName) + 1}`,
-										uid: gameInfo.general.uid
+										chat: `ping${gameInfo.publicPlayersState.findIndex((player) => player.userName === userName) + 1}`,
+										uid: gameInfo.general.uid,
 									})
 								}
 							>

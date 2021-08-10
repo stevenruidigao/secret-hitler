@@ -19,7 +19,7 @@ export default class Generalchat extends React.Component {
 		emoteColonIndex: -1,
 		excludedColonIndices: [],
 		genchat: true,
-		modDMs: null
+		modDMs: null,
 	};
 
 	componentDidMount() {
@@ -28,7 +28,7 @@ export default class Generalchat extends React.Component {
 		}
 
 		if (this.props.socket) {
-			this.props.socket.on('openModDMs', data => {
+			this.props.socket.on('openModDMs', (data) => {
 				this.setState({ modDMs: data, genchat: false });
 			});
 
@@ -36,7 +36,7 @@ export default class Generalchat extends React.Component {
 				this.setState({ modDMs: null, genchat: true });
 			});
 
-			this.props.socket.on('inProgressModDMUpdate', dm => {
+			this.props.socket.on('inProgressModDMUpdate', (dm) => {
 				this.setState({ modDMs: dm });
 			});
 		}
@@ -75,13 +75,13 @@ export default class Generalchat extends React.Component {
 		}
 	}
 
-	handleTyping = e => {
+	handleTyping = (e) => {
 		e.preventDefault();
 		const { allEmotes } = this.props;
 		const { badWord, textChangeTimer } = this.state;
 		let { excludedColonIndices } = this.state;
 		const { value } = e.target;
-		const emoteNames = Object.keys(allEmotes).map(emoteName => emoteName.slice(1, emoteName.length - 1));
+		const emoteNames = Object.keys(allEmotes).map((emoteName) => emoteName.slice(1, emoteName.length - 1));
 		let emoteColonIndex = value.substring(0, e.target.selectionStart).lastIndexOf(':');
 		let filteredEmotes = [];
 		const colonSplitText = value.substring(0, emoteColonIndex).split(':');
@@ -95,7 +95,7 @@ export default class Generalchat extends React.Component {
 			emoteColonIndex = -1;
 		}
 
-		excludedColonIndices = excludedColonIndices.map(i => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
+		excludedColonIndices = excludedColonIndices.map((i) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
 
 		if (value.lastIndexOf(':') === e.target.selectionStart - 1) {
 			this.setState({ emoteHelperSelectedIndex: -1 });
@@ -106,14 +106,16 @@ export default class Generalchat extends React.Component {
 				.slice(emoteColonIndex + 1)
 				.split(' ')[0]
 				.split(':')[0];
-			filteredEmotes = textAfterColon ? emoteNames.filter(emote => emote.toLowerCase().includes(textAfterColon.toLowerCase())).slice(0, 5) : this.defaultEmotes;
+			filteredEmotes = textAfterColon
+				? emoteNames.filter((emote) => emote.toLowerCase().includes(textAfterColon.toLowerCase())).slice(0, 5)
+				: this.defaultEmotes;
 			emoteColonIndex = emoteNames.includes(textAfterColon + ':') ? -1 : emoteColonIndex;
 		}
 		this.setState({
 			emoteHelperElements: filteredEmotes.length ? filteredEmotes : this.defaultEmotes,
 			chatValue: value,
 			emoteColonIndex,
-			excludedColonIndices
+			excludedColonIndices,
 		});
 
 		const foundWord = getBadWord(value);
@@ -129,12 +131,12 @@ export default class Generalchat extends React.Component {
 					textLastChanged: Date.now(),
 					textChangeTimer: setTimeout(() => {
 						this.setState({ textChangeTimer: -1 });
-					}, 2000)
+					}, 2000),
 				});
 			} else {
 				this.setState({
 					badWord: [null, null],
-					textChangeTimer: -1
+					textChangeTimer: -1,
 				});
 			}
 		}
@@ -149,47 +151,47 @@ export default class Generalchat extends React.Component {
 			if (userName === this.state.modDMs.username || userName === this.state.modDMs.aemMember)
 				return {
 					isDisabled: false,
-					placeholder: 'Send a message'
+					placeholder: 'Send a message',
 				};
 			return {
 				isDisabled: true,
-				placeholder: 'You are observing a conversation'
+				placeholder: 'You are observing a conversation',
 			};
 		}
 
 		if (!userName) {
 			return {
 				isDisabled: true,
-				placeholder: 'You must log in to use chat'
+				placeholder: 'You must log in to use chat',
 			};
 		}
 
-		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find(play => play.userName === userName) : undefined;
+		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find((play) => play.userName === userName) : undefined;
 
 		if (!user) {
 			return {
 				isDisabled: true,
-				placeholder: 'Please reload...'
+				placeholder: 'Please reload...',
 			};
 		}
 
 		if (userInfo.gameSettings && userInfo.gameSettings.isPrivate) {
 			return {
 				isDisabled: true,
-				placeholder: 'Your account is private and cannot participate in general chat'
+				placeholder: 'Your account is private and cannot participate in general chat',
 			};
 		}
 
 		if ((user.wins || 0) + (user.losses || 0) < 10) {
 			return {
 				isDisabled: true,
-				placeholder: 'You must finish ten games to use general chat'
+				placeholder: 'You must finish ten games to use general chat',
 			};
 		}
 
 		return {
 			isDisabled: false,
-			placeholder: 'Send a message'
+			placeholder: 'Send a message',
 		};
 	};
 
@@ -205,11 +207,11 @@ export default class Generalchat extends React.Component {
 		if (chatValue && chatValue.length <= 300) {
 			if (this.state.genchat) {
 				this.props.socket.emit('addNewGeneralChat', {
-					chat: chatValue
+					chat: chatValue,
 				});
 			} else {
 				this.props.socket.emit('modDMsAddChat', {
-					chat: chatValue
+					chat: chatValue,
 				});
 			}
 
@@ -219,7 +221,7 @@ export default class Generalchat extends React.Component {
 				excludedColonIndices: [],
 				emoteColonIndex: -1,
 				emoteHelperElements: this.defaultEmotes,
-				emoteHelperSelectedIndex: -1
+				emoteHelperSelectedIndex: -1,
 			});
 		}
 	};
@@ -257,13 +259,13 @@ export default class Generalchat extends React.Component {
 		this.setState({
 			chatValue: isHelper ? helperChatArr.join('') : `${chatValue}${emote} `,
 			emoteColonIndex: -1,
-			emoteHelperSelectedIndex: -1
+			emoteHelperSelectedIndex: -1,
 		});
 
 		if (!isHelper) this.chatInput.focus();
 	};
 
-	handleKeyPress = e => {
+	handleKeyPress = (e) => {
 		const { emoteHelperSelectedIndex, emoteHelperElements, emoteColonIndex, excludedColonIndices } = this.state;
 		const { keyCode } = e;
 		const emoteHelperElementCount = emoteHelperElements && emoteHelperElements.length;
@@ -273,20 +275,20 @@ export default class Generalchat extends React.Component {
 				// esc
 				this.setState({
 					excludedColonIndices: [...excludedColonIndices, emoteColonIndex],
-					emoteColonIndex: -1
+					emoteColonIndex: -1,
 				});
 			} else if (keyCode === 40) {
 				// arrow key
 				const nextIndex = emoteHelperSelectedIndex + 1;
 				e.preventDefault(); // prevents moving to home and end of textarea
 				this.setState({
-					emoteHelperSelectedIndex: nextIndex === emoteHelperElementCount ? 0 : nextIndex
+					emoteHelperSelectedIndex: nextIndex === emoteHelperElementCount ? 0 : nextIndex,
 				});
 			} else if (keyCode === 38) {
 				// arrow key
 				e.preventDefault(); // prevents moving to home and end of textarea
 				this.setState({
-					emoteHelperSelectedIndex: emoteHelperSelectedIndex ? emoteHelperSelectedIndex - 1 : emoteHelperElementCount - 1
+					emoteHelperSelectedIndex: emoteHelperSelectedIndex ? emoteHelperSelectedIndex - 1 : emoteHelperElementCount - 1,
 				});
 			} else if (keyCode === 9 || keyCode === 13) {
 				// enter and tab
@@ -294,7 +296,7 @@ export default class Generalchat extends React.Component {
 				if (emoteHelperSelectedIndex >= 0) {
 					this.handleInsertEmote(emoteHelperElements[emoteHelperSelectedIndex], true);
 					this.setState({
-						emoteColonIndex: -1
+						emoteColonIndex: -1,
 					});
 				} else {
 					this.handleSubmit();
@@ -318,7 +320,7 @@ export default class Generalchat extends React.Component {
 							backgroundColor: 'indianred',
 							padding: '7px',
 							borderRadius: '10px 10px 0px 0px',
-							border: '1px solid #8c8c8c'
+							border: '1px solid #8c8c8c',
 						}}
 					>
 						"{this.state.badWord[1]}"{this.state.badWord[0] !== this.state.badWord[1] ? ` (${this.state.badWord[0]})` : ''} is forbidden.
@@ -333,7 +335,7 @@ export default class Generalchat extends React.Component {
 							backgroundColor: 'indianred',
 							padding: '7px',
 							borderRadius: '10px 10px 0px 0px',
-							border: '1px solid #8c8c8c'
+							border: '1px solid #8c8c8c',
 						}}
 					>
 						{`This message is too long ${300 - this.state.chatValue.length}`}
@@ -348,7 +350,7 @@ export default class Generalchat extends React.Component {
 					spellCheck="false"
 					onKeyDown={this.handleKeyPress}
 					onChange={this.handleTyping}
-					ref={c => (this.chatInput = c)}
+					ref={(c) => (this.chatInput = c)}
 				/>
 				{!this.generalChatStatus().isDisabled && renderEmotesButton(this.handleInsertEmote, this.props.allEmotes)}
 				{this.state.modDMs !== null &&
@@ -397,10 +399,10 @@ export default class Generalchat extends React.Component {
 		 * @param {array} tournyWins - array of tournywins in epoch ms numbers (date.getTime())
 		 * @return {jsx}
 		 */
-		const renderCrowns = tournyWins =>
+		const renderCrowns = (tournyWins) =>
 			tournyWins
-				.filter(winTime => time - winTime < 10800000)
-				.map(crown => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
+				.filter((winTime) => time - winTime < 10800000)
+				.map((crown) => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
 
 		const chatToRender = this.state.genchat ? generalChats : { list: this.state.modDMs?.messages };
 
@@ -409,7 +411,7 @@ export default class Generalchat extends React.Component {
 			chatToRender.list.map((chat, i) => {
 				const { gameSettings } = userInfo;
 				const isMod = Boolean(chat.staffRole) || chat.userName.substring(0, 11) == '[BROADCAST]';
-				const user = chat.userName && Object.keys(userList).length ? userList.list.find(player => player.userName === chat.userName) : undefined;
+				const user = chat.userName && Object.keys(userList).length ? userList.list.find((player) => player.userName === chat.userName) : undefined;
 				const userClasses =
 					!user || (gameSettings && gameSettings.disablePlayerColorsInChat)
 						? 'chat-user'
@@ -495,9 +497,9 @@ export default class Generalchat extends React.Component {
 	renderEmoteHelper() {
 		const { allEmotes } = this.props;
 		const { emoteHelperSelectedIndex, emoteHelperElements } = this.state;
-		const helperHover = index => {
+		const helperHover = (index) => {
 			this.setState({
-				emoteHelperSelectedIndex: index
+				emoteHelperSelectedIndex: index,
 			});
 		};
 
@@ -523,7 +525,7 @@ export default class Generalchat extends React.Component {
 							src={allEmotes[`:${el}:`]}
 							style={{
 								height: '28px',
-								margin: '2px 10px 2px 5px'
+								margin: '2px 10px 2px 5px',
 							}}
 						/>
 						{`${el}`}
@@ -570,9 +572,9 @@ export default class Generalchat extends React.Component {
 				<section className="segment chats">
 					{emoteColonIndex >= 0 && this.renderEmoteHelper()}
 					<Scrollbars
-						ref={c => (this.scrollbar = c)}
+						ref={(c) => (this.scrollbar = c)}
 						onScroll={this.handleChatScrolled}
-						renderThumbVertical={props => <div {...props} className="thumb-vertical" />}
+						renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
 					>
 						<div className="ui list genchat-container">{this.renderChats()}</div>
 					</Scrollbars>
@@ -585,7 +587,7 @@ export default class Generalchat extends React.Component {
 
 Generalchat.defaultProps = {
 	generalChats: {},
-	userInfo: {}
+	userInfo: {},
 };
 
 Generalchat.propTypes = {
@@ -594,5 +596,5 @@ Generalchat.propTypes = {
 	socket: PropTypes.object,
 	generalChats: PropTypes.object,
 	userList: PropTypes.object,
-	allEmotes: PropTypes.object
+	allEmotes: PropTypes.object,
 };

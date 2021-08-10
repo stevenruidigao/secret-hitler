@@ -10,10 +10,10 @@ import { PLAYERCOLORS, getBadWord, getNumberWithOrdinal } from '../../constants'
 import { renderEmotesButton, processEmotes } from '../../emotes';
 import * as Swal from 'sweetalert2';
 
-const mapDispatchToProps = dispatch => ({
-	loadReplay: summary => dispatch(loadReplay(summary)),
-	toggleNotes: notesStatus => dispatch(toggleNotes(notesStatus)),
-	updateUser: userInfo => dispatch(updateUser(userInfo))
+const mapDispatchToProps = (dispatch) => ({
+	loadReplay: (summary) => dispatch(loadReplay(summary)),
+	toggleNotes: (notesStatus) => dispatch(toggleNotes(notesStatus)),
+	updateUser: (userInfo) => dispatch(updateUser(userInfo)),
 });
 
 const mapStateToProps = ({ notesActive }) => ({ notesActive });
@@ -24,7 +24,7 @@ const ClaimButton = ({ cards, onClick }) => {
 			{['fascist', 'liberal'].includes(cards) ? (
 				<div className={`card ${cards}`}></div>
 			) : (
-				cards.split('').map(card => {
+				cards.split('').map((card) => {
 					if (card === 'r') {
 						return <div className="card fascist"></div>;
 					} else {
@@ -38,11 +38,11 @@ const ClaimButton = ({ cards, onClick }) => {
 
 const ClaimButtons = ({ claimOptions, handleClaimButtonClick }) => (
 	<div className="claim-button-container">
-		{claimOptions.map(claimOption => (
+		{claimOptions.map((claimOption) => (
 			<ClaimButton
 				key={claimOption}
 				cards={claimOption}
-				onClick={e => {
+				onClick={(e) => {
 					handleClaimButtonClick(e, claimOption);
 				}}
 			/>
@@ -91,7 +91,7 @@ class Gamechat extends React.Component {
 		emoteHelperSelectedIndex: 0,
 		emoteHelperElements: this.defaultEmotes,
 		emoteColonIndex: -1,
-		excludedColonIndices: []
+		excludedColonIndices: [],
 	};
 
 	componentDidMount() {
@@ -115,7 +115,7 @@ class Gamechat extends React.Component {
 		});
 		this.props.socket.on('removeClaim', () => {
 			this.setState({
-				claim: ''
+				claim: '',
 			});
 		});
 	}
@@ -128,15 +128,16 @@ class Gamechat extends React.Component {
 			(prevProps &&
 				userInfo.userName &&
 				userInfo.isSeated &&
-				prevProps.gameInfo.publicPlayersState.filter(player => player.isDead).length !== gameInfo.publicPlayersState.filter(player => player.isDead).length &&
-				gameInfo.publicPlayersState.find(player => userInfo.userName === player.userName).isDead) ||
+				prevProps.gameInfo.publicPlayersState.filter((player) => player.isDead).length !==
+					gameInfo.publicPlayersState.filter((player) => player.isDead).length &&
+				gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).isDead) ||
 			(prevProps &&
 				userInfo.userName &&
 				gameInfo.gameState.phase === 'presidentSelectingPolicy' &&
-				((gameInfo.publicPlayersState.find(player => userInfo.userName === player.userName) &&
-					gameInfo.publicPlayersState.find(player => userInfo.userName === player.userName).governmentStatus === 'isPresident') ||
-					(gameInfo.publicPlayersState.find(player => userInfo.userName === player.userName) &&
-						gameInfo.publicPlayersState.find(player => userInfo.userName === player.userName).governmentStatus === 'isChancellor')) &&
+				((gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
+					gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).governmentStatus === 'isPresident') ||
+					(gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
+						gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).governmentStatus === 'isChancellor')) &&
 				prevProps.gameInfo.gameState.phase !== 'presidentSelectingPolicy')
 		) {
 			this.setState({ inputValue: '' });
@@ -157,7 +158,7 @@ class Gamechat extends React.Component {
 			this.setState(
 				{
 					processedChats: this.processChats(),
-					forceProcess: false
+					forceProcess: false,
 				},
 				() => this.scrollChats()
 			);
@@ -179,8 +180,8 @@ class Gamechat extends React.Component {
 	handleWhitelistPlayers = () => {
 		this.setState({
 			playersToWhitelist: this.props.userList.list
-				.filter(user => user.userName !== this.props.userInfo.userName)
-				.map(user => ({ userName: user.userName, isSelected: false }))
+				.filter((user) => user.userName !== this.props.userInfo.userName)
+				.map((user) => ({ userName: user.userName, isSelected: false })),
 		});
 
 		$(this.whitelistModal).modal('show');
@@ -195,7 +196,7 @@ class Gamechat extends React.Component {
 
 	renderNotes() {
 		if (this.state.notesEnabled) {
-			const notesChange = e => {
+			const notesChange = (e) => {
 				this.setState({ notesValue: `${e.target.value}` });
 			};
 			return (
@@ -219,13 +220,13 @@ class Gamechat extends React.Component {
 		}
 	};
 
-	handleTyping = e => {
+	handleTyping = (e) => {
 		e.preventDefault();
 		const { gameInfo, allEmotes } = this.props;
 		const { badWord } = this.state;
 		const value = e.target.value;
 		let { excludedColonIndices } = this.state;
-		const emoteNames = Object.keys(allEmotes).map(emoteName => emoteName.slice(1, emoteName.length - 1));
+		const emoteNames = Object.keys(allEmotes).map((emoteName) => emoteName.slice(1, emoteName.length - 1));
 		let emoteColonIndex = value.substring(0, e.target.selectionStart).lastIndexOf(':');
 		let filteredEmotes = [];
 		const colonSplitText = value.substring(0, emoteColonIndex).split(':');
@@ -239,7 +240,7 @@ class Gamechat extends React.Component {
 			emoteColonIndex = -1;
 		}
 
-		excludedColonIndices = excludedColonIndices.map(i => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
+		excludedColonIndices = excludedColonIndices.map((i) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
 
 		if (value.lastIndexOf(':') === e.target.selectionStart - 1) {
 			this.setState({ emoteHelperSelectedIndex: -1 });
@@ -250,7 +251,9 @@ class Gamechat extends React.Component {
 				.slice(emoteColonIndex + 1)
 				.split(' ')[0]
 				.split(':')[0];
-			filteredEmotes = textAfterColon ? emoteNames.filter(emote => emote.toLowerCase().includes(textAfterColon.toLowerCase())).slice(0, 5) : this.defaultEmotes;
+			filteredEmotes = textAfterColon
+				? emoteNames.filter((emote) => emote.toLowerCase().includes(textAfterColon.toLowerCase())).slice(0, 5)
+				: this.defaultEmotes;
 			emoteColonIndex = emoteNames.includes(textAfterColon + ':') ? -1 : emoteColonIndex;
 		}
 
@@ -258,13 +261,13 @@ class Gamechat extends React.Component {
 			emoteHelperElements: filteredEmotes.length ? filteredEmotes : this.defaultEmotes,
 			chatValue: value,
 			emoteColonIndex,
-			excludedColonIndices
+			excludedColonIndices,
 		});
 
 		if (gameInfo && gameInfo.general && gameInfo.general.private) {
 			if (badWord[0]) {
 				this.setState({
-					badWord: [null, null]
+					badWord: [null, null],
 				});
 				return;
 			}
@@ -279,12 +282,12 @@ class Gamechat extends React.Component {
 					textLastChanged: Date.now(),
 					textChangeTimer: setTimeout(() => {
 						this.setState({ textChangeTimer: -1 });
-					}, 1000)
+					}, 1000),
 				});
 			} else {
 				this.setState({
 					badWord: [null, null],
-					textChangeTimer: -1
+					textChangeTimer: -1,
 				});
 			}
 		}
@@ -308,13 +311,13 @@ class Gamechat extends React.Component {
 		this.setState({
 			chatValue: isHelper ? helperChatArr.join('') : `${chatValue}${emote} `,
 			emoteColonIndex: -1,
-			emoteHelperSelectedIndex: -1
+			emoteHelperSelectedIndex: -1,
 		});
 
 		if (!isHelper) this.chatInput.focus();
 	};
 
-	handleKeyPress = e => {
+	handleKeyPress = (e) => {
 		const { emoteHelperSelectedIndex, emoteHelperElements, emoteColonIndex, excludedColonIndices } = this.state;
 		const { keyCode } = e;
 		const emoteHelperElementCount = emoteHelperElements && emoteHelperElements.length;
@@ -324,20 +327,20 @@ class Gamechat extends React.Component {
 				// esc
 				this.setState({
 					excludedColonIndices: [...excludedColonIndices, emoteColonIndex],
-					emoteColonIndex: -1
+					emoteColonIndex: -1,
 				});
 			} else if (keyCode === 40) {
 				// arrow key
 				const nextIndex = emoteHelperSelectedIndex + 1;
 				e.preventDefault(); // prevents moving to home and end of textarea
 				this.setState({
-					emoteHelperSelectedIndex: nextIndex === emoteHelperElementCount ? 0 : nextIndex
+					emoteHelperSelectedIndex: nextIndex === emoteHelperElementCount ? 0 : nextIndex,
 				});
 			} else if (keyCode === 38) {
 				// arrow key
 				e.preventDefault(); // prevents moving to home and end of textarea
 				this.setState({
-					emoteHelperSelectedIndex: emoteHelperSelectedIndex ? emoteHelperSelectedIndex - 1 : emoteHelperElementCount - 1
+					emoteHelperSelectedIndex: emoteHelperSelectedIndex ? emoteHelperSelectedIndex - 1 : emoteHelperElementCount - 1,
 				});
 			} else if (keyCode === 9 || keyCode === 13) {
 				// enter and tab
@@ -345,7 +348,7 @@ class Gamechat extends React.Component {
 				if (emoteHelperSelectedIndex >= 0) {
 					this.handleInsertEmote(emoteHelperElements[emoteHelperSelectedIndex], true);
 					this.setState({
-						emoteColonIndex: -1
+						emoteColonIndex: -1,
 					});
 				} else {
 					this.handleSubmit();
@@ -361,7 +364,7 @@ class Gamechat extends React.Component {
 		return this.state.badWord[0] && Date.now() - this.state.textLastChanged < 1000;
 	};
 
-	handleSubmit = e => {
+	handleSubmit = (e) => {
 		const { gameInfo } = this.props;
 
 		if (e) {
@@ -377,7 +380,7 @@ class Gamechat extends React.Component {
 		if (chatValue.length <= 300 && chatValue && !$('.expando-container + div').hasClass('disabled')) {
 			const chat = {
 				chat: chatValue,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			};
 
 			this.props.socket.emit('addNewGameChat', chat);
@@ -388,7 +391,7 @@ class Gamechat extends React.Component {
 				excludedColonIndices: [],
 				emoteColonIndex: -1,
 				emoteHelperElements: this.defaultEmotes,
-				emoteHelperSelectedIndex: -1
+				emoteHelperSelectedIndex: -1,
 			});
 
 			if (this.gameChatInput) {
@@ -401,8 +404,8 @@ class Gamechat extends React.Component {
 		Swal.fire({
 			title: 'Are you sure you want to subscribe to mod-only chat to see private information?',
 			showCancelButton: true,
-			icon: 'warning'
-		}).then(result => {
+			icon: 'warning',
+		}).then((result) => {
 			if (result.value) {
 				const { gameInfo } = this.props;
 				this.props.socket.emit('subscribeModChat', gameInfo.general.uid);
@@ -416,7 +419,7 @@ class Gamechat extends React.Component {
 		}
 	}
 
-	handleChatFilterClick = e => {
+	handleChatFilterClick = (e) => {
 		const filter = e.currentTarget.getAttribute('data-filter');
 		switch (filter) {
 			case 'Player':
@@ -454,9 +457,9 @@ class Gamechat extends React.Component {
 
 	handleClickedClaimButton = () => {
 		const { gameInfo, userInfo } = this.props;
-		const playerIndex = gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName);
+		const playerIndex = gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName);
 		this.setState({
-			claim: this.state.claim ? '' : gameInfo.playersState[playerIndex].claim
+			claim: this.state.claim ? '' : gameInfo.playersState[playerIndex].claim,
 		});
 	};
 
@@ -475,7 +478,7 @@ class Gamechat extends React.Component {
 	}
 
 	isPlayerInGame(players, username) {
-		players.map(player => {
+		players.map((player) => {
 			if (player.userName === username) {
 				return true;
 			}
@@ -488,13 +491,13 @@ class Gamechat extends React.Component {
 		const { gameState, publicPlayersState } = gameInfo;
 		const { gameSettings, userName, isSeated } = userInfo;
 		const isDead = (() => {
-			if (userName && publicPlayersState.length && publicPlayersState.find(player => userName === player.userName)) {
-				return publicPlayersState.find(player => userName === player.userName).isDead;
+			if (userName && publicPlayersState.length && publicPlayersState.find((player) => userName === player.userName)) {
+				return publicPlayersState.find((player) => userName === player.userName).isDead;
 			}
 		})();
 		const isGovernmentDuringPolicySelection = (() => {
 			if (gameState && (gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy') && userName && isSeated) {
-				const player = publicPlayersState.find(p => p.userName === userName);
+				const player = publicPlayersState.find((p) => p.userName === userName);
 				return player && (player.governmentStatus === 'isPresident' || player.governmentStatus === 'isChancellor');
 			}
 		})();
@@ -505,26 +508,26 @@ class Gamechat extends React.Component {
 				userInfo.staffRole !== 'altmod' &&
 				userInfo.staffRole !== 'veteran'
 		);
-		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find(play => play.userName === userName) : undefined;
+		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find((play) => play.userName === userName) : undefined;
 
 		if (gameSettings && gameSettings.unbanTime && new Date(userInfo.gameSettings.unbanTime) > new Date()) {
 			return {
 				isDisabled: true,
-				placeholder: 'Chat disabled'
+				placeholder: 'Chat disabled',
 			};
 		}
 
 		if (!userName) {
 			return {
 				isDisabled: true,
-				placeholder: 'You must log in to use chat'
+				placeholder: 'You must log in to use chat',
 			};
 		}
 
 		if (!user) {
 			return {
 				isDisabled: true,
-				placeholder: 'Please reload...'
+				placeholder: 'Please reload...',
 			};
 		}
 
@@ -532,28 +535,28 @@ class Gamechat extends React.Component {
 			if (isDead && !gameState.isCompleted) {
 				return {
 					isDisabled: true,
-					placeholder: 'Dead men tell no tales'
+					placeholder: 'Dead men tell no tales',
 				};
 			}
 
 			if (isGovernmentDuringPolicySelection) {
 				return {
 					isDisabled: true,
-					placeholder: 'Chat disabled for card selection'
+					placeholder: 'Chat disabled for card selection',
 				};
 			}
 
 			if (gameInfo.general.playerChats === 'emotes' && gameInfo.gameState && !gameInfo.gameState.isCompleted && gameInfo.gameState.isStarted) {
 				return {
 					isDisabled: false,
-					placeholder: 'Emotes only'
+					placeholder: 'Emotes only',
 				};
 			}
 
 			if (gameInfo.general.playerChats === 'disabled' && gameInfo.gameState && !gameInfo.gameState.isCompleted && gameInfo.gameState.isStarted) {
 				return {
 					isDisabled: false,
-					placeholder: 'Chat commands only (e.g. ping, claim, @mod)'
+					placeholder: 'Chat commands only (e.g. ping, claim, @mod)',
 				};
 			}
 		} else {
@@ -563,7 +566,7 @@ class Gamechat extends React.Component {
 			) {
 				return {
 					isDisabled: true,
-					placeholder: 'Observer chat disabled'
+					placeholder: 'Observer chat disabled',
 				};
 			}
 
@@ -575,7 +578,7 @@ class Gamechat extends React.Component {
 			) {
 				return {
 					isDisabled: true,
-					placeholder: 'Observer chat disabled during game'
+					placeholder: 'Observer chat disabled during game',
 				};
 			}
 			if (
@@ -585,7 +588,7 @@ class Gamechat extends React.Component {
 			) {
 				return {
 					isDisabled: true,
-					placeholder: 'Observer chat disabled during lobby'
+					placeholder: 'Observer chat disabled during lobby',
 				};
 			}
 
@@ -595,28 +598,28 @@ class Gamechat extends React.Component {
 			) {
 				return {
 					isDisabled: false,
-					placeholder: 'Send a staff message'
+					placeholder: 'Send a staff message',
 				};
 			}
 
 			if ((user.wins || 0) + (user.losses || 0) < 10) {
 				return {
 					isDisabled: true,
-					placeholder: 'You must finish ten games to use observer chat'
+					placeholder: 'You must finish ten games to use observer chat',
 				};
 			}
 
 			if (user.isPrivate && !gameInfo.general.private) {
 				return {
 					isDisabled: true,
-					placeholder: 'Non-private observer chat disabled'
+					placeholder: 'Non-private observer chat disabled',
 				};
 			}
 		}
 
 		return {
 			isDisabled: false,
-			placeholder: 'Send a message'
+			placeholder: 'Send a message',
 		};
 	};
 
@@ -624,21 +627,21 @@ class Gamechat extends React.Component {
 		const { gameInfo, userInfo, userList } = this.props;
 		const { gameSettings } = userInfo;
 		const isBlind = gameInfo.general && gameInfo.general.blindMode && !gameInfo.gameState.isCompleted;
-		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map(player => player.userName) : [];
+		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map((player) => player.userName) : [];
 		const { showFullChat, showPlayerChat, showGameChat, showObserverChat } = this.state;
 		const time = new Date().getTime();
 		/**
 		 * @param {array} tournyWins - array of tournywins in epoch ms numbers (date.getTime())
 		 * @return {jsx}
 		 */
-		const renderCrowns = tournyWins => {
+		const renderCrowns = (tournyWins) => {
 			return tournyWins
-				.filter(winTime => time - winTime < 10800000)
-				.map(crown => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
+				.filter((winTime) => time - winTime < 10800000)
+				.map((crown) => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
 		};
 		const compareChatStrings = (a, b) => {
-			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map(object => object.text).join('');
-			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map(object => object.text).join('');
+			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map((object) => object.text).join('');
+			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map((object) => object.text).join('');
 
 			return stringA > stringB ? 1 : -1;
 		};
@@ -650,7 +653,7 @@ class Gamechat extends React.Component {
 				userInfo.staffRole !== 'veteran'
 		);
 
-		const renderPreviousSeasonAward = type => {
+		const renderPreviousSeasonAward = (type) => {
 			switch (type) {
 				case 'bronze':
 					return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
@@ -671,7 +674,7 @@ class Gamechat extends React.Component {
 			}
 		};
 
-		const getClassesFromType = type => {
+		const getClassesFromType = (type) => {
 			if (type === 'player') {
 				return 'chat-player';
 			} else {
@@ -679,7 +682,7 @@ class Gamechat extends React.Component {
 			}
 		};
 
-		const parseClaim = claim => {
+		const parseClaim = (claim) => {
 			const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'legacy';
 			let liberalChar = 'L';
 			let fascistChar = 'F';
@@ -733,7 +736,7 @@ class Gamechat extends React.Component {
 				list = listAcc;
 			}
 			const processedChats = list.reduce((acc, chat, i) => {
-				const playerListPlayer = Object.keys(userList).length ? userList.list.find(player => player.userName === chat.userName) : undefined;
+				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player) => player.userName === chat.userName) : undefined;
 				const isMod =
 					playerListPlayer &&
 					playerListPlayer.staffRole &&
@@ -888,9 +891,9 @@ class Gamechat extends React.Component {
 									? isSeated
 										? isBlind
 											? `${
-													gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName)]
-											  } {${gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName) + 1}}`
-											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName) + 1}}`
+													gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName)]
+											  } {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
+											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
 										: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
 										? chat.hiddenUsername
 										: isBlind && !isMod
@@ -916,9 +919,9 @@ class Gamechat extends React.Component {
 	renderEmoteHelper() {
 		const { allEmotes } = this.props;
 		const { emoteHelperSelectedIndex, emoteHelperElements } = this.state;
-		const helperHover = index => {
+		const helperHover = (index) => {
 			this.setState({
-				emoteHelperSelectedIndex: index
+				emoteHelperSelectedIndex: index,
 			});
 		};
 
@@ -944,7 +947,7 @@ class Gamechat extends React.Component {
 							src={allEmotes[`:${el}:`]}
 							style={{
 								height: '28px',
-								margin: '2px 10px 2px 5px'
+								margin: '2px 10px 2px 5px',
 							}}
 						/>
 						{`${el}`}
@@ -958,18 +961,18 @@ class Gamechat extends React.Component {
 		const { socket, userInfo, gameInfo, userList } = this.props;
 		const { emoteColonIndex, playersToWhitelist, showPlayerChat, showGameChat, showObserverChat, showFullChat, notesEnabled, lock } = this.state;
 
-		const selectedWhitelistplayer = playerName => {
-			const playerIndex = playersToWhitelist.findIndex(player => player.userName === playerName);
+		const selectedWhitelistplayer = (playerName) => {
+			const playerIndex = playersToWhitelist.findIndex((player) => player.userName === playerName);
 
 			playersToWhitelist[playerIndex].isSelected = !playersToWhitelist[playerIndex].isSelected;
 
 			this.setState(playersToWhitelist);
 		};
 		const submitWhitelist = () => {
-			const whitelistPlayers = playersToWhitelist.filter(player => player.isSelected).map(player => player.userName);
+			const whitelistPlayers = playersToWhitelist.filter((player) => player.isSelected).map((player) => player.userName);
 			socket.emit('updateGameWhitelist', {
 				uid: gameInfo.general.uid,
-				whitelistPlayers
+				whitelistPlayers,
 			});
 			$(this.whitelistModal).modal('hide');
 		};
@@ -1028,7 +1031,7 @@ class Gamechat extends React.Component {
 		};
 		const LeaveGameButton = () => {
 			const classes = classnames('ui primary button', {
-				['ui-disabled']: userInfo.isSeated && gameInfo.gameState.isStarted && !gameInfo.gameState.isCompleted
+				['ui-disabled']: userInfo.isSeated && gameInfo.gameState.isStarted && !gameInfo.gameState.isCompleted,
 			});
 
 			return (
@@ -1039,7 +1042,7 @@ class Gamechat extends React.Component {
 				</MenuButton>
 			);
 		};
-		const routeToOtherTournyTable = e => {
+		const routeToOtherTournyTable = (e) => {
 			e.preventDefault();
 			const { uid } = gameInfo.general;
 			const tableUidLastLetter = uid.charAt(gameInfo.general.uid.length - 1);
@@ -1062,10 +1065,10 @@ class Gamechat extends React.Component {
 				userInfo.staffRole !== 'altmod' &&
 				userInfo.staffRole !== 'veteran'
 		);
-		const hasNoAEM = players => {
+		const hasNoAEM = (players) => {
 			if (!userList || !userList.list) return false;
 			return userList.list.every(
-				user =>
+				(user) =>
 					!(
 						players.includes(user.userName) &&
 						user.staffRole &&
@@ -1080,40 +1083,40 @@ class Gamechat extends React.Component {
 		const modGetCurrentVotes = () => {
 			socket.emit('modPeekVotes', {
 				modName: userInfo.userName,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		};
 
 		const modGetRemakes = () => {
 			socket.emit('modGetRemakes', {
 				modName: userInfo.userName,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		};
 
 		const modFreezeGame = () => {
 			socket.emit('modFreezeGame', {
 				modName: userInfo.userName,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		};
 
-		const modDeleteGame = reason => {
+		const modDeleteGame = (reason) => {
 			socket.emit('updateModAction', {
 				modName: userInfo.userName,
 				userName: `DELGAME${gameInfo.general.uid}`,
 				comment: reason,
-				action: 'deleteGame'
+				action: 'deleteGame',
 			});
 			location.hash = '';
 		};
 
-		const sendModEndGame = winningTeamName => {
+		const sendModEndGame = (winningTeamName) => {
 			Swal.fire({
 				title: 'Are you sure you want to end this game with the ' + winningTeamName + ' team winning?',
 				showCancelButton: true,
-				icon: 'warning'
-			}).then(result => {
+				icon: 'warning',
+			}).then((result) => {
 				if (result.value) {
 					socket.emit('updateModAction', {
 						modName: userInfo.userName,
@@ -1121,7 +1124,7 @@ class Gamechat extends React.Component {
 						comment: `End game ${gameInfo.general.uid} with team ${winningTeamName} winning`,
 						uid: gameInfo.general.uid,
 						winningTeamName,
-						action: 'modEndGame'
+						action: 'modEndGame',
 					});
 				}
 			});
@@ -1173,12 +1176,12 @@ class Gamechat extends React.Component {
 												Swal.fire({
 													title: 'Are you sure you want to peek votes for this game?',
 													showCancelButton: true,
-													icon: 'warning'
-												}).then(result => {
+													icon: 'warning',
+												}).then((result) => {
 													if (result.value) {
 														modGetCurrentVotes();
 														this.setState({
-															votesPeeked: true
+															votesPeeked: true,
 														});
 													}
 												});
@@ -1209,12 +1212,12 @@ class Gamechat extends React.Component {
 												Swal.fire({
 													title: 'Are you sure you want to see the votes to remake for this game?',
 													showCancelButton: true,
-													icon: 'warning'
-												}).then(result => {
+													icon: 'warning',
+												}).then((result) => {
 													if (result.value) {
 														modGetRemakes();
 														this.setState({
-															remakeVotesPeeked: true
+															remakeVotesPeeked: true,
 														});
 													}
 												});
@@ -1245,12 +1248,12 @@ class Gamechat extends React.Component {
 												Swal.fire({
 													title: 'Are you sure you want to freeze this game?',
 													showCancelButton: true,
-													icon: 'warning'
-												}).then(result => {
+													icon: 'warning',
+												}).then((result) => {
 													if (result.value) {
 														modFreezeGame();
 														this.setState({
-															gameFrozen: true
+															gameFrozen: true,
 														});
 													}
 												});
@@ -1274,13 +1277,13 @@ class Gamechat extends React.Component {
 										Swal.fire({
 											title: 'Are you sure you want to delete this game?',
 											showCancelButton: true,
-											icon: 'warning'
-										}).then(result => {
+											icon: 'warning',
+										}).then((result) => {
 											if (result.value) {
 												Swal.fire({
 													title: 'Enter a reason for deleting this game, leave blank if dead',
-													input: 'text'
-												}).then(result => {
+													input: 'text',
+												}).then((result) => {
 													const reason = result.value || 'Dead';
 													modDeleteGame(reason);
 												});
@@ -1322,15 +1325,15 @@ class Gamechat extends React.Component {
 					style={{
 						fontSize: userInfo.gameSettings && userInfo.gameSettings.fontSize ? `${userInfo.gameSettings.fontSize}px` : '16px',
 						height: '100%',
-						cursor: `${isStaff ? 'text' : 'not-allowed'}`
+						cursor: `${isStaff ? 'text' : 'not-allowed'}`,
 					}}
 					className={this.state.claim ? 'segment chats blurred' : 'segment chats'}
 				>
 					{emoteColonIndex >= 0 && this.renderEmoteHelper()}
 					<Scrollbars
-						ref={c => (this.scrollbar = c)}
+						ref={(c) => (this.scrollbar = c)}
 						onScroll={this.handleChatScrolled}
-						renderThumbVertical={props => <div {...props} className="thumb-vertical" />}
+						renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
 					>
 						<div className="ui list">{this.processChats()}</div>
 					</Scrollbars>
@@ -1344,7 +1347,7 @@ class Gamechat extends React.Component {
 									userName: userInfo.userName,
 									claimState: claim,
 									claim: this.state.claim,
-									uid: gameInfo.general.uid
+									uid: gameInfo.general.uid,
 								};
 
 								e.preventDefault();
@@ -1363,7 +1366,7 @@ class Gamechat extends React.Component {
 										<div>
 											<p> As president, I drew...</p>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rrr');
 												}}
 												className="ui button threefascist"
@@ -1371,7 +1374,7 @@ class Gamechat extends React.Component {
 												3 Fascist policies
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rrb');
 												}}
 												className="ui button twofascistoneliberal"
@@ -1379,7 +1382,7 @@ class Gamechat extends React.Component {
 												2 Fascist and a Liberal policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rbb');
 												}}
 												className="ui button twoliberalonefascist"
@@ -1387,7 +1390,7 @@ class Gamechat extends React.Component {
 												2 Liberal and a Fascist policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'bbb');
 												}}
 												className="ui button threeliberal"
@@ -1406,7 +1409,7 @@ class Gamechat extends React.Component {
 										<div>
 											<p> As chancellor, I received...</p>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rr');
 												}}
 												className="ui button threefascist"
@@ -1414,7 +1417,7 @@ class Gamechat extends React.Component {
 												2 Fascist policies
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rb');
 												}}
 												className="ui button onefascistoneliberal"
@@ -1422,7 +1425,7 @@ class Gamechat extends React.Component {
 												A Fascist and a Liberal policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'bb');
 												}}
 												className="ui button threeliberal"
@@ -1436,7 +1439,7 @@ class Gamechat extends React.Component {
 										<div>
 											<p> As president, when I looked at the party membership I saw that he or she was on the...</p>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'fascist');
 												}}
 												className="ui button threefascist"
@@ -1444,7 +1447,7 @@ class Gamechat extends React.Component {
 												Fascist team
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'liberal');
 												}}
 												className="ui button threeliberal"
@@ -1463,7 +1466,7 @@ class Gamechat extends React.Component {
 										<div>
 											<p> As president, when I looked at the top card I saw a...</p>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'fascist');
 												}}
 												className="ui button threefascist"
@@ -1471,7 +1474,7 @@ class Gamechat extends React.Component {
 												Fascist policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'liberal');
 												}}
 												className="ui button threeliberal"
@@ -1490,7 +1493,7 @@ class Gamechat extends React.Component {
 										<div>
 											<p> As president, I peeked and saw... </p>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rrr');
 												}}
 												className="ui button threefascist"
@@ -1498,7 +1501,7 @@ class Gamechat extends React.Component {
 												3 Fascist policies
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rrb');
 												}}
 												className="ui button twofascistoneliberal"
@@ -1506,7 +1509,7 @@ class Gamechat extends React.Component {
 												2 Fascist and a Liberal policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'rbb');
 												}}
 												className="ui button twoliberalonefascist"
@@ -1514,7 +1517,7 @@ class Gamechat extends React.Component {
 												2 Liberal and a Fascist policy
 											</button>
 											<button
-												onClick={e => {
+												onClick={(e) => {
 													handleClaimButtonClick(e, 'bbb');
 												}}
 												className="ui button threeliberal"
@@ -1539,7 +1542,7 @@ class Gamechat extends React.Component {
 						) {
 							return (
 								<div
-									className={hasNoAEM(gameInfo.publicPlayersState.map(player => player.userName)) ? 'ui primary button' : 'ui primary button disabled'}
+									className={hasNoAEM(gameInfo.publicPlayersState.map((player) => player.userName)) ? 'ui primary button' : 'ui primary button disabled'}
 									title="Click here to subscribe to mod-only chat"
 									onClick={this.handleSubscribeModChat}
 								>
@@ -1559,7 +1562,7 @@ class Gamechat extends React.Component {
 									backgroundColor: 'indianred',
 									padding: '7px',
 									borderRadius: '10px 10px 0px 0px',
-									border: '1px solid #8c8c8c'
+									border: '1px solid #8c8c8c',
 								}}
 							>
 								The word "{this.state.badWord[1]}"{this.state.badWord[0] !== this.state.badWord[1] ? ` (${this.state.badWord[0]})` : ''} is forbidden.
@@ -1575,7 +1578,7 @@ class Gamechat extends React.Component {
 									backgroundColor: 'indianred',
 									padding: '7px',
 									borderRadius: '10px 10px 0px 0px',
-									border: '1px solid #8c8c8c'
+									border: '1px solid #8c8c8c',
 								}}
 							>
 								{`This message is too long ${300 - this.state.chatValue.length}`}
@@ -1591,7 +1594,7 @@ class Gamechat extends React.Component {
 							spellCheck="false"
 							placeholder={this.gameChatStatus().placeholder}
 							id="gameChatInput"
-							ref={c => (this.chatInput = c)}
+							ref={(c) => (this.chatInput = c)}
 						/>
 						{!this.gameChatStatus().isDisabled && renderEmotesButton(this.handleInsertEmote, this.props.allEmotes)}
 						<button type="submit" className={`ui primary button ${this.chatDisabled() ? 'disabled' : ''}`}>
@@ -1603,8 +1606,8 @@ class Gamechat extends React.Component {
 							gameInfo.playersState &&
 							gameInfo.playersState.length &&
 							userInfo.userName &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName)].claim &&
-							!gameInfo.playersState[gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName)].isDead
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].claim &&
+							!gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].isDead
 						) {
 							return (
 								<div className="claim-button" title="Click here to make a claim in chat" onClick={this.handleClickedClaimButton}>
@@ -1616,7 +1619,7 @@ class Gamechat extends React.Component {
 				</form>
 				<div
 					className="ui basic fullscreen modal leavegamemodals"
-					ref={c => {
+					ref={(c) => {
 						this.leaveGameModal = c;
 					}}
 				>
@@ -1631,7 +1634,7 @@ class Gamechat extends React.Component {
 				</div>
 				<div
 					className="ui basic fullscreen modal leavetournyqueue"
-					ref={c => {
+					ref={(c) => {
 						this.leaveTournyQueueModal = c;
 					}}
 				>
@@ -1640,7 +1643,7 @@ class Gamechat extends React.Component {
 				</div>
 				<div
 					className="ui basic fullscreen modal modendgamemodal"
-					ref={c => {
+					ref={(c) => {
 						this.modendgameModal = c;
 					}}
 				>
@@ -1663,7 +1666,7 @@ class Gamechat extends React.Component {
 				</div>
 				<div
 					className="ui basic fullscreen modal whitelistmodal"
-					ref={c => {
+					ref={(c) => {
 						this.whitelistModal = c;
 					}}
 				>
@@ -1672,9 +1675,7 @@ class Gamechat extends React.Component {
 						{this.state.playersToWhitelist
 							.sort((a, b) => (a.userName > b.userName ? 1 : -1))
 							.map((player, index) => {
-								const uid = Math.random()
-									.toString(36)
-									.substring(2);
+								const uid = Math.random().toString(36).substring(2);
 
 								return (
 									<li key={index}>
@@ -1712,7 +1713,7 @@ Gamechat.propTypes = {
 	userList: PropTypes.object,
 	allEmotes: PropTypes.object,
 	notesActive: PropTypes.bool,
-	toggleNotes: PropTypes.func
+	toggleNotes: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Gamechat);

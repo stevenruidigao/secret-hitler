@@ -15,7 +15,7 @@ class Tracks extends React.Component {
 			minutes: 0,
 			seconds: 0,
 			timedMode: false,
-			showTimer: false
+			showTimer: false,
 		};
 	}
 
@@ -25,15 +25,15 @@ class Tracks extends React.Component {
 		this._ismounted = true;
 
 		if (Notification && Notification.permission === 'granted' && this.props.socket) {
-			this.props.socket.on('pingPlayer', data => {
+			this.props.socket.on('pingPlayer', (data) => {
 				new Notification(data);
 			});
 		}
 
 		if (this.props.socket) {
-			this.props.socket.on('updateRemakeVoting', status => {
+			this.props.socket.on('updateRemakeVoting', (status) => {
 				this.setState({
-					remakeStatus: status
+					remakeStatus: status,
 				});
 			});
 		}
@@ -52,7 +52,7 @@ class Tracks extends React.Component {
 
 	toggleTimer = () => {
 		this.setState({
-			showTimer: !this.state.showTimer
+			showTimer: !this.state.showTimer,
 		});
 	};
 
@@ -61,7 +61,7 @@ class Tracks extends React.Component {
 
 		if (!gameInfo.gameState.isStarted) {
 			this.setState({
-				remakeStatus: false
+				remakeStatus: false,
 			});
 		}
 
@@ -97,7 +97,7 @@ class Tracks extends React.Component {
 					this.setState({
 						timedMode: true,
 						minutes,
-						seconds
+						seconds,
 					});
 				}
 			}, 1000);
@@ -106,7 +106,7 @@ class Tracks extends React.Component {
 		if (gameInfo.gameState && gameInfo.gameState.timedModeEnabled && nextProps.gameInfo.gameState && !nextProps.gameInfo.gameState.timedModeEnabled) {
 			window.clearInterval(this.intervalId);
 			this.setState({
-				timedMode: false
+				timedMode: false,
 			});
 		}
 	}
@@ -378,7 +378,7 @@ class Tracks extends React.Component {
 		const updateRemake = () => {
 			this.props.socket.emit('updateRemake', {
 				remakeStatus: !this.state.remakeStatus,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		};
 
@@ -395,7 +395,7 @@ class Tracks extends React.Component {
 
 				if (gameInfo.customGameSettings.powers) {
 					// Only need to detect one property, either they're all there or none are.
-					powers = gameInfo.customGameSettings.powers.map(p => {
+					powers = gameInfo.customGameSettings.powers.map((p) => {
 						if (p == null) return 'None';
 						if (p == 'investigate') return 'Inv';
 						if (p == 'deckpeek') return 'Peek';
@@ -426,7 +426,7 @@ class Tracks extends React.Component {
 					}
 				}
 
-				const getHZ = pos => {
+				const getHZ = (pos) => {
 					if (pos < hzStart) return 'Off';
 					if (pos > hzStart) return 'On';
 					return 'Start';
@@ -441,7 +441,7 @@ class Tracks extends React.Component {
 								left: `${offX + 137}px`,
 								top: `${offY + 58}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(1)}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(1)}.png)`,
 							}}
 						/>
 						<span
@@ -451,7 +451,7 @@ class Tracks extends React.Component {
 								left: `${offX + 229}px`,
 								top: `${offY + 58}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(2)}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(2)}.png)`,
 							}}
 						/>
 						<span
@@ -461,7 +461,7 @@ class Tracks extends React.Component {
 								left: `${offX + 321}px`,
 								top: `${offY + 58}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(3)}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(3)}.png)`,
 							}}
 						/>
 						<span
@@ -471,7 +471,7 @@ class Tracks extends React.Component {
 								left: `${offX + 413}px`,
 								top: `${offY + 58}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(4)}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(4)}.png)`,
 							}}
 						/>
 						<span
@@ -481,7 +481,7 @@ class Tracks extends React.Component {
 								left: `${offX + 505}px`,
 								top: `${offY + 58}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(5)}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(5)}.png)`,
 							}}
 						/>
 
@@ -490,7 +490,7 @@ class Tracks extends React.Component {
 							style={{
 								left: `${offX + 58}px`,
 								top: `${offY + 58}px`,
-								backgroundImage: `url(../images/customtracks/fasPower${powers[0]}${hzStart <= 0 ? 'Light' : ''}.png)`
+								backgroundImage: `url(../images/customtracks/fasPower${powers[0]}${hzStart <= 0 ? 'Light' : ''}.png)`,
 							}}
 						>
 							{vzPoint == 1 && (
@@ -502,7 +502,7 @@ class Tracks extends React.Component {
 							style={{
 								left: `${offX + 150}px`,
 								top: `${offY + 58}px`,
-								backgroundImage: `url(../images/customtracks/fasPower${powers[1]}${hzStart <= 1 ? 'Light' : ''}.png)`
+								backgroundImage: `url(../images/customtracks/fasPower${powers[1]}${hzStart <= 1 ? 'Light' : ''}.png)`,
 							}}
 						>
 							{vzPoint == 2 && (
@@ -514,7 +514,7 @@ class Tracks extends React.Component {
 							style={{
 								left: `${offX + 242}px`,
 								top: `${offY + 58}px`,
-								backgroundImage: `url(../images/customtracks/fasPower${powers[2]}${hzStart <= 2 ? 'Light' : ''}.png)`
+								backgroundImage: `url(../images/customtracks/fasPower${powers[2]}${hzStart <= 2 ? 'Light' : ''}.png)`,
 							}}
 						>
 							{vzPoint == 3 && (
@@ -526,7 +526,7 @@ class Tracks extends React.Component {
 							style={{
 								left: `${offX + 334}px`,
 								top: `${offY + 58}px`,
-								backgroundImage: `url(../images/customtracks/fasPower${powers[3]}${hzStart <= 3 ? 'Light' : ''}.png)`
+								backgroundImage: `url(../images/customtracks/fasPower${powers[3]}${hzStart <= 3 ? 'Light' : ''}.png)`,
 							}}
 						>
 							{vzPoint == 4 && (
@@ -538,7 +538,7 @@ class Tracks extends React.Component {
 							style={{
 								left: `${offX + 426}px`,
 								top: `${offY + 58}px`,
-								backgroundImage: `url(../images/customtracks/fasPower${powers[4]}${hzStart <= 4 ? 'Light' : ''}.png)`
+								backgroundImage: `url(../images/customtracks/fasPower${powers[4]}${hzStart <= 4 ? 'Light' : ''}.png)`,
 							}}
 						>
 							{vzPoint == 5 && (
@@ -557,7 +557,7 @@ class Tracks extends React.Component {
 								left: `${offX + 336}px`,
 								top: `${offY + 60}px`,
 								position: 'absolute',
-								backgroundImage: 'url(../images/customtracks/fasTrackHZText.png)'
+								backgroundImage: 'url(../images/customtracks/fasTrackHZText.png)',
 							}}
 						/>
 
@@ -568,7 +568,7 @@ class Tracks extends React.Component {
 								left: `${offX + 220}px`,
 								top: `${offY + 186}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrack${numFas}fas.png)`
+								backgroundImage: `url(../images/customtracks/fasTrack${numFas}fas.png)`,
 							}}
 						/>
 						<span
@@ -578,7 +578,7 @@ class Tracks extends React.Component {
 								left: `${offX + 220}px`,
 								top: `${offY + 196}px`,
 								position: 'absolute',
-								backgroundImage: `url(../images/customtracks/fasTrack${numFas > 1 ? 'Multi' : 'Single'}${hitKnowsFas ? 'Known' : 'Unknown'}.png)`
+								backgroundImage: `url(../images/customtracks/fasTrack${numFas > 1 ? 'Multi' : 'Single'}${hitKnowsFas ? 'Known' : 'Unknown'}.png)`,
 							}}
 						/>
 					</div>
@@ -699,14 +699,14 @@ class Tracks extends React.Component {
 
 Tracks.defaultProps = {
 	gameInfo: {},
-	userInfo: {}
+	userInfo: {},
 };
 
 Tracks.propTypes = {
 	onSeatingUser: PropTypes.func,
 	userInfo: PropTypes.object,
 	gameInfo: PropTypes.object,
-	socket: PropTypes.object
+	socket: PropTypes.object,
 };
 
 export default Tracks;

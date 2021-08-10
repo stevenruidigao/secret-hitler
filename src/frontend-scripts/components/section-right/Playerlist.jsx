@@ -13,11 +13,11 @@ import UserPopup from '../reusable/UserPopup.jsx';
 $.fn.modal = Modal;
 
 const mapStateToProps = ({ midSection }) => ({ midSection });
-const mapDispatchToProps = dispatch => ({
-	fetchProfile: username => dispatch(fetchProfile(username)),
-	fetchReplay: gameId => {
+const mapDispatchToProps = (dispatch) => ({
+	fetchProfile: (username) => dispatch(fetchProfile(username)),
+	fetchReplay: (gameId) => {
 		dispatch({ type: 'FETCH_REPLAY', gameId });
-	}
+	},
 });
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const isUserClickable = stateProps.midSection !== 'game' && stateProps.midSection !== 'replay';
@@ -33,14 +33,12 @@ class Playerlist extends React.Component {
 			cont: true,
 			exp: true,
 			inexp: false,
-			priv: false
-		}
+			priv: false,
+		},
 	};
 
 	clickInfoIcon = () => {
-		$('.playerlistinfo')
-			.modal('setting', 'transition', 'scale')
-			.modal('show');
+		$('.playerlistinfo').modal('setting', 'transition', 'scale').modal('show');
 	};
 
 	routeToGame(gameId) {
@@ -115,9 +113,9 @@ class Playerlist extends React.Component {
 	}
 
 	renderFilterIcons() {
-		const filterClick = filter => {
+		const filterClick = (filter) => {
 			this.setState({
-				userListFilter: this.state.userListFilter === 'all' ? 'rainbow' : 'all'
+				userListFilter: this.state.userListFilter === 'all' ? 'rainbow' : 'all',
 			});
 		};
 
@@ -234,33 +232,33 @@ class Playerlist extends React.Component {
 					userInfo.staffRole !== 'altmod' &&
 					userInfo.staffRole !== 'veteran'
 			);
-			const visible = list.filter(user => (this.state.userListFilter === 'all' || user[w] + user[l] > 49) && (!user.isPrivate || isStaff));
-			const admins = visible.filter(user => user.staffRole === 'admin').sort(this.alphabetical());
+			const visible = list.filter((user) => (this.state.userListFilter === 'all' || user[w] + user[l] > 49) && (!user.isPrivate || isStaff));
+			const admins = visible.filter((user) => user.staffRole === 'admin').sort(this.alphabetical());
 			const aem = [...admins];
-			const editors = visible.filter(user => user.staffRole === 'editor').sort(this.alphabetical());
+			const editors = visible.filter((user) => user.staffRole === 'editor').sort(this.alphabetical());
 			aem.push(...editors);
-			const moderators = visible.filter(user => user.staffRole === 'moderator').sort(this.alphabetical());
+			const moderators = visible.filter((user) => user.staffRole === 'moderator').sort(this.alphabetical());
 			aem.push(...moderators);
-			const nonStaff = visible.filter(user => !aem.includes(user));
-			const contributors = nonStaff.filter(user => user.isContributor).sort(this.alphabetical());
+			const nonStaff = visible.filter((user) => !aem.includes(user));
+			const contributors = nonStaff.filter((user) => user.isContributor).sort(this.alphabetical());
 
-			const privateUser = nonStaff.filter(user => !contributors.includes(user) && user.isPrivate);
+			const privateUser = nonStaff.filter((user) => !contributors.includes(user) && user.isPrivate);
 			const experienced = elo
 				? nonStaff
-						.filter(user => !contributors.includes(user) && !privateUser.includes(user) && user[w] + user[l] >= 50)
+						.filter((user) => !contributors.includes(user) && !privateUser.includes(user) && user[w] + user[l] >= 50)
 						.sort(this.sortByElo(this.alphabetical()))
 				: nonStaff
-						.filter(user => !contributors.includes(user) && !privateUser.includes(user) && user[w] + user[l] >= 50)
+						.filter((user) => !contributors.includes(user) && !privateUser.includes(user) && user[w] + user[l] >= 50)
 						.sort(this.winRate(this.alphabetical()));
 
-			const inexperienced = nonStaff.filter(user => !contributors.includes(user) && !experienced.includes(user) && !user.isPrivate).sort(this.alphabetical());
+			const inexperienced = nonStaff.filter((user) => !contributors.includes(user) && !experienced.includes(user) && !user.isPrivate).sort(this.alphabetical());
 
 			const makeUser = (user, i) => {
 				const popperRef = createRef();
 
 				const percent = ((user[w] / (user[w] + user[l])) * 100).toFixed(0);
 				const percentDisplay = user[w] + user[l] > 9 ? `${percent}%` : '';
-				const disableIfUnclickable = f => {
+				const disableIfUnclickable = (f) => {
 					if (this.props.isUserClickable) {
 						return f;
 					}
@@ -299,14 +297,14 @@ class Playerlist extends React.Component {
 							observing: 'This player is observing a game.',
 							rainbow: 'This player is playing in a experienced-player-only game.',
 							replay: 'This player is watching a replay.',
-							private: 'This player is playing in a private game.'
+							private: 'This player is playing in a private game.',
 						};
 						const onClick = {
 							playing: this.routeToGame,
 							observing: this.routeToGame,
 							rainbow: this.routeToGame,
 							replay: this.props.fetchReplay,
-							private: this.routeToGame
+							private: this.routeToGame,
 						};
 
 						return <i title={title[status.type]} className={iconClasses} onClick={disableIfUnclickable(onClick[status.type]).bind(this, status.gameId)} />;
@@ -395,7 +393,7 @@ class Playerlist extends React.Component {
 				);
 			};
 
-			const toggleGroup = cat => {
+			const toggleGroup = (cat) => {
 				const { expandInfo } = this.state;
 
 				expandInfo[cat] = !expandInfo[cat];
@@ -466,27 +464,27 @@ class Playerlist extends React.Component {
 					userInfo.staffRole !== 'altmod' &&
 					userInfo.staffRole !== 'veteran'
 			);
-			const visible = list.filter(user => (this.state.userListFilter === 'all' || user[w] + user[l] > 49) && (!user.isPrivate || isStaff));
-			const admins = visible.filter(user => user.staffRole === 'admin').sort(this.alphabetical());
+			const visible = list.filter((user) => (this.state.userListFilter === 'all' || user[w] + user[l] > 49) && (!user.isPrivate || isStaff));
+			const admins = visible.filter((user) => user.staffRole === 'admin').sort(this.alphabetical());
 			const aem = [...admins];
-			const editors = visible.filter(user => user.staffRole === 'editor').sort(this.alphabetical());
+			const editors = visible.filter((user) => user.staffRole === 'editor').sort(this.alphabetical());
 			aem.push(...editors);
-			const moderators = visible.filter(user => user.staffRole === 'moderator').sort(this.alphabetical());
+			const moderators = visible.filter((user) => user.staffRole === 'moderator').sort(this.alphabetical());
 			aem.push(...moderators);
-			const contributors = visible.filter(user => !aem.includes(user) && user.isContributor).sort(this.alphabetical());
+			const contributors = visible.filter((user) => !aem.includes(user) && user.isContributor).sort(this.alphabetical());
 			aem.push(...contributors);
 
 			const experienced = elo
-				? visible.filter(user => !aem.includes(user) && user[w] + user[l] >= 50).sort(this.sortByElo(this.alphabetical()))
-				: visible.filter(user => !aem.includes(user) && user[w] + user[l] >= 50).sort(this.winRate(this.alphabetical()));
+				? visible.filter((user) => !aem.includes(user) && user[w] + user[l] >= 50).sort(this.sortByElo(this.alphabetical()))
+				: visible.filter((user) => !aem.includes(user) && user[w] + user[l] >= 50).sort(this.winRate(this.alphabetical()));
 
-			const inexperienced = visible.filter(user => !aem.includes(user) && !experienced.includes(user)).sort(this.alphabetical());
+			const inexperienced = visible.filter((user) => !aem.includes(user) && !experienced.includes(user)).sort(this.alphabetical());
 
 			return [...aem, ...experienced, ...inexperienced].map((user, i) => {
 				const popperRef = createRef();
 				const percent = ((user[w] / (user[w] + user[l])) * 100).toFixed(0);
 				const percentDisplay = user[w] + user[l] > 9 ? `${percent}%` : '';
-				const disableIfUnclickable = f => {
+				const disableIfUnclickable = (f) => {
 					if (this.props.isUserClickable) {
 						return f;
 					}
@@ -525,14 +523,14 @@ class Playerlist extends React.Component {
 							observing: 'This player is observing a game.',
 							rainbow: 'This player is playing in a experienced-player-only game.',
 							replay: 'This player is watching a replay.',
-							private: 'This player is playing in a private game.'
+							private: 'This player is playing in a private game.',
 						};
 						const onClick = {
 							playing: this.routeToGame,
 							observing: this.routeToGame,
 							rainbow: this.routeToGame,
 							replay: this.props.fetchReplay,
-							private: this.routeToGame
+							private: this.routeToGame,
 						};
 
 						return <i title={title[status.type]} className={iconClasses} onClick={disableIfUnclickable(onClick[status.type]).bind(this, status.gameId)} />;
@@ -676,7 +674,7 @@ class Playerlist extends React.Component {
 						</span>
 					)}
 				</div>
-				<Scrollbars renderThumbVertical={props => <div {...props} className="thumb-vertical" />}>
+				<Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
 					<div className="playerlist-body">
 						{this.props.userInfo.gameSettings && this.props.userInfo.gameSettings.disableAggregations ? this.renderLegacyPlayerlist() : this.renderPlayerlist()}
 					</div>
@@ -689,7 +687,7 @@ class Playerlist extends React.Component {
 Playerlist.defaultProps = {
 	userInfo: {},
 	userList: { list: [] },
-	socket: {}
+	socket: {},
 };
 
 Playerlist.propTypes = {
@@ -697,7 +695,7 @@ Playerlist.propTypes = {
 	userList: PropTypes.object,
 	socket: PropTypes.object,
 	isUserClickable: PropTypes.bool,
-	fetchReplay: PropTypes.func
+	fetchReplay: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Playerlist);

@@ -20,28 +20,28 @@ class Players extends React.Component {
 		reportTextValue: '',
 		playerNotes: [],
 		playerNoteSeatEnabled: false,
-		reportLength: 0
+		reportLength: 0,
 	};
 
 	componentDidMount() {
 		const { socket, userInfo, gameInfo } = this.props;
 
 		if (userInfo.gameSettings && !userInfo.gameSettings.disablePlayerNotes) {
-			socket.on('notesUpdate', notes => {
+			socket.on('notesUpdate', (notes) => {
 				this.setState({ playerNotes: notes });
 			});
 
-			const seatedPlayers = gameInfo.publicPlayersState.filter(player => player.userName !== userInfo.userName).map(player => player.userName);
+			const seatedPlayers = gameInfo.publicPlayersState.filter((player) => player.userName !== userInfo.userName).map((player) => player.userName);
 
 			if (seatedPlayers.length) {
 				socket.emit('getPlayerNotes', {
 					userName: userInfo.userName,
-					seatedPlayers
+					seatedPlayers,
 				});
 			}
 		}
 
-		socket.on('gameJoinStatusUpdate', data => {
+		socket.on('gameJoinStatusUpdate', (data) => {
 			if (data.status === 'blacklisted') {
 				$(this.blacklistModal).modal('show');
 			}
@@ -53,7 +53,7 @@ class Players extends React.Component {
 		this.props.socket.off('gameJoinStatusUpdate');
 	}
 
-	handlePlayerReport = userName => {
+	handlePlayerReport = (userName) => {
 		const { gameInfo, userInfo, isReplay } = this.props;
 
 		if ((!gameInfo.general.unlistedGame && !gameInfo.general.private && userInfo.userName && userInfo.userName !== userName) || isReplay) {
@@ -72,7 +72,7 @@ class Players extends React.Component {
 			if (clickActionInfo[0] === userInfo.userName && clickActionInfo[1].includes(index)) {
 				socket.emit('presidentSelectedChancellor', {
 					chancellorIndex: index,
-					uid: gameInfo.general.uid
+					uid: gameInfo.general.uid,
 				});
 			}
 		}
@@ -81,7 +81,7 @@ class Players extends React.Component {
 			if (clickActionInfo[0] === userInfo.userName && clickActionInfo[1].includes(index)) {
 				socket.emit('selectPartyMembershipInvestigate', {
 					playerIndex: index,
-					uid: gameInfo.general.uid
+					uid: gameInfo.general.uid,
 				});
 			}
 		}
@@ -90,7 +90,7 @@ class Players extends React.Component {
 			if (clickActionInfo[0] === userInfo.userName && clickActionInfo[1].includes(index)) {
 				socket.emit('selectPartyMembershipInvestigateReverse', {
 					playerIndex: index,
-					uid: gameInfo.general.uid
+					uid: gameInfo.general.uid,
 				});
 			}
 		}
@@ -101,19 +101,19 @@ class Players extends React.Component {
 					Swal.fire({
 						title: `Are you sure you want to execute {${index + 1}} ${name}?`,
 						showCancelButton: true,
-						icon: 'warning'
-					}).then(result => {
+						icon: 'warning',
+					}).then((result) => {
 						if (result.value) {
 							socket.emit('selectedPlayerToExecute', {
 								playerIndex: index,
-								uid: gameInfo.general.uid
+								uid: gameInfo.general.uid,
 							});
 						}
 					});
 				} else {
 					socket.emit('selectedPlayerToExecute', {
 						playerIndex: index,
-						uid: gameInfo.general.uid
+						uid: gameInfo.general.uid,
 					});
 				}
 			}
@@ -123,7 +123,7 @@ class Players extends React.Component {
 			if (clickActionInfo[0] === userInfo.userName && clickActionInfo[1].includes(index)) {
 				socket.emit('selectedSpecialElection', {
 					playerIndex: index,
-					uid: gameInfo.general.uid
+					uid: gameInfo.general.uid,
 				});
 			}
 		}
@@ -156,19 +156,19 @@ class Players extends React.Component {
 	renderPlayerNotesIcon(index) {
 		const { userInfo, gameInfo, togglePlayerNotes, playerNotesActive } = this.props;
 		const { userName } = gameInfo.publicPlayersState[index];
-		const clickedPlayerNote = playerNoteSeatEnabled => {
+		const clickedPlayerNote = (playerNoteSeatEnabled) => {
 			togglePlayerNotes(!playerNotesActive ? userName : '');
 
 			this.setState({
-				playerNoteSeatEnabled
+				playerNoteSeatEnabled,
 			});
 		};
-		const note = this.state.playerNotes.find(note => note.notedUser === userName);
+		const note = this.state.playerNotes.find((note) => note.notedUser === userName);
 
 		if (userInfo.userName && userName !== userInfo.userName) {
 			return (
 				<i
-					onClick={e => {
+					onClick={(e) => {
 						e.stopPropagation();
 						clickedPlayerNote(index);
 					}}
@@ -219,12 +219,12 @@ class Players extends React.Component {
 				}
 			};
 
-			const prependCrowns = str => (
+			const prependCrowns = (str) => (
 				<span>
 					{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 						(!gameInfo.general.blindMode || gameInfo.gameState.isCompleted) &&
 						player.tournyWins &&
-						player.tournyWins.filter(winTime => time - winTime < 10800000).map((crown, ind) => <span className="crown-icon" key={player.tournyWins[ind]} />)}
+						player.tournyWins.filter((winTime) => time - winTime < 10800000).map((crown, ind) => <span className="crown-icon" key={player.tournyWins[ind]} />)}
 
 					{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 						(!gameInfo.general.blindMode || gameInfo.gameState.isCompleted) &&
@@ -274,15 +274,15 @@ class Players extends React.Component {
 					!isBlind &&
 					(!userInfo.userName || !(userInfo.userName && userInfo.gameSettings && userInfo.gameSettings.disablePlayerCardbacks))
 						? {
-								backgroundImage: `url(../images/custom-cardbacks/${player.userName}.${player.customCardback}?${player.customCardbackUid})`
+								backgroundImage: `url(../images/custom-cardbacks/${player.userName}.${player.customCardback}?${player.customCardbackUid})`,
 						  }
 						: {
-								backgroundImage: `url(../images/default_cardback.png)`
+								backgroundImage: `url(../images/default_cardback.png)`,
 						  }
 				}
 				className={(() => {
 					let classes = 'player-container';
-					const user = userList.list && userList.list.find(play => play.userName === player.userName);
+					const user = userList.list && userList.list.find((play) => play.userName === player.userName);
 
 					if (playersState && Object.keys(playersState).length && playersState[i] && playersState[i].notificationStatus) {
 						classes = `${classes} notifier ${playersState[i].notificationStatus}`;
@@ -414,7 +414,7 @@ class Players extends React.Component {
 			userInfo.userName &&
 			!gameInfo.gameState.isTracksFlipped &&
 			gameInfo.publicPlayersState.length < gameInfo.general.maxPlayersCount &&
-			(!userInfo.userName || !gameInfo.publicPlayersState.find(player => player.userName === userInfo.userName))
+			(!userInfo.userName || !gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName))
 		) {
 			return gameInfo.general.isTourny ? (
 				<div className="ui left pointing label tourny" onClick={this.clickedTakeSeat}>
@@ -428,14 +428,14 @@ class Players extends React.Component {
 		}
 	}
 
-	handlePasswordSubmit = e => {
+	handlePasswordSubmit = (e) => {
 		e.preventDefault();
 
 		this.props.onClickedTakeSeat(this.state.passwordValue);
 		$(this.passwordModal).modal('hide');
 	};
 
-	handleReportSubmit = e => {
+	handleReportSubmit = (e) => {
 		const { gameInfo } = this.props;
 		e.preventDefault();
 
@@ -443,26 +443,26 @@ class Players extends React.Component {
 			return;
 		}
 
-		const index = gameInfo.gameState.isStarted ? gameInfo.publicPlayersState.findIndex(player => player.userName === this.state.reportedPlayer) : undefined;
+		const index = gameInfo.gameState.isStarted ? gameInfo.publicPlayersState.findIndex((player) => player.userName === this.state.reportedPlayer) : undefined;
 		if (this.state.reportLength <= 140) {
 			this.props.socket.emit('playerReport', {
 				uid: gameInfo.general.uid,
 				userName: this.props.userInfo.userName || 'from replay',
 				reportedPlayer: `${gameInfo.gameState.isStarted ? `{${index + 1}} ${this.state.reportedPlayer}` : this.state.reportedPlayer}`,
 				reason: $('input[name="reason"]').attr('value'),
-				comment: this.state.reportTextValue
+				comment: this.state.reportTextValue,
 			});
 			$(this.reportModal).modal('hide');
 			this.setState({
 				maxReportLengthExceeded: false,
-				reportTextValue: ''
+				reportTextValue: '',
 			});
 		}
 	};
 
 	clickedTakeSeat = () => {
 		const { gameInfo, userInfo, onClickedTakeSeat, userList } = this.props;
-		const user = userList.list ? userList.list.find(user => user.userName === userInfo.userName) : null;
+		const user = userList.list ? userList.list.find((user) => user.userName === userInfo.userName) : null;
 
 		if (userInfo.userName) {
 			if (user && user.staffIncognito) {
@@ -479,7 +479,7 @@ class Players extends React.Component {
 			} else if (gameInfo.general.isVerifiedOnly && !userInfo.verified) {
 				$(this.verifiedModal).modal('show');
 			} else if (gameInfo.general.eloMinimum) {
-				const user = userList.list.find(user => user.userName === userInfo.userName);
+				const user = userList.list.find((user) => user.userName === userInfo.userName);
 
 				if (user && (parseInt(user.eloSeason, 10) >= gameInfo.general.eloMinimum || parseInt(user.eloOverall, 10) >= gameInfo.general.eloMinimum)) {
 					onClickedTakeSeat();
@@ -498,13 +498,13 @@ class Players extends React.Component {
 
 	render() {
 		const { isReplay } = this.props;
-		const handlePasswordInputChange = e => {
+		const handlePasswordInputChange = (e) => {
 			this.setState({ passwordValue: `${e.target.value}` });
 		};
-		const handleReportTextChange = e => {
+		const handleReportTextChange = (e) => {
 			this.setState({
 				reportLength: Number(e.target.value.length),
-				reportTextValue: `${e.target.value}`
+				reportTextValue: `${e.target.value}`,
 			});
 		};
 		const isBlind = this.props.gameInfo.general.blindMode && !this.props.gameInfo.gameState.isCompleted;
@@ -516,7 +516,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal signinnag"
-					ref={c => {
+					ref={(c) => {
 						this.signinModal = c;
 					}}
 				>
@@ -525,7 +525,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.blacklistModal = c;
 					}}
 				>
@@ -534,7 +534,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.verifiedModal = c;
 					}}
 				>
@@ -545,7 +545,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.elominimumModal = c;
 					}}
 				>
@@ -554,7 +554,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.notRainbowModal = c;
 					}}
 				>
@@ -563,7 +563,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.incognitoModal = c;
 					}}
 				>
@@ -572,7 +572,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal"
-					ref={c => {
+					ref={(c) => {
 						this.privatePlayerInPublicGameModal = c;
 					}}
 				>
@@ -583,7 +583,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal reportmodal"
-					ref={c => {
+					ref={(c) => {
 						this.reportModal = c;
 					}}
 				>
@@ -618,7 +618,7 @@ class Players extends React.Component {
 
 				<div
 					className="ui basic small modal passwordmodal"
-					ref={c => {
+					ref={(c) => {
 						this.passwordModal = c;
 					}}
 				>
@@ -631,7 +631,7 @@ class Players extends React.Component {
 								onChange={handlePasswordInputChange}
 								value={this.state.passwordValue}
 								autoFocus
-								ref={c => {
+								ref={(c) => {
 									this.privategamepassword = c;
 								}}
 							/>
@@ -654,12 +654,12 @@ class Players extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ({
-	togglePlayerNotes: playerName => dispatch(togglePlayerNotes(playerName))
+const mapDispatchToProps = (dispatch) => ({
+	togglePlayerNotes: (playerName) => dispatch(togglePlayerNotes(playerName)),
 });
 
 const mapStateToProps = ({ playerNotesActive }) => ({
-	playerNotesActive
+	playerNotesActive,
 });
 
 Players.propTypes = {
@@ -676,7 +676,7 @@ Players.propTypes = {
 	playerNotesActive: PropTypes.string,
 	onClickedTakeSeat: PropTypes.func,
 	togglePlayerNotes: PropTypes.func,
-	hideRoles: PropTypes.bool
+	hideRoles: PropTypes.bool,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Players);
