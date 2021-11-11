@@ -17,7 +17,7 @@
 		"node": "^12.0.0"
 	},
 	"dependencies": {
-		"@popperjs/core": "^2.4.4",
+		"@popperjs/core": "^2.10.2",
 		"compression": "^1.6.2",
 		"connect-mongodb-session": "^2.0.5",
 		"connect-redis": "^3.4.0",
