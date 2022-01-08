@@ -13,7 +13,7 @@ import {
 	fetchProfile,
 	fetchReplay
 } from '../actions/actions.js';
-// import socket from '../socket';
+import socket from '../socket';
 import PropTypes from 'prop-types';
 import RightSidebar from './section-right/RightSidebar.jsx';
 import Menu from './menu/Menu.jsx';
@@ -101,7 +101,7 @@ export class App extends React.Component {
 		window.addEventListener('hashchange', this.router.bind(this));
 		this.router.call(this); // uh..?
 
-		socket = this.props.socket;
+		// socket = this.props.socket;
 		console.log(socket);
 
 		if (classList.length) {
@@ -743,7 +743,7 @@ export class App extends React.Component {
 
 						{(() => {
 							if (
-								(this.props.midSection !== 'game' && this.props.midSection !== 'replay') ||
+								(false && this.props.midSection !== 'game' && this.props.midSection !== 'replay') ||
 								(this.props.userInfo.gameSettings && this.props.userInfo.gameSettings.enableRightSidebarInGame)
 							) {
 								return (

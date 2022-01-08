@@ -1,5 +1,6 @@
 import AppComponent from './components/App.jsx';
 import Generalchat from './components/section-right/Generalchat.jsx';
+import * as TopMenu from './components/menu/Menu.jsx';
 import Playerlist from './components/section-right/Playerlist.jsx';
 
 import babelPolyfill from 'babel-polyfill'; // eslint-disable-line
@@ -61,6 +62,83 @@ class ContentWidget extends Widget {
 
 function main() {
 	console.log(window.socket);
+
+	const sagaMiddleware = createSagaMiddleware();
+	const store = createStore(shapp, applyMiddleware(sagaMiddleware));
+	sagaMiddleware.run(rootSaga);
+
+	const gameContainer = document.getElementById('game-container');
+	var info = {};
+	var gameInfo = {};
+
+	if (gameContainer.classList.length) {
+		const username = gameContainer.classList[0].split('username-')[1];
+		console.log(username);
+		info = {
+			userName: username,
+			verified: window.verified,
+			staffRole: window.staffRole,
+			hasNotDismissedSignupModal: window.hasNotDismissedSignupModal,
+			isTournamentMod: window.isTournamentMod
+		};
+		console.log('**************************', info);
+	}
+
+	var chats = { chats: [] };
+	var list = { list: [] };
+	var emotes = {};
+
+	socket.emit('updateUserStatus');
+	socket.emit('getUserGameSettings');
+	socket.emit('sendUser', info);
+	socket.emit('upgrade');
+	socket.on('userList', userList => {
+		list = userList;
+		console.log('?????????????????????', userList, list);
+		const now = new Date();
+		const since = now - this.lastReconnectAttempt;
+		if (since > 1000 * 5) {
+			this.lastReconnectAttempt = now;
+			if (info && info.userName) {
+				if (!userList.list.map(user => user.userName).includes(info.userName)) {
+					console.log('Detected own user not in list, attempting to reconnect...');
+					socket.emit('getUserGameSettings');
+				}
+			}
+		}
+	});
+
+	socket.on('connect', () => {
+		console.log('Socket connected.');
+	});
+
+	socket.on('fetchUser', () => {
+		this.socket.emit('sendUser', info);
+	});
+
+	console.log('!!!!!!!!!!!!!!!!!!!!', list);
+
+	socket.on('generalChats', generalChats => {
+		console.log('genchat', generalChats);
+		chats = generalChats;
+		render(
+			<Provider store={store}>
+				<Generalchat gameInfo={{}} socket={socket} generalChats={chats} userInfo={info} userList={list} allEmotes={emotes} />
+			</Provider>,
+			chat.node
+		);
+	});
+
+	socket.on('emoteList', allEmotes => {
+		emotes = allEmotes;
+	});
+
+	/*render(
+		<Provider store={store}>
+			<TopMenu userInfo={info} gameInfo={gameInfo} midSection={''} />
+		</Provider>,
+		document.body
+	);*/
 
 	commands.addCommand('example:cut', {
 		label: 'Cut',
@@ -293,7 +371,7 @@ function main() {
 
 	let playerlist = new ContentWidget('PlayerList');
 	let b2 = new ContentWidget('Blue');
-	let react = new ContentWidget('React');
+	let game = new ContentWidget('Game');
 	// let g2 = new ContentWidget('Green');
 	// let y2 = new ContentWidget('Yellow');
 
@@ -301,13 +379,13 @@ function main() {
 	playerlist.title.closable = true;
 
 	let dock = new DockPanel();
-	dock.addWidget(react);
-	dock.addWidget(chat, { mode: 'split-right', ref: react });
+	dock.addWidget(game);
+	dock.addWidget(chat, { mode: 'split-right', ref: game });
 	// dock.addWidget(y1, { mode: 'split-bottom', ref: chat });
 	// dock.addWidget(g1, { mode: 'split-left', ref: y1 });
 	dock.addWidget(playerlist, { mode: 'tab-after', ref: chat });
 	// dock.addWidget(b2, { mode: 'split-right', ref: y1 });
-	// dock.addWidget(r1, { mode: 'tab-after', ref: react });
+	// dock.addWidget(r1, { mode: 'tab-after', ref: game });
 	dock.id = 'dock';
 
 	dock.addRequested.connect((sender, arg) => {
@@ -342,6 +420,8 @@ function main() {
 		}
 	});
 
+	// dock.restoreLayout
+
 	commands.addCommand('restore-dock-layout', {
 		label: args => {
 			return `Restore Layout ${args.index}`;
@@ -364,75 +444,20 @@ function main() {
 	Widget.attach(main, document.body);
 	// main.style.height = '100%';
 	// dock.style.height = '100%';
+	chat.style = 'overflow: hidden;';
 
-	const sagaMiddleware = createSagaMiddleware();
-	const store = createStore(shapp, applyMiddleware(sagaMiddleware));
-	sagaMiddleware.run(rootSaga);
+	var div = document.createElement('div');
+	div.className = document.getElementById('game-container').className;
+	div.id = 'game-container';
 
 	render(
 		<Provider store={store}>
 			<AppComponent socket={socket} />
 		</Provider>,
-		react.node
+		div
 	);
 
-	const { classList } = document.getElementById('game-container');
-	var info = {};
-
-	if (classList.length) {
-		const username = classList[0].split('username-')[1];
-		console.log(username);
-		info = {
-			userName: username,
-			verified: window.verified,
-			staffRole: window.staffRole,
-			hasNotDismissedSignupModal: window.hasNotDismissedSignupModal,
-			isTournamentMod: window.isTournamentMod
-		};
-		console.log('**************************', info);
-	}
-
-	var chats = { chats: [] };
-	var list = { list: [] };
-	var emotes = {};
-
-	socket.emit('updateUserStatus');
-	socket.emit('getUserGameSettings');
-	socket.emit('sendUser', info);
-	socket.emit('upgrade');
-	socket.on('userList', userList => {
-		list = userList;
-		console.log('?????????????????????', userList, list);
-		const now = new Date();
-		const since = now - this.lastReconnectAttempt;
-		if (since > 1000 * 5) {
-			this.lastReconnectAttempt = now;
-			if (info && info.userName) {
-				if (!userList.list.map(user => user.userName).includes(info.userName)) {
-					console.log('Detected own user not in list, attempting to reconnect...');
-					socket.emit('getUserGameSettings');
-				}
-			}
-		}
-	});
-
-	socket.on('connect', () => {
-		console.log('Socket connected.');
-	});
-
-	socket.on('fetchUser', () => {
-		this.socket.emit('sendUser', info);
-	});
-
-	console.log('!!!!!!!!!!!!!!!!!!!!', list);
-
-	socket.on('generalChats', generalChats => {
-		chats = generalChats;
-	});
-
-	socket.on('emoteList', allEmotes => {
-		emotes = allEmotes;
-	});
+	game.node.appendChild(div);
 
 	account();
 	chatanimation();
@@ -454,7 +479,7 @@ function main() {
 			</Provider>,
 			playerlist.node
 		);
-	}, 2000);
+	}, 5000);
 }
 
 window.socket = socket;

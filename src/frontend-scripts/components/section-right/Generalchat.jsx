@@ -203,6 +203,8 @@ export default class Generalchat extends React.Component {
 		const { chatValue } = this.state;
 
 		if (chatValue && chatValue.length <= 300) {
+			console.log('cv', chatValue);
+
 			if (this.state.genchat) {
 				this.props.socket.emit('addNewGeneralChat', {
 					chat: chatValue
