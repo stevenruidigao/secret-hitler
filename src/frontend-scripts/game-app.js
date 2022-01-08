@@ -369,17 +369,29 @@ function main() {
 	const store = createStore(shapp, applyMiddleware(sagaMiddleware));
 	sagaMiddleware.run(rootSaga);
 
+	render(
+		<Provider store={store}>
+			<AppComponent socket={socket} />
+		</Provider>,
+		react.node
+	);
+
 	const { classList } = document.getElementById('game-container');
-	const username = classList[0].split('username-')[1];
-	console.log(username);
-	const info = {
-		userName: username,
-		verified: window.verified,
-		staffRole: window.staffRole,
-		hasNotDismissedSignupModal: window.hasNotDismissedSignupModal,
-		isTournamentMod: window.isTournamentMod
-	};
-	console.log('**************************', info);
+	var info = {};
+
+	if (classList.length) {
+		const username = classList[0].split('username-')[1];
+		console.log(username);
+		info = {
+			userName: username,
+			verified: window.verified,
+			staffRole: window.staffRole,
+			hasNotDismissedSignupModal: window.hasNotDismissedSignupModal,
+			isTournamentMod: window.isTournamentMod
+		};
+		console.log('**************************', info);
+	}
+
 	var chats = { chats: [] };
 	var list = { list: [] };
 	var emotes = {};
@@ -402,13 +414,6 @@ function main() {
 				}
 			}
 		}
-
-		render(
-			<Provider store={store}>
-				<AppComponent socket={socket} />
-			</Provider>,
-			react.node
-		);
 	});
 
 	socket.on('connect', () => {
