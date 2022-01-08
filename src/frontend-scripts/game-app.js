@@ -384,10 +384,13 @@ function main() {
 	var list = { list: [] };
 	var emotes = {};
 
+	socket.emit('updateUserStatus');
 	socket.emit('getUserGameSettings');
 	socket.emit('sendUser', info);
+	socket.emit('upgrade');
 	socket.on('userList', userList => {
 		list = userList;
+		console.log('?????????????????????', userList, list);
 		const now = new Date();
 		const since = now - this.lastReconnectAttempt;
 		if (since > 1000 * 5) {
@@ -408,6 +411,14 @@ function main() {
 		);
 	});
 
+	socket.on('connect', () => {
+		console.log('Socket connected.');
+	});
+
+	socket.on('fetchUser', () => {
+		this.socket.emit('sendUser', info);
+	});
+
 	console.log('!!!!!!!!!!!!!!!!!!!!', list);
 
 	socket.on('generalChats', generalChats => {
@@ -422,19 +433,23 @@ function main() {
 	chatanimation();
 	polyfills();
 
-	render(
-		<Provider store={store}>
-			<Generalchat gameInfo={{}} socket={socket} generalChats={chats} userInfo={info} userList={list} allEmotes={emotes} />
-		</Provider>,
-		chat.node
-	);
+	console.log('__________', list);
 
-	render(
-		<Provider store={store}>
-			<Playerlist userInfo={info} userList={list} socket={socket} />
-		</Provider>,
-		playerlist.node
-	);
+	setTimeout(() => {
+		render(
+			<Provider store={store}>
+				<Generalchat gameInfo={{}} socket={socket} generalChats={chats} userInfo={info} userList={list} allEmotes={emotes} />
+			</Provider>,
+			chat.node
+		);
+
+		render(
+			<Provider store={store}>
+				<Playerlist userInfo={info} userList={list} socket={socket} />
+			</Provider>,
+			playerlist.node
+		);
+	}, 2000);
 }
 
 window.socket = socket;

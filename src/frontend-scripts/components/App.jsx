@@ -567,6 +567,7 @@ export class App extends React.Component {
 													id="touButton"
 												/>
 											</form>
+											B{' '}
 										</div>
 									</div>
 								);
