@@ -13,7 +13,7 @@ import {
 	fetchProfile,
 	fetchReplay
 } from '../actions/actions.js';
-import socket from '../socket';
+// import socket from '../socket';
 import PropTypes from 'prop-types';
 import RightSidebar from './section-right/RightSidebar.jsx';
 import Menu from './menu/Menu.jsx';
@@ -64,7 +64,7 @@ TopLevelErrorBoundary.propTypes = {
 };
 
 export class App extends React.Component {
-	constructor() {
+	constructor(props) {
 		super();
 
 		this.handleSeatingUser = this.handleSeatingUser.bind(this);
@@ -100,6 +100,9 @@ export class App extends React.Component {
 
 		window.addEventListener('hashchange', this.router.bind(this));
 		this.router.call(this); // uh..?
+
+		socket = this.props.socket;
+		console.log(socket);
 
 		if (classList.length) {
 			const username = classList[0].split('username-')[1];
