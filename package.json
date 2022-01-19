@@ -29,7 +29,7 @@
 		"gfycat-style-urls": "git://github.com/cozuya/gfycat-style-urls.git",
 		"helmet": "^4.2.0",
 		"immutable": "^4.0.0-rc.6",
-		"isomorphic-fetch": "^2.2.1",
+		"isomorphic-fetch": "^3.0.0",
 		"jimp": "^0.12.0",
 		"jquery": "^3.5.0",
 		"lodash": "^4.17.20",
