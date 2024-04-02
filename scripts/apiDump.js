@@ -13,7 +13,7 @@ const GameSummary = require('../models/game-summary');
 const Game = require('../models/game');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`, { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/secret-hitler-app", { useNewUrlParser: true });
 
 const now = new Date();
 console.log('Starting at', now);

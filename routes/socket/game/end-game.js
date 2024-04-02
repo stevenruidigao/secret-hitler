@@ -312,7 +312,7 @@ module.exports.completeGame = (game, winningTeamName) => {
 										type: eachPlayer.role.cardName
 									},
 									{
-										text: `'s Elo: `
+										text: "'s Elo: "
 									},
 									{
 										text: ` ${activeChange > 0 ? '+' : '-'}`

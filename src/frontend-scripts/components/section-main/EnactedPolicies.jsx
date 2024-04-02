@@ -18,7 +18,7 @@ const EnactedPolicies = props => {
 
 				const frontClasses = 'enactedpolicies-card front';
 				let backClasses = 'enactedpolicies-card back';
-				let containerClasses = `enactedpolicies-card-container`;
+				let containerClasses = "enactedpolicies-card-container";
 
 				if (stateObj && Object.keys(stateObj).length) {
 					if (stateObj.isFlipped) {

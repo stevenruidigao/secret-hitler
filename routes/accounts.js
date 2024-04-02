@@ -494,7 +494,7 @@ module.exports.accounts = torIpsParam => {
 			res.status(401).json({ message: 'Your passwords did not match.' });
 		} else if (email && !emailRegex.test(email)) {
 			res.status(401).json({
-				message: `That doesn't look like a valid email address.`
+				message: "That doesn't look like a valid email address."
 			});
 		} else if (email && email.split('@')[1] && bannedEmails.includes(email.split('@')[1]) && process.env.NODE_ENV === 'production') {
 			res.status(401).json({
@@ -685,7 +685,7 @@ module.exports.accounts = torIpsParam => {
 			});
 		} else if (!emailRegex.test(email)) {
 			res.status(401).json({
-				message: `That doesn't look like a valid email address.`
+				message: "That doesn't look like a valid email address."
 			});
 		} else {
 			Account.findOne({ 'verification.email': email }, (err, account) => {
@@ -721,7 +721,7 @@ module.exports.accounts = torIpsParam => {
 			});
 		} else if (email && !emailRegex.test(email)) {
 			res.status(401).json({
-				message: `That doesn't look like a valid email address.`
+				message: "That doesn't look like a valid email address."
 			});
 		} else {
 			Account.findOne({ 'verification.email': email }, (err, account) => {

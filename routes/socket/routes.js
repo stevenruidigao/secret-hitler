@@ -305,14 +305,14 @@ module.exports.socketRoutes = () => {
 							if (account.warnings && account.warnings.length > 0) {
 								socket.emit('sendWarnings', { username, warnings: account.warnings });
 							} else {
-								socket.emit('sendAlert', `That user doesn't have any warnings.`);
+								socket.emit('sendAlert', "That user doesn't have any warnings.");
 							}
 						} else {
-							socket.emit('sendAlert', `That user doesn't exist.`);
+							socket.emit('sendAlert', "That user doesn't exist.");
 						}
 					});
 				} else {
-					socket.emit('sendAlert', `Are you sure you're supposed to be doing that?`);
+					socket.emit('sendAlert', "Are you sure you're supposed to be doing that?");
 					console.log(passport.user, 'tried to receive warnings for', username);
 				}
 			});

@@ -3,7 +3,7 @@ const https = require('https');
 const makeReport = () => {
 	const report = JSON.stringify({
 		username: 'Totally a real report',
-		text: `Don't mind me, I'm just testing out slack formatting to have a nice table...\nSeriously, ignore this.`,
+		text: "Don't mind me, I'm just testing out slack formatting to have a nice table...\nSeriously, ignore this.",
 		attachments: [
 			{
 				fields: [
