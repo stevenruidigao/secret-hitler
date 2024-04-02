@@ -2221,7 +2221,7 @@ module.exports.handleAddNewGameChat = async (socket, passport, data, game, modUs
 				if (staffInGame.length !== 0) {
 					socket.emit(
 						'sendAlert',
-						`An account used by a moderator or a trial moderator is in this game. Please use the report function in this game and make sure to not out crucial information or just DM another moderator.`
+						"An account used by a moderator or a trial moderator is in this game. Please use the report function in this game and make sure to not out crucial information or just DM another moderator."
 					);
 					game.lastModPing = Date.now(); // prevent overquerying
 				} else {
@@ -2688,7 +2688,7 @@ module.exports.handleSubscribeModChat = (socket, passport, game) => {
 		makeReport(
 			{
 				player: passport.user,
-				situation: `has subscribed to mod chat for a game without an auto-report.`,
+				situation: "has subscribed to mod chat for a game without an auto-report.",
 				election: game.general.electionCount,
 				title: game.general.name,
 				uid: game.general.uid,
@@ -3147,7 +3147,7 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 								}
 							});
 						} else {
-							socket.emit('sendAlert', `That user doesn't exist`);
+							socket.emit('sendAlert', "That user doesn't exist");
 							return;
 						}
 					});
@@ -3158,7 +3158,7 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 							if (user.warnings && user.warnings.length > 0) {
 								socket.emit('sendAlert', `Warning with the message: "${user.warnings.pop().text}" deleted.`);
 							} else {
-								socket.emit('sendAlert', `That user doesn't have any warnings.`);
+								socket.emit('sendAlert', "That user doesn't have any warnings.");
 								return;
 							}
 							user.markModified('warnings');
@@ -3168,7 +3168,7 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 								}
 							});
 						} else {
-							socket.emit('sendAlert', `That user doesn't exist`);
+							socket.emit('sendAlert', "That user doesn't exist");
 							return;
 						}
 					});

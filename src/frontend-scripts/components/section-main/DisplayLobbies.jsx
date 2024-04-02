@@ -339,7 +339,7 @@ const DisplayLobbies = props => {
 			} else {
 				total.push(
 					<div key={total.length} className={classes} data-tooltip={player.userName} data-inverted="">
-						<img src={`../images/default_cardback.png`} />
+						<img src={"../images/default_cardback.png"} />
 					</div>
 				);
 			}

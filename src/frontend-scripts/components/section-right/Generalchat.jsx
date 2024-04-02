@@ -373,7 +373,7 @@ export default class Generalchat extends React.Component {
 							onClick={() => {
 								this.props.socket.emit('aemUnsubscribeChat', { userName: this.props.userInfo.userName });
 							}}
-							className={`ui primary button`}
+							className={"ui primary button"}
 						>
 							Leave Conversation
 						</button>

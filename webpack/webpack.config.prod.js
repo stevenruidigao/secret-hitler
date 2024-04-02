@@ -12,7 +12,7 @@ process.env.NODE_ENV = 'production';
 module.exports = {
 	entry: './src/frontend-scripts/game-app.js',
 	output: {
-		filename: `bundle.js`,
+		filename: "bundle.js",
 		path: path.resolve(__dirname, '../public/scripts')
 	},
 	plugins: [

@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 const GameSummary = require('../models/game-summary');
 
 if (![2, 3, 5, 6].includes(process.argv.length)) {
-	console.log(`Usage: node scripts/dumpGameSummariesAnon.js [limit (25000)] [output directory(./gameSummaries)] [tarball name (gameSummaries)] [skip (0)]`);
+	console.log("Usage: node scripts/dumpGameSummariesAnon.js [limit (25000)] [output directory(./gameSummaries)] [tarball name (gameSummaries)] [skip (0)]");
 	process.exit(1);
 }
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`, { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/secret-hitler-app", { useNewUrlParser: true });
 
 const now = new Date();
 console.log('Starting at', now);

@@ -5,7 +5,7 @@ const TEMP_PASSWORD = 'ChangeMe123';
 
 if (process.argv.length === 3) {
 	mongoose.Promise = global.Promise;
-	mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`);
+	mongoose.connect("mongodb://localhost:27017/secret-hitler-app");
 	const username = process.argv[2];
 	Account.findOne({ username })
 		.then(user => {

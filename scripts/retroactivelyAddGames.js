@@ -6,7 +6,7 @@ let count = 0;
 const season = 10;
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`, { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/secret-hitler-app", { useNewUrlParser: true });
 
 Game.find({
 	// date: {
