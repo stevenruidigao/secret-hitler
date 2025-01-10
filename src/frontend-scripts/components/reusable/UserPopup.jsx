@@ -1,7 +1,8 @@
 import React, { useState } from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { Popup, List, Grid, Button, Form } from 'semantic-ui-react';
-import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
+// import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
+const { getBlacklistIndex, userInBlacklist } = require('../../../../utils');
 
 const mapStateToProps = state => state;
 

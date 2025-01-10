@@ -180,6 +180,7 @@ const getBlacklistIndex = (userName, blacklist) => {
 	}
 	return -1;
 };
+
 const userInBlacklist = (userName, blacklist) => {
 	if (typeof blacklist === 'undefined') {
 		return false;
@@ -191,5 +192,6 @@ const userInBlacklist = (userName, blacklist) => {
 	}
 	return false;
 };
+
 exports.userInBlacklist = userInBlacklist;
 exports.getBlacklistIndex = getBlacklistIndex;
