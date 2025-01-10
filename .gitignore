@@ -44,5 +44,7 @@ dump/
 scripts/out/*
 public/images/emotesheet.png
 
+vite-build/*
+
 # Keep .gitkeep files, even in ignored directories
 !/**/.gitkeep

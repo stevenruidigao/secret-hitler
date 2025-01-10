@@ -3,7 +3,8 @@ import { Range, List, OrderedMap, Map } from 'immutable';
 import { fromNullable } from 'option';
 import classnames from 'classnames';
 import Slider from 'rc-slider';
-import { capitalize, text, policyToString } from '../../../../../utils';
+// import { capitalize, text, policyToString } from '../../../../../utils';
+const { capitalize, text, policyToString } = require('../../../../../utils');
 import GameText from '../../reusable/GameText.jsx';
 
 const TurnNav = ({ position, size, toTurn }) => {

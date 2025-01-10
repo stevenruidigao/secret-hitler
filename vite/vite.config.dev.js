@@ -5,15 +5,14 @@ import path from 'path';
 process.env.NODE_ENV = 'development';
 
 export default defineConfig({
-	base: './src',
+	// base: './',
 	plugins: [
 		react({
 			jsxRuntime: 'classic'
 		})
 	],
 	build: {
-		emptyOutDir: false,
-		outDir: path.resolve(__dirname, '../public/scripts/vite'),
+		outDir: path.resolve(__dirname, '../vite-build'),
 		rollupOptions: {
 			input: './src/frontend-scripts/game-app.jsx', // Entry point
 			output: {

@@ -1,4 +1,5 @@
-import { mapOpt1 } from '../../../utils';
+// import { mapOpt1 } from '../../../utils';
+const { mapOpt1 } = require('../../../utils');
 
 export default function toGameInfo(snapshot) {
 	const gameState = {

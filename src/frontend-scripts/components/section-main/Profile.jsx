@@ -11,7 +11,8 @@ import { Dropdown } from 'semantic-ui-react';
 import moment from 'moment';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
 import UserPopup from '../reusable/UserPopup.jsx';
-import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
+// import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
+const { getBlacklistIndex, userInBlacklist } = require('../../../../utils');
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });
