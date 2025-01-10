@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 // import { handToPolicies } from '../../../../../utils';
-const { handToPolicies } = require('../../../../../utils');
+import { handToPolicies } from '../../../../../utils/index.mjs';
 import { fromNullable } from 'option';
 import Card from '../../reusable/Card.jsx';
 

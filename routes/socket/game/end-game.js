@@ -3,14 +3,14 @@ const { userList, games } = require('../models.js');
 const { sendUserList, sendGameList } = require('../user-requests.js');
 const Account = require('../../../models/account.js');
 const Game = require('../../../models/game');
-const buildEnhancedGameSummary = require('../../../models/game-summary/buildEnhancedGameSummary');
+const buildEnhancedGameSummary = require('../../../models/game-summary/buildEnhancedGameSummary.cjs');
 const { updateProfiles } = require('../../../models/profile/utils');
 const debug = require('debug')('game:summary');
 const animals = require('../../../utils/animals');
 const adjectives = require('../../../utils/adjectives');
 const _ = require('lodash');
 const { makeReport } = require('../report.js');
-const { CURRENT_SEASON_NUMBER } = require('../../../src/frontend-scripts/node-constants.js');
+const { CURRENT_SEASON_NUMBER } = require('../../../src/frontend-scripts/constants.cjs');
 const { LineGuess } = require('../util');
 const { checkBadgesELO, checkBadgesXP } = require('../badges');
 

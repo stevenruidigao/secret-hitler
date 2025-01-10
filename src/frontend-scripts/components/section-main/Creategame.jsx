@@ -2,12 +2,11 @@ import React from 'react';
 import Switch from 'react-switch';
 import Select from 'react-select';
 import { Range } from 'rc-slider';
-// import blacklistedWords from '../../../../iso/blacklistwords';
-const blacklistedWords = require('../../../../iso/blacklistwords');
+import blacklistedWords from '../../../../iso/blacklistedWords.mjs';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
-export default class Creategame extends React.Component {
+export default class CreateGame extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -1853,7 +1852,7 @@ export default class Creategame extends React.Component {
 									maxLength="20"
 									placeholder="New Game"
 									onKeyPress={e => {
-										const { LEGALCHARACTERS } = require('../../constants');
+										const { LEGALCHARACTERS } = require('../../constants.mjs');
 										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}
@@ -2359,7 +2358,7 @@ export default class Creategame extends React.Component {
 	}
 }
 
-Creategame.propTypes = {
+CreateGame.propTypes = {
 	socket: PropTypes.object,
 	userInfo: PropTypes.object,
 	userList: PropTypes.object

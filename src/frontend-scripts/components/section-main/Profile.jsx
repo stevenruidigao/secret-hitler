@@ -12,7 +12,7 @@ import moment from 'moment';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
 import UserPopup from '../reusable/UserPopup.jsx';
 // import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
-const { getBlacklistIndex, userInBlacklist } = require('../../../../utils');
+import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.mjs';
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+// import commonjs from '@rollup/plugin-commonjs';
+// import path from 'path';
 
 process.env.NODE_ENV = 'development';
 
@@ -10,16 +11,27 @@ export default defineConfig({
 		react({
 			jsxRuntime: 'classic'
 		})
+		// commonjs(),
 	],
 	build: {
-		outDir: path.resolve(__dirname, '../vite-build'),
+		target: 'es2015',
+		outDir: './vite-build/',
 		rollupOptions: {
 			input: './src/frontend-scripts/game-app.jsx', // Entry point
 			output: {
-				entryFileNames: 'bundle.js' // Output file name
+				entryFileNames: 'scripts/bundle.js', // Output file name
+				assetFileNames: 'assets/[name].[ext]'
 			}
 		},
-		sourcemap: 'inline'
+		sourcemap: 'inline',
+		commonjsOptions: {
+			transformMixedEsModules: true
+		}
+		// watch: {
+		//     chokidar: {
+		//         usePolling: true, // for WSL
+		//     },
+		// },
 	},
 	css: {
 		preprocessorOptions: {

@@ -1,5 +1,6 @@
 import { put, call, takeLatest } from 'redux-saga/effects';
-import buildEnhancedGameSummary from '../../models/game-summary/buildEnhancedGameSummary';
+// import buildEnhancedGameSummary from '../../models/game-summary/buildEnhancedGameSummary';
+import buildEnhancedGameSummary from '../../models/game-summary/buildEnhancedGameSummary.mjs';
 import buildReplay from './replay/buildReplay';
 import { updateMidsection } from './actions/actions';
 

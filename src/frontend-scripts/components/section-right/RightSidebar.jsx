@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
-import Playerlist from './Playerlist.jsx';
-import Generalchat from './Generalchat.jsx';
+import PlayerList from './PlayerList.jsx';
+import GeneralChat from './GeneralChat.jsx';
 import PropTypes from 'prop-types';
 
 const RightSidebar = props => {
@@ -11,8 +11,8 @@ const RightSidebar = props => {
 
 	return (
 		<section className={classes} id={'playerlist'}>
-			{!props.forceMounted && <Playerlist userInfo={props.userInfo} userList={props.userList} socket={props.socket} />}
-			<Generalchat
+			{!props.forceMounted && <PlayerList userInfo={props.userInfo} userList={props.userList} socket={props.socket} />}
+			<GeneralChat
 				gameInfo={props.gameInfo}
 				socket={props.socket}
 				generalChats={props.generalChats}

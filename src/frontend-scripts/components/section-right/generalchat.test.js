@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Generalchat from './Generalchat';
+import Generalchat from './GeneralChat';
 
 describe('Generalchat', () => {
 	it('should initialize correctly', () => {

@@ -1,5 +1,7 @@
-const cn = require('classnames');
-const moment = require('moment');
+// const cn = require('classnames');
+// const moment = require('moment');
+import cn from 'classnames';
+import moment from 'moment';
 
 export const TOU_CHANGES = [
 	{

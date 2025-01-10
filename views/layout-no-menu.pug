@@ -10,9 +10,9 @@ html(lang="en")
 
 		if game
 			if prodCacheBustToken
-				link(rel="stylesheet", type="text/css", href=`/styles/style-main.css?${prodCacheBustToken}`)
+				link(rel="stylesheet", type="text/css", href=`/assets/game-app.css?${prodCacheBustToken}`)
 			else
-				link(rel="stylesheet", type="text/css", href="/styles/style-main.css")
+				link(rel="stylesheet", type="text/css", href="/assets/game-app.css")
 		else
 			if prodCacheBustToken
 				link(rel="stylesheet", type="text/css", href=`/styles/style-web.css?${prodCacheBustToken}`)
@@ -168,9 +168,9 @@ html(lang="en")
 
 		if game
 			if prodCacheBustToken
-				script(src=`/scripts/bundle.js?${prodCacheBustToken}`)
+				script(src=`/scripts/bundle.js?${prodCacheBustToken}` type="module")
 			else
-				script(src=`/scripts/bundle.js`)
+				script(src=`/scripts/bundle.js` type="module")
 		else
 			script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js")
 			script(src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js")

@@ -13,7 +13,7 @@ const { ProcessImage } = require('./image-processor');
 const savedTorIps = require('../utils/savedtorips');
 const fetch = require('node-fetch');
 const prodCacheBustToken = require('./prodCacheBustToken');
-const { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } = require('../src/frontend-scripts/node-constants');
+const { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } = require('../src/frontend-scripts/constants.cjs');
 const { checkBadgesAccount } = require('./socket/badges');
 const moment = require('moment');
 

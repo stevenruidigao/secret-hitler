@@ -1,14 +1,14 @@
 /* eslint-disable spaced-comment */
-const { Map, isIndexed, fromJS } = require('immutable');
-const { fromNullable, some, none } = require('option');
-const buildTurns = require('./buildTurns');
+import { Map, isIndexed, fromJS } from 'immutable';
+import { fromNullable, some, none } from 'option';
+import buildTurns from './buildTurns.mjs';
 
 /*
  * Wraps a gameSummary to produce a more human-friendly representation.
  * Feel free to add to this as needed.
  * Refer to `/docs/enhanced-game-summary.md` for API documentation.
  */
-function buildEnhancedGameSummary(_summary) {
+export default function buildEnhancedGameSummary(_summary) {
 	// convert Arrays to Lists and some values to Options
 	const summary = fromJS(_summary, (key, value, path) => {
 		const options = [
@@ -196,5 +196,3 @@ function buildEnhancedGameSummary(_summary) {
 		isWinner
 	};
 }
-
-module.exports = buildEnhancedGameSummary;

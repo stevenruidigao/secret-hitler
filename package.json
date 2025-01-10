@@ -90,6 +90,7 @@
 		"@babel/core": "^7.2.2",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
 		"@babel/plugin-proposal-optional-chaining": "^7.10.4",
+		"@rollup/plugin-commonjs": "^28.0.2",
 		"@vitejs/plugin-react": "2",
 		"babel-core": "7.0.0-bridge.0",
 		"babel-eslint": "^10.0.3",
@@ -159,8 +160,7 @@
 		"build": "webpack --config webpack/webpack.config.prod --mode production",
 		"inspect": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.js",
 		"server": "cross-env NODE_ENV=development nodemon bin/dev.js",
-		"start": "webpack --watch --config webpack/webpack.config.dev --mode development",
-		"start-vite": "vite build --watch --config vite/vite.config.dev.js --mode development",
+		"start": "vite build --watch --config vite/vite.config.dev.js --mode development",
 		"lint": "esw src/**/*.jsx scripts/ routes/ webpack/ models/ iso/",
 		"build-css:web": "node-sass --include-path src/scss src/scss/style-web.scss public/styles/style-web.css",
 		"build-css:dark": "node-sass --include-path src/scss src/scss/style-dark.scss public/styles/style-dark.css"

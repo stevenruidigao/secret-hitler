@@ -70,7 +70,7 @@ app.use(bodyParser.json({ limit: '10kb' })); // limit can be lower since this sh
 app.use(bodyParser.urlencoded({ extended: false, limit: '200kb' })); // limit needs to be decently high to account for cardback uploads
 app.use(favicon(`${__dirname}/public/favicon.ico`));
 app.use(cookieParser());
-app.use(express.static(`${__dirname}/public`, { maxAge: 86400000 * 28 }));
+app.use(express.static(`${__dirname}/vite-build`, { maxAge: 86400000 * 28 }));
 app.use(
 	helmet.frameguard({
 		action: 'deny'
