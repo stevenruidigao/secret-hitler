@@ -14,7 +14,7 @@
 	"homepage": "https://secrethitler.io",
 	"bugs": "https://github.com/cozuya/secret-hitler/issues",
 	"engines": {
-		"node": "^16.13.0"
+		"node": "16.13.0 - 18.20.5"
 	},
 	"dependencies": {
 		"@popperjs/core": "^2.4.4",
@@ -160,7 +160,7 @@
 		"build": "webpack --config webpack/webpack.config.prod --mode production",
 		"inspect": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.js",
 		"server": "cross-env NODE_ENV=development nodemon bin/dev.js",
-		"start": "vite build --watch --config vite/vite.config.dev.js --mode development",
+		"start": "vite build --watch --config vite/vite.config.dev.js --mode development --profile --debug",
 		"lint": "esw src/**/*.jsx scripts/ routes/ webpack/ models/ iso/",
 		"build-css:web": "node-sass --include-path src/scss src/scss/style-web.scss public/styles/style-web.css",
 		"build-css:dark": "node-sass --include-path src/scss src/scss/style-dark.scss public/styles/style-dark.css"

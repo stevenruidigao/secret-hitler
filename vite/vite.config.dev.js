@@ -1,17 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import commonjs from '@rollup/plugin-commonjs';
-// import path from 'path';
 
 process.env.NODE_ENV = 'development';
 
 export default defineConfig({
-	// base: './',
+	root: './',
 	plugins: [
 		react({
 			jsxRuntime: 'classic'
 		})
-		// commonjs(),
 	],
 	build: {
 		target: 'es2015',
@@ -23,7 +20,8 @@ export default defineConfig({
 				assetFileNames: 'assets/[name].[ext]'
 			}
 		},
-		sourcemap: 'inline',
+		// sourcemap: 'inline',
+		sourcemap: true,
 		commonjsOptions: {
 			transformMixedEsModules: true
 		}
