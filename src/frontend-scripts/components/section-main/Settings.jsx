@@ -1219,6 +1219,7 @@ class Settings extends React.Component {
 											return <img src={this.state.isUploaded} />;
 										}
 
+										// TODO: fix hack
 										if (gameSettings && gameSettings.customCardback && gameSettings.customCardback.fileExtension) {
 											return (
 												<div

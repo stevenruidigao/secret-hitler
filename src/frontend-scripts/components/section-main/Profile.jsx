@@ -545,6 +545,7 @@ class ProfileWrapper extends React.Component {
 
 		return (
 			<div>
+				{/* TODO: fix hack */}
 				{profile.customCardback && profile.customCardback.fileExtension && (
 					<div
 						className={userClasses}
