@@ -1,9 +1,9 @@
 import React from 'react'; // eslint-disable-line
 import { shallowWithStore } from 'enzyme-redux';
 import { createMockStore } from 'redux-test-utils';
-import Gamechat from './Gamechat';
+import GameChat from './GameChat';
 
-describe('Gamechat', () => {
+describe('GameChat', () => {
 	it('should initialize correctly', () => {
 		const initialProps = {
 			loadReplay: () => {},
@@ -14,7 +14,7 @@ describe('Gamechat', () => {
 
 		const store = createMockStore(initialProps);
 
-		const component = shallowWithStore(<Gamechat />, store);
+		const component = shallowWithStore(<GameChat />, store);
 
 		expect(component).toHaveLength(1);
 	});

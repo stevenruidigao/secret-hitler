@@ -1,6 +1,6 @@
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
-import { fetchProfile } from '../../actions/actions';
+import { fetchProfile } from '../../actions/actions.js';
 import cn from 'classnames';
 import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.mjs';
 import $ from 'jquery';
@@ -26,7 +26,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	return Object.assign({}, ownProps, dispatchProps, { isUserClickable });
 };
 
-class Playerlist extends React.Component {
+class PlayerList extends React.Component {
 	state = {
 		userListFilter: 'all',
 		expandInfo: {
@@ -715,13 +715,13 @@ class Playerlist extends React.Component {
 	}
 }
 
-Playerlist.defaultProps = {
+PlayerList.defaultProps = {
 	userInfo: {},
 	userList: { list: [] },
 	socket: {}
 };
 
-Playerlist.propTypes = {
+PlayerList.propTypes = {
 	userInfo: PropTypes.object,
 	userList: PropTypes.object,
 	socket: PropTypes.object,
@@ -729,4 +729,4 @@ Playerlist.propTypes = {
 	fetchReplay: PropTypes.func
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Playerlist);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(PlayerList);

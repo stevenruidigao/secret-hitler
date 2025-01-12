@@ -1,8 +1,8 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Generalchat from './Generalchat';
+import GeneralChat from './GeneralChat';
 
-describe('Generalchat', () => {
+describe('GeneralChat', () => {
 	it('should initialize correctly', () => {
 		const initialState = {
 			lock: false,
@@ -18,7 +18,7 @@ describe('Generalchat', () => {
 			modDMs: null
 		};
 
-		const component = shallow(<Generalchat />);
+		const component = shallow(<GeneralChat />);
 
 		expect(component.state()).toEqual(initialState);
 	});

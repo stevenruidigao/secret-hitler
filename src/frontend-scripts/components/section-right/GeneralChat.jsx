@@ -5,7 +5,7 @@ import { renderEmotesButton, processEmotes } from '../../emotes';
 import { Scrollbars } from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
 
-export default class Generalchat extends React.Component {
+export default class GeneralChat extends React.Component {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
 	state = {
@@ -583,12 +583,12 @@ export default class Generalchat extends React.Component {
 	}
 }
 
-Generalchat.defaultProps = {
+GeneralChat.defaultProps = {
 	generalChats: {},
 	userInfo: {}
 };
 
-Generalchat.propTypes = {
+GeneralChat.propTypes = {
 	gameInfo: PropTypes.object,
 	userInfo: PropTypes.object,
 	socket: PropTypes.object,

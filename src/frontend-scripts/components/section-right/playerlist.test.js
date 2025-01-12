@@ -2,9 +2,9 @@ import React from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { createMockStore } from 'redux-test-utils';
 import { shallowWithStore } from 'enzyme-redux';
-import Playerlist from './Playerlist';
+import PlayerList from './PlayerList';
 
-describe('Playerlist', () => {
+describe('PlayerList', () => {
 	let store;
 
 	beforeEach(() => {
@@ -15,7 +15,7 @@ describe('Playerlist', () => {
 		const mapStateToProps = state => ({
 			state
 		});
-		const ConnectedComponent = connect(mapStateToProps)(Playerlist);
+		const ConnectedComponent = connect(mapStateToProps)(PlayerList);
 		const component = shallowWithStore(<ConnectedComponent />, store);
 
 		expect(component).toHaveLength(1);
