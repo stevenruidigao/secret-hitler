@@ -2,7 +2,7 @@
 // TODO: Migrate to ES module imports
 // const { none } = require('option');
 // import { none } from 'option'; // webpack errors... commenting out for now
-import * as Immutable from 'immutable';
+import Immutable from 'immutable';
 const { List, Range } = Immutable;
 
 /**************************
