@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
@@ -110,7 +110,7 @@ const Signups = ({ socket }) => {
 							})
 							.map((report, index) => (
 								<tr key={index}>
-									<td>{moment(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
+									<td>{dayjs(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
 									<td>{report.userName}</td>
 									<td>{report.ip}</td>
 									<td>{report.type}</td>

@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 class Leaderboard extends React.Component {
 	constructor() {
@@ -132,7 +132,7 @@ class Leaderboard extends React.Component {
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>
 													</p>
-													<p>{moment(user.date).format('DD-MM-YYYY')}</p>
+													<p>{dayjs(user.date).format('DD-MM-YYYY')}</p>
 												</li>
 											))}
 										</ul>

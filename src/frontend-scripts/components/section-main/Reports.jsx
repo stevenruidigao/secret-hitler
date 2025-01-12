@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
 
@@ -125,7 +125,7 @@ export default class Reports extends React.Component {
 							})
 							.map((report, index) => (
 								<tr key={index} style={{ background: report.isActive ? '#cdf9db' : '#708a78' }}>
-									<td>{moment(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
+									<td>{dayjs(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
 									<td>
 										<a href={report.gameUid ? `#/table/${report.gameUid}` : ''} style={{ textDecoration: 'underline' }}>
 											{report.gameUid && report.gameUid.substr(0, 5)}

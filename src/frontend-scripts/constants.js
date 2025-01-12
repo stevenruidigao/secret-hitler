@@ -1,5 +1,8 @@
 const cn = require('classnames');
-const moment = require('moment');
+const dayjs = require('dayjs');
+const duration = require('dayjs/plugin/duration');
+
+dayjs.extend(duration);
 
 export const TOU_CHANGES = [
 	{
@@ -37,8 +40,8 @@ export const TOU_CHANGES = [
 	}
 ];
 
-export const CURRENT_SEASON_NUMBER = 22 + Math.ceil((moment() - moment('2025-01-01T00:00:00.000Z')) / moment.duration(3, 'months'));
-export const CURRENT_SEASON_END = moment('2025-01-01T00:00:00.000Z') + (CURRENT_SEASON_NUMBER - 22) * moment.duration(3, 'months');
+export const CURRENT_SEASON_NUMBER = 22 + Math.ceil((dayjs() - dayjs('2025-01-01T00:00:00.000Z')) / dayjs.duration(3, 'months'));
+export const CURRENT_SEASON_END = dayjs('2025-01-01T00:00:00.000Z') + (CURRENT_SEASON_NUMBER - 22) * dayjs.duration(3, 'months');
 
 const ALPHANUMERIC = [...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'];
 const SYMBOLS = [...' -_=+!"£$%^&*()\\/.,<>?#~\'@;:[]{}'];

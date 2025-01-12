@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import $ from 'jquery';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -1315,7 +1315,7 @@ export default class Moderation extends React.Component {
 							.map((report, index) => (
 								<tr key={index}>
 									<td style={{ whiteSpace: 'nowrap' }}>{report.modUserName}</td>
-									<td style={{ whiteSpace: 'nowrap' }}>{moment(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
+									<td style={{ whiteSpace: 'nowrap' }}>{dayjs(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
 									<td style={{ width: '120px', minWidth: '120px' }}>{niceAction[report.actionTaken] ? niceAction[report.actionTaken] : report.actionTaken}</td>
 									<td style={{ whiteSpace: 'normal', wordWrap: 'break-word', maxWidth: '200px', minWidth: '120px' }}>{report.userActedOn}</td>
 									<td style={{ whiteSpace: 'nowrap' }}>{report.ip}</td>

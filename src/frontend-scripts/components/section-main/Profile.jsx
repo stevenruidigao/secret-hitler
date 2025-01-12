@@ -8,7 +8,7 @@ import { PLAYER_COLORS } from '../../constants';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import { Dropdown } from 'semantic-ui-react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
 import UserPopup from '../reusable/UserPopup.jsx';
 import { getBlacklistIndex, userInBlacklist } from '../../../../utils';
@@ -261,7 +261,7 @@ class ProfileWrapper extends React.Component {
 							onClick={() =>
 								Swal.fire({
 									title: x.title,
-									text: `${x.text || ''} Earned: ${moment(x.dateAwarded).format('MM/DD/YYYY HH:mm')}.`,
+									text: `${x.text || ''} Earned: ${dayjs(x.dateAwarded).format('MM/DD/YYYY HH:mm')}.`,
 									imageUrl: `../images/badges/${x.id.startsWith('eloReset') ? 'eloReset' : x.id}.png`,
 									imageWidth: 100
 								})

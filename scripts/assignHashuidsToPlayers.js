@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const Game = require('../models/game');
-const moment = require('moment');
+const dayjs = require('dayjs');
+const localizedFormat = require('dayjs/plugin/localizedFormat');
 const _ = require('lodash');
 const fs = require('fs');
 const labels = [];
 const data = {};
 const { CURRENTSEASONNUMBER } = require('../src/frontend-scripts/node-constants');
+
+dayjs.extend(localizedFormat);
 
 const allPlayerGameData = {
 	fascistWinCount: 0,
@@ -70,13 +73,13 @@ Game.find({})
 	.eachAsync(game => {
 		const playerCount = game.losingPlayers.length + game.winningPlayers.length;
 		const fascistsWon = game.winningTeam === 'fascist';
-		const gameDate = moment(new Date(game.date)).format('l');
+		const gameDate = dayjs(new Date(game.date)).format('l');
 		const rebalanced = (game.rebalance6p && playerCount === 6) || (game.rebalance7p && playerCount === 7) || (game.rebalance9p && playerCount === 9);
 		const rebalanced9p2f = game.rebalance9p2f && playerCount === 9;
 
 		if (
 			gameDate === '5/13/2017' ||
-			gameDate === moment(new Date()).format('l') ||
+			gameDate === dayjs(new Date()).format('l') ||
 			(rebalanced &&
 				playerCount === 9 &&
 				(gameDate === '10/29/2017' || gameDate === '10/30/2017' || gameDate === '10/31/2017' || gameDate === '11/1/2017' || gameDate === '11/2/2017'))
@@ -218,7 +221,7 @@ Game.find({})
 				allPlayerGameData.fascistWinCountSeason++;
 			}
 		}
-		labels.push(moment(new Date(game.date)).format('l'));
+		labels.push(dayjs(new Date(game.date)).format('l'));
 	})
 	.then(() => {
 		const uLabels = _.uniq(labels),

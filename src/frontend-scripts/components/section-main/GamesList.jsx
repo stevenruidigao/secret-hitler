@@ -2,10 +2,13 @@ import React from 'react'; // eslint-disable-line
 import DisplayLobbies from './DisplayLobbies.jsx';
 import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants';
 import { Message } from 'semantic-ui-react';
 import { processEmotes } from '../../emotes';
+
+dayjs.extend(duration);
 
 export class GamesList extends React.Component {
 	state = {
@@ -254,8 +257,8 @@ export class GamesList extends React.Component {
 			<section className={this.state.filtersVisible ? 'browser-container' : 'browser-container filters-hidden'}>
 				<a href="#/changelog">
 					<h5 title="A season is an optional new tier of elo that is reset every 3 months.">
-						{moment(new Date()) > CURRENT_SEASON_END - moment.duration(1, 'month')
-							? `Season ends ${moment(CURRENT_SEASON_END).fromNow()}.`
+						{dayjs(new Date()) > CURRENT_SEASON_END - dayjs.duration(1, 'month')
+							? `Season ends ${dayjs(CURRENT_SEASON_END).fromNow()}.`
 							: `Welcome to season ${CURRENT_SEASON_NUMBER}!`}
 					</h5>
 				</a>

@@ -3,7 +3,7 @@ import { PLAYER_COLORS, getBadWord } from '../../constants';
 import PropTypes from 'prop-types';
 import { renderEmotesButton, processEmotes } from '../../emotes';
 import { Scrollbars } from 'react-custom-scrollbars';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default class Generalchat extends React.Component {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
@@ -416,7 +416,7 @@ export default class Generalchat extends React.Component {
 						: PLAYER_COLORS(user, !(gameSettings && gameSettings.disableSeasonal), 'chat-user');
 
 				if (userInfo.gameSettings && userInfo.gameSettings.enableTimestamps) {
-					timestamp = <span className="timestamp">{moment(chat.time).format('HH:mm')} </span>;
+					timestamp = <span className="timestamp">{dayjs(chat.time).format('HH:mm')} </span>;
 				}
 
 				return (

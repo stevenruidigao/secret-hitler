@@ -1219,7 +1219,7 @@ class Settings extends React.Component {
 											return <img src={this.state.isUploaded} />;
 										}
 
-										if (gameSettings && gameSettings.customCardback) {
+										if (gameSettings && gameSettings.customCardback && gameSettings.customCardback.fileExtension) {
 											return (
 												<div
 													className="current-cardback"
