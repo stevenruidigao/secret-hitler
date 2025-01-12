@@ -1,31 +1,31 @@
 /* eslint-disable spaced-comment */
-const { none } = require('option');
-const { Range, List } = require('immutable');
+import { none } from 'option';
+import { Range, List } from 'immutable';
 
 /**************************
  * IMMUTABLES AND OPTIONS *
  ***************************/
 
 // (opt: Option[A], predicate: A => Boolean) => Option[A]
-exports.filterOpt = (opt, predicate) => {
+export const filterOpt = (opt, predicate) => {
 	return opt.flatMap(o => (predicate(o) ? opt : none));
 };
 
 // (xs: List[Option[A]]) => List[A]
-exports.flattenListOpts = xs => xs.filter(x => x.isSome()).map(x => x.value());
+export const flattenListOpts = xs => xs.filter(x => x.isSome()).map(x => x.value());
 
 // (xs: List[A], opt: Option[A]) => List[A]
-exports.pushOpt = (xs, opt) => {
+export const pushOpt = (xs, opt) => {
 	return xs.concat(opt.map(x => List([x])).valueOrElse(List()));
 };
 
 // (x: A) => B => (x: Option[A]) => Option[B]
-exports.mapOpt1 = f => {
+export const mapOpt1 = f => {
 	return x => x.map(xx => f(xx));
 };
 
 // (x: A, y: B) => C => (x: Option[A], y: Option[B]) => Option[C]
-exports.mapOpt2 = f => {
+export const mapOpt2 = f => {
 	return (x, y) => x.flatMap(xx => y.map(yy => f(xx, yy)));
 };
 
@@ -41,7 +41,7 @@ exports.mapOpt2 = f => {
  */
 
 // (handX: Hand, handY: Hand) => Hand
-exports.handDiff = (handX, handY) => {
+export const handDiff = (handX, handY) => {
 	if (handX.hasOwnProperty('reds') && handX.hasOwnProperty('blues')) {
 		// check for legacy format of hands
 		if (handY.hasOwnProperty('reds') && handY.hasOwnProperty('blues')) {
@@ -78,7 +78,7 @@ exports.handDiff = (handX, handY) => {
 
 // expects hand to contain only a single card
 // (hand: Hand) => Policy
-exports.handToPolicy = hand => {
+export const handToPolicy = hand => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		if (hand.reds > 0 && hand.blues > 0) {
 			throw new Error('Expected hand to contain only a single card');
@@ -91,7 +91,7 @@ exports.handToPolicy = hand => {
 
 // consistently ordered 'fascist' first, followed by 'liberal'
 // (hand: Hand) => List[Policy]
-const handToPolicies = (exports.handToPolicies = hand => {
+export const handToPolicies = hand => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		const toPolicies = (count, type) => {
 			return Range(0, count)
@@ -106,10 +106,10 @@ const handToPolicies = (exports.handToPolicies = hand => {
 	}
 
 	return hand;
-});
+};
 
 // (policy: Policy) => Hand
-exports.policyToHand = policy => {
+export const policyToHand = policy => {
 	// return policy === 'fascist' ? { reds: 1, blues: 0 } : { reds: 0, blues: 1 };
 	return policy;
 };
@@ -122,7 +122,7 @@ const isComma = (index, list, userInfo) => {
 	return false;
 };
 
-const policyToString = (policy, userInfo) => {
+export const policyToString = (policy, userInfo) => {
 	const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'short';
 	let liberalChar = 'L';
 	let fascistChar = 'F';
@@ -138,12 +138,11 @@ const policyToString = (policy, userInfo) => {
 };
 
 // (policy: Policy) => String ('R' | 'B')
-exports.policyToString = policyToString;
 
-const text = (exports.text = (type, text, space, comma) => ({ type, text, space, comma }));
+export const text = (type, text, space, comma) => ({ type, text, space, comma });
 
 // (hand: Hand) => String ('R*B*')
-exports.handToText = (hand, userInfo) => {
+export const handToText = (hand, userInfo) => {
 	if (handToPolicies(hand).size === 0) {
 		return [];
 	}
@@ -159,17 +158,17 @@ exports.handToText = (hand, userInfo) => {
  ********/
 
 // (s: String) => String
-exports.capitalize = s => {
+export const capitalize = s => {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 // (target: Object, subset: Object) => Boolean
 // compares attributes with strict equality
-exports.objectContains = (target, subset) => {
+export const objectContains = (target, subset) => {
 	return Object.keys(subset).reduce((acc, key) => acc && target[key] === subset[key], true);
 };
 
-const getBlacklistIndex = (userName, blacklist) => {
+export const getBlacklistIndex = (userName, blacklist) => {
 	if (typeof blacklist === 'undefined') {
 		return -1;
 	}
@@ -181,7 +180,7 @@ const getBlacklistIndex = (userName, blacklist) => {
 	return -1;
 };
 
-const userInBlacklist = (userName, blacklist) => {
+export const userInBlacklist = (userName, blacklist) => {
 	if (typeof blacklist === 'undefined') {
 		return false;
 	}
@@ -192,6 +191,3 @@ const userInBlacklist = (userName, blacklist) => {
 	}
 	return false;
 };
-
-exports.userInBlacklist = userInBlacklist;
-exports.getBlacklistIndex = getBlacklistIndex;

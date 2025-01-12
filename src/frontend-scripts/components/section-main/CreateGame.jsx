@@ -2,7 +2,7 @@ import React from 'react';
 import Switch from 'react-switch';
 import Select from 'react-select';
 import { Range } from 'rc-slider';
-import blacklistedWords from '../../../../iso/blacklistwords';
+import blacklistedWords from '../../../../iso/blacklistedWords.mjs';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
