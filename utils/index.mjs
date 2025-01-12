@@ -1,6 +1,8 @@
 /* eslint-disable spaced-comment */
-import { none } from 'option';
-import { Range, List } from 'immutable';
+// TODO: Migrate to ES module imports
+const { none } = require('option');
+import * as Immutable from 'immutable';
+const { List, Range } = Immutable;
 
 /**************************
  * IMMUTABLES AND OPTIONS *

@@ -43,7 +43,7 @@ module.exports = {
 				test: /\.(js|jsx)$/,
 				use: {
 					loader: 'babel-loader',
-					query: {
+					options: {
 						presets: ['react-app']
 					}
 				},
