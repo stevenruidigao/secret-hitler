@@ -1,30 +1,19 @@
-const Crusher = require('pngcrush');
-const Jimp = require('jimp');
-const Stream = require('stream');
+const path = require('path');
+const sharp = require('sharp');
+
 const Account = require('../models/account');
-const fs = require('fs');
 const { userList, userListEmitter, games } = require('./socket/models');
 const { sendCommandChatsUpdate } = require('./socket/util');
 const { sendGameList } = require('./socket/user-requests');
 
 module.exports.ProcessImage = (username, raw, callback) => {
-	Jimp.read(Buffer.from(raw, 'base64'), (err, img) => {
-		if (err) {
-			callback(null, err);
-			return;
-		}
-
-		img.resize(70, 95).getBuffer(Jimp.MIME_PNG, (err2, buff) => {
-			if (err2) {
-				callback(null, err2);
+	sharp(Buffer.from(raw, 'base64'))
+		.resize(70, 95)
+		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), err => {
+			if (err) {
+				callback(null, err);
 				return;
 			}
-
-			const streamPass = new Stream.PassThrough();
-			streamPass.end(buff);
-			streamPass
-				.pipe(new Crusher(['-brute', '-rem', 'alla', '-c', '2', '-force', '-fix']))
-				.pipe(fs.createWriteStream(`public/images/custom-cardbacks/${username}.png`));
 
 			Account.findOne({ username: username }).then(account => {
 				account.gameSettings.customCardback = account.gameSettings.customCardback || {};
@@ -67,5 +56,4 @@ module.exports.ProcessImage = (username, raw, callback) => {
 				});
 			});
 		});
-	});
 };
