@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions';
-import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants';
+import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.mjs';
 import { renderEmotesButton, processEmotes } from '../../emotes';
 import Swal from 'sweetalert2';
 
@@ -68,7 +68,7 @@ const ClaimPeek = ({ handleClaimButtonClick }) => {
 	}
 };
 
-class Gamechat extends React.Component {
+class GameChat extends React.Component {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
 	state = {
@@ -1703,7 +1703,7 @@ class Gamechat extends React.Component {
 	}
 }
 
-Gamechat.propTypes = {
+GameChat.propTypes = {
 	clickedGameRole: PropTypes.object,
 	clickedPlayer: PropTypes.object,
 	roleState: PropTypes.func,
@@ -1718,4 +1718,4 @@ Gamechat.propTypes = {
 	toggleNotes: PropTypes.func
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Gamechat);
+export default connect(mapStateToProps, mapDispatchToProps)(GameChat);

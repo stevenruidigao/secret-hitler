@@ -1,5 +1,5 @@
 const { gameCreationDisabled, limitNewPlayers, userList, games } = require('../models');
-const { LEGAL_CHARACTERS } = require('../../../src/frontend-scripts/node-constants');
+const { LEGAL_CHARACTERS } = require('../../../src/frontend-scripts/constants.cjs');
 const { generateCombination } = require('gfycat-style-urls');
 const { chatReplacements } = require('../chatReplacements');
 const Account = require('../../../models/account');

@@ -23,7 +23,7 @@ PatchAlert.propTypes = {
 	onClick: PropTypes.func
 };
 
-const Defaultmid = ({ version, readPatchNotes, quickDefault, userInfo }) => (
+const DefaultMid = ({ version, readPatchNotes, quickDefault, userInfo }) => (
 	<section className="defaultmid">
 		<div className="poll">
 			<a target="_blank" href="/polls">
@@ -118,10 +118,11 @@ const Defaultmid = ({ version, readPatchNotes, quickDefault, userInfo }) => (
 	</section>
 );
 
-Defaultmid.propTypes = {
+DefaultMid.propTypes = {
 	quickDefault: PropTypes.func,
 	version: PropTypes.object,
 	readPatchNotes: PropTypes.func,
 	userInfo: PropTypes.object
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Defaultmid);
+
+export default connect(mapStateToProps, mapDispatchToProps)(DefaultMid);

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Tracks from './Tracks.jsx';
-import Gamechat from './Gamechat.jsx';
+import GameChat from './GameChat.jsx';
 import Players from './Players.jsx';
 import Confetti from './Confetti.jsx';
 import Balloons from './Balloons.jsx';
@@ -124,7 +124,7 @@ export default class Game extends React.Component {
 							<section className={gameInfo.general && gameInfo.general.isTourny ? 'gamestatus tourny' : 'gamestatus'}>
 								{gameInfo.general && gameInfo.general.status}
 							</section>
-							<Gamechat gameInfo={gameInfo} userInfo={userInfo} userList={userList} socket={socket} allEmotes={allEmotes} />
+							<GameChat gameInfo={gameInfo} userInfo={userInfo} userList={userList} socket={socket} allEmotes={allEmotes} />
 						</div>
 					</div>
 				</div>

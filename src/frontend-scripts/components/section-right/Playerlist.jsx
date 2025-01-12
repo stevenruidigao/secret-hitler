@@ -2,7 +2,7 @@ import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import { fetchProfile } from '../../actions/actions';
 import cn from 'classnames';
-import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants';
+import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.mjs';
 import $ from 'jquery';
 import Modal from 'semantic-ui-modal';
 import classnames from 'classnames';

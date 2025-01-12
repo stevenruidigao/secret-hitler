@@ -5,7 +5,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Modal, Header, Button, Icon } from 'semantic-ui-react';
 
 import GamesList from './GamesList.jsx';
-import Creategame from './Creategame.jsx';
+import CreateGame from './CreateGame.jsx';
 import Settings from './Settings.jsx';
 import Game from './Game.jsx';
 import Profile from './Profile.jsx';
@@ -267,7 +267,7 @@ export class Main extends React.Component {
 		const RenderMidSection = () => {
 			switch (midSection) {
 				case 'createGame':
-					return <Creategame userList={userList} userInfo={userInfo} socket={socket} />;
+					return <CreateGame userList={userList} userInfo={userInfo} socket={socket} />;
 				case 'changelog':
 					return <Changelog />;
 				case 'game':

@@ -4,7 +4,7 @@ const dayjs = require('dayjs');
 const localizedFormat = require('dayjs/plugin/localizedFormat');
 const fs = require('fs');
 const data = {};
-const { CURRENTSEASONNUMBER } = require('../src/frontend-scripts/node-constants');
+const { CURRENTSEASONNUMBER } = require('../src/frontend-scripts/constants.cjs');
 
 dayjs.extend(localizedFormat);
 

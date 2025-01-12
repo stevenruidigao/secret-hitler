@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Main from './section-main/Main.jsx';
-import Gamenotes from './Gamenotes.jsx';
+import GameNotes from './GameNotes.jsx';
 import {
 	updateUser,
 	updateMidsection,
@@ -477,7 +477,7 @@ export class App extends React.Component {
 							: '"Comfortaa", Lato, sans-serif'
 					}}
 				>
-					{this.props.notesActive && <Gamenotes value={this.state.notesValue} changeNotesValue={this.changeNotesValue} />}
+					{this.props.notesActive && <GameNotes value={this.state.notesValue} changeNotesValue={this.changeNotesValue} />}
 
 					{process.env.NODE_ENV !== 'production' && <DevHelpers />}
 

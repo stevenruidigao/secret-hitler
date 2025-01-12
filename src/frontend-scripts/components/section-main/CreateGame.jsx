@@ -6,7 +6,7 @@ import blacklistedWords from '../../../../iso/blacklistwords';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
-export default class Creategame extends React.Component {
+export default class CreateGame extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -1852,7 +1852,7 @@ export default class Creategame extends React.Component {
 									maxLength="20"
 									placeholder="New Game"
 									onKeyPress={e => {
-										const { LEGALCHARACTERS } = require('../../constants');
+										const { LEGALCHARACTERS } = require('../../constants.cjs');
 										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}
@@ -2358,7 +2358,7 @@ export default class Creategame extends React.Component {
 	}
 }
 
-Creategame.propTypes = {
+CreateGame.propTypes = {
 	socket: PropTypes.object,
 	userInfo: PropTypes.object,
 	userList: PropTypes.object

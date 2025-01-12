@@ -2,9 +2,9 @@ import React from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { createMockStore } from 'redux-test-utils';
 import { shallowWithStore } from 'enzyme-redux';
-import Defaultmid from './Defaultmid';
+import DefaultMid from './DefaultMid';
 
-describe('Defaultmid', () => {
+describe('DefaultMid', () => {
 	let store;
 
 	beforeEach(() => {
@@ -15,7 +15,7 @@ describe('Defaultmid', () => {
 		const mapStateToProps = state => ({
 			state
 		});
-		const ConnectedComponent = connect(mapStateToProps)(Defaultmid);
+		const ConnectedComponent = connect(mapStateToProps)(DefaultMid);
 		const component = shallowWithStore(<ConnectedComponent />, store);
 
 		expect(component).toHaveLength(1);

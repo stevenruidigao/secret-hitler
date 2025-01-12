@@ -4,7 +4,7 @@ import Table from '../reusable/Table.jsx';
 import React from 'react'; // eslint-disable-line no-unused-vars
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { PLAYER_COLORS } from '../../constants';
+import { PLAYER_COLORS } from '../../constants.mjs';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import { Dropdown } from 'semantic-ui-react';

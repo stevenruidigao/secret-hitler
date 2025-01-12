@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants';
+import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.mjs';
 import { Message } from 'semantic-ui-react';
 import { processEmotes } from '../../emotes';
 

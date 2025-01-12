@@ -10,7 +10,7 @@ const mapDispatchToProps = dispatch => ({
 		e.preventDefault();
 	};
 
-class Gamenotes extends React.Component {
+class GameNotes extends React.Component {
 	state = {
 		top: 110,
 		left: 690,
@@ -148,10 +148,10 @@ class Gamenotes extends React.Component {
 	}
 }
 
-Gamenotes.propTypes = {
+GameNotes.propTypes = {
 	toggleNotes: PropTypes.func,
 	value: PropTypes.string,
 	changeNotesValue: PropTypes.func
 };
 
-export default connect(null, mapDispatchToProps)(Gamenotes);
+export default connect(null, mapDispatchToProps)(GameNotes);
