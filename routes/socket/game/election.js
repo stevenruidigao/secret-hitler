@@ -1394,21 +1394,21 @@ module.exports.selectVoting = (passport, game, data, socket, force = false) => {
 		if (game.gameState.previousElectedGovernment.length) {
 			game.private.seatedPlayers[game.gameState.previousElectedGovernment[0]].playersState[game.gameState.previousElectedGovernment[0]].claim = '';
 			game.private.seatedPlayers[game.gameState.previousElectedGovernment[1]].playersState[game.gameState.previousElectedGovernment[1]].claim = '';
-			let affectedSocketId = Object.keys(io.sockets.sockets).find(
+			let affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 				socketId =>
-					io.sockets.sockets[socketId].handshake.session.passport &&
-					io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[game.gameState.previousElectedGovernment[0]].userName
+					io.sockets.sockets.get(socketId).handshake.session.passport &&
+					io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[game.gameState.previousElectedGovernment[0]].userName
 			);
-			if (io.sockets.sockets[affectedSocketId]) {
-				io.sockets.sockets[affectedSocketId].emit('removeClaim');
+			if (io.sockets.sockets.get(affectedSocketId)) {
+				io.sockets.sockets.get(affectedSocketId).emit('removeClaim');
 			}
-			affectedSocketId = Object.keys(io.sockets.sockets).find(
+			affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 				socketId =>
-					io.sockets.sockets[socketId].handshake.session.passport &&
-					io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[game.gameState.previousElectedGovernment[1]].userName
+					io.sockets.sockets.get(socketId).handshake.session.passport &&
+					io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[game.gameState.previousElectedGovernment[1]].userName
 			);
-			if (io.sockets.sockets[affectedSocketId]) {
-				io.sockets.sockets[affectedSocketId].emit('removeClaim');
+			if (io.sockets.sockets.get(affectedSocketId)) {
+				io.sockets.sockets.get(affectedSocketId).emit('removeClaim');
 			}
 		}
 

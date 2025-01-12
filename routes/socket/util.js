@@ -4,6 +4,19 @@ const { Webhook } = require('discord-webhook-node');
 const tempy = require('tempy');
 const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.cjs');
 
+const getRoomSockets = game => {
+	// TODO: remove
+	// console.log(io.sockets.adapter.rooms.get(game.general.uid).values(), io.sockets.sockets);
+
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
+		return [];
+	}
+
+	return Array.from(io.sockets.adapter.rooms.get(game.general.uid).values()).map(socketId => io.sockets.sockets.get(socketId));
+};
+
+module.exports.getRoomSockets = getRoomSockets;
+
 /**
  * Debugging function to send a game to Discord after it's been identified to be cyclic
  */
@@ -71,7 +84,7 @@ module.exports.combineCommandChats = combineCommandChats;
  * @param {boolean} noChats - remove chats for client to handle.
  */
 module.exports.sendInProgressGameUpdate = (game, noChats = false) => {
-	if (!game || !io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
 
@@ -79,7 +92,8 @@ module.exports.sendInProgressGameUpdate = (game, noChats = false) => {
 	// console.log(game.general.status, 'TimedMode:', game.gameState.timedModeEnabled, 'TimerId:', game.private.timerId ? 'exists' : 'null');
 
 	const seatedPlayerNames = game.publicPlayersState.map(player => player.userName);
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+
+	const roomSockets = getRoomSockets(game);
 	const playerSockets = roomSockets.filter(
 		socket =>
 			socket &&
@@ -147,11 +161,11 @@ module.exports.sendInProgressGameUpdate = (game, noChats = false) => {
 };
 
 module.exports.sendInProgressModChatUpdate = (game, chat, specificUser) => {
-	if (!io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
 
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = getRoomSockets(game);
 
 	if (roomSockets.length) {
 		roomSockets.forEach(sock => {
@@ -173,11 +187,11 @@ module.exports.sendInProgressModChatUpdate = (game, chat, specificUser) => {
 };
 
 module.exports.sendPlayerChatUpdate = (game, chat) => {
-	if (!io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
 
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = getRoomSockets(game);
 
 	roomSockets.forEach(sock => {
 		if (sock) {
@@ -187,11 +201,11 @@ module.exports.sendPlayerChatUpdate = (game, chat) => {
 };
 
 module.exports.sendCommandChatsUpdate = game => {
-	if (!io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
 
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = getRoomSockets(game);
 
 	roomSockets.forEach(sock => {
 		if (sock) {
@@ -236,11 +250,13 @@ module.exports.handleAEMMessages = handleAEMMessages;
 module.exports.sendInProgressModDMUpdate = (dm, modUserNames, editorUserNames, adminUserNames) => {
 	for (const user of dm.subscribedPlayers) {
 		try {
-			io.sockets.sockets[
-				Object.keys(io.sockets.sockets).find(
-					socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === user
+			io.sockets.sockets
+				.get(
+					Array.from(io.sockets.sockets.keys()).find(
+						socketId => io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
+					)
 				)
-			].emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
+				.emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
 		} catch (e) {
 			console.log('err', e);
 		}

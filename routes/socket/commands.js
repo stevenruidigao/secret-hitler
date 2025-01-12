@@ -389,22 +389,24 @@ module.exports.commands.getCommand('ping').run = (socket, passport, user, game, 
 	if (seat <= game.publicPlayersState.length && (!player.pingTime || Date.now() - player.pingTime > 180000)) {
 		try {
 			const affectedPlayerIndex = seat - 1;
-			const affectedSocketId = Object.keys(io.sockets.sockets).find(
+			const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 				socketId =>
-					io.sockets.sockets[socketId].handshake.session.passport &&
-					io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
+					io.sockets.sockets.get(socketId).handshake.session.passport &&
+					io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
 			);
 
 			player.pingTime = Date.now();
-			if (!io.sockets.sockets[affectedSocketId]) {
+			if (!io.sockets.sockets.get(affectedSocketId)) {
 				return;
 			}
-			io.sockets.sockets[affectedSocketId].emit(
-				'pingPlayer',
-				game.general.blindMode || game.general.playerChats === 'disabled'
-					? 'Secret Hitler IO: A player has pinged you.'
-					: `Secret Hitler IO: Player ${user.userName} just pinged you.`
-			);
+			io.sockets.sockets
+				.get(affectedSocketId)
+				.emit(
+					'pingPlayer',
+					game.general.blindMode || game.general.playerChats === 'disabled'
+						? 'Secret Hitler IO: A player has pinged you.'
+						: `Secret Hitler IO: Player ${user.userName} just pinged you.`
+				);
 
 			if (game.general.playerChats === 'disabled') {
 				game.private.seatedPlayers
@@ -781,16 +783,16 @@ module.exports.commands.getCommand('forceping').run = (socket, passport, user, g
 	});
 
 	try {
-		const affectedSocketId = Object.keys(io.sockets.sockets).find(
+		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 			socketId =>
-				io.sockets.sockets[socketId].handshake.session.passport &&
-				io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+				io.sockets.sockets.get(socketId).handshake.session.passport &&
+				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
 		);
-		if (!io.sockets.sockets[affectedSocketId]) {
+		if (!io.sockets.sockets.get(affectedSocketId)) {
 			sendMessage(game, user, 'Unable to send ping.');
 			return;
 		}
-		io.sockets.sockets[affectedSocketId].emit('pingPlayer', 'Secret Hitler IO: A moderator has pinged you.');
+		io.sockets.sockets.get(affectedSocketId).emit('pingPlayer', 'Secret Hitler IO: A moderator has pinged you.');
 	} catch (e) {
 		console.log(e, 'caught exception in ping chat');
 	}

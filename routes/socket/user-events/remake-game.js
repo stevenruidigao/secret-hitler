@@ -81,9 +81,10 @@ module.exports.handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		delete _game.private;
 		const newGame = _.cloneDeep(_game);
 		const remakePlayerNames = remakeData.filter(player => player.isRemaking).map(player => player.userName);
-		const remakePlayerSocketIDs = Object.keys(io.sockets.sockets).filter(
+		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter(
 			socketId =>
-				io.sockets.sockets[socketId].handshake.session.passport && remakePlayerNames.includes(io.sockets.sockets[socketId].handshake.session.passport.user)
+				io.sockets.sockets.get(socketId).handshake.session.passport &&
+				remakePlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
 		);
 		sendInProgressGameUpdate(game);
 
@@ -246,17 +247,17 @@ module.exports.handleUpdatedRemakeGame = (passport, game, data, socket) => {
 
 			let creatorRemade = false;
 			remakePlayerSocketIDs.forEach((id, index) => {
-				if (io.sockets.sockets[id]) {
-					io.sockets.sockets[id].leave(game.general.uid);
-					sendGameInfo(io.sockets.sockets[id], newGame.general.uid);
+				if (io.sockets.sockets.get(id)) {
+					io.sockets.sockets.get(id).leave(game.general.uid);
+					sendGameInfo(io.sockets.sockets.get(id), newGame.general.uid);
 					if (
-						io.sockets.sockets[id] &&
-						io.sockets.sockets[id].handshake &&
-						io.sockets.sockets[id].handshake.session &&
-						io.sockets.sockets[id].handshake.session.passport
+						io.sockets.sockets.get(id) &&
+						io.sockets.sockets.get(id).handshake &&
+						io.sockets.sockets.get(id).handshake.session &&
+						io.sockets.sockets.get(id).handshake.session.passport
 					) {
-						updateSeatedUser(io.sockets.sockets[id], io.sockets.sockets[id].handshake.session.passport, { uid: newGame.general.uid });
-						if (io.sockets.sockets[id].handshake.session.passport.user === newGame.private.gameCreatorName) creatorRemade = true;
+						updateSeatedUser(io.sockets.sockets.get(id), io.sockets.sockets.get(id).handshake.session.passport, { uid: newGame.general.uid });
+						if (io.sockets.sockets.get(id).handshake.session.passport.user === newGame.private.gameCreatorName) creatorRemade = true;
 					}
 				}
 			});

@@ -92,8 +92,9 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 
 	const isSuperMod = superModUserNames.includes(passport.user) || newStaff.editorUserNames.includes(passport.user);
 
-	const affectedSocketId = Object.keys(io.sockets.sockets).find(
-		socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === data.userName
+	const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
+		socketId =>
+			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
 	);
 
 	if (
@@ -154,9 +155,9 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 			const logOutUser = username => {
 				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
 
-				if (io.sockets.sockets[affectedSocketId]) {
-					io.sockets.sockets[affectedSocketId].emit('manualDisconnection');
-					io.sockets.sockets[affectedSocketId].disconnect();
+				if (io.sockets.sockets.get(affectedSocketId)) {
+					io.sockets.sockets.get(affectedSocketId).emit('manualDisconnection');
+					io.sockets.sockets.get(affectedSocketId).disconnect();
 				}
 
 				if (bannedUserlistIndex >= 0) {
@@ -232,8 +233,8 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 								user.warnings = [warning];
 							}
 							user.save(() => {
-								if (io.sockets.sockets[affectedSocketId]) {
-									io.sockets.sockets[affectedSocketId].emit('checkRestrictions');
+								if (io.sockets.sockets.get(affectedSocketId)) {
+									io.sockets.sockets.get(affectedSocketId).emit('checkRestrictions');
 								}
 							});
 						} else {
@@ -253,8 +254,8 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 							}
 							user.markModified('warnings');
 							user.save(() => {
-								if (io.sockets.sockets[affectedSocketId]) {
-									io.sockets.sockets[affectedSocketId].emit('checkRestrictions');
+								if (io.sockets.sockets.get(affectedSocketId)) {
+									io.sockets.sockets.get(affectedSocketId).emit('checkRestrictions');
 								}
 							});
 						} else {
@@ -389,8 +390,8 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 										socket.emit('sendAlert', `User ${data.comment} already exists`);
 									} else {
 										Account.findOne({ username: data.userName }).then(account => {
-											if (io.sockets.sockets[affectedSocketId]) {
-												io.sockets.sockets[affectedSocketId].emit('manualDisconnection');
+											if (io.sockets.sockets.get(affectedSocketId)) {
+												io.sockets.sockets.get(affectedSocketId).emit('manualDisconnection');
 											}
 											if (account) {
 												account.username = data.comment;
@@ -743,8 +744,8 @@ module.exports.handleModerationAction = (socket, passport, data, skipCheck, modU
 									}
 								});
 								account.save(() => {
-									if (io.sockets.sockets[affectedSocketId]) {
-										io.sockets.sockets[affectedSocketId].emit('gameSettings', account.gameSettings);
+									if (io.sockets.sockets.get(affectedSocketId)) {
+										io.sockets.sockets.get(affectedSocketId).emit('gameSettings', account.gameSettings);
 									}
 								});
 							} else {

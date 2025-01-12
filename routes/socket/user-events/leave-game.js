@@ -59,13 +59,15 @@ const startCountdown = game => {
 				const BPlayers = players.filter(player => !APlayers.includes(player));
 				const APlayerNames = APlayers.map(player => player.userName);
 				const BPlayerNames = BPlayers.map(player => player.userName);
-				const ASocketIds = Object.keys(io.sockets.sockets).filter(
+				const ASocketIds = Array.from(io.sockets.sockets.keys()).filter(
 					socketId =>
-						io.sockets.sockets[socketId].handshake.session.passport && APlayerNames.includes(io.sockets.sockets[socketId].handshake.session.passport.user)
+						io.sockets.sockets.get(socketId).handshake.session.passport &&
+						APlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
 				);
-				const BSocketIds = Object.keys(io.sockets.sockets).filter(
+				const BSocketIds = Array.from(io.sockets.sockets.keys()).filter(
 					socketId =>
-						io.sockets.sockets[socketId].handshake.session.passport && BPlayerNames.includes(io.sockets.sockets[socketId].handshake.session.passport.user)
+						io.sockets.sockets.get(socketId).handshake.session.passport &&
+						BPlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
 				);
 
 				gameA.general.uid = `${game.general.uid}TableA`;
@@ -77,9 +79,9 @@ const startCountdown = game => {
 				gameB.publicPlayersState = BPlayers;
 
 				ASocketIds.forEach(id => {
-					const socket = io.sockets.sockets[id];
+					const socket = io.sockets.sockets.get(id);
 
-					Object.keys(socket.rooms).forEach(roomUid => {
+					Array.from(socket.rooms.keys()).forEach(roomUid => {
 						socket.leave(roomUid);
 					});
 					socket.join(gameA.general.uid);
@@ -87,9 +89,9 @@ const startCountdown = game => {
 				});
 
 				BSocketIds.forEach(id => {
-					const socket = io.sockets.sockets[id];
+					const socket = io.sockets.sockets.get(id);
 
-					Object.keys(socket.rooms).forEach(roomUid => {
+					Array.from(socket.rooms.keys()).forEach(roomUid => {
 						socket.leave(roomUid);
 					});
 					socket.join(gameB.general.uid);

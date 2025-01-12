@@ -184,19 +184,21 @@ const userListEmitter = {
 			const staffUserList = Object.keys(staffList).filter(
 				name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
 			);
-			const staffSocketIds = Object.keys(io.sockets.sockets).filter(id => staffUserList.includes(io.sockets.sockets[id].handshake.session.passport?.user));
-			const nonStaffSocketIds = Object.keys(io.sockets.sockets).filter(id => !staffSocketIds.includes(id));
+			const staffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id =>
+				staffUserList.includes(io.sockets.sockets.get(id).handshake.session.passport?.user)
+			);
+			const nonStaffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id => !staffSocketIds.includes(id));
 
 			userListEmitter.send = false;
 
 			// Send to staff
 			staffSocketIds.forEach(id => {
-				io.sockets.sockets[id].emit('userList', { list: module.exports.formattedUserList(true) });
+				io.sockets.sockets.get(id).emit('userList', { list: module.exports.formattedUserList(true) });
 			});
 
 			// Send to non-staff
 			nonStaffSocketIds.forEach(id => {
-				io.sockets.sockets[id].emit('userList', { list: module.exports.formattedUserList(false) });
+				io.sockets.sockets.get(id).emit('userList', { list: module.exports.formattedUserList(false) });
 			});
 		}
 	}, 100)

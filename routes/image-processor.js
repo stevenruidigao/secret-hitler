@@ -44,12 +44,13 @@ module.exports.ProcessImage = (username, raw, callback) => {
 						}
 					});
 
-					const socketId = Object.keys(io.sockets.sockets).find(
-						socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === username
+					const socketId = Array.from(io.sockets.sockets.keys()).find(
+						socketId =>
+							io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === username
 					);
 
-					if (socketId && io.sockets.sockets[socketId]) {
-						io.sockets.sockets[socketId].emit('gameSettings', account.gameSettings);
+					if (socketId && io.sockets.sockets.get(socketId)) {
+						io.sockets.sockets.get(socketId).emit('gameSettings', account.gameSettings);
 					}
 
 					callback('Image uploaded successfully.');

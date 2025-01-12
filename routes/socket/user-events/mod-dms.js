@@ -47,8 +47,9 @@ module.exports.handleOpenChat = (socket, data, modUserNames, editorUserNames, ad
 		return sendInProgressModDMUpdate(dm, modUserNames, editorUserNames, adminUserNames);
 	}
 
-	const dmReceiverSocketID = Object.keys(io.sockets.sockets).find(
-		socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === data.userName
+	const dmReceiverSocketID = Array.from(io.sockets.sockets.keys()).find(
+		socketId =>
+			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
 	);
 	const dmReceiverSocket = io.sockets.sockets[dmReceiverSocketID];
 
@@ -122,8 +123,9 @@ module.exports.handleCloseChat = (socket, data, modUserNames, editorUserNames, a
 				try {
 					const sock =
 						io.sockets.sockets[
-							Object.keys(io.sockets.sockets).find(
-								socketId => io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === user
+							Array.from(io.sockets.sockets.keys()).find(
+								socketId =>
+									io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
 							)
 						];
 

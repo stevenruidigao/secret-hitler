@@ -779,16 +779,16 @@ const beginGame = game => {
 	);
 
 	for (let affectedPlayerNumber = 0; affectedPlayerNumber < game.publicPlayersState.length; affectedPlayerNumber++) {
-		const affectedSocketId = Object.keys(io.sockets.sockets).find(
+		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 			socketId =>
-				io.sockets.sockets[socketId].handshake.session.passport &&
-				io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+				io.sockets.sockets.get(socketId).handshake.session.passport &&
+				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
 		);
-		if (!io.sockets.sockets[affectedSocketId]) {
+		if (!io.sockets.sockets.get(affectedSocketId)) {
 			continue;
 		}
 		if (process.env.NODE_ENV !== 'development') {
-			io.sockets.sockets[affectedSocketId].emit('pingPlayer', 'Secret Hitler IO: The game has started!');
+			io.sockets.sockets.get(affectedSocketId).emit('pingPlayer', 'Secret Hitler IO: The game has started!');
 		}
 	}
 };

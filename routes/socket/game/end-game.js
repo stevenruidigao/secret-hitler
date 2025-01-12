@@ -191,13 +191,13 @@ module.exports.completeGame = (game, winningTeamName) => {
 	for (let affectedPlayerNumber = 0; affectedPlayerNumber < game.publicPlayersState.length; affectedPlayerNumber++) {
 		const affectedSocketId = Object.keys(io.sockets.sockets).find(
 			socketId =>
-				io.sockets.sockets[socketId].handshake.session.passport &&
-				io.sockets.sockets[socketId].handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+				io.sockets.sockets.get(socketId).handshake.session.passport &&
+				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
 		);
-		if (!io.sockets.sockets[affectedSocketId]) {
+		if (!io.sockets.sockets.get(affectedSocketId)) {
 			continue;
 		}
-		io.sockets.sockets[affectedSocketId].emit('removeClaim');
+		io.sockets.sockets.get(affectedSocketId).emit('removeClaim');
 	}
 
 	if (game && game.general && game.general.timedMode && game.private.timerId) {
@@ -467,7 +467,8 @@ module.exports.completeGame = (game, winningTeamName) => {
 							player.gameSettings.tournyWins.push(Date.now());
 							const playerSocketId = Object.keys(io.sockets.sockets).find(
 								socketId =>
-									io.sockets.sockets[socketId].handshake.session.passport && io.sockets.sockets[socketId].handshake.session.passport.user === player.username
+									io.sockets.sockets.get(socketId).handshake.session.passport &&
+									io.sockets.sockets.get(socketId).handshake.session.passport.user === player.username
 							);
 
 							io.sockets.sockets[playerSocketId].emit('gameSettings', player.gameSettings);
@@ -653,25 +654,25 @@ module.exports.completeGame = (game, winningTeamName) => {
 						sendInProgressGameUpdate(game);
 						const winningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
 							socketId =>
-								io.sockets.sockets[socketId].handshake.session.passport &&
-								winningPrivatePlayers.map(player => player.userName).includes(io.sockets.sockets[socketId].handshake.session.passport.user)
+								io.sockets.sockets.get(socketId).handshake.session.passport &&
+								winningPrivatePlayers.map(player => player.userName).includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
 						);
 
 						// crash here line 302 map of undefined.  Not sure how this didn't exist at this time.  Race condition in settimeout/interval?  Both games completed at almost the same time?  Dunno.
 						const otherGameWinningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
 							socketId =>
-								io.sockets.sockets[socketId].handshake.session.passport &&
+								io.sockets.sockets.get(socketId).handshake.session.passport &&
 								game.general.tournyInfo.winningPlayersFirstCompletedGame
 									.map(player => player.userName)
-									.includes(io.sockets.sockets[socketId].handshake.session.passport.user)
+									.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
 						);
 
 						const socketIds = winningPlayerSocketIds.concat(otherGameWinningPlayerSocketIds);
 
 						socketIds.forEach(id => {
-							const socket = io.sockets.sockets[id];
+							const socket = io.sockets.sockets.get(id);
 
-							Object.keys(socket.rooms).forEach(roomUid => {
+							Array.from(socket.rooms.keys()).forEach(roomUid => {
 								socket.leave(roomUid);
 							});
 							socket.join(finalGame.general.uid);

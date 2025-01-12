@@ -114,18 +114,18 @@ const gamesGarbageCollector = () => {
 
 		if (toDelete && currentGame.publicPlayersState) {
 			for (let affectedPlayerNumber = 0; affectedPlayerNumber < currentGame.publicPlayersState.length; affectedPlayerNumber++) {
-				const affectedSocketId = Object.keys(io.sockets.sockets).find(
+				const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
 					socketId =>
-						io.sockets.sockets[socketId].handshake.session.passport &&
-						io.sockets.sockets[socketId].handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
+						io.sockets.sockets.get(socketId).handshake.session.passport &&
+						io.sockets.sockets.get(socketId).handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
 				);
-				if (!io.sockets.sockets[affectedSocketId]) {
+				if (!io.sockets.sockets.get(affectedSocketId)) {
 					continue;
 				}
 
 				// I'm entirely unsure why socketio seems to misbehave with these combined so often - probably just bad timing
-				if (io.sockets.sockets && io.sockets.sockets[affectedSocketId]) io.sockets.sockets[affectedSocketId].emit('toLobby', currentGame.uid);
-				if (io.sockets.sockets && io.sockets.sockets[affectedSocketId]) io.sockets.sockets[affectedSocketId].leave(gameName);
+				if (io.sockets.sockets && io.sockets.sockets.get(affectedSocketId)) io.sockets.sockets.get(affectedSocketId).emit('toLobby', currentGame.uid);
+				if (io.sockets.sockets && io.sockets.sockets.get(affectedSocketId)) io.sockets.sockets.get(affectedSocketId).leave(gameName);
 			}
 
 			saveAndDeleteGame(gameName);
