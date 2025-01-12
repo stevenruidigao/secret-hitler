@@ -15,7 +15,7 @@ const fetch = require('node-fetch');
 const prodCacheBustToken = require('./prodCacheBustToken');
 const { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } = require('../src/frontend-scripts/constants.cjs');
 const { checkBadgesAccount } = require('./socket/badges');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 /**
  * @param {object} req - express request object.
@@ -346,10 +346,10 @@ module.exports = () => {
 					};
 				}
 
-				_profile.created = moment(account.created).format('MM/DD/YYYY');
+				_profile.created = dayjs(account.created).format('MM/DD/YYYY');
 				_profile.customCardback = account.gameSettings.customCardback;
 				_profile.bio = account.bio;
-				_profile.lastConnected = !!account.lastConnected ? moment(account.lastConnected).format('MM/DD/YYYY') : '';
+				_profile.lastConnected = !!account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
 				_profile.badges = account.badges || [];
 				_profile.eloPercentile = Object.keys(account.eloPercentile).length ? account.eloPercentile : undefined;
 				_profile.maxElo =
@@ -419,8 +419,8 @@ module.exports = () => {
 							console.log(e);
 						}
 
-						_profile.lastConnected = moment(account.lastConnected).format('MM/DD/YYYY h:mm');
-						_profile.created = moment(account.created).format('MM/DD/YYYY h:mm');
+						_profile.lastConnected = dayjs(account.lastConnected).format('MM/DD/YYYY h:mm');
+						_profile.created = dayjs(account.created).format('MM/DD/YYYY h:mm');
 
 						if (acc.staffRole !== 'trialmod') {
 							_profile.blacklist = account.gameSettings.blacklist;

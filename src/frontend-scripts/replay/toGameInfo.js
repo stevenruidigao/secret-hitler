@@ -1,4 +1,4 @@
-import { mapOpt1 } from '../../../utils';
+import { mapOpt1 } from '../../../utils/index.cjs';
 
 export default function toGameInfo(snapshot) {
 	const gameState = {

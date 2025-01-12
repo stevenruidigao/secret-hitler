@@ -62,8 +62,13 @@ const Account = require('../../models/account');
 const { TOU_CHANGES } = require('../../src/frontend-scripts/constants.cjs');
 const version = require('../../version');
 const https = require('https');
-const moment = require('moment');
+const dayjs = require('dayjs');
+const duration = require('dayjs/plugin/duration');
+const relativeTime = require('dayjs/plugin/relativeTime');
 const { selectPlayerToAssassinate } = require('./game/assassination');
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 let modUserNames = [],
 	editorUserNames = [],
@@ -341,7 +346,7 @@ module.exports.socketRoutes = () => {
 									status: 'error',
 									message:
 										'You can only submit feedback twice a day. You can submit feedback again in ' +
-										moment.duration(24 * 60 * 60 * 1000 - (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
+										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
 										'.'
 								});
 								return;

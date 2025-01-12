@@ -1,5 +1,5 @@
 import React from 'react'; // eslint-disable-line
-import { handToPolicies } from '../../../../../utils';
+import { handToPolicies } from '../../../../../utils/index.cjs';
 import { fromNullable } from 'option';
 import Card from '../../reusable/Card.jsx';
 

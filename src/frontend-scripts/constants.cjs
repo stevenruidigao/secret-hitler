@@ -1,8 +1,8 @@
 const cn = require('classnames');
 const dayjs = require('dayjs');
-const localizedFormat = require('dayjs/plugin/localizedFormat');
+const duration = require('dayjs/plugin/duration');
 
-dayjs.extend(localizedFormat);
+dayjs.extend(duration);
 
 module.exports.TOU_CHANGES = [
 	{

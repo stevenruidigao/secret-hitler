@@ -1,7 +1,12 @@
 const ModAction = require('../../../models/modAction');
 const { sendInProgressGameUpdate } = require('../util.js');
-const moment = require('moment');
+const dayjs = require('dayjs');
+const duration = require('dayjs/plugin/duration');
+const relativeTime = require('dayjs/plugin/relativeTime');
 const { makeReport } = require('../report.js');
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 /**
  * @param {object} socket - socket reference.
@@ -253,7 +258,7 @@ module.exports.handleModPeekRemakes = (socket, passport, game, modUserName) => {
 			}
 
 			const playerRemakeData = game.remakeData.find(d => d.userName === player.userName);
-			output += '<td>' + (playerRemakeData.remakeTime ? moment.duration(new Date() - new Date(playerRemakeData.remakeTime)).humanize() : '-') + '</td>';
+			output += '<td>' + (playerRemakeData.remakeTime ? dayjs.duration(new Date() - new Date(playerRemakeData.remakeTime)).humanize() : '-') + '</td>';
 			output += '<td>' + (playerRemakeData.isRemaking ? 'Yes' : 'No') + '</td>';
 			output += '<td>' + playerRemakeData.timesVoted + '</td>';
 			output += '</tr>';

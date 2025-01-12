@@ -1,5 +1,5 @@
 const Account = require('../../models/account');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 const gameTypeCount = 500;
 
@@ -170,7 +170,7 @@ module.exports.checkBadgesAccount = user => {
 
 		if (
 			user.created <=
-			moment()
+			dayjs()
 				.utc()
 				.subtract(years, 'years')
 				.toDate()
