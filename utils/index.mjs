@@ -1,6 +1,7 @@
 /* eslint-disable spaced-comment */
 // TODO: Migrate to ES module imports
-const { none } = require('option');
+// const { none } = require('option');
+// import { none } from 'option'; // webpack errors... commenting out for now
 import * as Immutable from 'immutable';
 const { List, Range } = Immutable;
 
@@ -8,10 +9,11 @@ const { List, Range } = Immutable;
  * IMMUTABLES AND OPTIONS *
  ***************************/
 
+// TODO: fix this if necessary
 // (opt: Option[A], predicate: A => Boolean) => Option[A]
-export const filterOpt = (opt, predicate) => {
-	return opt.flatMap(o => (predicate(o) ? opt : none));
-};
+// export const filterOpt = (opt, predicate) => {
+// 	return opt.flatMap(o => (predicate(o) ? opt : none));
+// };
 
 // (xs: List[Option[A]]) => List[A]
 export const flattenListOpts = xs => xs.filter(x => x.isSome()).map(x => x.value());
