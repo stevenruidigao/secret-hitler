@@ -24,7 +24,6 @@ const debug = require('debug')('app:server');
 const server = http.createServer(app);
 
 global.io = require('socket.io')(server);
-global.notify = require('node-notifier');
 
 app.set('port', port);
 app.set('strict routing', true);
