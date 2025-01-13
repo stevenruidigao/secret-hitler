@@ -1,10 +1,14 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractSass = new ExtractTextPlugin({
-	filename: '../styles/style-main.css',
-	disable: process.env.NODE_ENV === 'development'
-});
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const extractSass =
+	process.env.NODE_ENV !== 'development'
+		? new MiniCssExtractPlugin({
+				filename: '../styles/style-main.css'
+		  })
+		: undefined;
+
 const Dotenv = require('dotenv-webpack');
 
 process.env.NODE_ENV = 'production';
@@ -61,18 +65,16 @@ module.exports = {
 			},
 			{
 				test: /\.s?css$/,
-				use: extractSass.extract({
-					use: [
-						{
-							loader: 'css-loader',
-							options: { minimize: true }
-						},
-						{
-							loader: 'sass-loader'
-						}
-					],
-					fallback: 'style-loader'
-				})
+				use: [
+					extractSass ? MiniCssExtractPlugin.loader : 'style-loader',
+					{
+						loader: 'css-loader',
+						options: { minimize: true }
+					},
+					{
+						loader: 'sass-loader'
+					}
+				]
 			}
 		]
 	},
