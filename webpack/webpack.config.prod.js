@@ -1,5 +1,5 @@
 const path = require('path');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractSass = new ExtractTextPlugin({
 	filename: '../styles/style-main.css',
@@ -23,9 +23,9 @@ module.exports = {
 	],
 	optimization: {
 		minimizer: [
-			new UglifyJSPlugin({
+			new TerserPlugin({
 				parallel: true,
-				uglifyOptions: {
+				terserOptions: {
 					mangle: false,
 					keep_classnames: true,
 					keep_fnames: true
