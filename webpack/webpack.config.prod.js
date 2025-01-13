@@ -79,7 +79,7 @@ module.exports = {
 										'cssnano',
 										{
 											preset: 'default',
-											plugins: ['autoprefixer', 'postcss-preset-env']
+											plugins: ['postcss-preset-env']
 										}
 									]
 								]

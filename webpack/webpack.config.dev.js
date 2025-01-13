@@ -44,7 +44,7 @@ module.exports = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['react-app']
+						presets: ['@babel/preset-react']
 					}
 				},
 				exclude: /node_modules/
