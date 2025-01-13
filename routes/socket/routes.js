@@ -59,7 +59,7 @@ const {
 const { saveAndDeleteGame } = require('./game/end-game');
 const { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } = require('./models');
 const Account = require('../../models/account');
-const { TOU_CHANGES } = require('../../src/frontend-scripts/constants.cjs');
+const { TOU_CHANGES } = require('../../src/frontend-scripts/constants.js');
 const version = require('../../version');
 const https = require('https');
 const dayjs = require('dayjs');
