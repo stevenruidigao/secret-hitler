@@ -24,7 +24,7 @@ module.exports = {
 		new Dotenv({
 			path: path.resolve(__dirname, '..', '.env')
 		})
-	],
+	].filter(plugin => plugin !== undefined),
 	optimization: {
 		minimizer: [
 			new TerserPlugin({
