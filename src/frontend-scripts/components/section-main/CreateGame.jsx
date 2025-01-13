@@ -2,7 +2,7 @@ import React from 'react';
 import Switch from 'react-switch';
 import Select from 'react-select';
 import { Range } from 'rc-slider';
-import blacklistedWords from '../../../../iso/blacklistedWords.mjs';
+import blacklistedWords from '../../../../iso/blacklistedWords.js';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
@@ -1852,7 +1852,7 @@ export default class CreateGame extends React.Component {
 									maxLength="20"
 									placeholder="New Game"
 									onKeyPress={e => {
-										const { LEGALCHARACTERS } = require('../../constants.cjs');
+										const { LEGALCHARACTERS } = require('../../constants.js');
 										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}

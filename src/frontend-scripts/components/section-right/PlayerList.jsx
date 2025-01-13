@@ -2,14 +2,14 @@ import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import { fetchProfile } from '../../actions/actions.js';
 import cn from 'classnames';
-import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.mjs';
+import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.js';
 import $ from 'jquery';
 import Modal from 'semantic-ui-modal';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 import UserPopup from '../reusable/UserPopup.jsx';
-import { userInBlacklist } from '../../../../utils/index.mjs';
+import { userInBlacklist } from '../../../../utils/index.js';
 
 $.fn.modal = Modal;
 

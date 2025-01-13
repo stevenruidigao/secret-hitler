@@ -4,14 +4,14 @@ import Table from '../reusable/Table.jsx';
 import React from 'react'; // eslint-disable-line no-unused-vars
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { PLAYER_COLORS } from '../../constants.mjs';
+import { PLAYER_COLORS } from '../../constants.js';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import { Dropdown } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
 import UserPopup from '../reusable/UserPopup.jsx';
-import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.mjs';
+import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.js';
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });

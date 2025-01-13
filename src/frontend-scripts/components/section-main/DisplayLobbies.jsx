@@ -1,7 +1,7 @@
 import React from 'react'; // eslint-disable-line
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { PLAYER_COLORS } from '../../constants.mjs';
+import { PLAYER_COLORS } from '../../constants.js';
 
 const DisplayLobbies = props => {
 	const { game, userInfo, userList } = props;

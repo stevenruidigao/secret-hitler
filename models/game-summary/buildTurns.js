@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 const { List, Range } = require('immutable');
 const { some, none, fromNullable } = require('option');
-const { filterOpt, flattenListOpts, pushOpt, mapOpt1, mapOpt2, handDiff, policyToHand, handToPolicy } = require('../../utils/index.cjs');
+const { filterOpt, flattenListOpts, pushOpt, mapOpt1, mapOpt2, handDiff, policyToHand, handToPolicy } = require('../../utils/index.js');
 
 module.exports = (
 	logs,

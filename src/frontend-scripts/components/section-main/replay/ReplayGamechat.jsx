@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { loadReplay, updateUser } from '../../../actions/actions';
 import { processEmotes } from '../../../emotes';
-import { PLAYER_COLORS } from '../../../constants.mjs';
+import { PLAYER_COLORS } from '../../../constants.js';
 
 const mapDispatchToProps = dispatch => ({
 	loadReplay: summary => dispatch(loadReplay(summary)),

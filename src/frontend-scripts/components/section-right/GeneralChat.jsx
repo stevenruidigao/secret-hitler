@@ -1,5 +1,5 @@
 import React from 'react';
-import { PLAYER_COLORS, getBadWord } from '../../constants.mjs';
+import { PLAYER_COLORS, getBadWord } from '../../constants.js';
 import PropTypes from 'prop-types';
 import { renderEmotesButton, processEmotes } from '../../emotes';
 import { Scrollbars } from 'react-custom-scrollbars';

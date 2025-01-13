@@ -2,7 +2,7 @@ const { newStaff } = require('./models');
 const util = require('util');
 const { Webhook } = require('discord-webhook-node');
 const tempy = require('tempy');
-const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.cjs');
+const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.js');
 
 const getRoomSockets = game => {
 	// TODO: remove

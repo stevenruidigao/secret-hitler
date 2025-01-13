@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions';
-import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.mjs';
+import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.js';
 import { renderEmotesButton, processEmotes } from '../../emotes';
 import Swal from 'sweetalert2';
 

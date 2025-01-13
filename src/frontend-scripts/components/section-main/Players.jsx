@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import classnames from 'classnames';
 import Policies from './Policies.jsx';
 import { togglePlayerNotes } from '../../actions/actions';
-import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.mjs';
+import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.js';
 import UserPopup from '../reusable/UserPopup.jsx';
 
 $.fn.dropdown = Dropdown;

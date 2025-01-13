@@ -173,6 +173,13 @@ module.exports.getBadWord = text => {
 	return foundWord;
 };
 
+// https://community.shopify.com/c/Shopify-Design/Ordinal-Number-in-javascript-1st-2nd-3rd-4th/m-p/72156
+module.exports.getNumberWithOrdinal = n => {
+	const s = ['th', 'st', 'nd', 'rd'];
+	const v = n % 100;
+	return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
 module.exports.DEFAULT_THEME_COLORS = {
 	primaryColor: 'hsl(225, 73%, 57%)',
 	secondaryColor: 'hsl(225, 48%, 57%)',

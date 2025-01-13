@@ -24,7 +24,7 @@ const { getProfile } = require('../../models/profile/utils');
 const { sendInProgressGameUpdate } = require('./util');
 const version = require('../../version');
 const { obfIP } = require('./ip-obf');
-const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.cjs');
+const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.js');
 
 /**
  * @param {object} socket - user socket reference.

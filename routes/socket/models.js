@@ -1,4 +1,4 @@
-const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.cjs');
+const { CURRENT_SEASON_NUMBER } = require('../../src/frontend-scripts/constants.js');
 const Account = require('../../models/account');
 const ModAction = require('../../models/modAction');
 const BannedIP = require('../../models/bannedIP');

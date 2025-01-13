@@ -10,7 +10,7 @@ const animals = require('../../../utils/animals');
 const adjectives = require('../../../utils/adjectives');
 const _ = require('lodash');
 const { makeReport } = require('../report.js');
-const { CURRENT_SEASON_NUMBER } = require('../../../src/frontend-scripts/constants.cjs');
+const { CURRENT_SEASON_NUMBER } = require('../../../src/frontend-scripts/constants.js');
 const { LineGuess } = require('../util');
 const { checkBadgesELO, checkBadgesXP } = require('../badges');
 
