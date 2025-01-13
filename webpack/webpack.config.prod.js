@@ -68,8 +68,23 @@ module.exports = {
 				use: [
 					extractSass ? MiniCssExtractPlugin.loader : 'style-loader',
 					{
-						loader: 'css-loader',
-						options: { minimize: true }
+						loader: 'css-loader'
+					},
+					{
+						loader: 'postcss-loader',
+						options: {
+							postcssOptions: {
+								plugins: [
+									[
+										'cssnano',
+										{
+											preset: 'default',
+											plugins: ['autoprefixer', 'postcss-preset-env']
+										}
+									]
+								]
+							}
+						}
 					},
 					{
 						loader: 'sass-loader'
