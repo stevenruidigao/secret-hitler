@@ -44,6 +44,7 @@ dump/
 scripts/out/*
 public/images/emotesheet.png
 public/styles/*.map
+public/scrips/*.png
 
 # Keep .gitkeep files, even in ignored directories
 !/**/.gitkeep
