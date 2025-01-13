@@ -217,6 +217,126 @@ module.exports.policyPeekAndDrop = game => {
 /**
  * @param {object} passport - socket authentication.
  * @param {object} game - target game.
+ * @param {object} data from socket emit
+ * @param {object} socket - socket
+ */
+module.exports.selectBurnCard = (passport, game, data, socket) => {
+	if (game.general.timedMode && game.private.timerId) {
+		clearTimeout(game.private.timerId);
+		game.private.timerId = null;
+	}
+
+	if (game.gameState.isGameFrozen) {
+		if (socket) {
+			socket.emit('sendAlert', 'A staff member has prevented this game from proceeding. Please wait.');
+		}
+		return;
+	}
+
+	if (game.general.isRemade) {
+		if (socket) {
+			socket.emit('sendAlert', 'This game has been remade and is now no longer playable.');
+		}
+		return;
+	}
+
+	const { experiencedMode } = game.general;
+	const { presidentIndex } = game.gameState;
+	const { seatedPlayers } = game.private;
+	const president = seatedPlayers[presidentIndex];
+	const publicPresident = game.publicPlayersState[game.gameState.presidentIndex];
+
+	if (!president || president.userName !== passport.user) {
+		return;
+	}
+
+	if (game.gameState.phase !== 'presidentVoteOnBurn') {
+		return;
+	}
+
+	if (!game.private.lock.selectBurnCard && !(game.general.isTourny && game.general.tournyInfo.isCancelled)) {
+		game.private.lock.selectBurnCard = true;
+
+		game.private.summary = game.private.summary.updateLog({
+			presidentVeto: data.vote
+		});
+		game.publicPlayersState[presidentIndex].isLoader = false;
+		president.cardFlingerState[0].action = president.cardFlingerState[1].action = '';
+		president.cardFlingerState[0].cardStatus.isFlipped = president.cardFlingerState[1].cardStatus.isFlipped = false;
+
+		if (data.vote) {
+			president.cardFlingerState[0].notificationStatus = 'selected';
+			president.cardFlingerState[1].notificationStatus = '';
+		} else {
+			president.cardFlingerState[0].notificationStatus = '';
+			president.cardFlingerState[1].notificationStatus = 'selected';
+		}
+
+		publicPresident.cardStatus = {
+			cardDisplayed: true,
+			cardFront: 'ballot',
+			cardBack: {
+				cardName: data.vote ? 'ja' : 'nein'
+			}
+		};
+
+		sendInProgressGameUpdate(game);
+
+		setTimeout(
+			() => {
+				const chat = {
+					timestamp: new Date(),
+					gameChat: true,
+					chat: [
+						{ text: 'President ' },
+						{
+							text: game.general.blindMode
+								? `{${game.private.seatedPlayers.indexOf(president) + 1}}`
+								: `${passport.user} {${game.private.seatedPlayers.indexOf(president) + 1}}`,
+							type: 'player'
+						},
+						{
+							text: data.vote ? ' has chosen to discard the top card.' : ' has chosen to keep the top card.'
+						}
+					]
+				};
+
+				if (!game.general.disableGamechat) {
+					game.private.seatedPlayers.forEach(player => {
+						player.gameChats.push(chat);
+					});
+					game.private.unSeatedGameChats.push(chat);
+				}
+
+				publicPresident.cardStatus.isFlipped = true;
+
+				president.cardFlingerState = [];
+				if (data.vote) {
+					game.private.policies.shift();
+					game.gameState.undrawnPolicyCount--;
+					if (game.gameState.undrawnPolicyCount < 3) {
+						shufflePolicies(game);
+					}
+				}
+				sendInProgressGameUpdate(game);
+
+				setTimeout(
+					() => {
+						startElection(game);
+					},
+					process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 1000 : 3000
+				);
+			},
+			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 1000 : 3000
+		);
+	}
+};
+
+const selectBurnCard = module.exports.selectBurnCard; // site crashes without this line xd
+
+/**
+ * @param {object} passport - socket authentication.
+ * @param {object} game - target game.
  */
 module.exports.selectOnePolicy = (passport, game) => {
 	const { presidentIndex } = game.gameState;
@@ -435,126 +555,6 @@ module.exports.selectOnePolicy = (passport, game) => {
 		);
 	}
 };
-
-/**
- * @param {object} passport - socket authentication.
- * @param {object} game - target game.
- * @param {object} data from socket emit
- * @param {object} socket - socket
- */
-module.exports.selectBurnCard = (passport, game, data, socket) => {
-	if (game.general.timedMode && game.private.timerId) {
-		clearTimeout(game.private.timerId);
-		game.private.timerId = null;
-	}
-
-	if (game.gameState.isGameFrozen) {
-		if (socket) {
-			socket.emit('sendAlert', 'A staff member has prevented this game from proceeding. Please wait.');
-		}
-		return;
-	}
-
-	if (game.general.isRemade) {
-		if (socket) {
-			socket.emit('sendAlert', 'This game has been remade and is now no longer playable.');
-		}
-		return;
-	}
-
-	const { experiencedMode } = game.general;
-	const { presidentIndex } = game.gameState;
-	const { seatedPlayers } = game.private;
-	const president = seatedPlayers[presidentIndex];
-	const publicPresident = game.publicPlayersState[game.gameState.presidentIndex];
-
-	if (!president || president.userName !== passport.user) {
-		return;
-	}
-
-	if (game.gameState.phase !== 'presidentVoteOnBurn') {
-		return;
-	}
-
-	if (!game.private.lock.selectBurnCard && !(game.general.isTourny && game.general.tournyInfo.isCancelled)) {
-		game.private.lock.selectBurnCard = true;
-
-		game.private.summary = game.private.summary.updateLog({
-			presidentVeto: data.vote
-		});
-		game.publicPlayersState[presidentIndex].isLoader = false;
-		president.cardFlingerState[0].action = president.cardFlingerState[1].action = '';
-		president.cardFlingerState[0].cardStatus.isFlipped = president.cardFlingerState[1].cardStatus.isFlipped = false;
-
-		if (data.vote) {
-			president.cardFlingerState[0].notificationStatus = 'selected';
-			president.cardFlingerState[1].notificationStatus = '';
-		} else {
-			president.cardFlingerState[0].notificationStatus = '';
-			president.cardFlingerState[1].notificationStatus = 'selected';
-		}
-
-		publicPresident.cardStatus = {
-			cardDisplayed: true,
-			cardFront: 'ballot',
-			cardBack: {
-				cardName: data.vote ? 'ja' : 'nein'
-			}
-		};
-
-		sendInProgressGameUpdate(game);
-
-		setTimeout(
-			() => {
-				const chat = {
-					timestamp: new Date(),
-					gameChat: true,
-					chat: [
-						{ text: 'President ' },
-						{
-							text: game.general.blindMode
-								? `{${game.private.seatedPlayers.indexOf(president) + 1}}`
-								: `${passport.user} {${game.private.seatedPlayers.indexOf(president) + 1}}`,
-							type: 'player'
-						},
-						{
-							text: data.vote ? ' has chosen to discard the top card.' : ' has chosen to keep the top card.'
-						}
-					]
-				};
-
-				if (!game.general.disableGamechat) {
-					game.private.seatedPlayers.forEach(player => {
-						player.gameChats.push(chat);
-					});
-					game.private.unSeatedGameChats.push(chat);
-				}
-
-				publicPresident.cardStatus.isFlipped = true;
-
-				president.cardFlingerState = [];
-				if (data.vote) {
-					game.private.policies.shift();
-					game.gameState.undrawnPolicyCount--;
-					if (game.gameState.undrawnPolicyCount < 3) {
-						shufflePolicies(game);
-					}
-				}
-				sendInProgressGameUpdate(game);
-
-				setTimeout(
-					() => {
-						startElection(game);
-					},
-					process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 1000 : 3000
-				);
-			},
-			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 1000 : 3000
-		);
-	}
-};
-
-const selectBurnCard = module.exports.selectBurnCard; // site crashes without this line xd
 
 /**
  * @param {object} game - game to act on.
