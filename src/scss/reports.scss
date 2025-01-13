@@ -1,5 +1,7 @@
+@use 'variables';
+
 #main .reports {
-	color: $fascistteam;
+	color: variables.$fascistteam;
 	position: relative;
 	width: 98%;
 	h2 {

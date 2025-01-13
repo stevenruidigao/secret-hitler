@@ -1,3 +1,5 @@
+@use 'variables';
+
 #game-container {
 	margin: 0 auto;
 }
@@ -33,7 +35,7 @@
 			padding: 7px 0px 3px 2px;
 
 			&.tourny {
-				color: $tourny;
+				color: variables.$tourny;
 			}
 		}
 
@@ -110,7 +112,7 @@
 
 				.tourny-button {
 					width: 110px;
-					background: $tourny !important;
+					background: variables.$tourny !important;
 					&:hover {
 						background: darkgreen !important;
 					}
@@ -174,15 +176,15 @@
 				}
 				.chat-role--liberal {
 					font-weight: 700;
-					color: $darkliberalteam;
+					color: variables.$darkliberalteam;
 				}
 				.chat-role--merlin {
 					font-weight: 700;
-					color: $merlin;
+					color: variables.$merlin;
 				}
 				.chat-role--percival {
 					font-weight: 700;
-					color: $percival;
+					color: variables.$percival;
 				}
 				.chat-role--hitler {
 					font-weight: 700;
@@ -190,11 +192,11 @@
 				}
 				.chat-role--fascist {
 					font-weight: 700;
-					color: $darkfascistteam;
+					color: variables.$darkfascistteam;
 				}
 				.chat-role--morgana {
 					font-weight: 700;
-					color: $morgana;
+					color: variables.$morgana;
 				}
 				.chat-player {
 					color: var(--theme-text-1);
@@ -218,7 +220,7 @@
 				opacity: 0;
 				transition: opacity 1s;
 				p {
-					font-family: $headerfont;
+					font-family: variables.$headerfont;
 					font-size: 32px;
 					color: #fbbd08;
 					text-align: center;

@@ -1,3 +1,5 @@
+@use 'variables';
+
 #replay {
 	margin-top: 0px;
 	border: 0;
@@ -60,15 +62,15 @@
 			}
 			.chat-role--liberal {
 				font-weight: 700;
-				color: $darkliberalteam;
+				color: variables.$darkliberalteam;
 			}
 			.chat-role--merlin {
 				font-weight: 700;
-				color: $merlin;
+				color: variables.$merlin;
 			}
 			.chat-role--percival {
 				font-weight: 700;
-				color: $percival;
+				color: variables.$percival;
 			}
 			.chat-role--hitler {
 				font-weight: 700;
@@ -76,7 +78,7 @@
 			}
 			.chat-role--fascist {
 				font-weight: 700;
-				color: $darkfascistteam;
+				color: variables.$darkfascistteam;
 			}
 			.chat-player {
 				color: var(--theme-text-1);
@@ -146,11 +148,11 @@
 			h1 {
 				color: #c36563;
 				font-size: 26px;
-				font-family: $headerfont;
+				font-family: variables.$headerfont;
 			}
 
 			p {
-				font-family: $headerfont;
+				font-family: variables.$headerfont;
 				color: var(--theme-text-1);
 				font-size: 20px;
 			}
@@ -176,10 +178,11 @@
 			}
 
 			.phase-nav {
+				user-select: none;
+
 				@media screen and (max-width: 1182px) {
 					display: none;
 				}
-				user-select: none;
 
 				.steps {
 					margin-top: 0;
@@ -281,7 +284,7 @@
 				white-space: nowrap;
 				color: var(--theme-text-1);
 				font-size: 26px;
-				font-family: $headerfont;
+				font-family: variables.$headerfont;
 				margin-bottom: 10px;
 			}
 

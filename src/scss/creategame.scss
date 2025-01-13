@@ -1,3 +1,5 @@
+@use 'variables';
+
 .creategame {
 	.create-game-switch {
 		.react-switch-handle {
@@ -95,11 +97,11 @@
 	}
 
 	.tourny-container h4 {
-		color: $tourny;
+		color: variables.$tourny;
 	}
 
 	.tourny-slider {
-		background: $tourny;
+		background: variables.$tourny;
 	}
 
 	.checkbox-container {
@@ -122,10 +124,10 @@
 			padding-left: 100px;
 		}
 		span {
-			color: $hitlerteam;
+			color: variables.$hitlerteam;
 			i {
 				cursor: pointer;
-				color: $hitlerteam !important;
+				color: variables.$hitlerteam !important;
 			}
 		}
 
@@ -133,7 +135,7 @@
 			position: absolute;
 			top: 10px;
 			height: 28px;
-			border: 2px solid $hitlerteam;
+			border: 2px solid variables.$hitlerteam;
 		}
 
 		.rebalance-0 {

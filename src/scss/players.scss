@@ -1,11 +1,16 @@
+@use 'sass:list';
+@use 'sass:math';
+
+@use 'variables';
+
 $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (1900 0.9 1 0.6) (2000 0.8 1 0.4) (2100 0.7 1 0.5);
 
 @function lerp($low, $high, $elo) {
-	$scale: nth($high, 1) - nth($low, 1);
+	$scale: list.nth($high, 1) - list.nth($low, 1);
 	@if $scale <= 0 {
-		@return hsl(nth($low, 2) * 360, nth($low, 3) * 100, nth($low, 4) * 100);
+		@return hsl(list.nth($low, 2) * 360, list.nth($low, 3) * 100%, list.nth($low, 4) * 100%);
 	}
-	$lerp: ($elo - nth($low, 1)) / $scale;
+	$lerp: math.div($elo - list.nth($low, 1), $scale);
 	@if $lerp < 0 {
 		$lerp: 0;
 	}
@@ -13,24 +18,24 @@ $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (190
 		$lerp: 1;
 	}
 	@return hsl(
-		((nth($low, 2) * (1-$lerp)) + (nth($high, 2) * $lerp)) * 360,
-		((nth($low, 3) * (1-$lerp)) + (nth($high, 3) * $lerp)) * 100,
-		((nth($low, 4) * (1-$lerp)) + (nth($high, 4) * $lerp)) * 100
+		((list.nth($low, 2) * (1-$lerp)) + (list.nth($high, 2) * $lerp)) * 360,
+		((list.nth($low, 3) * (1-$lerp)) + (list.nth($high, 3) * $lerp)) * 100%,
+		((list.nth($low, 4) * (1-$lerp)) + (list.nth($high, 4) * $lerp)) * 100%
 	);
 }
 
 @function calcEloCol($elo) {
-	$low: nth($eloValues, 1);
-	$high: nth($eloValues, -1);
-	@for $i from 1 through length($eloValues) {
-		$val: nth($eloValues, $i);
-		$val2: nth($val, 1);
-		@if $val2 > nth($low, 1) {
+	$low: list.nth($eloValues, 1);
+	$high: list.nth($eloValues, -1);
+	@for $i from 1 through list.length($eloValues) {
+		$val: list.nth($eloValues, $i);
+		$val2: list.nth($val, 1);
+		@if $val2 > list.nth($low, 1) {
 			@if $val2 <= $elo {
 				$low: $val;
 			}
 		}
-		@if $val2 < nth($high, 1) {
+		@if $val2 < list.nth($high, 1) {
 			@if $val2 >= $elo {
 				$high: $val;
 			}
@@ -61,7 +66,7 @@ $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (190
 			width: 130px;
 			margin: 32px 0 0 10px;
 			padding: 15px;
-			background: $tourny;
+			background: variables.$tourny;
 		}
 	}
 	@for $i from 0 through 120 {
@@ -144,7 +149,7 @@ $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (190
 			overflow: hidden;
 			white-space: nowrap;
 			margin-top: -21px;
-			font-family: $headerfont;
+			font-family: variables.$headerfont;
 			color: var(--theme-text-2);
 			text-align: center;
 			font-size: 13px;
@@ -372,11 +377,11 @@ $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (190
 		}
 		.player-name.merlin,
 		.player-number.merlin {
-			color: $merlin;
+			color: variables.$merlin;
 		}
 		.player-name.percival,
 		.player-number.percival {
-			color: $percival;
+			color: variables.$percival;
 		}
 		.player-name.fascist,
 		.player-number.fascist {
@@ -388,7 +393,7 @@ $eloValues: (1500 0.3 1 0.3) (1600 0.3 1 0.5) (1849 0 1 0.7) (1850 1 1 0.7) (190
 		}
 		.player-name.morgana,
 		.player-number.morgana {
-			color: $morgana;
+			color: variables.$morgana;
 		}
 		.player-name.merlin_candidate,
 		.player-number.merlin_candidate {

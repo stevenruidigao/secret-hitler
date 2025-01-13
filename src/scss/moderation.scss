@@ -1,5 +1,7 @@
+@use 'variables';
+
 #main .moderation {
-	color: $fascistteam;
+	color: variables.$fascistteam;
 	position: relative;
 	width: 98%;
 	.player-input {

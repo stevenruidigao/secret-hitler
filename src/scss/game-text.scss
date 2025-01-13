@@ -1,3 +1,5 @@
+@use 'variables';
+
 .game-text {
 	.normal {
 		color: var(--theme-text-3);
@@ -5,17 +7,17 @@
 
 	.liberal {
 		font-weight: 700;
-		color: $darkliberalteam;
+		color: variables.$darkliberalteam;
 	}
 
 	.merlin {
 		font-weight: 700;
-		color: $merlin;
+		color: variables.$merlin;
 	}
 
 	.percival {
 		font-weight: 700;
-		color: $percival;
+		color: variables.$percival;
 	}
 
 	.hitler {
@@ -25,12 +27,12 @@
 
 	.fascist {
 		font-weight: 700;
-		color: $darkfascistteam;
+		color: variables.$darkfascistteam;
 	}
 
 	.morgana {
 		font-weight: 700;
-		color: $morgana;
+		color: variables.$morgana;
 	}
 
 	.player {
