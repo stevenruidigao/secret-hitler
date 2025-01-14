@@ -92,7 +92,7 @@ const obfCache = {};
 
 export const obfIP = ip => {
 	if (obfCache[ip]) return obfCache[ip];
-	const ip2 = module.exports.expandAndSimplify(ip);
+	const ip2 = expandAndSimplify(ip);
 	if (isValidBlockCount(ip2)) return (obfCache[ip] = ipv4(ip2));
 	const res = ipv6(ip2);
 	if (res == null) return '!!IPv6 NOT READY!!';
