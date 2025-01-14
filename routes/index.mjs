@@ -15,9 +15,9 @@ import version from '../version.mjs';
 
 import { accounts } from './accounts.mjs';
 import { processImage } from './image-processor.mjs';
-import prodCacheBustToken from './prodCacheBustToken.js';
+import prodCacheBustToken from './prodCacheBustToken.mjs';
 import { checkBadgesAccount } from './socket/badges.mjs';
-import { expandAndSimplify, obfIP } from './socket/ip-obf.js';
+import { expandAndSimplify, obfIP } from './socket/ip-obf.mjs';
 import { userList } from './socket/models.mjs';
 import { socketRoutes } from './socket/routes.mjs';
 

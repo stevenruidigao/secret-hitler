@@ -3,7 +3,7 @@ import mongodb from 'mongodb';
 import tempy from 'tempy';
 import util from 'util';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.js';
+import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mjs';
 
 import { newStaff } from './models.mjs';
 

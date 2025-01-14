@@ -1,5 +1,5 @@
 import Account from '../../../models/account.mjs';
-import { userInBlacklist } from '../../../utils/index.js';
+import { userInBlacklist } from '../../../utils/index.mjs';
 
 import { games, limitNewPlayers } from '../models.mjs';
 import { updateUserStatus, sendGameList } from '../user-requests.mjs';
@@ -13,8 +13,8 @@ import { checkStartConditions } from './leave-game.mjs'; // this used to be a se
  * @param {object} data - from socket emit.
  */
 export const updateSeatedUser = (socket, passport, data) => {
-	// Authentication Assured in routes.js
-	// In-game Assured in routes.js
+	// Authentication Assured in routes.mjs
+	// In-game Assured in routes.mjs
 	const game = games[data.uid];
 	// prevents race condition between 1) taking a seat and 2) the game starting
 

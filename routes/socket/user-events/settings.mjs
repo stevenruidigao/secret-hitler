@@ -1,5 +1,5 @@
 import Account from '../../../models/account.mjs';
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mjs';
 
 import { userList } from '../models.mjs';
 import { sendUserList } from '../user-requests.mjs';
@@ -31,7 +31,7 @@ export const handleUpdatedTheme = (socket, passport, data) => {
  * @param {object} data - from socket emit.
  */
 export const handleUpdatedGameSettings = (socket, passport, data) => {
-	// Authentication Assured in routes.js
+	// Authentication Assured in routes.mjs
 
 	Account.findOne({ username: passport.user })
 		.then(account => {
@@ -153,7 +153,7 @@ export const handleUpdatedGameSettings = (socket, passport, data) => {
  * @param {object} data - from socket emit.
  */
 export const handleUpdatedBio = (socket, passport, data) => {
-	// Authentication Assured in routes.js
+	// Authentication Assured in routes.mjs
 	if (typeof data !== 'string') return; // otherwise the server will crash if you forge the request
 	Account.findOne({ username: passport.user }).then(account => {
 		account.bio = data;

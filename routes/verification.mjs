@@ -6,8 +6,8 @@ import nodemailer from 'nodemailer';
 import mg from 'nodemailer-mailgun-transport';
 
 import Account from '../models/account.mjs';
-import VerifyAccount from '../models/verifyAccount.js';
-import ResetPassword from '../models/resetPassword.js';
+import VerifyAccount from '../models/verifyAccount.mjs';
+import ResetPassword from '../models/resetPassword.mjs';
 
 const verifyTemplate = _.template(
 	fs.readFileSync('./routes/account-verification-email.template', {

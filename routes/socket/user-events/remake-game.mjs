@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
+import { chatReplacements } from '../chatReplacements.mjs';
 import { saveAndDeleteGame } from '../game/end-game.mjs';
-import { chatReplacements } from '../chatReplacements.js';
 import { gameCreationDisabled, games, userList } from '../models.mjs';
 import { sendGameList, sendGameInfo } from '../user-requests.mjs';
 import { sendInProgressGameUpdate } from '../util.mjs';

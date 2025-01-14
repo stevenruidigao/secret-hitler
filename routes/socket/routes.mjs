@@ -55,8 +55,8 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 
 import Account from '../../models/account.mjs';
-import { TOU_CHANGES } from '../../src/frontend-scripts/constants.js';
-import version from '../../version.js';
+import { TOU_CHANGES } from '../../src/frontend-scripts/constants.mjs';
+import version from '../../version.mjs';
 
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.mjs';
 import { handleAEMMessages } from './util.mjs';

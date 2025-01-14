@@ -1,4 +1,4 @@
-import { chatReplacements } from '../chatReplacements.js';
+import { chatReplacements } from '../chatReplacements.mjs';
 import { runCommand } from '../commands.mjs';
 import { makeReport } from '../report.mjs';
 import { emoteList, userList, generalChats, getLastGenchatModPingAsync, setLastGenchatModPingAsync, getPrivateChatTruncate, newStaff } from '../models.mjs';
@@ -142,7 +142,7 @@ export const handleNewGeneralChat = async (socket, passport, data, modUserNames,
  * @param {boolean} isTourneyMod - self explain
  */
 export const handleAddNewGameChat = async (socket, passport, data, game, modUserNames, editorUserNames, adminUserNames, addNewClaim, isTourneyMod) => {
-	// Authentication Assured in routes.js
+	// Authentication Assured in routes.mjs
 	if (!game || !game.general || !data.chat) return;
 	const chat = data.chat.trim();
 	const staffUserNames = [...modUserNames, ...editorUserNames, ...adminUserNames];

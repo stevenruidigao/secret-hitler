@@ -16,7 +16,7 @@ dayjs.extend(relativeTime);
  * @param {object} game - game reference.
  */
 export const handleSubscribeModChat = (socket, passport, game) => {
-	// Authentication Assured in routes.js
+	// Authentication Assured in routes.mjs
 
 	if (game.private.hiddenInfoSubscriptions.includes(passport.user)) return;
 

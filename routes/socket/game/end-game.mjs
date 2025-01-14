@@ -6,7 +6,7 @@ import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhanced
 import Game from '../../../models/game.mjs';
 import { updateProfiles } from '../../../models/profile/utils.mjs';
 
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mjs';
 import animals from '../../../utils/animals.mjs';
 import adjectives from '../../../utils/adjectives.mjs';
 
