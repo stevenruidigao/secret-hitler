@@ -40,7 +40,7 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.(js|jsx)$/,
+				test: /\.(js|ts)x?$/,
 				use: {
 					loader: 'babel-loader',
 					options: {
