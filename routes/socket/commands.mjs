@@ -30,7 +30,7 @@ export const parseCommand = msg => {
 
 	const name = cmdRegex.exec(msg.trim());
 
-	const cmd = module.exports.commands.getCommand(name[1]);
+	const cmd = commands.getCommand(name[1]);
 	if (!cmd) {
 		return { name: name[1], args: null, command: null };
 	}
@@ -58,7 +58,7 @@ export const runCommand = (socket, passport, user, game, msg, AEM, isSeated) => 
 			game.private.commandChats[user.userName] = [];
 		}
 
-		const { name, command, args } = module.exports.parseCommand(msg);
+		const { name, command, args } = parseCommand(msg);
 
 		if (!command) {
 			sendMessage(game, user, `Unknown command /${name}. Use /help for a list of commands.`);
@@ -254,7 +254,7 @@ commands.getCommand = function(name) {
 commands.getCommand('help').run = (socket, passport, user, game, args, AEM, isSeated) => {
 	let i = 1;
 	sendMessage(game, user, 'List of Commands:');
-	for (const command of module.exports.commands) {
+	for (const command of commands) {
 		const isNotUsable =
 			(command.aemOnly && !AEM) ||
 			(command.observerOnly && isSeated) ||
