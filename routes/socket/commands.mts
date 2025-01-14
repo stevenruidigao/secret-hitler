@@ -1,12 +1,12 @@
-import Account from '../../models/account.mjs';
+import Account from '../../models/account.mts';
 
-import { selectPlayerToAssassinate } from './game/assassination.mjs';
-import { selectChancellor } from './game/election-util.mjs';
-import { selectVoting } from './game/election.mjs';
-import { makeReport } from './report.mjs';
-import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mjs';
+import { selectPlayerToAssassinate } from './game/assassination.mts';
+import { selectChancellor } from './game/election-util.mts';
+import { selectVoting } from './game/election.mts';
+import { makeReport } from './report.mts';
+import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mts';
 
-const sendMessage = (game, user, s, date = new Date()) =>
+const sendMessage = (game: any, user: any, s: string, date = new Date()) =>
 	game.private.commandChats[user.userName].push({
 		gameChat: true,
 		timestamp: date,
@@ -24,13 +24,13 @@ const sendMessage = (game, user, s, date = new Date()) =>
  *
  * @return {{ name: string, args: (string[]|null), command: (Command|null) }} - the name of the invoked command, as well as the parsed arguments and command object.
  */
-export const parseCommand = msg => {
-	const trimPrefix = (s, prefix) => (s.startsWith(prefix) ? s.slice(prefix.length) : s);
+export const parseCommand = (msg: string) => {
+	const trimPrefix = (s: string, prefix: string) => (s.startsWith(prefix) ? s.slice(prefix.length) : s);
 	const cmdRegex = /^\/(\w*)/i;
 
-	const name = cmdRegex.exec(msg.trim());
+	const name: any = cmdRegex.exec(msg.trim());
 
-	const cmd = commands.getCommand(name[1]);
+	const cmd = module.exports.commands.getCommand(name[1]);
 	if (!cmd) {
 		return { name: name[1], args: null, command: null };
 	}
@@ -52,7 +52,7 @@ export const parseCommand = msg => {
  * @param {boolean} AEM - whether the user is AEM.
  * @param {boolean} isSeated - whether the user is sat in the game.
  */
-export const runCommand = (socket, passport, user, game, msg, AEM, isSeated) => {
+export const runCommand = (socket: any, passport: any, user: any, game: any, msg: string, AEM: boolean, isSeated: boolean) => {
 	try {
 		if (!game.private.commandChats[user.userName]) {
 			game.private.commandChats[user.userName] = [];
@@ -123,11 +123,24 @@ export const runCommand = (socket, passport, user, game, msg, AEM, isSeated) => 
  * @property {boolean} gameStartedOnly - whether the command can only be used during a started game.
  * @property {Run} [run=] - the function called to run the command.
  */
+type Command = {
+	name: string[];
+	description: string;
+	examples: string[];
+	argumentsFormat: RegExp;
+	aemOnly: boolean;
+	observerOnly: boolean;
+	seatedOnly: boolean;
+	gameStartedOnly: boolean;
+	run?: any;
+}
 
 /**
  * @type {Command[]}
  */
-export const commands = [
+export const commands: Command[] & {
+	getCommand: (name: string) => Command | null;
+} = [
 	{
 		name: ['help'],
 		description: 'Use your social deduction skills to figure it out',
@@ -238,7 +251,7 @@ export const commands = [
 		seatedOnly: false,
 		gameStartedOnly: true
 	}
-];
+] as any;
 
 /**
  * Finds a command in the commands array by name, case-insensitive.
@@ -247,14 +260,14 @@ export const commands = [
  *
  * @return {Command|null} - the command with that name or null if it is not found.
  */
-commands.getCommand = function(name) {
-	return this.find(c => c.name.includes(name.toLowerCase())) || null;
+commands.getCommand = function(name: string) {
+	return this.find((c: any) => c.name.includes(name.toLowerCase())) || null;
 };
 
-commands.getCommand('help').run = (socket, passport, user, game, args, AEM, isSeated) => {
+(commands.getCommand('help') as Command).run = (socket: any, passport: any, user: any, game: any, args: any, AEM: boolean, isSeated: boolean) => {
 	let i = 1;
 	sendMessage(game, user, 'List of Commands:');
-	for (const command of commands) {
+	for (const command of module.exports.commands) {
 		const isNotUsable =
 			(command.aemOnly && !AEM) ||
 			(command.observerOnly && isSeated) ||
@@ -279,7 +292,7 @@ commands.getCommand('help').run = (socket, passport, user, game, args, AEM, isSe
 	}
 };
 
-commands.getCommand('g').run = (socket, passport, user, game, args) => {
+(commands.getCommand('g') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	if (game.general.private || (game.customGameSettings && game.customGameSettings.enabled)) {
 		sendMessage(game, user, 'Line guessing is only enabled in ranked and practice games.');
 		return;
@@ -318,7 +331,7 @@ commands.getCommand('g').run = (socket, passport, user, game, args) => {
 	game.guesses[user.userName] = guess;
 };
 
-commands.getCommand('gm').run = (socket, passport, user, game, args) => {
+(commands.getCommand('gm') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	if (!game.general.avalonSH) {
 		sendMessage(game, user, 'Merlin guessing is only enabled in avalon SH games.');
 		return;
@@ -340,12 +353,12 @@ commands.getCommand('gm').run = (socket, passport, user, game, args) => {
 	game.merlinGuesses[user.userName] = guess;
 };
 
-commands.getCommand('pingmod').run = (socket, passport, user, game, args) => {
+(commands.getCommand('pingmod') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	if (!game.lastModPing || Date.now() > game.lastModPing + 180000) {
-		Account.find({ username: { $in: game.publicPlayersState.map(player => player.userName) } }).then(accounts => {
+		Account.find({ username: { $in: game.publicPlayersState.map((player: any) => player.userName) } }).then((accounts: any[]) => {
 			const staffInGame = accounts
 				.filter(
-					account =>
+					(account: any) =>
 						account.staffRole === 'altmod' ||
 						account.staffRole === 'moderator' ||
 						account.staffRole === 'editor' ||
@@ -382,8 +395,8 @@ commands.getCommand('pingmod').run = (socket, passport, user, game, args) => {
 	}
 };
 
-commands.getCommand('ping').run = (socket, passport, user, game, args) => {
-	const player = game.publicPlayersState.find(player => player.userName === passport.user);
+(commands.getCommand('ping') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+	const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
 	const seat = parseInt(args[0]);
 
 	if (seat <= game.publicPlayersState.length && (!player.pingTime || Date.now() - player.pingTime > 180000)) {
@@ -410,7 +423,7 @@ commands.getCommand('ping').run = (socket, passport, user, game, args) => {
 
 			if (game.general.playerChats === 'disabled') {
 				game.private.seatedPlayers
-					.find(x => x.userName === player.userName)
+					.find((seatedPlayer: any) => seatedPlayer.userName === player.userName)
 					.gameChats.push({
 						timestamp: new Date(),
 						gameChat: true,
@@ -454,8 +467,8 @@ commands.getCommand('ping').run = (socket, passport, user, game, args) => {
 	}
 };
 
-commands.getCommand('forcerigdeck').run = (socket, passport, user, game, args) => {
-	const changedChat = [
+(commands.getCommand('forcerigdeck') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+	const changedChat: any[] = [
 		{
 			text: 'A staff member has changed the deck to '
 		}
@@ -482,7 +495,7 @@ commands.getCommand('forcerigdeck').run = (socket, passport, user, game, args) =
 	});
 };
 
-commands.getCommand('forcevote').run = (socket, passport, user, game, args) => {
+(commands.getCommand('forcevote') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
 		return;
@@ -578,7 +591,7 @@ commands.getCommand('forcevote').run = (socket, passport, user, game, args) => {
 	}
 };
 
-commands.getCommand('forceskip').run = (socket, passport, user, game, args) => {
+(commands.getCommand('forceskip') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -639,13 +652,13 @@ commands.getCommand('forceskip').run = (socket, passport, user, game, args) => {
 	});
 	selectChancellor(null, { user: affectedPlayer.userName }, game, { chancellorIndex: chancellor }, true);
 	setTimeout(() => {
-		for (const p of game.private.seatedPlayers.filter(player => !player.isDead)) {
+		for (const p of game.private.seatedPlayers.filter((player: any) => !player.isDead)) {
 			selectVoting({ user: p.userName }, game, { vote: false }, null, true);
 		}
 	}, 1000);
 };
 
-commands.getCommand('forcepick').run = (socket, passport, user, game, args) => {
+(commands.getCommand('forcepick') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -748,7 +761,7 @@ commands.getCommand('forcepick').run = (socket, passport, user, game, args) => {
 	}
 };
 
-commands.getCommand('forceping').run = (socket, passport, user, game, args) => {
+(commands.getCommand('forceping') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -798,7 +811,7 @@ commands.getCommand('forceping').run = (socket, passport, user, game, args) => {
 	}
 };
 
-commands.getCommand('forcerigrole').run = (socket, passport, user, game, args) => {
+(commands.getCommand('forcerigrole') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
 	if (game && game.private) {
 		const seat = parseInt(args[0], 10);
 		const role = (r => {
@@ -818,7 +831,7 @@ commands.getCommand('forcerigrole').run = (socket, passport, user, game, args) =
 			return;
 		}
 
-		const changedChat = [
+		const changedChat: any[] = [
 			{
 				text: 'A staff member has changed the role of player '
 			}

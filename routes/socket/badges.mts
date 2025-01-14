@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 
-import Account from '../../models/account.mjs';
+import Account from '../../models/account.mts';
 
 dayjs.extend(utc);
 
 const gameTypeCount = 500;
 
-const ELO_BADGES = [
+const ELO_BADGES: [number, string][] = [
 	// ELO to badge
 	[1800, 'elo1800'],
 	[1900, 'elo1900'],
@@ -17,7 +17,7 @@ const ELO_BADGES = [
 	[2300, 'elo2300']
 ];
 
-const XP_BADGES = [
+const XP_BADGES: [number, string][] = [
 	// XP to badge
 	[50, 'xp50'],
 	[100, 'xp100'],
@@ -30,7 +30,7 @@ const XP_BADGES = [
 	[15000, 'xp15000']
 ];
 
-const ACCOUNT_AGE_BADGES = [
+const ACCOUNT_AGE_BADGES: [number, string][] = [
 	// Account age (in years) to badge
 	[1, 'birthday1'],
 	[2, 'birthday2'],
@@ -39,7 +39,7 @@ const ACCOUNT_AGE_BADGES = [
 	[5, 'birthday5']
 ];
 
-const GAMES_PLAYED_BADGES = [
+const GAMES_PLAYED_BADGES: [number, string][] = [
 	// number of ranked + practice games played
 	[100, 'games100'],
 	[200, 'games200'],
@@ -50,7 +50,7 @@ const GAMES_PLAYED_BADGES = [
 	[5000, 'games5000']
 ];
 
-const GAMES_WON_BADGES = [
+const GAMES_WON_BADGES: [number, string][] = [
 	// number of ranked + practice games won
 	[100, 'won100'],
 	[200, 'won200'],
@@ -59,19 +59,19 @@ const GAMES_WON_BADGES = [
 	[2000, 'won2000']
 ];
 
-const CUSTOM_GAME_BADGES = [
+const CUSTOM_GAME_BADGES: [number, string][] = [
 	// Number of custom games played to badge
 	[gameTypeCount, 'customPlayer'],
 	[2 * gameTypeCount, 'customPro']
 ];
 
-const SILENT_GAME_BADGES = [
+const SILENT_GAME_BADGES: [number, string][] = [
 	// Number of silent games played to badge
 	[gameTypeCount, 'silentPlayer'],
 	[2 * gameTypeCount, 'silentPro']
 ];
 
-const EMOTE_GAME_BADGES = [
+const EMOTE_GAME_BADGES: [number, string][] = [
 	// Number of emote games played to badge
 	[gameTypeCount, 'emotePlayer'],
 	[2 * gameTypeCount, 'emotePro']
@@ -85,8 +85,8 @@ const EMOTE_GAME_BADGES = [
  * @param {*} badgeText
  * @param {*} badgeTitle
  */
-export const awardBadgePrequeried = (user, badgeId, badgeText, badgeTitle) => {
-	if (user.badges.filter(badge => badge.id === badgeId).length === 0) {
+export const awardBadgePrequeried = (user: any, badgeId: any, badgeText: any, badgeTitle: any) => {
+	if (user.badges.filter((badge: any) => badge.id === badgeId).length === 0) {
 		user.badges.push({
 			id: badgeId,
 			text: badgeText,
@@ -97,9 +97,9 @@ export const awardBadgePrequeried = (user, badgeId, badgeText, badgeTitle) => {
 	}
 };
 
-export const removeBadge = (user, badgeId) => {
+export const removeBadge = (user: any, badgeId: any) => {
 	user.badges.splice(
-		user.badges.findIndex(x => x.id === badgeId),
+		user.badges.findIndex((badge: any) => badge.id === badgeId),
 		1
 	);
 };
@@ -112,8 +112,8 @@ export const removeBadge = (user, badgeId) => {
  * @param {*} badgeText
  * @param {*} badgeTitle
  */
-export const awardBadge = (username, badgeId, badgeText, badgeTitle) => {
-	Account.findOne({ username }).then(user => {
+export const awardBadge = (username: any, badgeId: any, badgeText: any, badgeTitle: any) => {
+	Account.findOne({ username }).then((user: any) => {
 		awardBadgePrequeried(user, badgeId, badgeText, badgeTitle);
 	});
 };
@@ -124,7 +124,7 @@ export const awardBadge = (username, badgeId, badgeText, badgeTitle) => {
  * @param {*} user user object
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
-export const checkBadgesELO = (user, gameJustPlayed = '') => {
+export const checkBadgesELO = (user: any, gameJustPlayed = '') => {
 	if (!user.eloOverall) {
 		return;
 	}
@@ -144,7 +144,7 @@ export const checkBadgesELO = (user, gameJustPlayed = '') => {
  * @param {*} user user object
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
-export const checkBadgesXP = (user: { xpOverall: number; }, gameJustPlayed = '') => {
+export const checkBadgesXP = (user: any, gameJustPlayed = '') => {
 	if (!user.xpOverall) {
 		return;
 	}
@@ -163,7 +163,7 @@ export const checkBadgesXP = (user: { xpOverall: number; }, gameJustPlayed = '')
  *
  * @param {*} user user object
  */
-export const checkBadgesAccount = user => {
+export const checkBadgesAccount = (user: any) => {
 	if (!user.created) {
 		return;
 	}
@@ -220,12 +220,12 @@ export const checkBadgesAccount = user => {
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
 export const checkBadgesGamesPlayed = (
-	user,
-	rankedOrPracticeGamesPlayed,
-	rankedOrPracticeGamesWon,
-	customGamesPlayed,
-	silentGamesPlayed,
-	emoteGamesPlayed,
+	user: any,
+	rankedOrPracticeGamesPlayed: any,
+	rankedOrPracticeGamesWon: any,
+	customGamesPlayed: any,
+	silentGamesPlayed: any,
+	emoteGamesPlayed: any,
 	gameJustPlayed = ''
 ) => {
 	for (const badge of GAMES_PLAYED_BADGES) {
