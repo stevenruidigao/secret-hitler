@@ -54,7 +54,7 @@ export const handleOpenChat = (socket, data, modUserNames, editorUserNames, admi
 		socketId =>
 			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
 	);
-	const dmReceiverSocket = io.sockets.sockets[dmReceiverSocketID];
+	const dmReceiverSocket = io.sockets.sockets.get(dmReceiverSocketID);
 
 	if (!Object.keys(dmReceiver).length || dmReceiverSocketID == null || dmReceiverSocket == null) {
 		return socket.emit('sendAlert', 'That player is not online!');
@@ -124,13 +124,12 @@ export const handleCloseChat = (socket, data, modUserNames, editorUserNames, adm
 		) {
 			for (const user of dm.subscribedPlayers) {
 				try {
-					const sock =
-						io.sockets.sockets[
-							Array.from(io.sockets.sockets.keys()).find(
-								socketId =>
-									io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
-							)
-						];
+					const sock = io.sockets.sockets.get(
+						Array.from(io.sockets.sockets.keys()).find(
+							socketId =>
+								io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
+						)
+					);
 
 					sock.emit('closeModDMs');
 					sock.emit('postCloseModDMs');
