@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import adjectives from '../../../utils/adjectives.js';
-import animals from '../../../utils/animals.js';
+import adjectives from '../../../utils/adjectives.mjs';
+import animals from '../../../utils/animals.mjs';
 
 import { saveAndDeleteGame } from '../game/end-game.mjs';
 import startGame from '../game/start-game.mjs';

@@ -1,4 +1,4 @@
-import PlayerNote from '../../../models/playerNote.js';
+import PlayerNote from '../../../models/playerNote.mjs';
 
 import { sendPlayerNotes } from '../user-requests.mjs';
 

@@ -1,7 +1,7 @@
 import https from 'https';
 
 // import Account from '../../../models/account';
-import PlayerReport from '../../../models/playerReport.js';
+import PlayerReport from '../../../models/playerReport.mjs';
 
 import { userList, games } from '../models.mjs';
 

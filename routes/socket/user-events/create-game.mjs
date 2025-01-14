@@ -1,11 +1,11 @@
 import { generateCombination } from 'gfycat-style-urls';
 
 import Account from '../../../models/account.mjs';
-import Game from '../../../models/game.js';
+import Game from '../../../models/game.mjs';
 
-import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.js';
+import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.mjs';
 
-import { chatReplacements } from '../chatReplacements.js';
+import { chatReplacements } from '../chatReplacements.mjs';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.mjs';
 import { updateUserStatus, sendGameList } from '../user-requests.mjs';
 import { secureGame } from '../util.mjs';

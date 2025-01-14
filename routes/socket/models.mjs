@@ -4,13 +4,13 @@ import redis from 'redis';
 import { promisify } from 'util';
 
 import Account from '../../models/account.mjs';
-import BannedIP from '../../models/bannedIP.js';
-import ModAction from '../../models/modAction.js';
+import BannedIP from '../../models/bannedIP.mjs';
+import ModAction from '../../models/modAction.mjs';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.js';
-import version from '../../version.js';
+import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mjs';
+import version from '../../version.mjs';
 
-import { doesIPMatchCIDR } from './ip-obf.js';
+import { doesIPMatchCIDR } from './ip-obf.mjs';
 
 const emotes = {};
 

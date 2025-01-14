@@ -2,13 +2,13 @@ import debug from 'debug';
 import _ from 'lodash';
 
 import Account from '../../../models/account.mjs';
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.js';
-import Game from '../../../models/game.js';
+import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.mjs';
+import Game from '../../../models/game.mjs';
 import { updateProfiles } from '../../../models/profile/utils.mjs';
 
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
-import animals from '../../../utils/animals.js';
-import adjectives from '../../../utils/adjectives.js';
+import animals from '../../../utils/animals.mjs';
+import adjectives from '../../../utils/adjectives.mjs';
 
 import { checkBadgesELO, checkBadgesXP } from '../badges.mjs';
 import { userList, games } from '../models.mjs';

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import Account from '../../../models/account.mjs';
-import GameSummaryBuilder from '../../../models/game-summary/GameSummaryBuilder.js';
+import GameSummaryBuilder from '../../../models/game-summary/GameSummaryBuilder.mjs';
 
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mjs';
 

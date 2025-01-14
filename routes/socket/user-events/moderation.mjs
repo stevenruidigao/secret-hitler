@@ -2,16 +2,16 @@ import fs from 'fs';
 import https from 'https';
 
 import Account from '../../../models/account.mjs';
-import BannedIP from '../../../models/bannedIP.js';
-import ModAction from '../../../models/modAction.js';
-import PlayerReport from '../../../models/playerReport.js';
-import Profile from '../../../models/profile/index.js';
+import BannedIP from '../../../models/bannedIP.mjs';
+import ModAction from '../../../models/modAction.mjs';
+import PlayerReport from '../../../models/playerReport.mjs';
+import Profile from '../../../models/profile/index.mjs';
 
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mjs';
 
 import { removeBadge, checkBadgesAccount } from '../badges.mjs';
 import { completeGame, saveAndDeleteGame } from '../game/end-game.mjs';
-import { obfIP } from '../ip-obf.js';
+import { obfIP } from '../ip-obf.mjs';
 import {
 	newStaff,
 	userList,

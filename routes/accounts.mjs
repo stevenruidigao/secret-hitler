@@ -2,18 +2,18 @@ import passport from 'passport';
 import fetch from 'node-fetch';
 
 import Account from '../models/account.mjs';
-import EightEightCounter from '../models/eightEightCounter.js';
-import BannedIP from '../models/bannedIP.js';
-import Profile from '../models/profile/index.js';
-import Signups from '../models/signups.js';
+import EightEightCounter from '../models/eightEightCounter.mjs';
+import BannedIP from '../models/bannedIP.mjs';
+import Profile from '../models/profile/index.mjs';
+import Signups from '../models/signups.mjs';
 
-import blacklistedWords from '../iso/blacklistedWords.js';
-import bannedEmails from '../utils/disposableEmails.js';
+import blacklistedWords from '../iso/blacklistedWords.mjs';
+import bannedEmails from '../utils/disposableEmails.mjs';
 
 import { verifyRoutes, setVerify } from './verification.mjs';
-import prodCacheBustToken from './prodCacheBustToken.js';
+import prodCacheBustToken from './prodCacheBustToken.mjs';
 
-import { expandAndSimplify, obfIP, doesIPMatchCIDR } from './socket/ip-obf.js';
+import { expandAndSimplify, obfIP, doesIPMatchCIDR } from './socket/ip-obf.mjs';
 import { accountCreationDisabled, bypassVPNCheck, verifyBypass, consumeBypass, testIP } from './socket/models.mjs';
 import { handleDefaultIPv6Range } from './socket/util.mjs';
 

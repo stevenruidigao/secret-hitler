@@ -1,15 +1,15 @@
 import Account from '../../models/account.mjs';
-import Game from '../../models/game.js';
-import ModAction from '../../models/modAction.js';
-import PlayerNote from '../../models/playerNote.js';
-import PlayerReport from '../../models/playerReport.js';
+import Game from '../../models/game.mjs';
+import ModAction from '../../models/modAction.mjs';
+import PlayerNote from '../../models/playerNote.mjs';
+import PlayerReport from '../../models/playerReport.mjs';
 import { getProfile } from '../../models/profile/utils.mjs';
-import Signups from '../../models/signups.js';
+import Signups from '../../models/signups.mjs';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.js';
-import version from '../../version.js';
+import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mjs';
+import version from '../../version.mjs';
 
-import { obfIP } from './ip-obf.js';
+import { obfIP } from './ip-obf.mjs';
 import {
 	games,
 	userList,

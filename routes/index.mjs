@@ -3,15 +3,15 @@ import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 
 import Account from '../models/account.mjs'; // eslint-disable-line no-unused-vars
-import GameSummary from '../models/game-summary/index.js';
-import Game from '../models/game.js';
-import ModThread from '../models/modThread.js';
-import Profile from '../models/profile/index.js';
+import GameSummary from '../models/game-summary/index.mjs';
+import Game from '../models/game.mjs';
+import ModThread from '../models/modThread.mjs';
+import Profile from '../models/profile/index.mjs';
 import { getProfile } from '../models/profile/utils.mjs';
 
-import { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } from '../src/frontend-scripts/constants.js';
-import savedTorIps from '../utils/savedtorips.js';
-import version from '../version.js';
+import { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } from '../src/frontend-scripts/constants.mjs';
+import savedTorIps from '../utils/savedTorIPs.mjs';
+import version from '../version.mjs';
 
 import { accounts } from './accounts.mjs';
 import { processImage } from './image-processor.mjs';

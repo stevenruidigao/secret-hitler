@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 
-import ModAction from '../../../models/modAction.js';
+import ModAction from '../../../models/modAction.mjs';
 
 import { makeReport } from '../report.mjs';
 import { sendInProgressGameUpdate } from '../util.mjs';

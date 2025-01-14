@@ -2,7 +2,7 @@ import https from 'https';
 
 import { generateCombination } from 'gfycat-style-urls';
 
-import ModThread from '../../../models/modThread.js';
+import ModThread from '../../../models/modThread.mjs';
 
 import { userList, modDMs, games } from '../models.mjs';
 import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../util.mjs';
