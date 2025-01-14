@@ -1,4 +1,4 @@
-import userEvents from './user-events/index.mjs';
+import userEvents from './user-events.mjs';
 
 const {
 	handleUpdatedTruncateGame,
@@ -61,10 +61,10 @@ import version from '../../version.js';
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.mjs';
 import { handleAEMMessages } from './util.mjs';
 
-import { selectPlayerToAssassinate } from './game/assassination.js';
-import { selectChancellor } from './game/election-util.js';
-import { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } from './game/election.js';
-import { saveAndDeleteGame } from './game/end-game.js';
+import { selectPlayerToAssassinate } from './game/assassination.mjs';
+import { selectChancellor } from './game/election-util.mjs';
+import { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } from './game/election.mjs';
+import { saveAndDeleteGame } from './game/end-game.mjs';
 import {
 	selectSpecialElection,
 	selectPartyMembershipInvestigate,
@@ -73,7 +73,7 @@ import {
 	selectPartyMembershipInvestigateReverse,
 	selectOnePolicy,
 	selectBurnCard
-} from './game/policy-powers.js';
+} from './game/policy-powers.mjs';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);

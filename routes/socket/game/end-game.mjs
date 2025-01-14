@@ -1,10 +1,10 @@
 import debug from 'debug';
 import _ from 'lodash';
 
-import Account from '../../../models/account.js';
+import Account from '../../../models/account.mjs';
 import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.js';
 import Game from '../../../models/game.js';
-import { updateProfiles } from '../../../models/profile/utils.js';
+import { updateProfiles } from '../../../models/profile/utils.mjs';
 
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
 import animals from '../../../utils/animals.js';

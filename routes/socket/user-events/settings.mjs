@@ -1,7 +1,7 @@
 import Account from '../../../models/account.mjs';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.js';
 
-import { userList } from '../models.js';
+import { userList } from '../models.mjs';
 import { sendUserList } from '../user-requests.mjs';
 
 /**

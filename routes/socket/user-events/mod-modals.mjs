@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime.js';
 
 import ModAction from '../../../models/modAction.js';
 
-import { makeReport } from '../report.js';
+import { makeReport } from '../report.mjs';
 import { sendInProgressGameUpdate } from '../util.mjs';
 
 dayjs.extend(duration);

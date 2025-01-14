@@ -1,8 +1,8 @@
 import Account from '../../models/account.mjs';
 
-import { selectPlayerToAssassinate } from './game/assassination.js';
-import { selectChancellor } from './game/election-util.js';
-import { selectVoting } from './game/election.js';
+import { selectPlayerToAssassinate } from './game/assassination.mjs';
+import { selectChancellor } from './game/election-util.mjs';
+import { selectVoting } from './game/election.mjs';
 import { makeReport } from './report.mjs';
 import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mjs';
 

@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import redis from 'redis';
 import { promisify } from 'util';
 
@@ -10,8 +12,8 @@ import version from '../../version.js';
 
 import { doesIPMatchCIDR } from './ip-obf.js';
 
-import fs from 'fs';
 const emotes = {};
+
 fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach(file => {
 	if (file.name.endsWith('.png')) {
 		const emoteName = file.name.substring(0, file.name.length - 4);

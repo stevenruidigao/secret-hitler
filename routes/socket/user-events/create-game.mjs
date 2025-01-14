@@ -2,6 +2,7 @@ import { generateCombination } from 'gfycat-style-urls';
 
 import Account from '../../../models/account.mjs';
 import Game from '../../../models/game.js';
+
 import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.js';
 
 import { chatReplacements } from '../chatReplacements.js';

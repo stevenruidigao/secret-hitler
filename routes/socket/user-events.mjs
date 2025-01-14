@@ -1,19 +1,19 @@
 import https from 'https';
 
-import chat from './user-events/chat.mjs';
-import claim from './user-events/claim.mjs';
-import createGame from './user-events/create-game.mjs';
-import flappyHitler from './user-events/flappy-hitler.mjs';
-import joinGame from './user-events/join-game.mjs';
-import leaveGame from './user-events/leave-game.mjs';
-import modDms from './user-events/mod-dms.mjs';
-import modModals from './user-events/mod-modals.mjs';
-import moderation from './user-events/moderation.mjs';
-import playerNotes from './user-events/player-notes.mjs';
-import playerReports from './user-events/player-reports.mjs';
-import remakeGame from './user-events/remake-game.mjs';
-import settings from './user-events/settings.mjs';
-import util from './user-events/util.mjs';
+import * as chat from './user-events/chat.mjs';
+import * as claim from './user-events/claim.mjs';
+import * as createGame from './user-events/create-game.mjs';
+import * as flappyHitler from './user-events/flappy-hitler.mjs';
+import * as joinGame from './user-events/join-game.mjs';
+import * as leaveGame from './user-events/leave-game.mjs';
+import * as modDms from './user-events/mod-dms.mjs';
+import * as modModals from './user-events/mod-modals.mjs';
+import * as moderation from './user-events/moderation.mjs';
+import * as playerNotes from './user-events/player-notes.mjs';
+import * as playerReports from './user-events/player-reports.mjs';
+import * as remakeGame from './user-events/remake-game.mjs';
+import * as settings from './user-events/settings.mjs';
+import * as util from './user-events/util.mjs';
 
 export default Object.assign(
 	{},

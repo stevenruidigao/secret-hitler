@@ -1,9 +1,9 @@
+import { sendGameList } from '../user-requests.mjs';
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mjs';
 
 import { assassinateMerlin } from './assassination.mjs';
 import { completeGame } from './end-game.mjs';
 import { startElection, shufflePolicies } from './common.mjs';
-import { sendGameList } from '../user-requests.mjs';
 
 /**
  * @param {object} game - game to act on.

@@ -1,13 +1,14 @@
 import _ from 'lodash';
 
+import adjectives from '../../../utils/adjectives.js';
+import animals from '../../../utils/animals.js';
+
 import { saveAndDeleteGame } from '../game/end-game.mjs';
 import startGame from '../game/start-game.mjs';
 
 import { games, userList } from '../models.mjs';
 import { updateUserStatus, sendGameList, sendUserList } from '../user-requests.mjs';
 import { sendCommandChatsUpdate, sendInProgressGameUpdate } from '../util.mjs';
-import adjectives from '../../../utils/adjectives.js';
-import animals from '../../../utils/animals.js';
 
 /**
  * @param {object} game - game to act on.
