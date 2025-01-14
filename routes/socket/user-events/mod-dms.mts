@@ -126,12 +126,12 @@ export const handleCloseChat = (socket, data, modUserNames, editorUserNames, adm
 			for (const user of dm.subscribedPlayers) {
 				try {
 					const sock =
-						io.sockets.sockets[
+						io.sockets.sockets.get(
 							Array.from(io.sockets.sockets.keys()).find(
 								socketId =>
 									io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
 							)
-						];
+						);
 
 					sock.emit('closeModDMs');
 					sock.emit('postCloseModDMs');
