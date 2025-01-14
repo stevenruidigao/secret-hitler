@@ -51,13 +51,16 @@ export const getPrivateChatTruncate = async () => {
 
 export const emoteList = emotes;
 
-export const games: Record<string, any> = {};
+export const games: any = {};
 export const userList: any[] = [];
-export const generalChats = {
+export const generalChats: {
+	sticky: string,
+	list: any[]
+} = {
 	sticky: '',
 	list: []
 };
-export const modDMs = {
+export const modDMs: any = {
 	// player username => full object
 };
 export const accountCreationDisabled = { status: false };

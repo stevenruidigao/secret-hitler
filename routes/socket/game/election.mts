@@ -533,7 +533,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: any, data: any, s
  * @param {object} data - socket emit
  * @param {object} socket - socket
  */
-export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, socket: any) => {
+export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, socket?: any) => {
 	const { experiencedMode } = game.general;
 	const president = game.private.seatedPlayers[game.gameState.presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');

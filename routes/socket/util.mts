@@ -159,7 +159,7 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 	}
 };
 
-export const sendInProgressModChatUpdate = (game: any, chat: any, specificUser: any) => {
+export const sendInProgressModChatUpdate = (game: any, chat: any, specificUser?: any) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}

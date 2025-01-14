@@ -3,8 +3,8 @@ import https from 'https';
 import Account from '../../models/account.mts';
 import { newStaff } from './models.mts';
 
-function sendReport(game, report, data, type) {
-	Account.find({ staffRole: { $exists: true } }).then(accounts => {
+function sendReport(game: any, report: any, data: any, type: string) {
+	Account.find({ staffRole: { $exists: true } }).then((accounts: any[]) => {
 		const staffUserNames = accounts
 			.filter(
 				account =>
@@ -14,10 +14,10 @@ function sendReport(game, report, data, type) {
 					account.staffRole === 'admin' ||
 					account.staffRole === 'trialmod'
 			)
-			.map(account => account.username);
-		const players = game.private.seatedPlayers.map(player => player.userName);
+			.map((account: any) => account.username);
+		const players = game.private.seatedPlayers.map((player: any) => player.userName);
 		const isStaff = players.some(
-			n =>
+			(n: string) =>
 				staffUserNames.includes(n) ||
 				newStaff.altmodUserNames.includes(n) ||
 				newStaff.modUserNames.includes(n) ||
@@ -57,7 +57,7 @@ function sendReport(game, report, data, type) {
 	});
 }
 
-export const makeReport = (data, game, type = 'report') => {
+export const makeReport = (data: any, game: any, type = 'report') => {
 	const { player, seat, role, election, situation, uid, gameType, homepage } = data;
 
 	if (!homepage) {
@@ -67,7 +67,7 @@ export const makeReport = (data, game, type = 'report') => {
 		if (game.general.casualGame && (type === 'report' || type === 'reportdelayed')) return;
 	}
 
-	let report;
+	let report: any;
 
 	if (type === 'report' || type === 'modchat') {
 		game.private.hiddenInfoShouldNotify = false;
@@ -111,8 +111,8 @@ export const makeReport = (data, game, type = 'report') => {
 	if (type === 'report' || type === 'reportdelayed') {
 		const upperRole = role[0].toUpperCase() + role.substr(1);
 		const isDelayed = type === 'reportdelayed' ? ' - **Staff DELAYED**' : '';
-		let throwerIP;
-		const otherPlayers = [];
+		let throwerIP: string;
+		const otherPlayers: any[] = [];
 
 		report = {
 			content: `<@&${process.env.DISCORDMODID}>${isDelayed}\n__**Player**__: ${player} {${seat}}\n__**Role**__: ${upperRole}\n__**Situation**__: ${situation}\n__**Election #**__: ${election}\n__**Game Type**__: ${gameType}`,
@@ -121,25 +121,25 @@ export const makeReport = (data, game, type = 'report') => {
 			avatar_url: 'https://cdn.discordapp.com/emojis/230161421336313857.png?v=1'
 		};
 
-		game.publicPlayersState.map(state => {
+		game.publicPlayersState.map((state: any) => {
 			if (state.userName !== player) {
 				otherPlayers.push(state.userName);
 			}
 		});
 
-		Account.findOne({ username: player }, (err, account) => {
+		Account.findOne({ username: player }, (err: Error, account: any) => {
 			if (err) console.log(err, 'err finding user');
 			else if (account) data.ip = account.lastConnectedIP || account.signupIP;
 			throwerIP = data.ip;
 
-			const matches = {};
+			const matches: Record<string | number, any> = {};
 			Account.find({ username: { $in: otherPlayers } })
-				.then(accounts => {
-					accounts.forEach(account => {
+				.then((accounts: any[]) => {
+					accounts.forEach((account: any) => {
 						let ip;
 						if (account) ip = account.lastConnectedIP || account.signupIP;
 
-						const seat = game.private.seatedPlayers.findIndex(elem => elem.userName === account.username);
+						const seat = game.private.seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
 						if (ip === throwerIP) {
 							matches[seat] = `${account.username} {${seat + 1}}`;
 						} else if (

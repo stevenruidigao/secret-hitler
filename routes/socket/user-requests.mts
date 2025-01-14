@@ -295,7 +295,7 @@ export const sendGeneralChats = (socket: any) => {
  * @param {object} game - target game.
  * @param {string} override - type of user status to be displayed.
  */
-export const updateUserStatus = (passport: any, game: any, override?: string) => {
+export const updateUserStatus = (passport: any, game?: any, override?: string) => {
 	const user: any = userList.find((user: any) => user.userName === passport.user);
 
 	if (user) {

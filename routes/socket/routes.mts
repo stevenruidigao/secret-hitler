@@ -158,7 +158,7 @@ const findGame = (data: any) => {
 	}
 };
 
-const ensureInGame = (passport, game) => {
+const ensureInGame = (passport: any, game: any) => {
 	if (game && game.publicPlayersState && game.gameState && passport && passport.user) {
 		const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
 
@@ -173,7 +173,7 @@ const gatherStaffUsernames = () => {
 			editorUserNames = accounts.filter((account: any) =>account.staffRole === 'editor').map((account: any) =>account.username);
 			adminUserNames = accounts.filter((account: any) =>account.staffRole === 'admin').map((account: any) =>account.username);
 		})
-		.catch(err => {
+		.catch((err: Error) => {
 			console.log(err, 'err in finding staffroles');
 		});
 };
@@ -188,7 +188,7 @@ export const socketRoutes = () => {
 			socket.emit('version', { current: version });
 
 			// defensively check if game exists
-			socket.use((packet, next) => {
+			socket.use((packet: any, next: any) => {
 				const data = packet[1];
 				const uid = data && data.uid;
 				const isGameFound = uid && findGame(data);
@@ -226,16 +226,16 @@ export const socketRoutes = () => {
 			sendGeneralChats(socket);
 			sendGameList(socket, isAEM);
 
-			let isRestricted = true;
+			let isRestricted: boolean | undefined = true;
 
 			const checkRestriction = (account: any) => {
 				if (!account || !passport || !passport.user || !socket) return;
-				const parseVer = ver => {
-					const vals = ver.split('.');
-					vals.forEach((v, i) => (vals[i] = parseInt(v)));
+				const parseVer = (ver: string) => {
+					const vals: any = ver.split('.');
+					vals.forEach((v: string, i: number) => (vals[i] = parseInt(v)));
 					return vals;
 				};
-				const firstVerNew = (v1, v2) => {
+				const firstVerNew = (v1: any[], v2: any[]) => {
 					for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
 						if (!v2[i]) return true;
 						if (!v1[i] || isNaN(v1[i]) || v1[i] < v2[i]) return false;
@@ -245,7 +245,7 @@ export const socketRoutes = () => {
 				};
 
 				if (account.touLastAgreed && account.touLastAgreed.length) {
-					const changesSince = [];
+					const changesSince: any[] = [];
 					const myVer = parseVer(account.touLastAgreed);
 					TOU_CHANGES.forEach(change => {
 						if (!firstVerNew(myVer, parseVer(change.changeVer))) changesSince.push(change);
@@ -297,7 +297,7 @@ export const socketRoutes = () => {
 				});
 			});
 
-			socket.on('seeWarnings', username => {
+			socket.on('seeWarnings', (username: string) => {
 				if (isAEM) {
 					Account.findOne({ username: username }).then((account: any) => {
 						if (account) {
@@ -346,7 +346,7 @@ export const socketRoutes = () => {
 
 						if (account.feedbackSubmissions.length >= 2) {
 							const secondMostRecentIndex = account.feedbackSubmissions.length - 2;
-							if (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date > 1000 * 60 * 60 * 24) {
+							if (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date > 1000 * 60 * 60 * 24) {
 								// if it's been 24 hours since the *2nd* most recent feedback submission
 								account.feedbackSubmissions.push(newFeedback);
 							} else {
@@ -354,7 +354,7 @@ export const socketRoutes = () => {
 									status: 'error',
 									message:
 										'You can only submit feedback twice a day. You can submit feedback again in ' +
-										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
+										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
 										'.'
 								});
 								return;
@@ -363,7 +363,7 @@ export const socketRoutes = () => {
 							account.feedbackSubmissions.push(newFeedback);
 						}
 
-						let feedback = {
+						let feedback: any = {
 							content: `__**Player**__: ${passport.user}\n__**Feedback**__: ${data.feedback}`,
 							username: 'Feedback',
 							allowed_mentions: { parse: [] }
@@ -555,7 +555,7 @@ export const socketRoutes = () => {
 					updateSeatedUser(socket, passport, data);
 				}
 			});
-			socket.on('playerReport', (data, callback) => {
+			socket.on('playerReport', (data: any, callback: Function) => {
 				if (isRestricted || !data || !data.comment || data.comment.length > 140) return;
 				if (authenticated) {
 					handlePlayerReport(passport, data, callback);
@@ -585,7 +585,7 @@ export const socketRoutes = () => {
 			socket.on('getGameList', () => {
 				sendGameList(socket);
 			});
-			socket.on('getGameInfo', uid => {
+			socket.on('getGameInfo', (uid: string) => {
 				sendGameInfo(socket, uid);
 			});
 			socket.on('getUserList', () => {
@@ -604,12 +604,12 @@ export const socketRoutes = () => {
 					selectChancellorVoteOnVeto(passport, game, data);
 				}
 			});
-			socket.on('getModInfo', count => {
+			socket.on('getModInfo', (count: number) => {
 				if (authenticated && (isAEM || isTrial)) {
 					sendModInfo(games, socket, count, isTrial, isAEM);
 				}
 			});
-			socket.on('subscribeModChat', uid => {
+			socket.on('subscribeModChat', (uid: string) => {
 				const game = findGame({ uid });
 				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 					if (game && game.private && game.private.seatedPlayers) {
