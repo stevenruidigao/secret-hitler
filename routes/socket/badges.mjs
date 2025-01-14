@@ -125,14 +125,14 @@ export const awardBadge = (username, badgeId, badgeText, badgeTitle) => {
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
 export const checkBadgesELO = (user, gameJustPlayed = '') => {
-	if (!user.eloOverall) {
+	if (!user.overall || !user.overall.elo) {
 		return;
 	}
 
 	for (const badge of ELO_BADGES) {
 		const [elo, badgeId] = badge;
 
-		if (user.eloOverall >= elo) {
+		if (user.overall.elo >= elo) {
 			awardBadgePrequeried(user, badgeId, gameJustPlayed ? `You reached ${elo} ELO in the game ${gameJustPlayed}.` : ``, `You reached ${elo} ELO!`);
 		}
 	}
@@ -145,14 +145,14 @@ export const checkBadgesELO = (user, gameJustPlayed = '') => {
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
 export const checkBadgesXP = (user, gameJustPlayed = '') => {
-	if (!user.xpOverall) {
+	if (!user.overall || !user.overall.xp) {
 		return;
 	}
 
 	for (const badge of XP_BADGES) {
 		const [xp, badgeId] = badge;
 
-		if (user.xpOverall >= xp) {
+		if (user.overall.xp >= xp) {
 			awardBadgePrequeried(user, badgeId, gameJustPlayed ? `You reached ${xp} XP in the game ${gameJustPlayed}.` : ``, `You reached ${xp} XP!`);
 		}
 	}
