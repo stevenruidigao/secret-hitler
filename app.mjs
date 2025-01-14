@@ -16,8 +16,8 @@ import connectMongoDBSession from 'connect-mongodb-session';
 import redis from 'redis';
 import connectRedis from 'connect-redis';
 
-import routesIndex from './routes/index.js';
-import Account from './models/account.js';
+import routesIndex from './routes/index.mjs';
+import Account from './models/account.mjs';
 import { expandAndSimplify } from './routes/socket/ip-obf.js';
 
 let store;
