@@ -129,7 +129,7 @@ export interface IAccount {
 	bio?: string;
 	games?: string[];
 	overall?: IStats;
-	seasons?: Map<number, IStats>;
+	seasons?: Map<string, IStats>;
 	previousDayElo?: number;
 	previousDayXP?: number;
 	created?: Date;

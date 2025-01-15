@@ -181,27 +181,28 @@ export const sendUserGameSettings = (socket: Socket) => {
 	if (!passport || !passport.user) return;
 
 	Account.findOne({ username: passport.user })
-		.then((account: any) => {
-			socket.emit('gameSettings', account.gameSettings);
+		.then((account) => {
+			socket.emit('gameSettings', account?.gameSettings);
 
 			const userListNames = userList.map((user: any) => user.userName);
 
 			getProfile(passport.user);
-			if (!userListNames.includes(passport.user)) {
+
+			if (account && !userListNames.includes(passport.user)) {
 				const userListInfo: Record<string, any> = {
 					userName: passport.user,
-					playerPronouns: account.gameSettings.playerPronouns,
+					playerPronouns: account.gameSettings?.playerPronouns,
 					staffRole: account.staffRole || '',
 					isContributor: account.isContributor || false,
-					staff: account.gameSettings.staff,
+					staff: account.gameSettings?.staff,
 					isRainbowOverall: account.isRainbowOverall,
 					isRainbowSeason: account.isRainbowSeason,
-					isPrivate: account.gameSettings.isPrivate,
-					tournyWins: account.gameSettings.tournyWins,
-					blacklist: account.gameSettings.blacklist,
-					customCardback: account.gameSettings.customCardback,
-					previousSeasonAward: account.gameSettings.previousSeasonAward,
-					specialTournamentStatus: account.gameSettings.specialTournamentStatus,
+					isPrivate: account.gameSettings?.isPrivate,
+					tournyWins: account.gameSettings?.tournyWins,
+					blacklist: account.gameSettings?.blacklist,
+					customCardback: account.gameSettings?.customCardback,
+					previousSeasonAward: account.gameSettings?.previousSeasonAward,
+					specialTournamentStatus: account.gameSettings?.specialTournamentStatus,
 					overall: account.overall,
 					season: account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {},
 					status: {
@@ -218,7 +219,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 
 			socket.emit('version', {
 				current: version,
-				lastSeen: account.lastVersionSeen || 'none'
+				lastSeen: account?.lastVersionSeen || 'none'
 			});
 		})
 		.catch((err: Error) => {
