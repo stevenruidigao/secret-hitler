@@ -283,7 +283,9 @@ export const socketRoutes = () => {
 			};
 
 			if (passport && passport.user && authenticated) {
-				Account.findOne({ username: passport.user }).then((account: any) => {
+				Account.findOne({ username: passport.user }).then((account) => {
+					if (!account) return;
+
 					isRestricted = checkRestriction(account);
 				});
 			}
@@ -305,14 +307,16 @@ export const socketRoutes = () => {
 			});
 
 			socket.on('receiveRestrictions', () => {
-				Account.findOne({ username: passport.user }).then((account: any) => {
+				Account.findOne({ username: passport.user }).then((account) => {
+					if (!account) return;
+
 					isRestricted = checkRestriction(account);
 				});
 			});
 
 			socket.on('seeWarnings', (username: string) => {
 				if (isAEM) {
-					Account.findOne({ username: username }).then((account: any) => {
+					Account.findOne({ username: username }).then((account) => {
 						if (account) {
 							if (account.warnings && account.warnings.length > 0) {
 								socket.emit('sendWarnings', { username, warnings: account.warnings });
@@ -350,8 +354,10 @@ export const socketRoutes = () => {
 				}
 
 				if (data.feedback.length <= 1900) {
-					Account.findOne({ username: passport.user }).then((account: any) => {
+					Account.findOne({ username: passport.user }).then((account) => {
+						if (!account) return;
 						if (!account.feedbackSubmissions) account.feedbackSubmissions = [];
+
 						const newFeedback = {
 							date: new Date(),
 							feedback: data.feedback
@@ -359,7 +365,7 @@ export const socketRoutes = () => {
 
 						if (account.feedbackSubmissions.length >= 2) {
 							const secondMostRecentIndex = account.feedbackSubmissions.length - 2;
-							if (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date > 1000 * 60 * 60 * 24) {
+							if (!account.feedbackSubmissions[secondMostRecentIndex].date || newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf() > 1000 * 60 * 60 * 24) {
 								// if it's been 24 hours since the *2nd* most recent feedback submission
 								account.feedbackSubmissions.push(newFeedback);
 							} else {
@@ -367,7 +373,7 @@ export const socketRoutes = () => {
 									status: 'error',
 									message:
 										'You can only submit feedback twice a day. You can submit feedback again in ' +
-										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date)).humanize() +
+										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf())).humanize() +
 										'.'
 								});
 								return;
@@ -472,7 +478,9 @@ export const socketRoutes = () => {
 
 			socket.on('confirmTOU', () => {
 				if (authenticated && isRestricted) {
-					Account.findOne({ username: passport.user }).then((account: any) => {
+					Account.findOne({ username: passport.user }).then((account) => {
+						if (!account) return;
+
 						account.touLastAgreed = TOU_CHANGES[0].changeVer;
 						account.save();
 						isRestricted = checkRestriction(account);

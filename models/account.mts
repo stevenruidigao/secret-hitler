@@ -90,7 +90,7 @@ export interface IWarning {
 }
 
 export interface IFeedbackSubmission {
-	time?: Date;
+	date?: Date;
 	text?: string;
 }
 
