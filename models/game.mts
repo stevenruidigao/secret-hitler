@@ -2,7 +2,46 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const Game = new Schema({
+export interface IGame {
+	uid?: string;
+	name?: string;
+	flag?: string;
+	date?: Date;
+	playerChats?: 'silent' | 'emote' | 'regular';
+	playerCount?: number;
+	winningPlayers?: string[];
+	losingPlayers?: string[];
+	winningTeam?: string;
+	season?: number;
+	isRainbow?: boolean;
+	eloMinimum?: number;
+	xpMinimum?: number;
+	rebalance6p?: boolean;
+	rebalance7p?: boolean;
+	rebalance9p?: boolean;
+	rerebalance9p?: boolean;
+	rebalance9p2f?: boolean;
+	isTournyFirstRound?: boolean;
+	isTournySecondRound?: boolean;
+	casualGame?: boolean;
+	practiceGame?: boolean;
+	customGame?: boolean;
+	unlistedGame?: boolean;
+	isVerifiedOnly?: boolean;
+	chats?: any[];
+	hiddenInfoChat?: any[];
+	guesses?: Map<string, string>;
+	merlinGuesses?: Map<string, number>;
+	timedMode?: number;
+	blindMode?: boolean;
+	avalonSH?: {
+		withPercival?: boolean;
+	};
+	noTopdecking?: number;
+	completed?: boolean;
+}
+
+const Game = new Schema<IGame>({
 	uid: String,
 	name: String,
 	flag: String,
@@ -15,6 +54,7 @@ const Game = new Schema({
 	season: Number,
 	isRainbow: Boolean,
 	eloMinimum: Number,
+	xpMinimum: Number,
 	rebalance6p: Boolean,
 	rebalance7p: Boolean,
 	rebalance9p: Boolean,
@@ -46,4 +86,4 @@ const Game = new Schema({
 	completed: Boolean
 });
 
-export default mongoose.model('Game', Game);
+export default mongoose.model<IGame>('Game', Game);

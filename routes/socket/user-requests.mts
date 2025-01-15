@@ -250,13 +250,14 @@ export const sendPlayerNotes = (socket: Socket, data: any) => {
 export const sendReplayGameData = (socket: Socket, uid: string) => {
 	Game.findOne({ uid })
 		.select({ _id: 0, _v: 0 })
-		.then((game: any, err: Error) => {
-			if (err) {
-				console.log(err, 'game err retrieving for replay');
-			}
-
+		.then((game) => {
 			if (game) {
 				socket.emit('replayGameData', game);
+			}
+		})
+		.catch((err: Error) => {
+			if (err) {
+				console.log(err, 'game err retrieving for replay');
 			}
 		});
 };
@@ -355,12 +356,14 @@ export const sendGameInfo = (socket: Socket, uid: string) => {
 		sendInProgressGameUpdate(game);
 		socket.emit('joinGameRedirect', game.general.uid);
 	} else {
-		Game.findOne({ uid }).then((game: any, err: Error) => {
-			if (err) {
-				console.log(err, 'game err retrieving for replay');
-			}
-
-			socket.emit('manualReplayRequest', game ? game.uid : '');
-		});
+		Game.findOne({ uid })
+			.then((game) => {
+				socket.emit('manualReplayRequest', game ? game.uid : '');
+			})
+			.catch((err: Error) => {
+				if (err) {
+					console.log(err, 'game err retrieving for replay');
+				}
+			});
 	}
 };

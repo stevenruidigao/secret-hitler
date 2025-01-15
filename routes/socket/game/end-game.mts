@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import Account from '../../../models/account.mts';
 import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.mts';
-import Game from '../../../models/game.mts';
+import Game, { IGame } from '../../../models/game.mts';
 import { updateProfiles } from '../../../models/profile/utils.mts';
 
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mjs';
@@ -20,7 +20,7 @@ import startGame from './start-game.mjs';
 
 const debugLogger = debug('game:summary');
 
-export const generateGameObject = (game: any) => {
+export const generateGameObject = (game: any): IGame => {
 	const casualBool = Boolean(game?.general?.casualGame); // Because Mongo is explicitly typed and integers are not truthy according to it
 	const practiceBool = Boolean(game?.general?.practiceGame);
 	const unlistedBool = Boolean(game?.general?.unlistedGame);
@@ -150,14 +150,14 @@ export const saveGame = (game: any) => {
 export const saveOrUpdateGame = (gameID: string, callback: Function) => {
 	const gameInMemory = games[gameID];
 
-	Game.findOne({ uid: gameID }).then((game: any) => {
+	Game.findOne({ uid: gameID }).then((game) => {
 		if (game) {
-			const newObject: any = generateGameObject(gameInMemory); // in theory this should only be chats (as the only time a game is saved and *not* deleted is on game end) but for forwards compatibility all keys are checked
+			const newObject = generateGameObject(gameInMemory); // in theory this should only be chats (as the only time a game is saved and *not* deleted is on game end) but for forwards compatibility all keys are checked
 
-			for (const key in newObject) {
+			for (const key of Object.keys(newObject) as (keyof IGame)[]) { // TODO: check this
 				if (newObject.hasOwnProperty(key) && game[key] !== newObject[key]) {
 					// check in order to prevent unnecessarily marking fields as modified in mongoose
-					game[key] = newObject[key];
+					(game[key] as IGame[keyof IGame]) = newObject[key] as IGame[keyof IGame]; // TODO: check this
 				}
 			}
 

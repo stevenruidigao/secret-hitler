@@ -523,7 +523,7 @@ export default () => {
 				Game.findOne({ uid: id })
 					.lean()
 					.exec()
-					.then((game: any) => {
+					.then((game) => {
 						if (!game) {
 							res.status(404).send('Game not found');
 						} else {
