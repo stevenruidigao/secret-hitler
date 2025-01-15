@@ -191,14 +191,25 @@ export const completeGame = (game: any, winningTeamName: string) => {
 
 	for (let affectedPlayerNumber = 0; affectedPlayerNumber < game.publicPlayersState.length; affectedPlayerNumber++) {
 		const affectedSocketId = Object.keys(io.sockets.sockets).find(
-			socketId =>
-				io.sockets.sockets.get(socketId).handshake.session.passport &&
-				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+			socketId => {
+				const socket = io.sockets.sockets.get(socketId);
+
+				if (!socket) return false;
+
+				const handshake = socket.handshake as any;
+
+				return handshake?.session?.passport &&
+					handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
+			}
 		);
-		if (!io.sockets.sockets.get(affectedSocketId)) {
+
+		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+		if (!affectedSocket) {
 			continue;
 		}
-		io.sockets.sockets.get(affectedSocketId).emit('removeClaim');
+		
+		affectedSocket.emit('removeClaim');
 	}
 
 	if (game && game.general && game.general.timedMode && game.private.timerId) {
@@ -466,13 +477,25 @@ export const completeGame = (game: any, winningTeamName: string) => {
 
 						if (isTournamentFinalGame && !game.general.casualGame) {
 							player.gameSettings.tournyWins.push(Date.now());
+
 							const playerSocketId = Object.keys(io.sockets.sockets).find(
-								socketId =>
-									io.sockets.sockets.get(socketId).handshake.session.passport &&
-									io.sockets.sockets.get(socketId).handshake.session.passport.user === player.username
+								socketId => {
+									const s = io.sockets.sockets.get(socketId);
+
+									if (!s) return false;
+
+									const handshake = s.handshake as any;
+
+									return (
+										handshake?.session?.passport &&
+										handshake.session.passport.user === player.username
+									);
+								}
 							);
 
-							io.sockets.sockets.get(playerSocketId).emit('gameSettings', player.gameSettings); // TODO: aaaaaaaa
+							const playerSocket = playerSocketId && io.sockets.sockets.get(playerSocketId);
+
+							if (playerSocket) playerSocket.emit('gameSettings', player.gameSettings);
 						}
 					} else {
 						if (isRainbow) {
@@ -654,18 +677,34 @@ export const completeGame = (game: any, winningTeamName: string) => {
 						game.general.tournyInfo.isRound1TableThatFinished2nd = true;
 						sendInProgressGameUpdate(game);
 						const winningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
-							socketId =>
-								io.sockets.sockets.get(socketId).handshake.session.passport &&
-								winningPrivatePlayers.map((player: any) => player.userName).includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
+							socketId => {
+								const socket = io.sockets.sockets.get(socketId);
+
+								if (!socket) return false;
+
+								const handshake = socket.handshake as any;
+
+								return handshake?.session?.passport &&
+									winningPrivatePlayers.map((player: any) => player.userName).includes(handshake.session.passport.user);
+							}
 						);
 
 						// crash here line 302 map of undefined.  Not sure how this didn't exist at this time.  Race condition in settimeout/interval?  Both games completed at almost the same time?  Dunno.
 						const otherGameWinningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
-							socketId =>
-								io.sockets.sockets.get(socketId).handshake.session.passport &&
-								game.general.tournyInfo.winningPlayersFirstCompletedGame
-									.map((player: any) => player.userName)
-									.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
+							socketId => {
+								const socket = io.sockets.sockets.get(socketId);
+
+								if (!socket) return false;
+
+								const handshake = socket.handshake as any;
+
+								return (
+									handshake?.session?.passport &&
+										game.general.tournyInfo.winningPlayersFirstCompletedGame
+											.map((player: any) => player.userName)
+											.includes(handshake.session.passport.user)
+								);
+							}
 						);
 
 						const socketIds = winningPlayerSocketIds.concat(otherGameWinningPlayerSocketIds);
@@ -673,9 +712,12 @@ export const completeGame = (game: any, winningTeamName: string) => {
 						socketIds.forEach(id => {
 							const socket = io.sockets.sockets.get(id);
 
+							if (!socket) return;
+
 							Array.from(socket.rooms.keys()).forEach(roomUid => {
 								socket.leave(roomUid);
 							});
+
 							socket.join(finalGame.general.uid);
 							socket.emit('joinGameRedirect', finalGame.general.uid);
 						});
