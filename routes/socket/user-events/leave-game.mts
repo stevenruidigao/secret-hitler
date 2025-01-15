@@ -405,7 +405,7 @@ export const handleUserLeaveGame = (socket: Socket, game: any, data: any, passpo
 	}
 
 	if (!data.isRemake) {
-		updateUserStatus(passport, null);
+		updateUserStatus(passport, undefined);
 		socket.emit('gameUpdate', {});
 	}
 	sendGameList();

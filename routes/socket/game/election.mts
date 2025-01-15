@@ -5,8 +5,8 @@ import { makeReport } from '../report.mts';
 import { sendGameList } from '../user-requests.mts';
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mts';
 
+import { ActiveGame, shufflePolicies, startElection } from './common.mts';
 import { assassinateMerlin } from './assassination.mts';
-import { shufflePolicies, startElection } from './common.mts';
 import { selectChancellor } from './election-util.mts';
 import { completeGame } from './end-game.mts';
 import {
@@ -60,7 +60,7 @@ const presidentPowers: Record<number, [Function, string] | null>[] = [
  * @param {string} team - name of team that is enacting policy.
  * @param {object} socket - socket
  */
-const enactPolicy = (game: any, team: string, socket?: Socket) => {
+const enactPolicy = (game: ActiveGame, team: string, socket?: Socket) => {
 	const index = game.trackState.enactedPolicies.length;
 	const { experiencedMode } = game.general;
 
@@ -356,7 +356,7 @@ const enactPolicy = (game: any, team: string, socket?: Socket) => {
  * @param {object} data - socket emit
  * @param {object} socket - socket
  */
-export const selectPresidentVoteOnVeto = (passport: any, game: any, data: any, socket: Socket) => {
+export const selectPresidentVoteOnVeto = (passport: any, game: ActiveGame, data: any, socket: Socket) => {
 	const { experiencedMode } = game.general;
 	const president = game.private.seatedPlayers[game.gameState.presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -534,7 +534,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: any, data: any, s
  * @param {object} data - socket emit
  * @param {object} socket - socket
  */
-export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, socket?: any) => {
+export const selectChancellorVoteOnVeto = (passport: any, game: ActiveGame, data: any, socket?: any) => {
 	const { experiencedMode } = game.general;
 	const president = game.private.seatedPlayers[game.gameState.presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -738,7 +738,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, 
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectChancellorPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket?: Socket) => {
+export const selectChancellorPolicy = (passport: any, game: ActiveGame, data: any, wasTimer: boolean, socket?: Socket) => {
 	const { experiencedMode } = game.general;
 	const presidentIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isPresident');
 	const president = game.private.seatedPlayers[presidentIndex];
@@ -990,7 +990,7 @@ export const selectChancellorPolicy = (passport: any, game: any, data: any, wasT
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket?: Socket) => {
+export const selectPresidentPolicy = (passport: any, game: ActiveGame, data: any, wasTimer: boolean, socket?: Socket) => {
 	const { presidentIndex } = game.gameState;
 	const president = game.private.seatedPlayers[presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -1358,7 +1358,7 @@ export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTi
  * @param {object} socket - socket
  * @param {bool} force - if action was forced
  */
-export const selectVoting = (passport: any, game: any, data: any, socket?: Socket, force = false) => {
+export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?: Socket, force = false) => {
 	const { seatedPlayers } = game.private;
 	const { experiencedMode } = game.general;
 	const player = seatedPlayers.find((player: any) => player.userName === passport.user); // TODO: optimize

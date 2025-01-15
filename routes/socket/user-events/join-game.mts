@@ -1,14 +1,15 @@
 import { Socket } from 'socket.io';
 
 import Account from '../../../models/account.mts';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 import { userInBlacklist } from '../../../utils/index.mts';
 
 import { games, limitNewPlayers } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { sendCommandChatsUpdate } from '../util.mts';
 
+import { ActiveGame } from '../game/common.mts';
 import { checkStartConditions } from './leave-game.mts'; // this used to be a separate game-countdown.js but that isn't really helpful tbh
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 /**
  * @param {object} socket - user socket reference.
@@ -18,7 +19,7 @@ import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.m
 export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 	// In-game Assured in routes.mts
-	const game = games[data.uid];
+	const game: ActiveGame = games[data.uid];
 	// prevents race condition between 1) taking a seat and 2) the game starting
 
 	if (!game || !game.gameState || game.gameState.isTracksFlipped) {

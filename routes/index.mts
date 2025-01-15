@@ -1,9 +1,9 @@
-import { Express, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import passport from 'passport'; // eslint-disable-line no-unused-vars
 import dayjs from 'dayjs';
-import fetch, { ResponseType } from 'node-fetch';
+import fetch from 'node-fetch';
 
-import Account from '../models/account.mts'; // eslint-disable-line no-unused-vars
+import Account, { IAccount, IGameSettings } from '../models/account.mts'; // eslint-disable-line no-unused-vars
 import GameSummary from '../models/game-summary/index.mts';
 import Game from '../models/game.mts';
 import ModThread from '../models/modThread.mts';
@@ -167,23 +167,32 @@ export default () => {
 					console.log(err, 'profile find err');
 				});
 
-			Account.findOne({ username }, (err: Error, account: any) => {
+			Account.findOne({ username }, (err: Error, account: IAccount) => {
 				if (err) {
 					console.log(err);
 					return;
 				}
 
 				checkBadgesAccount(account);
-				const { blacklist } = account.gameSettings;
 
-				const backgroundColor = account.colors.background || DEFAULT_THEME_COLORS.baseBackgroundColor;
-				const textColor = account.colors.text || DEFAULT_THEME_COLORS.baseTextColor;
-				const [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
-				const [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
+				let blacklist: string[] = [];
+				let gameSettingsWithoutBlacklist: IGameSettings | {} = {};
 
-				const gameSettingsWithoutBlacklist = account.gameSettings.toObject();
+				if (account.gameSettings) {
+					blacklist = account.gameSettings.blacklist || blacklist;
+					const gameSettings = (account.gameSettings.toObject as Function)();
+					
+					if (gameSettings.blacklist) {
+						delete gameSettings.blacklist;
+					}
 
-				delete gameSettingsWithoutBlacklist.blacklist;
+					gameSettingsWithoutBlacklist = gameSettings;
+				}
+
+				let backgroundColor = account?.colors?.background || DEFAULT_THEME_COLORS.baseBackgroundColor;
+				let textColor = account?.colors?.text || DEFAULT_THEME_COLORS.baseTextColor;
+				let [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
+				let [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
 
 				const gameObj: Record<string, any> = {
 					game: true,
@@ -195,9 +204,9 @@ export default () => {
 					username,
 					gameSettings: gameSettingsWithoutBlacklist,
 					blacklist,
-					primaryColor: account.colors.primary || DEFAULT_THEME_COLORS.primaryColor,
-					secondaryColor: account.colors.secondary || DEFAULT_THEME_COLORS.secondaryColor,
-					tertiaryColor: account.colors.tertiary || DEFAULT_THEME_COLORS.tertiaryColor,
+					primaryColor: account?.colors?.primary || DEFAULT_THEME_COLORS.primaryColor,
+					secondaryColor: account?.colors?.secondary || DEFAULT_THEME_COLORS.secondaryColor,
+					tertiaryColor: account?.colors?.tertiary || DEFAULT_THEME_COLORS.tertiaryColor,
 					backgroundColor,
 					secondaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
 						backgroundLightness > 50 ? backgroundLightness - 7 : backgroundLightness + 7
@@ -219,7 +228,7 @@ export default () => {
 
 				if (
 					(account.ipHistory && account.ipHistory.length === 0) ||
-					(account.ipHistory.length > 0 && account.ipHistory[account.ipHistory.length - 1].ip !== ip)
+					(account.ipHistory && account.ipHistory.length > 0 && account.ipHistory[account.ipHistory.length - 1].ip !== ip)
 				) {
 					account.ipHistory.push({
 						date: new Date(),
@@ -227,7 +236,7 @@ export default () => {
 					});
 				}
 
-				account.save(() => {
+				(account.save as Function)(() => {
 					res.render('game', gameObj);
 				});
 			});
@@ -561,14 +570,23 @@ export default () => {
 			const username = req.session.passport.user;
 
 			Account.findOne({ username })
-				.then((account: any) => {
-					account.gameSettings.customCardback = account.gameSettings.customCardback || {};
-
-					if (!account.isRainbowOverall) {
+				.then((account) => {
+					if (!account || !account.isRainbowOverall) {
 						res.json({
 							message: 'You need to be rainbow to upload a cardback.'
 						});
-					} else if (
+
+						return;
+					}
+
+					if (!account.gameSettings) {
+						account.gameSettings = {};
+					}
+					
+					account.gameSettings.customCardback = account.gameSettings.customCardback || {};
+
+					if (
+						account.gameSettings.customCardback.saveTime &&
 						new Date(account.gameSettings.customCardback.saveTime) &&
 						Date.now() - new Date(account.gameSettings.customCardback.saveTime).getTime() < 30000
 					) {
@@ -581,7 +599,7 @@ export default () => {
 						});
 					}
 				})
-				.catch((err: Error) => {
+				.catch((err) => {
 					console.log(err, 'account err in cardbacks');
 				});
 		} catch (err) {

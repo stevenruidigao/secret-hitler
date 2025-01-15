@@ -316,7 +316,7 @@ const continueSignup = (config: any) => {
 				oauthID: `${config.isOAuth && config.type === 'discord' ? accountObj.discord?.id : ''}`
 			});
 
-			Account.register(
+			(Account as any).register(
 				new Account(accountObj),
 				Math.random()
 					.toString(36)
@@ -348,7 +348,7 @@ const continueSignup = (config: any) => {
 				}
 			);
 		} else {
-			Account.register(new Account(save), password, (err: Error) => {
+			(Account as any).register(new Account(save), password, (err: Error) => {
 				if (err) {
 					console.log(err);
 					res.status(500).json({ message: err.toString() });

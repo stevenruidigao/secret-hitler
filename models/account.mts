@@ -14,6 +14,7 @@ export interface IStats {
 }
 
 export interface IGameSettings {
+	toObject?: () => IGameSettings;
 	playerPronouns?: string;
 	staff?: {
 		disableVisibleElo?: boolean;
@@ -82,6 +83,11 @@ export interface IGameSettings {
 	claimButtons?: string;
 }
 
+export interface IHistoricalIP {
+	date: Date;
+	ip: string;
+}
+
 export interface IWarning {
 	text?: string;
 	moderator?: string;
@@ -107,6 +113,7 @@ export interface IHistoricalElo {
 }
 
 export interface IAccount {
+	save?: (callback: Function) => any;
 	version?: number;
 	username?: string;
 	password?: string;
@@ -121,7 +128,7 @@ export interface IAccount {
 	signupIP?: string;
 	lastConnectedIP?: string;
 	lastConnected?: Date;
-	ipHistory?: string[];
+	ipHistory?: IHistoricalIP[];
 	verified?: boolean;
 	isBanned?: boolean;
 	isTimeout?: Date;

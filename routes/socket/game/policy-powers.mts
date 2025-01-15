@@ -3,14 +3,14 @@ import { Socket } from 'socket.io';
 import { sendGameList } from '../user-requests.mts';
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mjs';
 
+import { startElection, shufflePolicies, ActiveGame } from './common.mts';
 import { assassinateMerlin } from './assassination.mts';
 import { completeGame } from './end-game.mts';
-import { startElection, shufflePolicies } from './common.mts';
 
 /**
  * @param {object} game - game to act on.
  */
-export const policyPeek = (game: any) => {
+export const policyPeek = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -34,7 +34,7 @@ export const policyPeek = (game: any) => {
  * @param {object} game - target game.
  * @param {object} socket - socket
  */
-export const selectPolicies = (passport: any, game: any, socket?: Socket) => {
+export const selectPolicies = (passport: any, game: ActiveGame, socket?: Socket) => {
 	const { presidentIndex } = game.gameState;
 	const { experiencedMode } = game.general;
 	const { seatedPlayers } = game.private;
@@ -198,7 +198,7 @@ export const selectPolicies = (passport: any, game: any, socket?: Socket) => {
 /**
  * @param {object} game - game to act on.
  */
-export const policyPeekAndDrop = (game: any) => {
+export const policyPeekAndDrop = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -223,7 +223,7 @@ export const policyPeekAndDrop = (game: any) => {
  * @param {object} data from socket emit
  * @param {object} socket - socket
  */
-export const selectBurnCard = (passport: any, game: any, data: any, socket?: Socket) => {
+export const selectBurnCard = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	if (game.general.timedMode && game.private.timerId) {
 		clearTimeout(game.private.timerId);
 		game.private.timerId = null;
@@ -339,7 +339,7 @@ export const selectBurnCard = (passport: any, game: any, data: any, socket?: Soc
  * @param {object} passport - socket authentication.
  * @param {object} game - target game.
  */
-export const selectOnePolicy = (passport: any, game: any) => {
+export const selectOnePolicy = (passport: any, game: ActiveGame) => {
 	const { presidentIndex } = game.gameState;
 	const { experiencedMode } = game.general;
 	const { seatedPlayers } = game.private;
@@ -562,7 +562,7 @@ export const selectOnePolicy = (passport: any, game: any) => {
 /**
  * @param {object} game - game to act on.
  */
-export const investigateLoyalty = (game: any) => {
+export const investigateLoyalty = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -628,7 +628,7 @@ export const investigateLoyalty = (game: any) => {
  * @param {object} data from socket emit
  * @param {object} socket - socket
  */
-export const selectPartyMembershipInvestigate = (passport: any, game: any, data: any, socket?: Socket) => {
+export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	if (game.general.timedMode && game.private.timerId) {
 		clearTimeout(game.private.timerId);
 		game.private.timerId = null;
@@ -811,7 +811,7 @@ export const selectPartyMembershipInvestigate = (passport: any, game: any, data:
 /**
  * @param {object} game - game to act on.
  */
-export const showPlayerLoyalty = (game: any) => {
+export const showPlayerLoyalty = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -841,7 +841,7 @@ export const showPlayerLoyalty = (game: any) => {
  * @param {object} data from socket emit
  * @param {object} socket - socket
  */
-export const selectPartyMembershipInvestigateReverse = (passport: any, game: any, data: any, socket: Socket) => {
+export const selectPartyMembershipInvestigateReverse = (passport: any, game: ActiveGame, data: any, socket: Socket) => {
 	if (game.general.timedMode && game.private.timerId) {
 		clearTimeout(game.private.timerId);
 		game.private.timerId = null;
@@ -1041,7 +1041,7 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: any
 /**
  * @param {object} game - game to act on.
  */
-export const specialElection = (game: any) => {
+export const specialElection = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -1073,7 +1073,7 @@ export const specialElection = (game: any) => {
  * @param {object} data from socket emit
  * @param {object} socket - socket
  */
-export const selectSpecialElection = (passport: any, game: any, data: any, socket?: Socket) => {
+export const selectSpecialElection = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	const { playerIndex } = data;
 	const { presidentIndex } = game.gameState;
 	const gameChat: any = {
@@ -1174,7 +1174,7 @@ export const selectSpecialElection = (passport: any, game: any, data: any, socke
 /**
  * @param {object} game - game to act on.
  */
-export const executePlayer = (game: any) => {
+export const executePlayer = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const { presidentIndex } = game.gameState;
 	const president = seatedPlayers[presidentIndex];
@@ -1229,7 +1229,7 @@ export const executePlayer = (game: any) => {
  * @param {object} data from socket emit
  * @param {object} socket - socket
  */
-export const selectPlayerToExecute = (passport: any, game: any, data: any, socket?: Socket) => {
+export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	const { playerIndex } = data;
 	const { presidentIndex } = game.gameState;
 	const { seatedPlayers } = game.private;

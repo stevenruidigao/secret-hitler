@@ -28,6 +28,7 @@ import {
 	staffList
 } from './models.mts';
 import { sendInProgressGameUpdate } from './util.mts';
+import { ActiveGame } from './game/common.mts';
 
 /**
  * @param {object} socket - user socket reference.
@@ -49,7 +50,7 @@ export const sendUserList = (socket?: any) => {
 	}
 };
 
-export const getModInfo = (games: any[], users: any[], socket: Socket, queryObj: any, count = 1, isTrial: boolean, isAEM: boolean) => {
+export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket, queryObj: any, count = 1, isTrial: boolean, isAEM: boolean) => {
 	const maskEmail = (email: string) => (email && email.split('@')[1]) || '';
 	ModAction.find(queryObj)
 		.sort({ $natural: -1 })
@@ -156,7 +157,7 @@ export const sendPrivateSignups = (socket: Socket) => {
  * @param {boolean} isTrial - true if the user is a trial mod.
  * @param {boolean} isAEM - true if the user is a AEM member.
  */
-export const sendModInfo = (games: any[], socket: Socket, count: number, isTrial: boolean, isAEM: boolean) => {
+export const sendModInfo = (games: Record<any, ActiveGame>, socket: Socket, count: number, isTrial: boolean, isAEM: boolean) => {
 	const userNames = userList.map((user: any) => user.userName);
 
 	Account.find({ username: { $in: userNames }, 'gameSettings.isPrivate': { $ne: true } })
@@ -301,7 +302,7 @@ export const sendGeneralChats = (socket: Socket) => {
  * @param {object} game - target game.
  * @param {string} override - type of user status to be displayed.
  */
-export const updateUserStatus = (passport: any, game?: any, override?: string) => {
+export const updateUserStatus = (passport: any, game?: ActiveGame, override?: string) => {
 	const user: any = userList.find((user: any) => user.userName === passport.user);
 
 	if (user) {

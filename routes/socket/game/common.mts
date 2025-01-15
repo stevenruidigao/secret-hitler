@@ -5,11 +5,28 @@ import { sendInProgressGameUpdate } from '../util.mjs';
 
 import { selectChancellor } from './election-util.mts';
 
+export type ActiveGame = {
+	uid?: string;
+	general: any;
+	private: any;
+	gameState: any;
+	trackState: any;
+	publicPlayersState: any;
+	customGameSettings: any;
+	chats: any[];
+	guesses: any[];
+	merlinGuesses: any[];
+	lastModPing?: number;
+	unsentReports: any[];
+	summary?: any;
+	summarySaved?: boolean;
+}
+
 /**
  * @param {object} game - game to act on.
  * @param {boolean} isStart - true if this is the initial shuffle.
  */
-export const shufflePolicies = (game: any, isStart?: boolean) => {
+export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 	if (!game) {
 		return;
 	}

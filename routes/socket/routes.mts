@@ -415,8 +415,10 @@ export const socketRoutes = () => {
 
 			socket.on('flappyEvent', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					handleFlappyEvent(data, game);
 				}
 			});
@@ -620,8 +622,10 @@ export const socketRoutes = () => {
 			});
 			socket.on('selectedChancellorVoteOnVeto', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectChancellorVoteOnVeto(passport, game, data);
 				}
 			});
@@ -632,57 +636,64 @@ export const socketRoutes = () => {
 			});
 			socket.on('subscribeModChat', (uid: string) => {
 				const game = findGame({ uid });
-				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-					if (game && game.private && game.private.seatedPlayers) {
+				
+				if (game && game.private && game.private.seatedPlayers) {
+					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 						const players = game.private.seatedPlayers.map((player: any) => player.userName);
-						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then((accounts: any[]) => {
+						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then((accounts) => {
 							const staff = accounts
-								.filter((acc: any) => {
+								.filter((acc) => {
 									acc.staffRole && acc.staffRole.length > 0 && players.includes(acc.username);
 								})
 								.map(acc => acc.username);
+								
 							if (staff.length) {
 								socket.emit('sendAlert', `AEM members are present: ${JSON.stringify(staff)}`);
 								return;
 							}
+
 							handleSubscribeModChat(socket, passport, game);
 						});
-					} else socket.emit('sendAlert', 'Game is missing.');
-				}
+					}
+				} else socket.emit('sendAlert', 'Game is missing.');
 			});
 			socket.on('modPeekVotes', (data: any) => {
 				if (!data) return;
 				const uid = data.uid;
 				const game = findGame({ uid });
-				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-					if (game && game.private && game.private.seatedPlayers) {
+
+				if (game && game.private && game.private.seatedPlayers) {
+					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 						handleModPeekVotes(socket, passport, game, data.modName);
-					} else {
-						socket.emit('sendAlert', 'Game is missing.');
 					}
+				} else {
+					socket.emit('sendAlert', 'Game is missing.');
 				}
 			});
 			socket.on('modGetRemakes', (data: any) => {
 				if (!data) return;
+
 				const uid = data.uid;
 				const game = findGame({ uid });
-				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-					if (game && game.private && game.private.seatedPlayers) {
-						handleModPeekRemakes(socket, passport, game, data.modName);
-					} else {
-						socket.emit('sendAlert', 'Game is missing.');
+
+				if (game && game.private && game.private.seatedPlayers) {
+					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
+							handleModPeekRemakes(socket, passport, game, data.modName);
 					}
+				} else {
+					socket.emit('sendAlert', 'Game is missing.');
 				}
 			});
 			socket.on('modFreezeGame', (data: any) => {
 				const uid = data.uid;
 				const game = findGame({ uid });
-				if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-					if (game && game.private && game.private.seatedPlayers) {
+
+				if (game && game.private && game.private.seatedPlayers) {
+					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 						handleGameFreeze(socket, passport, game, data.modName);
-					} else {
-						socket.emit('sendAlert', 'Game is missing.');
 					}
+				} else {
+					socket.emit('sendAlert', 'Game is missing.');
 				}
 			});
 			socket.on('getUserReports', () => {
@@ -705,87 +716,111 @@ export const socketRoutes = () => {
 
 			socket.on('presidentSelectedChancellor', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectChancellor(socket, passport, game, data);
 				}
 			});
 			socket.on('selectedVoting', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectVoting(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPresidentPolicy', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPresidentPolicy(passport, game, data, false, socket);
 				}
 			});
 			socket.on('selectedChancellorPolicy', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectChancellorPolicy(passport, game, data, false, socket);
 				}
 			});
 			socket.on('selectedPresidentVoteOnVeto', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPresidentVoteOnVeto(passport, game, data, socket);
 				}
 			});
 			// policy-powers
 			socket.on('selectPartyMembershipInvestigate', (data: any) => {
 				if (isRestricted) return;
+
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigate(passport, game, data, socket);
 				}
 			});
 			socket.on('selectPartyMembershipInvestigateReverse', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigateReverse(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPolicies', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					if (game.private.lock.policyPeekAndDrop) selectOnePolicy(passport, game);
 					else selectPolicies(passport, game, socket);
 				}
 			});
 			socket.on('selectedPresidentVoteOnBurn', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectBurnCard(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPlayerToExecute', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPlayerToExecute(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedSpecialElection', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectSpecialElection(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPlayerToAssassinate', (data: any) => {
 				if (isRestricted) return;
+                                
 				const game = findGame(data);
-				if (authenticated && ensureInGame(passport, game)) {
+				
+				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPlayerToAssassinate(passport, game, data, socket);
 				}
 			});

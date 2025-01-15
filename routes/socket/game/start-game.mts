@@ -5,12 +5,12 @@ import GameSummaryBuilder from '../../../models/game-summary/GameSummaryBuilder.
 
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mjs';
 
-import { shufflePolicies, startElection } from './common.mts';
+import { ActiveGame, shufflePolicies, startElection } from './common.mts';
 
 /**
  * @param {object} game - game to act on.
  */
-const beginGame = (game: any) => {
+const beginGame = (game: ActiveGame) => {
 	const { experiencedMode } = game.general;
 
 	game.general.timeStarted = Date.now();
@@ -809,7 +809,7 @@ const beginGame = (game: any) => {
 /**
  * @param {object} game - game to act on.
  */
-export default (game: any) => {
+export default (game: ActiveGame) => {
 	game.gameState.isTracksFlipped = true;
 	let startGamePause = process.env.NODE_ENV === 'development' ? 1 : 5;
 

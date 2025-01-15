@@ -10,6 +10,7 @@ import ModAction from '../../models/modAction.mts';
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
 import version from '../../version.mts';
 
+import { ActiveGame } from './game/common.mts';
 import { doesIPMatchCIDR } from './ip-obf.mts';
 
 const emotes: Record<string, string> = {};

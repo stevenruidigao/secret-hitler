@@ -16,11 +16,12 @@ import { makeReport } from '../report.mjs';
 import { sendUserList, sendGameList } from '../user-requests.mts';
 import { LineGuess, sendInProgressGameUpdate, rateEloGame } from '../util.mjs';
 
+import { ActiveGame } from './common.mts';
 import startGame from './start-game.mjs';
 
 const debugLogger = debug('game:summary');
 
-export const generateGameObject = (game: any): IGame => {
+export const generateGameObject = (game: ActiveGame): IGame => {
 	const casualBool = Boolean(game?.general?.casualGame); // Because Mongo is explicitly typed and integers are not truthy according to it
 	const practiceBool = Boolean(game?.general?.practiceGame);
 	const unlistedBool = Boolean(game?.general?.unlistedGame);
@@ -117,7 +118,7 @@ export const generateGameObject = (game: any): IGame => {
 /**
  * @param {object} game - game to act on.
  */
-export const saveGame = (game: any) => {
+export const saveGame = (game: ActiveGame) => {
 	const summary = game.gameState.isCompleted && game.private.summary && game.private.summary.publish();
 
 	/**
@@ -181,7 +182,7 @@ export const saveAndDeleteGame = (gameID: string) => {
  * @param {object} game - game to act on.
  * @param {string} winningTeamName - name of the team that won this game.
  */
-export const completeGame = (game: any, winningTeamName: string) => {
+export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	if (game && game.unsentReports) {
 		game.unsentReports.forEach((report: any) => {
 			makeReport({ ...report }, game, report.type === 'modchat' ? 'modchatdelayed' : 'reportdelayed');

@@ -2,9 +2,10 @@ import { Socket } from 'socket.io';
 
 import { sendInProgressGameUpdate } from '../util.mts';
 
+import { ActiveGame } from './common.mts';
 import { completeGame } from './end-game.mts';
 
-export const assassinateMerlin = (game: any) => {
+export const assassinateMerlin = (game: ActiveGame) => {
 	const { seatedPlayers } = game.private;
 	const hitlerIndex = seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler');
 	const hitler = seatedPlayers[hitlerIndex];

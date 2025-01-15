@@ -1,6 +1,7 @@
 import https from 'https';
 
 import Account from '../../models/account.mts';
+import { ActiveGame } from './game/common.mts';
 import { newStaff } from './models.mts';
 
 function sendReport(game: any, report: any, data: any, type: string) {
@@ -57,7 +58,7 @@ function sendReport(game: any, report: any, data: any, type: string) {
 	});
 }
 
-export const makeReport = (data: any, game: any, type = 'report') => {
+export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 	const { player, seat, role, election, situation, uid, gameType, homepage } = data;
 
 	if (!homepage) {
@@ -69,7 +70,7 @@ export const makeReport = (data: any, game: any, type = 'report') => {
 
 	let report: any;
 
-	if (type === 'report' || type === 'modchat') {
+	if (game && (type === 'report' || type === 'modchat')) {
 		game.private.hiddenInfoShouldNotify = false;
 	}
 
@@ -108,7 +109,7 @@ export const makeReport = (data: any, game: any, type = 'report') => {
 		return;
 	}
 
-	if (type === 'report' || type === 'reportdelayed') {
+	if (game && (type === 'report' || type === 'reportdelayed')) {
 		const upperRole = role[0].toUpperCase() + role.substr(1);
 		const isDelayed = type === 'reportdelayed' ? ' - **Staff DELAYED**' : '';
 		let throwerIP: string;

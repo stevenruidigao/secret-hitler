@@ -38,7 +38,7 @@ export const handleNewGeneralChat = async (socket: any, passport: any, data: any
 						situation: `"${pingMods[2]}".`,
 						homepage: true
 					},
-					null,
+					undefined,
 					'ping'
 				);
 				await setLastGenchatModPingAsync(Date.now());

@@ -1,8 +1,9 @@
 import { Socket } from 'socket.io';
 
+import Account from '../../../models/account.mts';
+
 import { games, userList, testIP } from '../models.mts';
 import { sendInProgressGameUpdate } from '../util.mts';
-import Account from '../../../models/account.mts';
 import { sendUserList } from '../user-requests.mts';
 
 /**

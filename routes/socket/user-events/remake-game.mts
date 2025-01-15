@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import { chatReplacements } from '../chatReplacements.mts';
 import { saveAndDeleteGame } from '../game/end-game.mts';
+import { chatReplacements } from '../chatReplacements.mts';
 import { gameCreationDisabled, games, userList } from '../models.mts';
-import { sendGameList, sendGameInfo } from '../user-requests.mts';
 import { sendInProgressGameUpdate } from '../util.mts';
+import { sendGameList, sendGameInfo } from '../user-requests.mts';
 
 import { updateSeatedUser } from './join-game.mts';
 import { checkStartConditions } from './leave-game.mts';
