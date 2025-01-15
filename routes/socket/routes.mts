@@ -55,7 +55,7 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
-import Account from '../../models/account.mts';
+import Account, { IAccount } from '../../models/account.mts';
 import { TOU_CHANGES } from '../../src/frontend-scripts/constants.mjs';
 import version from '../../version.mjs';
 
@@ -241,7 +241,7 @@ export const socketRoutes = () => {
 
 			let isRestricted: boolean | undefined = true;
 
-			const checkRestriction = (account: any) => {
+			const checkRestriction = (account: IAccount) => {
 				if (!account || !passport || !passport.user || !socket) return;
 				const parseVer = (ver: string) => {
 					const vals: any = ver.split('.');
@@ -271,8 +271,8 @@ export const socketRoutes = () => {
 					socket.emit('touChange', [TOU_CHANGES[TOU_CHANGES.length - 1]]);
 					return true;
 				}
-				const warnings = account.warnings.filter((warning: any) => !warning.acknowledged);
-				if (warnings.length > 0) {
+				const warnings = account?.warnings?.filter((warning: any) => !warning.acknowledged);
+				if (warnings && warnings.length > 0) {
 					const { moderator, acknowledged, ...firstWarning } = warnings[0]; // eslint-disable-line no-unused-vars
 					socket.emit('warningPopup', firstWarning);
 					return true;
