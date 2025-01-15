@@ -413,7 +413,7 @@ commands.getCommand = function(name: string) {
 					const handshake = s.handshake as any;
 
 					return handshake?.session?.passport &&
-					handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
+						handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
 				}
 			);
 

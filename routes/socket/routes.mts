@@ -132,7 +132,7 @@ const gamesGarbageCollector = () => {
 						const handshake = socket.handshake as any;
 
 						return handshake?.session?.passport &&
-						handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
+							handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
 					}
 				);
 

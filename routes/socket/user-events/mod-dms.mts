@@ -149,7 +149,7 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: any, edito
 
 									return (
 										handshake?.session?.passport &&
-										handshake.session.passport.user === user
+											handshake.session.passport.user === user
 									);
 								}
 							) || ''

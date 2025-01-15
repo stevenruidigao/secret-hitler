@@ -53,7 +53,7 @@ export const processImage = (username: string, raw: string, callback: any) => {
 						return handshake?.session?.passport?.user === username;
 					});
 
-					const socket = typeof socketId === 'string' && io.sockets.sockets.get(socketId);
+					const socket = socketId && io.sockets.sockets.get(socketId);
 
 					if (socketId && socket) {
 						socket.emit('gameSettings', account.gameSettings);

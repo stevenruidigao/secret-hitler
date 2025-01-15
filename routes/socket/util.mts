@@ -104,6 +104,7 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 			Object.keys(handshake?.session?.passport).length &&
 			seatedPlayerNames.includes(handshake?.session?.passport?.user);
 	});
+
 	const observerSockets = roomSockets.filter(socket => {
 		if (!socket) return false;
 
@@ -281,9 +282,9 @@ export const sendInProgressModDMUpdate = (dm: any, modUserNames: string[], edito
 				) || ''
 			);
 
-			if (!socket) return; // TODO: do something else?
-
-			socket.emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
+			if (socket) {
+				socket.emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
+			}
 		} catch (e) {
 			console.log('err', e);
 		}
