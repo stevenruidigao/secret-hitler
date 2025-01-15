@@ -22,10 +22,6 @@ import { expandAndSimplify, obfIP } from './socket/ip-obf.mts';
 import { userList } from './socket/models.mts';
 import { socketRoutes } from './socket/routes.mts';
 
-declare global {
-	var app: Express;
-}
-
 const app = global.app;
 
 /**

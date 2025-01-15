@@ -6,10 +6,6 @@ import { userList, userListEmitter, games } from './socket/models.mts';
 import { sendCommandChatsUpdate } from './socket/util.mts';
 import { sendGameList } from './socket/user-requests.mts';
 
-declare global {
-	var io: any;
-}
-
 const io = global.io;
 
 export const processImage = (username: string, raw: string, callback: any) => {
@@ -50,13 +46,17 @@ export const processImage = (username: string, raw: string, callback: any) => {
 						}
 					});
 
-					const socketId = Array.from(io.sockets.sockets.keys()).find(
-						socketId =>
-							io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === username
-					);
+					const socketId = Array.from(io.sockets.sockets.keys()).find(socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+						const handshake = socket?.handshake as any;
 
-					if (socketId && io.sockets.sockets.get(socketId)) {
-						io.sockets.sockets.get(socketId).emit('gameSettings', account.gameSettings);
+						return handshake?.session?.passport?.user === username;
+					});
+
+					const socket = typeof socketId === 'string' && io.sockets.sockets.get(socketId);
+
+					if (socketId && socket) {
+						socket.emit('gameSettings', account.gameSettings);
 					}
 
 					callback('Image uploaded successfully.');

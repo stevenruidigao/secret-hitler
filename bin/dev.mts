@@ -6,6 +6,11 @@ import dotenv from 'dotenv';
 import debug from 'debug';
 import { Server } from 'socket.io';
 
+declare global {
+	var app: express.Express;
+	var io: Server;
+}
+
 dotenv.config();
 
 const port = (() => {

@@ -83,9 +83,12 @@ export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, soc
 		const newGame = _.cloneDeep(_game);
 		const remakePlayerNames = remakeData.filter((player: any) => player.isRemaking).map((player: any) => player.userName);
 		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter(
-			socketId =>
-				io.sockets.sockets.get(socketId).handshake.session.passport &&
-				remakePlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
+			socketId => {
+				const socket = io.sockets.sockets.get(socketId);
+				const handshake = socket?.handshake as any;
+
+				return handshake?.session?.passport && remakePlayerNames.includes(handshake?.session?.passport?.user)
+			}
 		);
 		sendInProgressGameUpdate(game);
 
@@ -248,17 +251,21 @@ export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, soc
 
 			let creatorRemade = false;
 			remakePlayerSocketIDs.forEach((id, index) => {
-				if (io.sockets.sockets.get(id)) {
-					io.sockets.sockets.get(id).leave(game.general.uid);
-					sendGameInfo(io.sockets.sockets.get(id), newGame.general.uid);
+				const socket = io.sockets.sockets.get(id);
+
+				if (socket) {
+					const handshake = socket.handshake as any;
+
+					socket.leave(game.general.uid);
+					sendGameInfo(socket, newGame.general.uid);
+
 					if (
-						io.sockets.sockets.get(id) &&
-						io.sockets.sockets.get(id).handshake &&
-						io.sockets.sockets.get(id).handshake.session &&
-						io.sockets.sockets.get(id).handshake.session.passport
+						handshake &&
+						handshake.session &&
+						handshake.session.passport
 					) {
-						updateSeatedUser(io.sockets.sockets.get(id), io.sockets.sockets.get(id).handshake.session.passport, { uid: newGame.general.uid });
-						if (io.sockets.sockets.get(id).handshake.session.passport.user === newGame.private.gameCreatorName) creatorRemade = true;
+						updateSeatedUser(socket, handshake.session.passport, { uid: newGame.general.uid });
+						if (handshake.session.passport.user === newGame.private.gameCreatorName) creatorRemade = true;
 					}
 				}
 			});
