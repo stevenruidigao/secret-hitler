@@ -51,7 +51,7 @@ module.exports.handleOpenChat = (socket, data, modUserNames, editorUserNames, ad
 		socketId =>
 			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
 	);
-	const dmReceiverSocket = io.sockets.sockets[dmReceiverSocketID];
+	const dmReceiverSocket = io.sockets.sockets.get(dmReceiverSocketID);
 
 	if (!Object.keys(dmReceiver).length || dmReceiverSocketID == null || dmReceiverSocket == null) {
 		return socket.emit('sendAlert', 'That player is not online!');
