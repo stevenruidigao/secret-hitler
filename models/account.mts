@@ -167,6 +167,7 @@ export interface IAccount {
 	badges?: IBadge[];
 	maxElo?: number;
 	pastElo?: IHistoricalElo[];
+	isTournamentMod?: boolean;
 }
 
 const Stats = new Schema<IStats>({

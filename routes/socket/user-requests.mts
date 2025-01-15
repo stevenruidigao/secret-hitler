@@ -160,7 +160,7 @@ export const sendModInfo = (games: any[], socket: Socket, count: number, isTrial
 	const userNames = userList.map((user: any) => user.userName);
 
 	Account.find({ username: { $in: userNames }, 'gameSettings.isPrivate': { $ne: true } })
-		.then((users: any[]) => {
+		.then((users) => {
 			getModInfo(games, users, socket, {}, count, isTrial, isAEM);
 		})
 		.catch((err: Error) => {

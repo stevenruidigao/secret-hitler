@@ -181,10 +181,10 @@ const ensureInGame = (passport: any, game: any) => {
 
 const gatherStaffUsernames = () => {
 	Account.find({ staffRole: { $exists: true } })
-		.then((accounts: any[]) => {
-			modUserNames = accounts.filter((account: any) =>account.staffRole === 'moderator').map((account: any) =>account.username);
-			editorUserNames = accounts.filter((account: any) =>account.staffRole === 'editor').map((account: any) =>account.username);
-			adminUserNames = accounts.filter((account: any) =>account.staffRole === 'admin').map((account: any) =>account.username);
+		.then((accounts) => {
+			modUserNames = accounts.filter((account: any) => account.staffRole === 'moderator').map((account) => account.username);
+			editorUserNames = accounts.filter((account: any) => account.staffRole === 'editor').map((account) => account.username);
+			adminUserNames = accounts.filter((account: any) => account.staffRole === 'admin').map((account) => account.username);
 		})
 		.catch((err: Error) => {
 			console.log(err, 'err in finding staffroles');
@@ -221,18 +221,18 @@ export const socketRoutes = () => {
 			let isTourneyMod = false;
 
 			if (authenticated && passport && passport.user) {
-				Account.findOne({ username: passport.user }).then((account: any) => {
+				Account.findOne({ username: passport.user }).then((account) => {
 					if (
-						account.staffRole &&
-						account.staffRole.length > 0 &&
+						account?.staffRole?.length &&
+						account?.staffRole?.length > 0 &&
 						account.staffRole !== 'trialmod' &&
 						account.staffRole !== 'altmod' &&
 						account.staffRole !== 'veteran'
 					) {
 						isAEM = true;
 					}
-					if (account.staffRole && account.staffRole.length > 0 && account.staffRole === 'trialmod') isTrial = true;
-					if (account.isTournamentMod) isTourneyMod = true;
+					if (account?.staffRole && account?.staffRole?.length > 0 && account?.staffRole === 'trialmod') isTrial = true;
+					if (account?.isTournamentMod) isTourneyMod = true;
 				});
 			}
 
