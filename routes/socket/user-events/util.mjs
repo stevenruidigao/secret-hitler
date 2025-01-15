@@ -18,15 +18,15 @@ export const checkUserStatus = (socket, callback) => {
 
 		const oldSocketID = Object.keys(sockets).find(
 			socketID =>
-				sockets[socketID].handshake.session.passport &&
-				Object.keys(sockets[socketID].handshake.session.passport).length &&
-				sockets[socketID].handshake.session.passport.user === user &&
+				sockets.get(socketID).handshake.session.passport &&
+				Object.keys(sockets.get(socketID).handshake.session.passport).length &&
+				sockets.get(socketID).handshake.session.passport.user === user &&
 				socketID !== socket.id
 		);
 
-		if (oldSocketID && sockets[oldSocketID]) {
-			sockets[oldSocketID].emit('manualDisconnection');
-			delete sockets[oldSocketID];
+		if (oldSocketID && sockets.get(oldSocketID)) {
+			sockets.get(oldSocketID).emit('manualDisconnection');
+			sockets.delete(oldSocketID);
 		}
 
 		const reconnectingUser = game ? game.publicPlayersState.find(player => player.userName === user) : undefined;
