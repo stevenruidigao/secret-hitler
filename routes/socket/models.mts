@@ -190,7 +190,7 @@ export const userListEmitter = {
 				name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
 			);
 			const staffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id =>
-				staffUserList.includes(io.sockets.sockets.get(id).handshake.session.passport?.user)
+				staffUserList.includes(io.sockets.sockets.get(id).handshake.session?.passport?.user)
 			);
 			const nonStaffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id => !staffSocketIds.includes(id));
 

@@ -20,7 +20,7 @@ export const handleOpenChat = (socket: any, data: any, modUserNames: string[], e
 
 	const dmReceiver = userList.find(x => x.userName === data.userName) || {};
 	const modInDM = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(data.aemMember) !== -1);
-	const modInGame = Object.keys(games).find(x => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find(y => y.userName === data.aemMember));
+	const modInGame = Object.keys(games).find(x => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y: any) => y.userName === data.aemMember));
 
 	if (modInGame) {
 		socket.emit('sendAlert', 'You cannot start or join a chat while in-game.');
@@ -110,7 +110,7 @@ export const handleOpenChat = (socket: any, data: any, modUserNames: string[], e
 	}
 };
 
-export const handleCloseChat = (socket, data, modUserNames, editorUserNames, adminUserNames) => {
+export const handleCloseChat = (socket: any, data: any, modUserNames: any, editorUserNames: any, adminUserNames: any) => {
 	// save, notify, etc
 	const passport = socket.handshake.session.passport;
 
@@ -174,11 +174,11 @@ export const handleCloseChat = (socket, data, modUserNames, editorUserNames, adm
 	}
 };
 
-export const handleUnsubscribeChat = (socket, data, modUserNames, editorUserNames, adminUserNames) => {
+export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: any, editorUserNames: any, adminUserNames: any) => {
 	const passport = socket.handshake.session.passport;
 
 	const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
-	const dm = modDMs[dmID];
+	const dm = dmID !== undefined ? modDMs[dmID]: undefined;
 
 	if (dm) {
 		dm.aemOnlyMessages.push({
@@ -201,7 +201,7 @@ export const handleUnsubscribeChat = (socket, data, modUserNames, editorUserName
 	}
 };
 
-export const handleAddNewModDMChat = (socket, passport, data, modUserNames, editorUserNames, adminUserNames) => {
+export const handleAddNewModDMChat = (socket: any, passport: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const receivingPlayer = Object.keys(modDMs).find(x => modDMs[x].username === passport.user || modDMs[x].aemMember === socket.handshake.session.passport.user);
 	if (receivingPlayer) {
 		// add a new chat and push it to AEM chat and player chat

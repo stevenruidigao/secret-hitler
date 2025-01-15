@@ -28,7 +28,7 @@ import {
 import { sendUserReports, getModInfo, sendGameList, sendUserList } from '../user-requests.mts';
 import { handleDefaultIPv6Range, sendCommandChatsUpdate } from '../util.mts';
 
-let lagTest = [];
+let lagTest: any[] = [];
 
 /**
  * @param {object} socket - socket reference.
@@ -38,7 +38,7 @@ let lagTest = [];
  * @param {array} modUserNames - list of usernames that are mods
  * @param {array} superModUserNames - list of usernames that are editors and admins
  */
-export const handleModerationAction = (socket, passport, data, skipCheck, modUserNames, superModUserNames) => {
+export const handleModerationAction = (socket: any, passport: any, data: any, skipCheck: boolean, modUserNames: string[], superModUserNames: string[]) => {
 	if (data.userName) {
 		data.userName = data.userName.trim();
 	}
@@ -55,7 +55,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					}
 				} else {
 					// Try to find the IP from the account specified if possible.
-					Account.findOne({ username: data.userName }, (err, account) => {
+					Account.findOne({ username: data.userName }, (err: Error, account: any) => {
 						if (err) console.log(err, 'err finding user');
 						else if (account) data.ip = account.lastConnectedIP || account.signupIP;
 						handleModerationAction(socket, passport, data, true, modUserNames, superModUserNames);
@@ -109,7 +109,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 	) {
 		if (data.isReportResolveChange) {
 			PlayerReport.findOne({ _id: data._id })
-				.then(report => {
+				.then((report: any) => {
 					if (report) {
 						report.isActive = !report.isActive;
 						report.save(() => {
@@ -117,33 +117,33 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 						});
 					}
 				})
-				.catch(err => {
+				.catch((err: Error) => {
 					console.log(err, 'err in finding player report');
 				});
 		} else if (data.action === 'getFilteredData') {
 			return;
-			let queryObj;
+			// let queryObj;
 
-			if (data.comment && (data.comment.split('.').length > 1 || data.comment.split(':').length > 1)) {
-				queryObj = {
-					ip: new RegExp(`^${obfIP(data.comment.substring(1))}`)
-				};
-			} else {
-				queryObj = {
-					userActedOn: data.comment
-				};
-			}
-			const userNames = userList.map(user => user.userName);
+			// if (data.comment && (data.comment.split('.').length > 1 || data.comment.split(':').length > 1)) {
+			// 	queryObj = {
+			// 		ip: new RegExp(`^${obfIP(data.comment.substring(1))}`)
+			// 	};
+			// } else {
+			// 	queryObj = {
+			// 		userActedOn: data.comment
+			// 	};
+			// }
+			// const userNames = userList.map(user => user.userName);
 
-			Account.find({ username: userNames, 'gameSettings.isPrivate': { $ne: true } })
-				.then(users => {
-					getModInfo(users, socket, queryObj);
-				})
-				.catch(err => {
-					console.log(err, 'err in sending mod info');
-				});
+			// Account.find({ username: userNames, 'gameSettings.isPrivate': { $ne: true } })
+			// 	.then((users: any[]) => {
+			// 		getModInfo(users, socket, queryObj);
+			// 	})
+			// 	.catch((err: Error) => {
+			// 		console.log(err, 'err in sending mod info');
+			// 	});
 		} else {
-			const modaction = new ModAction({
+			const modaction: any = new ModAction({
 				date: new Date(),
 				modUserName: passport.user,
 				userActedOn: data.userName,
@@ -155,7 +155,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 			/**
 			 * @param {string} username - name of user.
 			 */
-			const logOutUser = username => {
+			const logOutUser = (username: string) => {
 				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
 
 				if (io.sockets.sockets.get(affectedSocketId)) {
@@ -173,9 +173,9 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 			/**
 			 * @param {string} username - name of user.
 			 */
-			const banAccount = username => {
+			const banAccount = (username: string) => {
 				Account.findOne({ username })
-					.then(account => {
+					.then((account: any) => {
 						if (account) {
 							// account.hash = crypto.randomBytes(20).toString('hex');
 							// account.salt = crypto.randomBytes(20).toString('hex');
@@ -191,7 +191,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 							});
 						}
 					})
-					.catch(err => {
+					.catch((err: Error) => {
 						console.log(err, 'ban user err');
 					});
 			};
@@ -207,7 +207,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					return;
 				case 'clearTimeout':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								account.isTimeout = new Date(0);
 								account.isBanned = false;
@@ -216,7 +216,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'clearTimeout user err');
 						});
 					break;
@@ -228,7 +228,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 						acknowledged: false
 					};
 
-					Account.findOne({ username: data.userName }).then(user => {
+					Account.findOne({ username: data.userName }).then((user: any) => {
 						if (user) {
 							if (user.warnings && user.warnings.length > 0) {
 								user.warnings.push(warning);
@@ -247,7 +247,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					});
 					break;
 				case 'removeWarning':
-					Account.findOne({ username: data.userName }).then(user => {
+					Account.findOne({ username: data.userName }).then((user: any) => {
 						if (user) {
 							if (user.warnings && user.warnings.length > 0) {
 								socket.emit('sendAlert', `Warning with the message: "${user.warnings.pop().text}" deleted.`);
@@ -268,14 +268,14 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					});
 					break;
 				case 'clearTimeoutIP':
-					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err, res) => {
+					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err: any) => {
 						if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 					});
 					console.log(handleDefaultIPv6Range(data.ip));
 					break;
 				case 'clearTimeoutAndTimeoutIP':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								account.isTimeout = new Date(0);
 								account.isBanned = false;
@@ -284,11 +284,11 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 
-							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err, res) => {
+							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err: any) => {
 								if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 							});
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'clearTimeout user err');
 						});
 					break;
@@ -313,14 +313,14 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 						});
 						completeGame(gameToEnd, data.winningTeamName);
 						setTimeout(() => {
-							gameToEnd.publicPlayersState.forEach(player => (player.leftGame = true));
+							gameToEnd.publicPlayersState.forEach((player: any) => (player.leftGame = true));
 							saveAndDeleteGame(gameToEnd.general.uid);
 							sendGameList();
 						}, 5000);
 					}
 					break;
 				case 'setVerified':
-					Account.findOne({ username: data.userName }).then(account => {
+					Account.findOne({ username: data.userName }).then((account: any) => {
 						if (account) {
 							account.verified = true;
 							account.verification.email = account.username + '@verified.secrethitler.io';
@@ -346,7 +346,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'rainbowUser':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isRainbowOverall = true;
 									account.dateRainbowOverall = new Date();
@@ -354,7 +354,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									logOutUser(data.userName);
 								} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err, 'rainbow user error');
 							});
 					} else {
@@ -365,12 +365,12 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'deleteUser':
 					if (isSuperMod) {
 						// let account, profile;
-						Account.findOne({ username: data.userName }).then(acc => {
-							account = acc;
+						Account.findOne({ username: data.userName }).then((acc: any) => {
+							// account = acc; // TODO: check if this does anything 
 							acc.delete();
-							Profile.findOne({ _id: data.userName }).then(prof => {
+							Profile.findOne({ _id: data.userName }).then((prof: any) => {
 								if (!prof) return;
-								profile = prof;
+								// profile = prof; // TODO: check if this does anything
 								prof.delete();
 							});
 						});
@@ -383,8 +383,8 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'renameUser':
 					if (isSuperMod) {
 						let success = false;
-						Account.findOne({ username: data.comment }).then(account => {
-							Profile.findOne({ _id: data.comment }).then(profile => {
+						Account.findOne({ username: data.comment }).then((account: any) => {
+							Profile.findOne({ _id: data.comment }).then((profile: any) => {
 								if (profile) {
 									socket.emit('sendAlert', `Profile of ${data.comment} already exists`);
 									// TODO: Add Profile Backup (for accidental/bugged renames)
@@ -392,7 +392,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									if (account) {
 										socket.emit('sendAlert', `User ${data.comment} already exists`);
 									} else {
-										Account.findOne({ username: data.userName }).then(account => {
+										Account.findOne({ username: data.userName }).then((account: any) => {
 											if (io.sockets.sockets.get(affectedSocketId)) {
 												io.sockets.sockets.get(affectedSocketId).emit('manualDisconnection');
 											}
@@ -408,7 +408,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 												return;
 											}
 											success = false;
-											Profile.findOne({ _id: data.userName }).then(profile => {
+											Profile.findOne({ _id: data.userName }).then((profile: any) => {
 												if (profile) {
 													const newProfile = JSON.parse(JSON.stringify(profile));
 													newProfile._id = data.comment;
@@ -436,7 +436,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					banAccount(data.userName);
 					break;
 				case 'deleteBio':
-					Account.findOne({ username: data.userName }).then(account => {
+					Account.findOne({ username: data.userName }).then((account: any) => {
 						if (account) {
 							account.bio = '';
 							account.save();
@@ -444,7 +444,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					});
 					break;
 				case 'setPlayerPronouns':
-					Account.findOne({ username: data.userName }).then(account => {
+					Account.findOne({ username: data.userName }).then((account: any) => {
 						if (account) {
 							account.gameSettings.playerPronouns = data.comment;
 							account.save();
@@ -513,9 +513,9 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 						});
 
 						ipban.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err, users) {
+							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: any) {
 								if (users && users.length > 0) {
-									users.forEach(user => {
+									users.forEach((user: any) => {
 										banAccount(user.username);
 									});
 								}
@@ -567,7 +567,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					});
 					timeout.save(() => {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isTimeout = new Date(Date.now() + 18 * 60 * 60 * 1000);
 									account.save(() => {
@@ -577,14 +577,14 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err, 'timeout user err');
 							});
 					});
 					break;
 				case 'timeOut2':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								account.isTimeout = new Date(Date.now() + 18 * 60 * 60 * 1000);
 								account.save(() => {
@@ -594,7 +594,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'timeout2 user err');
 						});
 					break;
@@ -606,7 +606,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					});
 					timeout3.save(() => {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isTimeout = new Date(Date.now() + 60 * 60 * 1000);
 									account.save(() => {
@@ -616,14 +616,14 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err, 'timeout3 user err');
 							});
 					});
 					break;
 				case 'timeOut4':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								account.isTimeout = new Date(Date.now() + 6 * 60 * 60 * 1000);
 								account.save(() => {
@@ -633,13 +633,13 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'timeout4 user err');
 						});
 					break;
 				case 'togglePrivate':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								const { isPrivate } = account.gameSettings;
 
@@ -652,13 +652,13 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'private convert user err');
 						});
 					break;
 				case 'togglePrivateEighteen':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								const { isPrivate } = account.gameSettings;
 
@@ -671,7 +671,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err, 'private convert user err');
 						});
 					break;
@@ -696,7 +696,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 							.remove(() => {
 								logOutUser(data.userName);
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					} else {
@@ -714,9 +714,9 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 
 					if (isSuperMod) {
 						ipbanl.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err, users) {
+							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: any) {
 								if (users && users.length > 0) {
-									users.forEach(user => {
+									users.forEach((user: any) => {
 										banAccount(user.username);
 									});
 								}
@@ -729,7 +729,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 					break;
 				case 'deleteCardback':
 					Account.findOne({ username: data.userName })
-						.then(account => {
+						.then((account: any) => {
 							if (account) {
 								account.gameSettings.customCardback = '';
 								const user = userList.find(u => u.userName === data.userName);
@@ -739,7 +739,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								}
 								Object.keys(games).forEach(uid => {
 									const game = games[uid];
-									const foundUser = game.publicPlayersState.find(user => user.userName === data.userName);
+									const foundUser = game.publicPlayersState.find((user: any) => user.userName === data.userName);
 									if (foundUser) {
 										foundUser.customCardback = '';
 										sendCommandChatsUpdate(game);
@@ -755,7 +755,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch(err => {
+						.catch((err: Error) => {
 							console.log(err);
 						});
 					break;
@@ -792,7 +792,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'removeContributor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isContributor = false;
 									removeBadge(account, 'contributor');
@@ -805,7 +805,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -813,7 +813,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'removeStaffRole':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									const staffRole = account.staffRole;
 									if (staffRole === 'moderator' || staffRole === 'editor') {
@@ -835,7 +835,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -843,7 +843,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'toggleContributor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isContributor = true;
 									checkBadgesAccount(account);
@@ -855,7 +855,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -863,7 +863,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'toggleTourneyMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.isTournamentMod = true;
 									account.save(() => {
@@ -873,7 +873,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -881,7 +881,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'promoteToTrialMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.staffRole = 'trialmod';
 									account.save(() => {
@@ -892,7 +892,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -900,7 +900,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'promoteToAltMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.staffRole = 'altmod';
 									account.save(() => {
@@ -911,7 +911,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -919,7 +919,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'promoteToMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.staffRole = 'moderator';
 									checkBadgesAccount(account);
@@ -931,7 +931,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -939,7 +939,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'promoteToEditor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.staffRole = 'editor';
 									checkBadgesAccount(account);
@@ -951,7 +951,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -959,7 +959,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 				case 'promoteToVeteran':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then(account => {
+							.then((account: any) => {
 								if (account) {
 									account.staffRole = 'veteran';
 									checkBadgesAccount(account);
@@ -970,7 +970,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch(err => {
+							.catch((err: Error) => {
 								console.log(err);
 							});
 					}
@@ -1004,7 +1004,8 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 							crashReq.end(crashReport);
 						}
 						setTimeout(() => {
-							crashServer();
+							process.exit(1);
+							// crashServer(); // TODO: I think this works
 						}, 1000);
 					} else {
 						socket.emit('sendAlert', 'Only editors and admins can restart the server.');
@@ -1017,7 +1018,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 
 						if (game && game.general) {
 							saveAndDeleteGame(game.general.uid);
-							game.publicPlayersState.forEach(player => (player.leftGame = true)); // Causes timed games to stop.
+							game.publicPlayersState.forEach((player: any) => (player.leftGame = true)); // Causes timed games to stop.
 							sendGameList();
 						}
 					} else if (data.userName.substr(0, 13) === 'RESETGAMENAME') {
@@ -1051,7 +1052,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 
 						if (!isNaN(parseInt(number, 10)) || isPlusOrMinus) {
 							Account.findOne({ username: data.userName })
-								.then(account => {
+								.then((account: any) => {
 									if (account) {
 										account.overall[setType] = isPlusOrMinus
 											? number.charAt(0) === '+'
@@ -1091,14 +1092,14 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 										account.save();
 									} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								})
-								.catch(err => {
+								.catch((err: Error) => {
 									console.log(err, 'set wins/losses error');
 								});
 						}
 					}
 			}
 
-			const niceAction = {
+			const niceAction: Record<string, string> = {
 				comment: 'Comment',
 				warn: 'Issue Warning',
 				removeWarning: 'Delete Warning',

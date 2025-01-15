@@ -5,7 +5,7 @@ import { games, limitNewPlayers } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { sendCommandChatsUpdate } from '../util.mts';
 
-import { checkStartConditions } from './leave-game.mjs'; // this used to be a separate game-countdown.js but that isn't really helpful tbh
+import { checkStartConditions } from './leave-game.mts'; // this used to be a separate game-countdown.js but that isn't really helpful tbh
 
 /**
  * @param {object} socket - user socket reference.
@@ -13,8 +13,8 @@ import { checkStartConditions } from './leave-game.mjs'; // this used to be a se
  * @param {object} data - from socket emit.
  */
 export const updateSeatedUser = (socket: any, passport: any, data: any) => {
-	// Authentication Assured in routes.mjs
-	// In-game Assured in routes.mjs
+	// Authentication Assured in routes.mts
+	// In-game Assured in routes.mts
 	const game = games[data.uid];
 	// prevents race condition between 1) taking a seat and 2) the game starting
 

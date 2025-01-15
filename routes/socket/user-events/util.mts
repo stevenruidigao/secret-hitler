@@ -7,14 +7,14 @@ import { sendUserList } from '../user-requests.mts';
  * @param {object} socket - socket reference.
  * @param {function} callback - success callback.
  */
-export const checkUserStatus = (socket, callback) => {
+export const checkUserStatus = (socket: any, callback: Function) => {
 	const { passport } = socket.handshake.session;
 
 	if (passport && Object.keys(passport).length) {
 		const { user } = passport;
 		const { sockets } = io.sockets;
 
-		const game = games[Object.keys(games).find(gameName => games[gameName].publicPlayersState.find(player => player.userName === user && !player.leftGame))];
+		const game = games[Object.keys(games).find((gameName: string) => games[gameName].publicPlayersState.find((player: any) => player.userName === user && !player.leftGame)) || ''];
 
 		const oldSocketID = Object.keys(sockets).find(
 			socketID =>
@@ -29,7 +29,7 @@ export const checkUserStatus = (socket, callback) => {
 			delete sockets[oldSocketID];
 		}
 
-		const reconnectingUser = game ? game.publicPlayersState.find(player => player.userName === user) : undefined;
+		const reconnectingUser = game ? game.publicPlayersState.find((player: any) => player.userName === user) : undefined;
 
 		if (game && game.gameState.isStarted && !game.gameState.isCompleted && reconnectingUser) {
 			reconnectingUser.connected = true;
@@ -40,7 +40,7 @@ export const checkUserStatus = (socket, callback) => {
 
 		if (user) {
 			// Double-check the user isn't sneaking past IP bans.
-			const logOutUser = username => {
+			const logOutUser = (username: string) => {
 				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
 
 				socket.emit('manualDisconnection');
@@ -53,12 +53,12 @@ export const checkUserStatus = (socket, callback) => {
 				// destroySession(username);
 			};
 
-			Account.findOne({ username: user }, function(err, account) {
+			Account.findOne({ username: user }, function(err: Error, account: any) {
 				if (account) {
 					if (account.isBanned || (account.isTimeout && new Date() < account.isTimeout)) {
 						logOutUser(user);
 					} else {
-						testIP(account.lastConnectedIP, banType => {
+						testIP(account.lastConnectedIP, (banType: string) => {
 							if (banType && banType != 'new' && banType != 'fragbanSmall' && banType != 'fragbanLarge' && !account.gameSettings.ignoreIPBans) logOutUser(user);
 							else {
 								sendUserList();
@@ -72,12 +72,12 @@ export const checkUserStatus = (socket, callback) => {
 	} else callback();
 };
 
-export const handleHasSeenNewPlayerModal = socket => {
+export const handleHasSeenNewPlayerModal = (socket: any) => {
 	const { passport } = socket.handshake.session;
 
 	if (passport && Object.keys(passport).length) {
 		const { user } = passport;
-		Account.findOne({ username: user }).then(account => {
+		Account.findOne({ username: user }).then((account: any) => {
 			account.hasNotDismissedSignupModal = false;
 			socket.emit('checkRestrictions');
 			account.save();

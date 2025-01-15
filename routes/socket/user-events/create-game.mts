@@ -17,7 +17,7 @@ import { secureGame } from '../util.mts';
  * @param {object} data - from socket emit.
  */
 export const handleAddNewGame = async (socket: any, passport: any, data: any) => {
-	// Authentication Assured in routes.mjs
+	// Authentication Assured in routes.mts
 	if (gameCreationDisabled.status || (!data.privatePassword && limitNewPlayers.status)) {
 		return;
 	}

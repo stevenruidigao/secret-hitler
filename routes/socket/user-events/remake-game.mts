@@ -15,7 +15,7 @@ import { checkStartConditions } from './leave-game.mts';
  * @param {object} data - from socket emit.
  * @param {object} socket - socket
  */
-export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
+export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, socket: any) => {
 	if (game.general.isRemade) {
 		return; // Games can only be remade once.
 	}
@@ -30,8 +30,8 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 	const remakeText = game.general.isTourny ? 'cancel' : 'remake';
 	const { remakeData, publicPlayersState } = game;
 	if (!remakeData) return;
-	const playerIndex = remakeData.findIndex(player => player.userName === passport.user);
-	const realPlayerIndex = publicPlayersState.findIndex(player => player.userName === passport.user);
+	const playerIndex = remakeData.findIndex((player: any) => player.userName === passport.user);
+	const realPlayerIndex = publicPlayersState.findIndex((player: any) => player.userName === passport.user);
 	const player = remakeData[playerIndex];
 	let chat;
 	const minimumRemakeVoteCount =
@@ -81,7 +81,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		const _game = Object.assign({}, game);
 		delete _game.private;
 		const newGame = _.cloneDeep(_game);
-		const remakePlayerNames = remakeData.filter(player => player.isRemaking).map(player => player.userName);
+		const remakePlayerNames = remakeData.filter((player: any) => player.isRemaking).map((player: any) => player.userName);
 		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter(
 			socketId =>
 				io.sockets.sockets.get(socketId).handshake.session.passport &&
@@ -166,13 +166,13 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		newGame.general.chatReplTime = Array(chatReplacements.length + 1).fill(0);
 
 		newGame.publicPlayersState = game.publicPlayersState
-			.filter(player =>
+			.filter((player: any) =>
 				game.remakeData
-					.filter(rmkPlayer => rmkPlayer.isRemaking)
-					.map(rmkPlayer => rmkPlayer.userName)
-					.some(rmkPlayer => rmkPlayer === player.userName)
+					.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
+					.map((rmkPlayer: any) => rmkPlayer.userName)
+					.some((rmkPlayer: any) => rmkPlayer === player.userName)
 			)
-			.map(player => ({
+			.map((player: any) => ({
 				userName: player.userName,
 				customCardback: player.customCardback,
 				previousSeasonAward: player.previousSeasonAward,
@@ -213,7 +213,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 			gameCreatorBlacklist: game.private.gameCreatorBlacklist
 		};
 
-		game.publicPlayersState.forEach((player, i) => {
+		game.publicPlayersState.forEach((player: any, i: number) => {
 			if (game.private.seatedPlayers && game.private.seatedPlayers[i] && game.private.seatedPlayers[i].role) {
 				player.cardStatus.cardFront = 'secretrole';
 				player.cardStatus.cardBack = game.private.seatedPlayers[i].role;
@@ -233,11 +233,11 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		sendInProgressGameUpdate(game);
 
 		setTimeout(() => {
-			game.publicPlayersState.forEach(player => {
+			game.publicPlayersState.forEach((player: any) => {
 				if (remakePlayerNames.includes(player.userName)) player.leftGame = true;
 			});
 
-			if (game.publicPlayersState.filter(publicPlayer => publicPlayer.leftGame).length === game.general.playerCount) {
+			if (game.publicPlayersState.filter((publicPlayer: any) => publicPlayer.leftGame).length === game.general.playerCount) {
 				saveAndDeleteGame(game.general.uid);
 			} else {
 				sendInProgressGameUpdate(game);
@@ -273,12 +273,12 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 	/**
 	 * @param {string} firstTableUid - the UID of the first tournament table
 	 */
-	const cancellTourny = firstTableUid => {
+	const cancellTourny = (firstTableUid: string) => {
 		const secondTableUid =
 			firstTableUid.charAt(firstTableUid.length - 1) === 'A'
 				? `${firstTableUid.slice(0, firstTableUid.length - 1)}B`
 				: `${firstTableUid.slice(0, firstTableUid.length - 1)}A`;
-		const secondTable = games.find(game => game.general.uid === secondTableUid);
+		const secondTable = games.find((game: any) => game.general.uid === secondTableUid);
 
 		if (secondTable) {
 			secondTable.general.tournyInfo.isCancelled = true;
@@ -306,7 +306,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		player.timesVoted++;
 		player.remakeTime = Date.now();
 
-		const remakePlayerCount = remakeData.filter(player => player.isRemaking).length;
+		const remakePlayerCount = remakeData.filter((player: any) => player.isRemaking).length;
 		chat.chat.push({
 			text: ` has voted to ${remakeText} this ${game.general.isTourny ? 'tournament.' : 'game.'} (${remakePlayerCount}/${minimumRemakeVoteCount})`
 		});
@@ -334,7 +334,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 								text: 'The remaining policies are '
 							},
 							{
-								policies: game.private.policies.map(policyName => (policyName === 'liberal' ? 'b' : 'r'))
+								policies: game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
 							},
 							{
 								text: '.'
@@ -343,7 +343,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 					};
 
 					game.private.unSeatedGameChats.push(remainingPoliciesChat);
-					game.private.seatedPlayers.forEach(player => {
+					game.private.seatedPlayers.forEach((player: any) => {
 						player.gameChats.push(remainingPoliciesChat);
 					});
 
@@ -360,7 +360,7 @@ export const handleUpdatedRemakeGame = (passport, game, data, socket) => {
 		player.isRemaking = false;
 		player.remakeTime = Date.now();
 
-		const remakePlayerCount = remakeData.filter(player => player.isRemaking).length;
+		const remakePlayerCount = remakeData.filter((player: any) => player.isRemaking).length;
 
 		if (game.general.isRemaking && remakePlayerCount < minimumRemakeVoteCount) {
 			game.general.isRemaking = false;

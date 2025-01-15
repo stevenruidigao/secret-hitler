@@ -15,8 +15,8 @@ dayjs.extend(relativeTime);
  * @param {object} passport - socket authentication.
  * @param {object} game - game reference.
  */
-export const handleSubscribeModChat = (socket, passport, game) => {
-	// Authentication Assured in routes.mjs
+export const handleSubscribeModChat = (socket: any, passport: any, game: any) => {
+	// Authentication Assured in routes.mts
 
 	if (game.private.hiddenInfoSubscriptions.includes(passport.user)) return;
 
@@ -36,12 +36,12 @@ export const handleSubscribeModChat = (socket, passport, game) => {
 		game.private.hiddenInfoShouldNotify = false;
 	}
 
-	const modOnlyChat = {
+	const modOnlyChat: any = {
 		timestamp: new Date(),
 		gameChat: true,
 		chat: [{ text: `${passport.user} has subscribed to mod chat. Current deck: ` }]
 	};
-	game.private.policies.forEach(policy => {
+	game.private.policies.forEach((policy: any) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
 			type: policy
@@ -58,7 +58,7 @@ export const handleSubscribeModChat = (socket, passport, game) => {
  * @param {object} game - game reference.
  * @param {string} modUserName - freezing Moderator's username
  */
-export const handleGameFreeze = (socket, passport, game, modUserName) => {
+export const handleGameFreeze = (socket: any, passport: any, game: any, modUserName: string) => {
 	const gameToFreeze = game;
 
 	if (gameToFreeze && gameToFreeze.private && gameToFreeze.private.seatedPlayers) {
@@ -82,7 +82,7 @@ export const handleGameFreeze = (socket, passport, game, modUserName) => {
 		game.private.gameFrozen = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Game Freeze' })
-			.then(action => {
+			.then((action: any) => {
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';
@@ -93,14 +93,14 @@ export const handleGameFreeze = (socket, passport, game, modUserName) => {
 				}
 				action.save();
 			})
-			.catch(err => {
+			.catch((err: Error) => {
 				console.log(err, 'err in finding player report');
 			});
 	}
 
 	const now = new Date();
 	if (game.gameState.isGameFrozen) {
-		if (now - game.gameState.isGameFrozen >= 4000) {
+		if (now.valueOf() - game.gameState.isGameFrozen >= 4000) {
 			game.gameState.isGameFrozen = false;
 		} else {
 			// Figured this would get annoying - can add it back if mods want.
@@ -127,7 +127,7 @@ export const handleGameFreeze = (socket, passport, game, modUserName) => {
  * @param {object} game - game reference.
  * @param {string} modUserName - requesting Moderator's username
  */
-export const handleModPeekVotes = (socket, passport, game, modUserName) => {
+export const handleModPeekVotes = (socket: any, passport: any, game: any, modUserName: any) => {
 	const gameToPeek = game;
 	let output = '<table class="fullTable"><tr><th>Seat</th><th>Role</th><th>Vote</th></tr>';
 
@@ -152,7 +152,7 @@ export const handleModPeekVotes = (socket, passport, game, modUserName) => {
 		game.private.votesPeeked = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Peek Votes' })
-			.then(action => {
+			.then((action: any) => {
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';
@@ -163,14 +163,14 @@ export const handleModPeekVotes = (socket, passport, game, modUserName) => {
 				}
 				action.save();
 			})
-			.catch(err => {
+			.catch((err: Error) => {
 				console.log(err, 'err in finding player report');
 			});
 	}
 
 	if (gameToPeek && gameToPeek.private && gameToPeek.private.seatedPlayers) {
 		const playersToCheckVotes = gameToPeek.private.seatedPlayers;
-		playersToCheckVotes.map(player => {
+		playersToCheckVotes.map((player: any) => {
 			output += '<tr>';
 			output += '<td>' + (playersToCheckVotes.indexOf(player) + 1) + '</td>';
 			output += '<td>';
@@ -201,7 +201,7 @@ export const handleModPeekVotes = (socket, passport, game, modUserName) => {
  * @param {object} game - game reference.
  * @param {string} modUserName - requesting Moderator's username
  */
-export const handleModPeekRemakes = (socket, passport, game, modUserName) => {
+export const handleModPeekRemakes = (socket: any, passport: any, game: any, modUserName: string) => {
 	const gameToPeek = game;
 	let output =
 		'<table class="fullTable"><tr><th>Seat</th><th>Role</th><th>Time since last voted to remake</th><th>Currently voting to remake?</th><th>Times voted to remake</th></tr>';
@@ -227,7 +227,7 @@ export const handleModPeekRemakes = (socket, passport, game, modUserName) => {
 		game.private.remakeVotesPeeked = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Get Remakes' })
-			.then(action => {
+			.then((action: any) => {
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';
@@ -238,14 +238,14 @@ export const handleModPeekRemakes = (socket, passport, game, modUserName) => {
 				}
 				action.save();
 			})
-			.catch(err => {
+			.catch((err: Error) => {
 				console.log(err, 'err in finding player report');
 			});
 	}
 
 	if (gameToPeek && gameToPeek.private && gameToPeek.private.seatedPlayers) {
 		const playersToCheckVotes = gameToPeek.private.seatedPlayers;
-		playersToCheckVotes.map(player => {
+		playersToCheckVotes.map((player: any) => {
 			output += '<tr>';
 			output += '<td>' + (playersToCheckVotes.indexOf(player) + 1) + '</td>';
 			output += '<td>';
@@ -259,8 +259,8 @@ export const handleModPeekRemakes = (socket, passport, game, modUserName) => {
 				output += 'Roles not Dealt';
 			}
 
-			const playerRemakeData = game.remakeData.find(d => d.userName === player.userName);
-			output += '<td>' + (playerRemakeData.remakeTime ? dayjs.duration(new Date() - new Date(playerRemakeData.remakeTime)).humanize() : '-') + '</td>';
+			const playerRemakeData = game.remakeData.find((d: any) => d.userName === player.userName);
+			output += '<td>' + (playerRemakeData.remakeTime ? dayjs.duration(new Date().valueOf() - new Date(playerRemakeData.remakeTime).valueOf()).humanize() : '-') + '</td>';
 			output += '<td>' + (playerRemakeData.isRemaking ? 'Yes' : 'No') + '</td>';
 			output += '<td>' + playerRemakeData.timesVoted + '</td>';
 			output += '</tr>';

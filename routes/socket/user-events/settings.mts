@@ -9,10 +9,10 @@ import { sendUserList } from '../user-requests.mts';
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedTheme = (socket, passport, data) => {
+export const handleUpdatedTheme = (socket: any, passport: any, data: any) => {
 	const fields = ['primaryColor', 'secondaryColor', 'tertiaryColor', 'backgroundColor', 'textColor'];
 
-	Account.findOne({ username: passport && passport.user }).then(account => {
+	Account.findOne({ username: passport && passport.user }).then((account: any) => {
 		if (!account) {
 			return;
 		}
@@ -30,11 +30,11 @@ export const handleUpdatedTheme = (socket, passport, data) => {
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedGameSettings = (socket, passport, data) => {
-	// Authentication Assured in routes.mjs
+export const handleUpdatedGameSettings = (socket: any, passport: any, data: any) => {
+	// Authentication Assured in routes.mts
 
 	Account.findOne({ username: passport.user })
-		.then(account => {
+		.then((account: any) => {
 			const currentPrivate = account.gameSettings.isPrivate;
 			const userIdx = userList.findIndex(user => user.userName === passport.user);
 			const aem = account.staffRole && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin');
@@ -49,7 +49,7 @@ export const handleUpdatedGameSettings = (socket, passport, data) => {
 						typeof blacklist.length === 'number' &&
 						blacklist.length <= 30 &&
 						blacklist.every(
-							entry =>
+							(entry: any) =>
 								typeof entry === 'object' && typeof entry.userName === 'string' && typeof entry.reason === 'string' && typeof entry.timestamp === 'number'
 						)
 					) {
@@ -142,7 +142,7 @@ export const handleUpdatedGameSettings = (socket, passport, data) => {
 				});
 			}
 		})
-		.catch(err => {
+		.catch((err: Error) => {
 			console.log(err);
 		});
 };
@@ -152,10 +152,10 @@ export const handleUpdatedGameSettings = (socket, passport, data) => {
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedBio = (socket, passport, data) => {
-	// Authentication Assured in routes.mjs
+export const handleUpdatedBio = (socket: any, passport: any, data: any) => {
+	// Authentication Assured in routes.mts
 	if (typeof data !== 'string') return; // otherwise the server will crash if you forge the request
-	Account.findOne({ username: passport.user }).then(account => {
+	Account.findOne({ username: passport.user }).then((account: any) => {
 		account.bio = data;
 		account.save();
 	});

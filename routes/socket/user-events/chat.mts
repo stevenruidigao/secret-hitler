@@ -146,7 +146,7 @@ export const handleNewGeneralChat = async (socket: any, passport: any, data: any
  * @param {boolean} isTourneyMod - self explain
  */
 export const handleAddNewGameChat = async (socket: any, passport: any, data: any, game: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[], addNewClaim: Function, isTourneyMod: boolean) => {
-	// Authentication Assured in routes.mjs
+	// Authentication Assured in routes.mts
 	if (!game || !game.general || !data.chat) return;
 	const chat = data.chat.trim();
 	const staffUserNames = [...modUserNames, ...editorUserNames, ...adminUserNames];
