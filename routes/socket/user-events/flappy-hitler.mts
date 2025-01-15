@@ -1,12 +1,12 @@
 import { getRoomSockets } from '../util.mts';
 
-module.exports.handleFlappyEvent = (data, game) => {
+export const handleFlappyEvent = (data: any, game: any) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
-
+	
 	const roomSockets = getRoomSockets(game.general.uid);
-	const updateFlappyRoom = newData => {
+	const updateFlappyRoom = (newData: any) => {
 		roomSockets.forEach(sock => {
 			if (sock) {
 				sock.emit('flappyUpdate', newData);
