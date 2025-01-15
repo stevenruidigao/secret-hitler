@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { Socket } from 'socket.io';
 
 import adjectives from '../../../utils/adjectives.mts';
 import animals from '../../../utils/animals.mts';
@@ -177,7 +178,7 @@ export const checkStartConditions = (game: any) => {
 /**
  * @param {object} socket - user socket reference.
  */
-export const handleSocketDisconnect = (socket: any) => {
+export const handleSocketDisconnect = (socket: Socket) => {
 	const { passport } = socket.handshake.session;
 
 	let listUpdate = false;
@@ -303,7 +304,7 @@ const playerLeavePretourny = (game: any, playerName: string) => {
  * @param {object} data - from socket emit.
  * @param {object} passport - socket authentication.
  */
-export const handleUserLeaveGame = (socket: any, game: any, data: any, passport: any) => {
+export const handleUserLeaveGame = (socket: Socket, game: any, data: any, passport: any) => {
 	// Authentication Assured in routes.js
 	// In-game Assured in routes.js
 

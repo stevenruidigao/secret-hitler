@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import { games, userList, testIP } from '../models.mts';
 import { sendInProgressGameUpdate } from '../util.mts';
 import Account from '../../../models/account.mts';
@@ -7,7 +9,7 @@ import { sendUserList } from '../user-requests.mts';
  * @param {object} socket - socket reference.
  * @param {function} callback - success callback.
  */
-export const checkUserStatus = (socket: any, callback: Function) => {
+export const checkUserStatus = (socket: Socket, callback: Function) => {
 	const { passport } = socket.handshake.session;
 
 	if (passport && Object.keys(passport).length) {
@@ -81,7 +83,7 @@ export const checkUserStatus = (socket: any, callback: Function) => {
 	} else callback();
 };
 
-export const handleHasSeenNewPlayerModal = (socket: any) => {
+export const handleHasSeenNewPlayerModal = (socket: Socket) => {
 	const { passport } = socket.handshake.session;
 
 	if (passport && Object.keys(passport).length) {

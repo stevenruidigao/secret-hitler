@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
+import { Socket } from 'socket.io';
 
 import ModAction from '../../../models/modAction.mts';
 
@@ -15,7 +16,7 @@ dayjs.extend(relativeTime);
  * @param {object} passport - socket authentication.
  * @param {object} game - game reference.
  */
-export const handleSubscribeModChat = (socket: any, passport: any, game: any) => {
+export const handleSubscribeModChat = (socket: Socket, passport: any, game: any) => {
 	// Authentication Assured in routes.mts
 
 	if (game.private.hiddenInfoSubscriptions.includes(passport.user)) return;
@@ -58,7 +59,7 @@ export const handleSubscribeModChat = (socket: any, passport: any, game: any) =>
  * @param {object} game - game reference.
  * @param {string} modUserName - freezing Moderator's username
  */
-export const handleGameFreeze = (socket: any, passport: any, game: any, modUserName: string) => {
+export const handleGameFreeze = (socket: Socket, passport: any, game: any, modUserName: string) => {
 	const gameToFreeze = game;
 
 	if (gameToFreeze && gameToFreeze.private && gameToFreeze.private.seatedPlayers) {
@@ -127,7 +128,7 @@ export const handleGameFreeze = (socket: any, passport: any, game: any, modUserN
  * @param {object} game - game reference.
  * @param {string} modUserName - requesting Moderator's username
  */
-export const handleModPeekVotes = (socket: any, passport: any, game: any, modUserName: any) => {
+export const handleModPeekVotes = (socket: Socket, passport: any, game: any, modUserName: any) => {
 	const gameToPeek = game;
 	let output = '<table class="fullTable"><tr><th>Seat</th><th>Role</th><th>Vote</th></tr>';
 
@@ -201,7 +202,7 @@ export const handleModPeekVotes = (socket: any, passport: any, game: any, modUse
  * @param {object} game - game reference.
  * @param {string} modUserName - requesting Moderator's username
  */
-export const handleModPeekRemakes = (socket: any, passport: any, game: any, modUserName: string) => {
+export const handleModPeekRemakes = (socket: Socket, passport: any, game: any, modUserName: string) => {
 	const gameToPeek = game;
 	let output =
 		'<table class="fullTable"><tr><th>Seat</th><th>Role</th><th>Time since last voted to remake</th><th>Currently voting to remake?</th><th>Times voted to remake</th></tr>';

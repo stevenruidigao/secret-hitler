@@ -1,3 +1,4 @@
+import { Socket } from 'socket.io';
 // @ts-expect-error: no types for gfycat-style-urls
 import { generateCombination } from 'gfycat-style-urls';
 
@@ -16,7 +17,7 @@ import { secureGame } from '../util.mts';
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleAddNewGame = async (socket: any, passport: any, data: any) => {
+export const handleAddNewGame = async (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 	if (gameCreationDisabled.status || (!data.privatePassword && limitNewPlayers.status)) {
 		return;

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { Socket } from 'socket.io';
 
 import { chatReplacements } from '../chatReplacements.mts';
 import { saveAndDeleteGame } from '../game/end-game.mts';
@@ -15,7 +16,7 @@ import { checkStartConditions } from './leave-game.mts';
  * @param {object} data - from socket emit.
  * @param {object} socket - socket
  */
-export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, socket: any) => {
+export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, socket: Socket) => {
 	if (game.general.isRemade) {
 		return; // Games can only be remade once.
 	}

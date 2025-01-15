@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import Account from '../../models/account.mts';
 
 import { selectPlayerToAssassinate } from './game/assassination.mts';
@@ -52,7 +54,7 @@ export const parseCommand = (msg: string) => {
  * @param {boolean} AEM - whether the user is AEM.
  * @param {boolean} isSeated - whether the user is sat in the game.
  */
-export const runCommand = (socket: any, passport: any, user: any, game: any, msg: string, AEM: boolean, isSeated: boolean) => {
+export const runCommand = (socket: Socket, passport: any, user: any, game: any, msg: string, AEM: boolean, isSeated: boolean) => {
 	try {
 		if (!game.private.commandChats[user.userName]) {
 			game.private.commandChats[user.userName] = [];
@@ -264,7 +266,7 @@ commands.getCommand = function(name: string) {
 	return this.find((c: any) => c.name.includes(name.toLowerCase())) || null;
 };
 
-(commands.getCommand('help') as Command).run = (socket: any, passport: any, user: any, game: any, args: any, AEM: boolean, isSeated: boolean) => {
+(commands.getCommand('help') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any, AEM: boolean, isSeated: boolean) => {
 	let i = 1;
 	sendMessage(game, user, 'List of Commands:');
 	for (const command of module.exports.commands) {
@@ -292,7 +294,7 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('g') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('g') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	if (game.general.private || (game.customGameSettings && game.customGameSettings.enabled)) {
 		sendMessage(game, user, 'Line guessing is only enabled in ranked and practice games.');
 		return;
@@ -331,7 +333,7 @@ commands.getCommand = function(name: string) {
 	game.guesses[user.userName] = guess;
 };
 
-(commands.getCommand('gm') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('gm') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	if (!game.general.avalonSH) {
 		sendMessage(game, user, 'Merlin guessing is only enabled in avalon SH games.');
 		return;
@@ -353,7 +355,7 @@ commands.getCommand = function(name: string) {
 	game.merlinGuesses[user.userName] = guess;
 };
 
-(commands.getCommand('pingmod') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('pingmod') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	if (!game.lastModPing || Date.now() > game.lastModPing + 180000) {
 		Account.find({ username: { $in: game.publicPlayersState.map((player: any) => player.userName) } }).then((accounts: any[]) => {
 			const staffInGame = accounts
@@ -395,7 +397,7 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('ping') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('ping') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
 	const seat = parseInt(args[0]);
 
@@ -408,12 +410,13 @@ commands.getCommand = function(name: string) {
 					io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
 			);
 
+			const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
 			player.pingTime = Date.now();
-			if (!io.sockets.sockets.get(affectedSocketId)) {
-				return;
-			}
-			io.sockets.sockets
-				.get(affectedSocketId)
+
+			if (!affectedSocket) return;
+
+			affectedSocket
 				.emit(
 					'pingPlayer',
 					game.general.blindMode || game.general.playerChats === 'disabled'
@@ -467,7 +470,7 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('forcerigdeck') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forcerigdeck') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	const changedChat: any[] = [
 		{
 			text: 'A staff member has changed the deck to '
@@ -495,7 +498,7 @@ commands.getCommand = function(name: string) {
 	});
 };
 
-(commands.getCommand('forcevote') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forcevote') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
 		return;
@@ -587,11 +590,11 @@ commands.getCommand = function(name: string) {
 		};
 		game.private.hiddenInfoChat.push(modOnlyChat);
 
-		selectVoting({ user: affectedPlayer.userName }, game, { vote }, null, true);
+		selectVoting({ user: affectedPlayer.userName }, game, { vote }, undefined, true);
 	}
 };
 
-(commands.getCommand('forceskip') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forceskip') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -650,15 +653,15 @@ commands.getCommand = function(name: string) {
 			}
 		]
 	});
-	selectChancellor(null, { user: affectedPlayer.userName }, game, { chancellorIndex: chancellor }, true);
+	selectChancellor({ user: affectedPlayer.userName }, game, { chancellorIndex: chancellor }, undefined, true);
 	setTimeout(() => {
 		for (const p of game.private.seatedPlayers.filter((player: any) => !player.isDead)) {
-			selectVoting({ user: p.userName }, game, { vote: false }, null, true);
+			selectVoting({ user: p.userName }, game, { vote: false }, undefined, true);
 		}
 	}, 1000);
 };
 
-(commands.getCommand('forcepick') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forcepick') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -714,7 +717,7 @@ commands.getCommand = function(name: string) {
 				]
 			});
 
-			selectPlayerToAssassinate({ user: affectedPlayer.userName }, game, { playerIndex: chancellorPick - 1 }, null);
+			selectPlayerToAssassinate({ user: affectedPlayer.userName }, game, { playerIndex: chancellorPick - 1 });
 			return;
 		}
 
@@ -757,11 +760,11 @@ commands.getCommand = function(name: string) {
 				}
 			]
 		});
-		selectChancellor(null, { user: affectedPlayer.userName }, game, { chancellorIndex: chancellorPick - 1 }, true);
+		selectChancellor({ user: affectedPlayer.userName }, game, { chancellorIndex: chancellorPick - 1 }, undefined, true);
 	}
 };
 
-(commands.getCommand('forceping') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forceping') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	const { blindMode, replacementNames } = game.general;
 
 	if (game.general.isRemade) {
@@ -801,17 +804,21 @@ commands.getCommand = function(name: string) {
 				io.sockets.sockets.get(socketId).handshake.session.passport &&
 				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
 		);
-		if (!io.sockets.sockets.get(affectedSocketId)) {
+
+		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+		if (!affectedSocket) {
 			sendMessage(game, user, 'Unable to send ping.');
 			return;
 		}
-		io.sockets.sockets.get(affectedSocketId).emit('pingPlayer', 'Secret Hitler IO: A moderator has pinged you.');
+		
+		affectedSocket.emit('pingPlayer', 'Secret Hitler IO: A moderator has pinged you.');
 	} catch (e) {
 		console.log(e, 'caught exception in ping chat');
 	}
 };
 
-(commands.getCommand('forcerigrole') as Command).run = (socket: any, passport: any, user: any, game: any, args: any) => {
+(commands.getCommand('forcerigrole') as Command).run = (socket: Socket, passport: any, user: any, game: any, args: any) => {
 	if (game && game.private) {
 		const seat = parseInt(args[0], 10);
 		const role = (r => {

@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import Account from '../../../models/account.mts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
@@ -9,7 +11,7 @@ import { sendUserList } from '../user-requests.mts';
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedTheme = (socket: any, passport: any, data: any) => {
+export const handleUpdatedTheme = (socket: Socket, passport: any, data: any) => {
 	const fields = ['primaryColor', 'secondaryColor', 'tertiaryColor', 'backgroundColor', 'textColor'];
 
 	Account.findOne({ username: passport && passport.user }).then((account: any) => {
@@ -30,7 +32,7 @@ export const handleUpdatedTheme = (socket: any, passport: any, data: any) => {
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedGameSettings = (socket: any, passport: any, data: any) => {
+export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 
 	Account.findOne({ username: passport.user })
@@ -152,7 +154,7 @@ export const handleUpdatedGameSettings = (socket: any, passport: any, data: any)
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedBio = (socket: any, passport: any, data: any) => {
+export const handleUpdatedBio = (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 	if (typeof data !== 'string') return; // otherwise the server will crash if you forge the request
 	Account.findOne({ username: passport.user }).then((account: any) => {

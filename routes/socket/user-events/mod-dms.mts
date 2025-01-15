@@ -1,5 +1,6 @@
 import https from 'https';
 
+import { Socket } from 'socket.io';
 // @ts-expect-error: no types for gfycat-style-urls
 import { generateCombination } from 'gfycat-style-urls';
 
@@ -8,7 +9,7 @@ import ModThread from '../../../models/modThread.mts';
 import { userList, modDMs, games } from '../models.mts';
 import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../util.mts';
 
-export const handleOpenChat = (socket: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
+export const handleOpenChat = (socket: Socket, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const passport = socket.handshake.session.passport;
 	if (data.aemMember !== passport.user) return;
 

@@ -1,6 +1,8 @@
 import fs from 'fs';
 import https from 'https';
 
+import { Socket } from 'socket.io';
+
 import Account from '../../../models/account.mts';
 import BannedIP from '../../../models/bannedIP.mts';
 import ModAction from '../../../models/modAction.mts';
@@ -38,7 +40,7 @@ let lagTest: any[] = [];
  * @param {array} modUserNames - list of usernames that are mods
  * @param {array} superModUserNames - list of usernames that are editors and admins
  */
-export const handleModerationAction = (socket: any, passport: any, data: any, skipCheck: boolean, modUserNames: string[], superModUserNames: string[]) => {
+export const handleModerationAction = (socket: Socket, passport: any, data: any, skipCheck: boolean, modUserNames: string[], superModUserNames: string[]) => {
 	if (data.userName) {
 		data.userName = data.userName.trim();
 	}

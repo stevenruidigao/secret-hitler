@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import Account from '../../../models/account.mts';
 import { userInBlacklist } from '../../../utils/index.mts';
 
@@ -12,7 +14,7 @@ import { checkStartConditions } from './leave-game.mts'; // this used to be a se
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const updateSeatedUser = (socket: any, passport: any, data: any) => {
+export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 	// In-game Assured in routes.mts
 	const game = games[data.uid];

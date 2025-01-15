@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import { sendInProgressGameUpdate } from '../util.mts';
 
 import { completeGame } from './end-game.mts';
@@ -79,7 +81,7 @@ export const assassinateMerlin = (game: any) => {
 	}
 };
 
-export const selectPlayerToAssassinate = (passport: any, game: any, data: any, socket: any) => {
+export const selectPlayerToAssassinate = (passport: any, game: any, data: any, socket?: Socket) => {
 	const { seatedPlayers } = game.private;
 	const target = seatedPlayers[data.playerIndex];
 	const publicTarget = game.publicPlayersState[data.playerIndex];

@@ -190,7 +190,7 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 				if (game.gameState.timedModeEnabled) {
 					const chancellorIndex = _.shuffle(game.gameState.clickActionInfo[1])[0];
 
-					selectChancellor(null, { user: pendingPresidentPlayer.userName }, game, { chancellorIndex });
+					selectChancellor({ user: pendingPresidentPlayer.userName }, game, { chancellorIndex });
 					game.private.replayGameChats.push({
 						gameChat: true,
 						timestamp: new Date(),

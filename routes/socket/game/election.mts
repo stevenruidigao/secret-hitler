@@ -1,4 +1,5 @@
-import _, { Function0 } from 'lodash';
+import _ from 'lodash';
+import { Socket } from 'socket.io';
 
 import { makeReport } from '../report.mts';
 import { sendGameList } from '../user-requests.mts';
@@ -59,7 +60,7 @@ const presidentPowers: Record<number, [Function, string] | null>[] = [
  * @param {string} team - name of team that is enacting policy.
  * @param {object} socket - socket
  */
-const enactPolicy = (game: any, team: string, socket: any) => {
+const enactPolicy = (game: any, team: string, socket: Socket) => {
 	const index = game.trackState.enactedPolicies.length;
 	const { experiencedMode } = game.general;
 
@@ -355,7 +356,7 @@ const enactPolicy = (game: any, team: string, socket: any) => {
  * @param {object} data - socket emit
  * @param {object} socket - socket
  */
-export const selectPresidentVoteOnVeto = (passport: any, game: any, data: any, socket: any) => {
+export const selectPresidentVoteOnVeto = (passport: any, game: any, data: any, socket: Socket) => {
 	const { experiencedMode } = game.general;
 	const president = game.private.seatedPlayers[game.gameState.presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -737,7 +738,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, 
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectChancellorPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: any) => {
+export const selectChancellorPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: Socket) => {
 	const { experiencedMode } = game.general;
 	const presidentIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isPresident');
 	const president = game.private.seatedPlayers[presidentIndex];
@@ -989,7 +990,7 @@ export const selectChancellorPolicy = (passport: any, game: any, data: any, wasT
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: any) => {
+export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: Socket) => {
 	const { presidentIndex } = game.gameState;
 	const president = game.private.seatedPlayers[presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -1357,7 +1358,7 @@ export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTi
  * @param {object} socket - socket
  * @param {bool} force - if action was forced
  */
-export const selectVoting = (passport: any, game: any, data: any, socket: any, force = false) => {
+export const selectVoting = (passport: any, game: any, data: any, socket?: Socket, force = false) => {
 	const { seatedPlayers } = game.private;
 	const { experiencedMode } = game.general;
 	const player = seatedPlayers.find((player: any) => player.userName === passport.user); // TODO: optimize
@@ -1377,7 +1378,7 @@ export const selectVoting = (passport: any, game: any, data: any, socket: any, f
 		return;
 	}
 
-	const passedElection = (socket: any) => {
+	const passedElection = (socket: Socket) => {
 		const { gameState } = game;
 		const { presidentIndex } = gameState;
 		const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -1673,7 +1674,7 @@ export const selectVoting = (passport: any, game: any, data: any, socket: any, f
 							game.gameState.pendingChancellorIndex = null;
 							game.gameState.timedModeEnabled = false;
 
-							selectChancellor(null, { user: game.private.seatedPlayers[game.gameState.presidentIndex].userName }, game, { chancellorIndex: chancellorIndex });
+							selectChancellor({ user: game.private.seatedPlayers[game.gameState.presidentIndex].userName }, game, { chancellorIndex: chancellorIndex });
 							game.private.replayGameChats.push({
 								gameChat: true,
 								timestamp: new Date(),
@@ -1701,7 +1702,7 @@ export const selectVoting = (passport: any, game: any, data: any, socket: any, f
 			);
 		}
 	};
-	const flipBallotCards = (socket: any) => {
+	const flipBallotCards = (socket: Socket) => {
 		if (!seatedPlayers[0]) {
 			return;
 		}

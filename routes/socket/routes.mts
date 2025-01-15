@@ -53,6 +53,7 @@ import https from 'https';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
+import { Socket } from 'socket.io';
 
 import Account from '../../models/account.mts';
 import { TOU_CHANGES } from '../../src/frontend-scripts/constants.mjs';
@@ -144,7 +145,7 @@ const gamesGarbageCollector = () => {
 	cloneSettingsFromRedis();
 };
 
-const ensureAuthenticated = (socket: any) => {
+const ensureAuthenticated = (socket: Socket) => {
 	if (socket.handshake && socket.handshake.session) {
 		const { passport } = socket.handshake.session;
 
@@ -183,7 +184,7 @@ export const socketRoutes = () => {
 
 	gatherStaffUsernames();
 
-	io.on('connection', (socket: any) => {
+	io.on('connection', (socket: Socket) => {
 		checkUserStatus(socket, () => {
 			socket.emit('version', { current: version });
 
@@ -541,7 +542,7 @@ export const socketRoutes = () => {
 			socket.on('leaveGame', (data: any) => {
 				const game = findGame(data);
 
-				if (game && game.general && io.sockets.adapter.rooms[game.general.uid] && socket) {
+				if (game && game.general && io.sockets.adapter.rooms.get(game.general.uid) && socket) {
 					socket.leave(game.general.uid);
 				}
 

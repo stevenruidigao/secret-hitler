@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import { sendInProgressGameUpdate } from '../util.mts';
 
 import { selectVoting } from './election.mts';
@@ -9,7 +11,7 @@ import { selectVoting } from './election.mts';
  * @param {object} data - from socket emit.
  * @param {bool} force - whether or not this action was forced.
  */
-export const selectChancellor = (socket: any, passport: any, game: any, data: any, force = false) => {
+export const selectChancellor = (passport: any, game: any, data: any, socket?: Socket, force = false) => {
 	if ((game.general.isTourny && game.general.tournyInfo.isCancelled) || data.chancellorIndex >= game.general.playerCount || data.chancellorIndex < 0) {
 		return;
 	}

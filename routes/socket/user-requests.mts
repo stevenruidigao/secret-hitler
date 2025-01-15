@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 import Account from '../../models/account.mts';
 import Game from '../../models/game.mts';
 import ModAction from '../../models/modAction.mts';
@@ -47,7 +49,7 @@ export const sendUserList = (socket?: any) => {
 	}
 };
 
-export const getModInfo = (games: any[], users: any[], socket: any, queryObj: any, count = 1, isTrial: boolean, isAEM: boolean) => {
+export const getModInfo = (games: any[], users: any[], socket: Socket, queryObj: any, count = 1, isTrial: boolean, isAEM: boolean) => {
 	const maskEmail = (email: string) => (email && email.split('@')[1]) || '';
 	ModAction.find(queryObj)
 		.sort({ $natural: -1 })
@@ -126,7 +128,7 @@ export const getModInfo = (games: any[], users: any[], socket: any, queryObj: an
 		});
 };
 
-export const sendSignups = (socket: any, types = ['local', 'discord', 'github']) => {
+export const sendSignups = (socket: Socket, types = ['local', 'discord', 'github']) => {
 	Signups.find({ type: { $in: types } })
 		.sort({ $natural: -1 })
 		.limit(500)
@@ -139,11 +141,11 @@ export const sendSignups = (socket: any, types = ['local', 'discord', 'github'])
 		});
 };
 
-export const sendAllSignups = (socket: any) => {
+export const sendAllSignups = (socket: Socket) => {
 	sendSignups(socket, ['local', 'private', 'discord', 'github']);
 };
 
-export const sendPrivateSignups = (socket: any) => {
+export const sendPrivateSignups = (socket: Socket) => {
 	sendSignups(socket, ['private']);
 };
 
@@ -154,7 +156,7 @@ export const sendPrivateSignups = (socket: any) => {
  * @param {boolean} isTrial - true if the user is a trial mod.
  * @param {boolean} isAEM - true if the user is a AEM member.
  */
-export const sendModInfo = (games: any[], socket: any, count: number, isTrial: boolean, isAEM: boolean) => {
+export const sendModInfo = (games: any[], socket: Socket, count: number, isTrial: boolean, isAEM: boolean) => {
 	const userNames = userList.map((user: any) => user.userName);
 
 	Account.find({ username: userNames, 'gameSettings.isPrivate': { $ne: true } })
@@ -169,7 +171,7 @@ export const sendModInfo = (games: any[], socket: any, count: number, isTrial: b
 /**
  * @param {object} socket - user socket reference.
  */
-export const sendUserGameSettings = (socket: any) => {
+export const sendUserGameSettings = (socket: Socket) => {
 	const { passport } = socket.handshake.session;
 
 	if (!passport || !passport.user) {
@@ -226,7 +228,7 @@ export const sendUserGameSettings = (socket: any) => {
  * @param {object} socket - user socket reference.
  * @param {object} data - data about the request
  */
-export const sendPlayerNotes = (socket: any, data: any) => {
+export const sendPlayerNotes = (socket: Socket, data: any) => {
 	PlayerNote.find({ userName: data.userName, notedUser: { $in: data.seatedPlayers } })
 		.then((notes: any) => {
 			if (notes) {
@@ -242,7 +244,7 @@ export const sendPlayerNotes = (socket: any, data: any) => {
  * @param {object} socket - user socket reference.
  * @param {string} uid - uid of game.
  */
-export const sendReplayGameData = (socket: any, uid: string) => {
+export const sendReplayGameData = (socket: Socket, uid: string) => {
 	Game.findOne({ uid })
 		.select({ _id: 0, _v: 0 })
 		.then((game: any, err: Error) => {
@@ -274,7 +276,7 @@ export const sendGameList = (socket?: any, isAEM?: boolean) => {
 /**
  * @param {object} socket - user socket reference.
  */
-export const sendUserReports = (socket: any) => {
+export const sendUserReports = (socket: Socket) => {
 	PlayerReport.find()
 		.sort({ $natural: -1 })
 		.limit(500)
@@ -286,7 +288,7 @@ export const sendUserReports = (socket: any) => {
 /**
  * @param {object} socket - user socket reference.
  */
-export const sendGeneralChats = (socket: any) => {
+export const sendGeneralChats = (socket: Socket) => {
 	socket.emit('generalChats', generalChats);
 };
 
@@ -323,7 +325,7 @@ export const updateUserStatus = (passport: any, game?: any, override?: string) =
  * @param {object} socket - user socket reference.
  * @param {string} uid - uid of game.
  */
-export const sendGameInfo = (socket: any, uid: string) => {
+export const sendGameInfo = (socket: Socket, uid: string) => {
 	const game = games[uid];
 	const { passport } = socket.handshake.session;
 
