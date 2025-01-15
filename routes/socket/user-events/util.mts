@@ -10,7 +10,11 @@ import { sendUserList } from '../user-requests.mts';
  * @param {function} callback - success callback.
  */
 export const checkUserStatus = (socket: Socket, callback: Function) => {
-	const { passport } = socket.handshake.session;
+	const handshake = socket?.handshake as any;
+
+	if (!handshake?.session) return;
+
+	const { passport } = handshake.session;
 
 	if (passport && Object.keys(passport).length) {
 		const { user } = passport;
@@ -84,7 +88,11 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 };
 
 export const handleHasSeenNewPlayerModal = (socket: Socket) => {
-	const { passport } = socket.handshake.session;
+	const handshake = socket?.handshake as any;
+
+	if (!handshake?.session) return;
+
+	const { passport } = handshake.session;
 
 	if (passport && Object.keys(passport).length) {
 		const { user } = passport;

@@ -405,9 +405,16 @@ commands.getCommand = function(name: string) {
 		try {
 			const affectedPlayerIndex = seat - 1;
 			const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-				socketId =>
-					io.sockets.sockets.get(socketId).handshake.session.passport &&
-					io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
+				socketId => {
+					const s = io.sockets.sockets.get(socketId);
+
+					if (!s) return false;
+
+					const handshake = s.handshake as any;
+
+					return handshake?.session?.passport &&
+					handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
+				}
 			);
 
 			const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
@@ -800,9 +807,16 @@ commands.getCommand = function(name: string) {
 
 	try {
 		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-			socketId =>
-				io.sockets.sockets.get(socketId).handshake.session.passport &&
-				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+			socketId => {
+				const s = io.sockets.sockets.get(socketId);
+
+				if (!s) return false;
+
+				const handshake = s.handshake as any;
+
+				return handshake?.session?.passport &&
+					handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
+			}
 		);
 
 		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);

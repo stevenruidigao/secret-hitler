@@ -172,11 +172,13 @@ export const sendModInfo = (games: any[], socket: Socket, count: number, isTrial
  * @param {object} socket - user socket reference.
  */
 export const sendUserGameSettings = (socket: Socket) => {
-	const { passport } = socket.handshake.session;
+	const handshake = socket?.handshake as any;
 
-	if (!passport || !passport.user) {
-		return;
-	}
+	if (!handshake?.session) return;
+
+	const { passport } = handshake.session;
+
+	if (!passport || !passport.user) return;
 
 	Account.findOne({ username: passport.user })
 		.then((account: any) => {
@@ -327,7 +329,11 @@ export const updateUserStatus = (passport: any, game?: any, override?: string) =
  */
 export const sendGameInfo = (socket: Socket, uid: string) => {
 	const game = games[uid];
-	const { passport } = socket.handshake.session;
+	const handshake = socket?.handshake as any;
+
+	if (!handshake?.session) return;
+
+	const { passport } = handshake.session;
 
 	if (game && game.publicPlayersState && game.general) {
 		if (passport && Object.keys(passport).length) {

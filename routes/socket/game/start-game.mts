@@ -782,15 +782,26 @@ const beginGame = (game: any) => {
 
 	for (let affectedPlayerNumber = 0; affectedPlayerNumber < game.publicPlayersState.length; affectedPlayerNumber++) {
 		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-			socketId =>
-				io.sockets.sockets.get(socketId).handshake.session.passport &&
-				io.sockets.sockets.get(socketId).handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName
+			socketId => {
+				const s = io.sockets.sockets.get(socketId);
+
+				if (!s) return false;
+
+				const handshake = s.handshake as any;
+
+				return handshake?.session?.passport &&
+					handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
+			}
 		);
-		if (!io.sockets.sockets.get(affectedSocketId)) {
+
+		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+		if (!affectedSocket) {
 			continue;
 		}
+
 		if (process.env.NODE_ENV !== 'development') {
-			io.sockets.sockets.get(affectedSocketId).emit('pingPlayer', 'Secret Hitler IO: The game has started!');
+			affectedSocket.emit('pingPlayer', 'Secret Hitler IO: The game has started!');
 		}
 	}
 };
@@ -798,7 +809,7 @@ const beginGame = (game: any) => {
 /**
  * @param {object} game - game to act on.
  */
-export default game => {
+export default (game: any) => {
 	game.gameState.isTracksFlipped = true;
 	let startGamePause = process.env.NODE_ENV === 'development' ? 1 : 5;
 

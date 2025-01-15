@@ -124,17 +124,27 @@ const gamesGarbageCollector = () => {
 		if (toDelete && currentGame.publicPlayersState) {
 			for (let affectedPlayerNumber = 0; affectedPlayerNumber < currentGame.publicPlayersState.length; affectedPlayerNumber++) {
 				const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-					socketId =>
-						io.sockets.sockets.get(socketId).handshake.session.passport &&
-						io.sockets.sockets.get(socketId).handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
+					socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+
+						if (!socket) return false;
+
+						const handshake = socket.handshake as any;
+
+						return handshake?.session?.passport &&
+						handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
+					}
 				);
-				if (!io.sockets.sockets.get(affectedSocketId)) {
+
+				const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+				if (!affectedSocket) {
 					continue;
 				}
 
 				// I'm entirely unsure why socketio seems to misbehave with these combined so often - probably just bad timing
-				if (io.sockets.sockets && io.sockets.sockets.get(affectedSocketId)) io.sockets.sockets.get(affectedSocketId).emit('toLobby', currentGame.uid);
-				if (io.sockets.sockets && io.sockets.sockets.get(affectedSocketId)) io.sockets.sockets.get(affectedSocketId).leave(gameName);
+				if (io.sockets.sockets && affectedSocket) affectedSocket.emit('toLobby', currentGame.uid);
+				if (io.sockets.sockets && affectedSocket) affectedSocket.leave(gameName);
 			}
 
 			saveAndDeleteGame(gameName);
@@ -146,8 +156,10 @@ const gamesGarbageCollector = () => {
 };
 
 const ensureAuthenticated = (socket: Socket) => {
-	if (socket.handshake && socket.handshake.session) {
-		const { passport } = socket.handshake.session;
+	const handshake = socket?.handshake as any;
+
+	if (handshake && handshake?.session) {
+		const { passport } = handshake?.session;
 
 		return Boolean(passport && passport.user && Object.keys(passport).length);
 	}
@@ -201,7 +213,7 @@ export const socketRoutes = () => {
 				}
 			});
 
-			const { passport } = socket.handshake.session;
+			const { passport } = (socket?.handshake as any)?.session;
 			const authenticated = ensureAuthenticated(socket);
 
 			let isAEM = false;

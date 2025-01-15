@@ -60,7 +60,7 @@ const presidentPowers: Record<number, [Function, string] | null>[] = [
  * @param {string} team - name of team that is enacting policy.
  * @param {object} socket - socket
  */
-const enactPolicy = (game: any, team: string, socket: Socket) => {
+const enactPolicy = (game: any, team: string, socket?: Socket) => {
 	const index = game.trackState.enactedPolicies.length;
 	const { experiencedMode } = game.general;
 
@@ -738,7 +738,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: any, data: any, 
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectChancellorPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: Socket) => {
+export const selectChancellorPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket?: Socket) => {
 	const { experiencedMode } = game.general;
 	const presidentIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isPresident');
 	const president = game.private.seatedPlayers[presidentIndex];
@@ -990,7 +990,7 @@ export const selectChancellorPolicy = (passport: any, game: any, data: any, wasT
  * @param {boolean} wasTimer - came from timer
  * @param {object} socket - socket
  */
-export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket: Socket) => {
+export const selectPresidentPolicy = (passport: any, game: any, data: any, wasTimer: boolean, socket?: Socket) => {
 	const { presidentIndex } = game.gameState;
 	const president = game.private.seatedPlayers[presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -1378,7 +1378,7 @@ export const selectVoting = (passport: any, game: any, data: any, socket?: Socke
 		return;
 	}
 
-	const passedElection = (socket: Socket) => {
+	const passedElection = (socket?: Socket) => {
 		const { gameState } = game;
 		const { presidentIndex } = gameState;
 		const chancellorIndex = game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor');
@@ -1702,7 +1702,7 @@ export const selectVoting = (passport: any, game: any, data: any, socket?: Socke
 			);
 		}
 	};
-	const flipBallotCards = (socket: Socket) => {
+	const flipBallotCards = (socket?: Socket) => {
 		if (!seatedPlayers[0]) {
 			return;
 		}

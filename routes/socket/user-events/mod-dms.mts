@@ -10,8 +10,12 @@ import { userList, modDMs, games } from '../models.mts';
 import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../util.mts';
 
 export const handleOpenChat = (socket: Socket, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
-	const passport = socket.handshake.session.passport;
-	if (data.aemMember !== passport.user) return;
+	const handshake = socket?.handshake as any;
+
+	if (!handshake?.session) return;
+	
+	const passport = handshake.session.passport;
+	if (!passport || data.aemMember !== passport.user) return;
 
 	const aemMember = userList.find(x => x.userName === data.aemMember);
 	if (aemMember && aemMember.staff && aemMember.staff.incognito) {
@@ -53,12 +57,19 @@ export const handleOpenChat = (socket: Socket, data: any, modUserNames: string[]
 	}
 
 	const dmReceiverSocketID = Array.from(io.sockets.sockets.keys()).find(
-		socketId =>
-			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
-	);
-	const dmReceiverSocket = io.sockets.sockets.get(dmReceiverSocketID);
+		socketId => {
+			const socket = io.sockets.sockets.get(socketId);
 
-	if (!Object.keys(dmReceiver).length || dmReceiverSocketID == null || dmReceiverSocket == null) {
+			if (!socket) return false;
+
+			const handshake = socket.handshake as any;
+
+			return handshake?.session?.passport && handshake.session.passport.user === data.userName;
+		}
+	);
+	const dmReceiverSocket = dmReceiverSocketID && io.sockets.sockets.get(dmReceiverSocketID);
+
+	if (!Object.keys(dmReceiver).length || dmReceiverSocketID == null || !dmReceiverSocket) {
 		return socket.emit('sendAlert', 'That player is not online!');
 	}
 
@@ -129,10 +140,22 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: any, edito
 					const sock =
 						io.sockets.sockets.get(
 							Array.from(io.sockets.sockets.keys()).find(
-								socketId =>
-									io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
-							)
+								socketId => {
+									const s = io.sockets.sockets.get(socketId);
+
+									if (!s) return false;
+
+									const handshake = s.handshake as any;
+
+									return (
+										handshake?.session?.passport &&
+										handshake.session.passport.user === user
+									);
+								}
+							) || ''
 						);
+
+					if (!sock) continue;
 
 					sock.emit('closeModDMs');
 					sock.emit('postCloseModDMs');

@@ -98,8 +98,16 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 	const isSuperMod = superModUserNames.includes(passport.user) || newStaff.editorUserNames.includes(passport.user);
 
 	const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-		socketId =>
-			io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === data.userName
+		socketId => {
+			const s = io.sockets.sockets.get(socketId);
+
+			if (!s) return false;
+
+			const handshake = s.handshake as any;
+
+			return handshake?.session?.passport &&
+				handshake.session.passport.user === data.userName;
+		}
 	);
 
 	if (
@@ -159,10 +167,11 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 			 */
 			const logOutUser = (username: string) => {
 				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
+				const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
-				if (io.sockets.sockets.get(affectedSocketId)) {
-					io.sockets.sockets.get(affectedSocketId).emit('manualDisconnection');
-					io.sockets.sockets.get(affectedSocketId).disconnect();
+				if (affectedSocket) {
+					affectedSocket.emit('manualDisconnection');
+					affectedSocket.disconnect();
 				}
 
 				if (bannedUserlistIndex >= 0) {
@@ -238,8 +247,10 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								user.warnings = [warning];
 							}
 							user.save(() => {
-								if (io.sockets.sockets.get(affectedSocketId)) {
-									io.sockets.sockets.get(affectedSocketId).emit('checkRestrictions');
+								const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+								if (affectedSocket) {
+									affectedSocket.emit('checkRestrictions');
 								}
 							});
 						} else {
@@ -257,10 +268,13 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `That user doesn't have any warnings.`);
 								return;
 							}
+
 							user.markModified('warnings');
 							user.save(() => {
-								if (io.sockets.sockets.get(affectedSocketId)) {
-									io.sockets.sockets.get(affectedSocketId).emit('checkRestrictions');
+								const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+								if (affectedSocket) {
+									affectedSocket.emit('checkRestrictions');
 								}
 							});
 						} else {
@@ -395,9 +409,12 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 										socket.emit('sendAlert', `User ${data.comment} already exists`);
 									} else {
 										Account.findOne({ username: data.userName }).then((account: any) => {
-											if (io.sockets.sockets.get(affectedSocketId)) {
-												io.sockets.sockets.get(affectedSocketId).emit('manualDisconnection');
+											const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+											if (affectedSocket) {
+												affectedSocket.emit('manualDisconnection');
 											}
+
 											if (account) {
 												account.username = data.comment;
 												account.save();
@@ -406,6 +423,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 											} else {
 												socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 											}
+
 											if (!success) {
 												return;
 											}
@@ -749,8 +767,10 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									}
 								});
 								account.save(() => {
-									if (io.sockets.sockets.get(affectedSocketId)) {
-										io.sockets.sockets.get(affectedSocketId).emit('gameSettings', account.gameSettings);
+									const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
+
+									if (affectedSocket) {
+										affectedSocket.emit('gameSettings', account.gameSettings);
 									}
 								});
 							} else {

@@ -62,14 +62,29 @@ const startCountdown = (game: any) => {
 				const APlayerNames = APlayers.map((player: any) => player.userName);
 				const BPlayerNames = BPlayers.map((player: any) => player.userName);
 				const ASocketIds = Array.from(io.sockets.sockets.keys()).filter(
-					socketId =>
-						io.sockets.sockets.get(socketId).handshake.session.passport &&
-						APlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
+					socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+
+						if (!socket) return false;
+
+						const handshake = socket.handshake as any;
+
+						return handshake?.session?.passport &&
+							APlayerNames.includes(handshake.session.passport.user);
+					}
 				);
+
 				const BSocketIds = Array.from(io.sockets.sockets.keys()).filter(
-					socketId =>
-						io.sockets.sockets.get(socketId).handshake.session.passport &&
-						BPlayerNames.includes(io.sockets.sockets.get(socketId).handshake.session.passport.user)
+					socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+
+						if (!socket) return false;
+
+						const handshake = socket.handshake as any;
+
+						return handshake?.session?.passport &&
+							BPlayerNames.includes(handshake.session.passport.user);
+					}
 				);
 
 				gameA.general.uid = `${game.general.uid}TableA`;
@@ -83,6 +98,8 @@ const startCountdown = (game: any) => {
 				ASocketIds.forEach(id => {
 					const socket = io.sockets.sockets.get(id);
 
+					if (!socket) return;
+
 					Array.from(socket.rooms.keys()).forEach(roomUid => {
 						socket.leave(roomUid);
 					});
@@ -92,6 +109,8 @@ const startCountdown = (game: any) => {
 
 				BSocketIds.forEach(id => {
 					const socket = io.sockets.sockets.get(id);
+
+					if (!socket) return;
 
 					Array.from(socket.rooms.keys()).forEach(roomUid => {
 						socket.leave(roomUid);
@@ -179,7 +198,10 @@ export const checkStartConditions = (game: any) => {
  * @param {object} socket - user socket reference.
  */
 export const handleSocketDisconnect = (socket: Socket) => {
-	const { passport } = socket.handshake.session;
+	if (!socket) return;
+
+	const handshake = socket.handshake as any;
+	const { passport } = handshake.session;
 
 	let listUpdate = false;
 	if (passport && Object.keys(passport).length) {
