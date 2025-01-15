@@ -1,7 +1,10 @@
+import { getRoomSockets } from '../util.mjs';
+
 export const handleFlappyEvent = (data, game) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
+
 	const roomSockets = getRoomSockets(game.general.uid);
 	const updateFlappyRoom = newData => {
 		roomSockets.forEach(sock => {
