@@ -472,7 +472,7 @@ export const completeGame = (game: any, winningTeamName: string) => {
 									io.sockets.sockets.get(socketId).handshake.session.passport.user === player.username
 							);
 
-							io.sockets.sockets[playerSocketId].emit('gameSettings', player.gameSettings); // TODO: aaaaaaaa
+							io.sockets.sockets.get(playerSocketId).emit('gameSettings', player.gameSettings); // TODO: aaaaaaaa
 						}
 					} else {
 						if (isRainbow) {
