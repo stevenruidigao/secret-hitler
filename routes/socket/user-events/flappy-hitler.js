@@ -1,4 +1,4 @@
-import { getRoomSockets } from '../util.js';
+const { getRoomSockets } = require('../util.js');
 
 module.exports.handleFlappyEvent = (data, game) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
