@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 // @ts-expect-error: no types for gfycat-style-urls
 import { generateCombination } from 'gfycat-style-urls';
 
-import Account from '../../../models/account.mts';
+import Account, { IAccount } from '../../../models/account.mts';
 import Game from '../../../models/game.mts';
 
 import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.mts';
@@ -333,7 +333,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	}
 
 	user.timeLastGameCreated = currentTime;
-	Account.findOne({ username: user.userName }).then((account: any) => {
+	Account.findOne({ username: user.userName }).then((account) => {
 		newGame.private = {
 			reports: {},
 			unSeatedGameChats: [],
@@ -368,7 +368,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 				standard: !newGame.general.rainbowgame,
 				customgame: newGame.customGameSettings.enabled,
 				casualgame: newGame.general.casualGame,
-				creator: account.username
+				creator: account?.username
 			});
 		}
 		socket.join(newGame.general.uid);

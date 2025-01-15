@@ -4,7 +4,172 @@ import passportLocalMongoose from 'passport-local-mongoose';
 
 const { Schema } = mongoose;
 
-const Stats = new Schema({
+export interface IStats {
+	xp?: number;
+	elo?: number;
+	wins?: number;
+	losses?: number;
+	rainbowWins?: number;
+	rainbowLosses?: number;
+}
+
+export interface IGameSettings {
+	playerPronouns?: string;
+	staff?: {
+		disableVisibleElo?: boolean;
+		disableVisibleXP?: boolean;
+		disableStaffColor?: boolean;
+		incognito?: boolean;
+	};
+	isRainbow?: boolean;
+	newReport?: boolean;
+	hasUnseenBadge?: boolean;
+	customCardback?: {
+		fileExtension?: string;
+		saveTime?: string;
+		uid?: string;
+	};
+	enableTimestamps?: boolean;
+	enableRightSidebarInGame?: boolean;
+	disablePlayerColorsInChat?: boolean;
+	disablePlayerCardbacks?: boolean;
+	disableHelpMessages?: boolean;
+	disableHelpIcons?: boolean;
+	disableConfetti?: boolean;
+	disableCrowns?: boolean;
+	disableSeasonal?: boolean;
+	disableAggregations?: boolean;
+	disableKillConfirmation?: boolean;
+	soundStatus?: string;
+	unbanTime?: Date;
+	unTimeoutTime?: Date;
+	fontSize?: number;
+	fontFamily?: string;
+	isPrivate?: boolean;
+	privateToggleTime?: number;
+	blacklist?: string[];
+	tournyWins?: string[];
+	hasChangedName?: boolean;
+	previousSeasonAward?: string;
+	specialTournamentStatus?: string;
+	disableElo?: boolean;
+	fullheight?: boolean;
+	safeForWork?: boolean;
+	keyboardShortcuts?: string;
+	notifyForNewLobby?: boolean;
+	gameFilters?: {
+		unstarted?: boolean;
+		inProgress?: boolean;
+		completed?: boolean;
+		pub?: boolean;
+		priv?: boolean;
+		custom?: boolean;
+		casual?: boolean;
+		timedMode?: boolean;
+		standard?: boolean;
+		rainbow?: boolean;
+	};
+	gameNotes?: {
+		top?: number;
+		left?: number;
+		width?: number;
+		height?: number;
+	};
+	playerNotes?: string[];
+	ignoreIPBans?: boolean;
+	truncatedSize?: number;
+	claimCharacters?: string;
+	claimButtons?: string;
+}
+
+export interface IWarning {
+	text?: string;
+	moderator?: string;
+	time?: Date;
+	acknowledged?: boolean;
+}
+
+export interface IFeedbackSubmission {
+	time?: Date;
+	text?: string;
+}
+
+export interface IBadge {
+	id?: string;
+	text?: string;
+	title?: string;
+	dateAwarded?: Date;
+}
+
+export interface IHistoricalElo {
+	date?: Date;
+	value?: number;
+}
+
+export interface IAccount {
+	version?: number;
+	username?: string;
+	password?: string;
+	isLocal?: boolean;
+	staffRole?: string;
+	isContributor?: boolean;
+	dismissedSignupModal?: boolean;
+	gameSettings?: IGameSettings;
+	verification?: {
+		email?: string;
+	};
+	signupIP?: string;
+	lastConnectedIP?: string;
+	lastConnected?: Date;
+	ipHistory?: string[];
+	verified?: boolean;
+	isBanned?: boolean;
+	isTimeout?: Date;
+	touLastAgreed?: string;
+	bio?: string;
+	games?: string[];
+	overall?: IStats;
+	seasons?: Map<number, IStats>;
+	previousDayElo?: number;
+	previousDayXP?: number;
+	created?: Date;
+	isOnFire?: boolean;
+	lastCompletedGame?: Date;
+	lastVersionSeen?: string;
+	isFixed?: boolean;
+	hashUid?: string;
+	discord?: {
+		username?: string;
+		discriminator?: string;
+		mfa?: boolean;
+		uid?: string;
+	};
+	github?: {
+		username?: string;
+		mfa?: boolean;
+	};
+	warnings?: IWarning[];
+	feedbackSubmissions?: IFeedbackSubmission[];
+	colors?: {
+		primary?: string;
+		secondary?: string;
+		tertiary?: string;
+		background?: string;
+		text?: string;
+	};
+	eloPercentile?: {
+		seasonal?: number;
+		overall?: number;
+	};
+	isRainbowSeason?: boolean;
+	isRainbowOverall?: boolean;
+	dateRainbowOverall?: Date;
+	badges?: IBadge[];
+	maxElo?: number;
+	pastElo?: IHistoricalElo[];
+}
+
+const Stats = new Schema<IStats>({
 	xp: { type: Number, default: 0 },
 	elo: { type: Number, default: 1600 },
 	wins: { type: Number, default: 0 },
@@ -13,7 +178,7 @@ const Stats = new Schema({
 	rainbowLosses: { type: Number, default: 0 }
 });
 
-const Account = new Schema({
+const Account = new Schema<IAccount>({
 	version: Number,
 	username: { type: String, required: true, unique: true },
 	password: String,
@@ -146,4 +311,4 @@ const Account = new Schema({
 
 Account.plugin(passportLocalMongoose);
 
-export default mongoose.model('Account', Account) as any;
+export default mongoose.model<IAccount>('Account', Account);

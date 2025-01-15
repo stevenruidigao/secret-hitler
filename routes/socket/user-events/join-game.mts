@@ -8,6 +8,7 @@ import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { sendCommandChatsUpdate } from '../util.mts';
 
 import { checkStartConditions } from './leave-game.mts'; // this used to be a separate game-countdown.js but that isn't really helpful tbh
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 /**
  * @param {object} socket - user socket reference.
@@ -33,17 +34,17 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 		return;
 	}
 
-	Account.findOne({ username: passport.user }).then((account: any) => {
+	Account.findOne({ username: passport.user }).then((account) => {
 		const isNotMaxedOut = game.publicPlayersState.length < game.general.maxPlayersCount;
 		const isNotInGame = !game.publicPlayersState.find((player: any) => player.userName === passport.user);
-		const isRainbowSafe = !game.general.rainbowgame || (game.general.rainbowgame && account.isRainbowOverall);
+		const isRainbowSafe = !game.general.rainbowgame || (game.general.rainbowgame && account?.isRainbowOverall);
 		const isPrivateSafe =
 			!game.general.private ||
 			(game.general.private && (data.password === game.private.privatePassword || game.general.whitelistedPlayers.includes(passport.user)));
-		const isMeetingEloMinimum = !game.general.eloMinimum || game.general.eloMinimum <= account.eloSeason || game.general.eloMinimum <= account.eloOverall;
-		const isMeetingXPMinimum = !game.general.xpMinimum || game.general.xpMinimum <= account.xpOverall;
+		const isMeetingEloMinimum = !game.general.eloMinimum || (account?.seasons && game.general.eloMinimum <= (account.seasons.get(CURRENT_SEASON_NUMBER)?.elo || 1600)) || game.general.eloMinimum <= (account?.overall?.elo || 1600);
+		const isMeetingXPMinimum = !game.general.xpMinimum || game.general.xpMinimum <= (account?.overall?.xp || 0);
 
-		if (account.wins + account.losses < 3 && limitNewPlayers.status && !game.general.private) {
+		if ((account?.overall?.wins || 0) + (account?.overall?.losses || 0) < 3 && limitNewPlayers.status && !game.general.private) {
 			return;
 		}
 
@@ -53,12 +54,12 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 				userName: passport.user,
 				connected: true,
 				isDead: false,
-				customCardback: account.gameSettings.customCardback,
-				isPrivate: account.gameSettings.isPrivate,
-				tournyWins: account.gameSettings.tournyWins,
-				previousSeasonAward: account.gameSettings.previousSeasonAward,
-				specialTournamentStatus: account.gameSettings.specialTournamentStatus,
-				staff: account.gameSettings.staff,
+				customCardback: account?.gameSettings?.customCardback,
+				isPrivate: account?.gameSettings?.isPrivate,
+				tournyWins: account?.gameSettings?.tournyWins,
+				previousSeasonAward: account?.gameSettings?.previousSeasonAward,
+				specialTournamentStatus: account?.gameSettings?.specialTournamentStatus,
+				staff: account?.gameSettings?.staff,
 				cardStatus: {
 					cardDisplayed: false,
 					isFlipped: false,

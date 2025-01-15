@@ -2,6 +2,65 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
+export interface IMatchData {
+	events?: number;
+	successes?: number;
+}
+
+export interface IRoleMatchData {
+	liberal?: IMatchData;
+	fascist?: IMatchData;
+}
+
+export interface IPlayerCountMatchData {
+	liberal?: IMatchData;
+	fascist?: IMatchData;
+	5?: IRoleMatchData;
+	6?: IRoleMatchData;
+	7?: IRoleMatchData;
+	8?: IRoleMatchData;
+	9?: IRoleMatchData;
+	10?: IRoleMatchData;
+}
+
+export interface IRecentGame {
+	_id?: string;
+	loyalty?: string;
+	playerSize?: number;
+	isWinner?: boolean;
+	isRebalanced?: boolean;
+	date?: Date;
+}
+
+export interface IProfile {
+	_id?: string;
+	username?: string;
+	version?: string;
+	created?: Date;
+	customCardback?: string;
+	bio?: string;
+	lastConnectedIP?: string;
+	stats?: {
+		matches?: {
+			legacyMatches?: IRoleMatchData;
+			greyMatches?: IPlayerCountMatchData;
+			rainbowMatches?: IPlayerCountMatchData;
+			practiceMatches?: IRoleMatchData;
+			silentMatches?: IRoleMatchData;
+			emoteMatches?: IRoleMatchData;
+			casualMatches?: IRoleMatchData;
+			customMatches?: IRoleMatchData;
+		};
+		actions?: {
+			voteAccuracy?: IMatchData;
+			shotAccuracy?: IMatchData;
+			legacyVoteAccuracy?: IMatchData;
+			legacyShotAccuracy?: IMatchData;
+		};
+	};
+	recentGames?: IRecentGame[];
+}
+
 const matchData = {
 	events: { type: Number, default: 0 },
 	successes: { type: Number, default: 0 }
@@ -12,7 +71,7 @@ const roleMatchData = {
 	fascist: matchData
 };
 
-const profileSchema = new Schema({
+const profileSchema = new Schema<IProfile>({
 	_id: String, // username
 	username: String,
 	version: String, // versioning for `recalculateProfiles`
@@ -73,4 +132,4 @@ const profileSchema = new Schema({
 	}
 });
 
-export default mongoose.model('Profile', profileSchema);
+export default mongoose.model<IProfile>('Profile', profileSchema);
