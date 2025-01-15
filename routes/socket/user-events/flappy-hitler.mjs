@@ -1,8 +1,8 @@
 export const handleFlappyEvent = (data, game) => {
-	if (!io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(sockedId => io.sockets.connected[sockedId]);
+	const roomSockets = getRoomSockets(game.general.uid);
 	const updateFlappyRoom = newData => {
 		roomSockets.forEach(sock => {
 			if (sock) {

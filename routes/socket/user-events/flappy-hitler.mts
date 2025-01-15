@@ -1,8 +1,10 @@
+import { getRoomSockets } from "../util.mts";
+
 export const handleFlappyEvent = (data: any, game: any) => {
-	if (!io.sockets.adapter.rooms[game.general.uid]) {
+	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
-	const roomSockets = Object.keys(io.sockets.adapter.rooms[game.general.uid].sockets).map(socketId => io.sockets.connected[socketId]);
+	const roomSockets = getRoomSockets(game.general.uid);
 	const updateFlappyRoom = (newData: any) => {
 		roomSockets.forEach(sock => {
 			if (sock) {
