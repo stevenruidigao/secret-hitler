@@ -13,11 +13,13 @@ export const getRoomSockets = (game: any) => {
 	// TODO: remove
 	// console.log(io.sockets.adapter.rooms.get(game.general.uid).values(), io.sockets.sockets);
 
-	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
-		return [];
-	}
+	if (!game) return [];
 
-	return Array.from(io.sockets.adapter.rooms.get(game.general.uid).values()).map(socketId => io.sockets.sockets.get(socketId));
+	const room = io.sockets.adapter.rooms.get(game.general.uid);
+
+	if (!room) return [];
+
+	return Array.from(room.values()).map(socketId => io.sockets.sockets.get(socketId));
 };
 
 /**
@@ -93,20 +95,30 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 	const seatedPlayerNames = game.publicPlayersState.map((player: any) => player.userName);
 
 	const roomSockets = getRoomSockets(game);
-	const playerSockets = roomSockets.filter(
-		socket =>
-			socket &&
-			socket.handshake.session.passport &&
-			Object.keys(socket.handshake.session.passport).length &&
-			seatedPlayerNames.includes(socket.handshake.session.passport.user)
-	);
-	const observerSockets = roomSockets.filter(
-		socket => (socket && !socket.handshake.session.passport) || (socket && !seatedPlayerNames.includes(socket.handshake.session.passport.user))
-	);
+	const playerSockets = roomSockets.filter(socket => {
+		if (!socket) return false;
+
+		const handshake = socket.handshake as any;
+
+		return handshake?.session?.passport &&
+			Object.keys(handshake?.session?.passport).length &&
+			seatedPlayerNames.includes(handshake?.session?.passport?.user);
+	});
+	const observerSockets = roomSockets.filter(socket => {
+		if (!socket) return false;
+
+		const handshake = socket.handshake as any;
+
+		return (socket && !handshake?.session?.passport) || (socket && !seatedPlayerNames.includes(handshake?.session?.passport?.user))
+	});
 
 	playerSockets.forEach(sock => {
+		if (!sock) return;
+
+		const handshake = sock.handshake as any;
+
 		const _game = Object.assign({}, game);
-		const { user } = sock.handshake.session.passport;
+		const { user } = handshake?.session?.passport;
 
 		if (!game.gameState.isCompleted && game.gameState.isTracksFlipped) {
 			const privatePlayer = _game.private.seatedPlayers.find((player: any) => user === player.userName);
@@ -136,8 +148,11 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 	}
 	if (observerSockets.length) {
 		observerSockets.forEach(sock => {
+			if (!sock) return;
+
+			const handshake = sock.handshake as any;
 			const _game = Object.assign({}, game);
-			const user = sock.handshake.session.passport ? sock.handshake.session.passport.user : null;
+			const user = handshake.session.passport ? handshake.session.passport.user : null;
 
 			if (user && game.private && game.private.hiddenInfoSubscriptions && game.private.hiddenInfoSubscriptions.includes(user)) {
 				// AEM status is ensured when adding to the subscription list
@@ -168,8 +183,13 @@ export const sendInProgressModChatUpdate = (game: any, chat: any, specificUser?:
 
 	if (roomSockets.length) {
 		roomSockets.forEach(sock => {
-			if (sock && sock.handshake && sock.handshake.passport && sock.handshake.passport.user) {
-				const { user } = sock.handshake.session.passport;
+			if (!sock) return;
+
+			const handshake = sock.handshake as any;
+			
+			if (handshake && handshake.passport && handshake.passport.user) {
+				const { user } = handshake.session.passport;
+
 				if (game.private.hiddenInfoSubscriptions.includes(user)) {
 					// AEM status is ensured when adding to the subscription list
 					if (!specificUser) {
@@ -207,13 +227,15 @@ export const sendCommandChatsUpdate = (game: any) => {
 	const roomSockets = getRoomSockets(game);
 
 	roomSockets.forEach(sock => {
-		if (sock) {
-			const _game = Object.assign({}, game);
-			const user = sock.handshake?.session?.passport?.user;
-			if (user) {
-				_game.chats = combineCommandChats(_game, user, game.private.commandChats);
-				sock.emit('gameUpdate', secureGame(_game));
-			}
+		if (!sock) return;
+
+		const handshake = sock.handshake as any;
+		const _game = Object.assign({}, game);
+		const user = handshake?.session?.passport?.user;
+
+		if (user) {
+			_game.chats = combineCommandChats(_game, user, game.private.commandChats);
+			sock.emit('gameUpdate', secureGame(_game));
 		}
 	});
 };
@@ -245,13 +267,23 @@ export const handleAEMMessages = (dm: any, user: any, modUserNames: string[], ed
 export const sendInProgressModDMUpdate = (dm: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	for (const user of dm.subscribedPlayers) {
 		try {
-			io.sockets.sockets
-				.get(
-					Array.from(io.sockets.sockets.keys()).find(
-						socketId => io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === user
-					)
-				)
-				.emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
+			const socket = io.sockets.sockets.get(
+				Array.from(io.sockets.sockets.keys()).find(
+					socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+
+						if (!socket) return false;
+
+						const handshake = socket.handshake as any;
+
+						return handshake.session.passport && handshake.session.passport.user === user;
+					}
+				) || ''
+			);
+
+			if (!socket) return; // TODO: do something else?
+
+			socket.emit('inProgressModDMUpdate', handleAEMMessages(dm, user, modUserNames, editorUserNames, adminUserNames));
 		} catch (e) {
 			console.log('err', e);
 		}

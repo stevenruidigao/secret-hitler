@@ -17,15 +17,24 @@ export const checkUserStatus = (socket: any, callback: Function) => {
 		const game = games[Object.keys(games).find((gameName: string) => games[gameName].publicPlayersState.find((player: any) => player.userName === user && !player.leftGame)) || ''];
 
 		const oldSocketID = Object.keys(sockets).find(
-			socketID =>
-				sockets.get(socketID).handshake.session.passport &&
-				Object.keys(sockets.get(socketID).handshake.session.passport).length &&
-				sockets.get(socketID).handshake.session.passport.user === user &&
-				socketID !== socket.id
+			socketID => {
+				const s = sockets.get(socketID);
+
+				if (!s) return false;
+
+				const handshake = s.handshake as any;
+
+				return handshake.session.passport &&
+					Object.keys(handshake.session.passport).length &&
+					handshake.session.passport.user === user &&
+					socketID !== socket.id;
+			}
 		);
 
-		if (oldSocketID && sockets.get(oldSocketID)) {
-			sockets.get(oldSocketID).emit('manualDisconnection');
+		const oldSocket = oldSocketID && sockets.get(oldSocketID);
+
+		if (oldSocketID && oldSocket) {
+			oldSocket.emit('manualDisconnection');
 			sockets.delete(oldSocketID);
 		}
 

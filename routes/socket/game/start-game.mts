@@ -10,7 +10,7 @@ import { shufflePolicies, startElection } from './common.mts';
 /**
  * @param {object} game - game to act on.
  */
-const beginGame = game => {
+const beginGame = (game: any) => {
 	const { experiencedMode } = game.general;
 
 	game.general.timeStarted = Date.now();
@@ -45,7 +45,7 @@ const beginGame = game => {
 	}
 	shufflePolicies(game, true);
 
-	const roles = [
+	const roles: any[] = [
 		{
 			cardName: 'hitler',
 			icon: 6,
@@ -56,7 +56,7 @@ const beginGame = game => {
 			_.shuffle(
 				// With custom games, up to 8 libs can be in a game, but there are only 6 cards. Two are re-used in this case.
 				_.range(0, 8)
-					.map(el => {
+					.map((el: any): any => {
 						if (game.general.avalonSH?.withPercival)
 							return {
 								cardName: el === 1 ? 'percival' : el === 0 ? 'merlin' : 'liberal',
@@ -108,15 +108,15 @@ const beginGame = game => {
 		player.cardStatus.cardDisplayed = true;
 	});
 
-	game.private.seatedPlayers.forEach((player, i) => {
+	game.private.seatedPlayers.forEach((player: any, i: number) => {
 		const index = Math.floor(Math.random() * roles.length);
 
 		player.role = roles[index];
 
 		roles.splice(index, 1);
-		player.playersState = _.range(0, game.publicPlayersState.length).map(play => ({}));
+		player.playersState = _.range(0, game.publicPlayersState.length).map((play: any) => ({}));
 
-		player.playersState.forEach((play, index) => {
+		player.playersState.forEach((play: any, index: number) => {
 			play.notificationStatus = play.nameStatus = '';
 
 			play.cardStatus = i === index ? { cardBack: player.role } : {};
@@ -225,29 +225,29 @@ const beginGame = game => {
 	const fasElo = { overall: 1600, season: 1600 };
 	Account.find({
 		username: { $in: game.private.seatedPlayers.map((player: any) => player.userName) }
-	}).then(accounts => {
+	}).then((accounts: any[]) => {
 		libElo.overall =
 			lib.reduce(
-				(prev, curr) =>
-					(accounts.find(account => account.username === curr).eloOverall ? accounts.find(account => account.username === curr).eloOverall : 1600) + prev,
+				(prev: any, curr: any) =>
+					(accounts.find((account: any) => account.username === curr).eloOverall ? accounts.find((account: any) => account.username === curr).eloOverall : 1600) + prev,
 				0
 			) / lib.length;
 		libElo.season =
 			lib.reduce(
-				(prev, curr) =>
-					(accounts.find(account => account.username === curr).eloSeason ? accounts.find(account => account.username === curr).eloSeason : 1600) + prev,
+				(prev: any, curr: any) =>
+					(accounts.find((account: any) => account.username === curr).eloSeason ? accounts.find((account: any) => account.username === curr).eloSeason : 1600) + prev,
 				0
 			) / lib.length;
 		fasElo.overall =
 			fas.reduce(
-				(prev, curr) =>
-					(accounts.find(account => account.username === curr).eloOverall ? accounts.find(account => account.username === curr).eloOverall : 1600) + prev,
+				(prev: any, curr: any) =>
+					(accounts.find((account: any) => account.username === curr).eloOverall ? accounts.find((account: any) => account.username === curr).eloOverall : 1600) + prev,
 				0
 			) / fas.length;
 		fasElo.season =
 			fas.reduce(
-				(prev, curr) =>
-					(accounts.find(account => account.username === curr).eloSeason ? accounts.find(account => account.username === curr).eloSeason : 1600) + prev,
+				(prev: any, curr: any) =>
+					(accounts.find((account: any) => account.username === curr).eloSeason ? accounts.find((account: any) => account.username === curr).eloSeason : 1600) + prev,
 				0
 			) / fas.length;
 	});
@@ -299,7 +299,7 @@ const beginGame = game => {
 
 	setTimeout(
 		() => {
-			game.private.seatedPlayers.forEach((player, i) => {
+			game.private.seatedPlayers.forEach((player: any, i: number) => {
 				const { seatedPlayers } = game.private;
 				const { cardName } = player.role;
 				player.playersState[seatedPlayers.indexOf(player)].nameStatus = cardName;
@@ -307,7 +307,7 @@ const beginGame = game => {
 				if (cardName === 'fascist' || cardName === 'morgana') {
 					if (customGameSettings.fascistCount === 2) {
 						const otherFascist = seatedPlayers.find(
-							play => play.role.team === 'fascist' && play.role.cardName !== 'hitler' && play.userName !== player.userName
+							(play: any) => play.role.team === 'fascist' && play.role.cardName !== 'hitler' && play.userName !== player.userName
 						);
 						const otherFascistIndex = seatedPlayers.indexOf(otherFascist);
 
@@ -344,7 +344,7 @@ const beginGame = game => {
 						player.playersState[otherFascistIndex].notificationStatus = 'fascist';
 					} else if (customGameSettings.fascistCount === 3) {
 						const otherFascists = seatedPlayers.filter(
-							play => play.role.team === 'fascist' && play.role.cardName !== 'hitler' && play.userName !== player.userName
+							(play: any) => play.role.team === 'fascist' && play.role.cardName !== 'hitler' && play.userName !== player.userName
 						);
 
 						if (!game.general.disableGamechat) {
@@ -383,10 +383,10 @@ const beginGame = game => {
 								]
 							});
 						}
-						otherFascists.forEach(fascistPlayer => {
+						otherFascists.forEach((fascistPlayer: any) => {
 							player.playersState[seatedPlayers.indexOf(fascistPlayer)].nameStatus = 'fascist';
 						});
-						otherFascists.forEach(fascistPlayer => {
+						otherFascists.forEach((fascistPlayer: any) => {
 							player.playersState[seatedPlayers.indexOf(fascistPlayer)].notificationStatus = 'fascist';
 						});
 					}
@@ -474,7 +474,7 @@ const beginGame = game => {
 							player.playersState[seatedPlayers.indexOf(otherFascist)].nameStatus = 'fascist';
 							player.playersState[seatedPlayers.indexOf(otherFascist)].notificationStatus = 'fascist';
 						} else {
-							const otherFascists = seatedPlayers.filter(play => play.role.team === 'fascist' && play.userName !== player.userName);
+							const otherFascists = seatedPlayers.filter((play: any) => play.role.team === 'fascist' && play.userName !== player.userName);
 
 							if (!game.general.disableGamechat) {
 								player.gameChats.push({
@@ -524,7 +524,7 @@ const beginGame = game => {
 									]
 								});
 							}
-							otherFascists.forEach(fascistPlayer => {
+							otherFascists.forEach((fascistPlayer: any) => {
 								player.playersState[seatedPlayers.indexOf(fascistPlayer)].nameStatus = 'fascist';
 								player.playersState[seatedPlayers.indexOf(fascistPlayer)].notificationStatus = 'fascist';
 							});
@@ -550,7 +550,7 @@ const beginGame = game => {
 						}
 					}
 				} else if (game.general.avalonSH && cardName === 'merlin') {
-					const fascists = seatedPlayers.filter(play => play.role.team === 'fascist');
+					const fascists = seatedPlayers.filter((play: any) => play.role.team === 'fascist');
 
 					if (fascists.length === 2) {
 						player.gameChats.push({
@@ -743,12 +743,12 @@ const beginGame = game => {
 
 	setTimeout(
 		() => {
-			game.private.seatedPlayers.forEach((player, i) => {
+			game.private.seatedPlayers.forEach((player: any, i: number) => {
 				if (!player.playersState) {
 					return;
 				}
 				player.playersState[i].cardStatus.isFlipped = false;
-				player.playersState.forEach(play => {
+				player.playersState.forEach((play: any) => {
 					play.notificationStatus = '';
 				});
 			});
@@ -770,7 +770,7 @@ const beginGame = game => {
 	setTimeout(
 		() => {
 			game.private.seatedPlayers.forEach((player: any) => {
-				player.playersState.forEach(state => {
+				player.playersState.forEach((state: any) => {
 					state.cardStatus = {};
 				});
 			});

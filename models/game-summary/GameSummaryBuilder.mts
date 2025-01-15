@@ -19,7 +19,7 @@ export default class GameSummaryBuilder {
 	libElo: number;
 	fasElo: number;
 
-	constructor(uid: string, date: any, gameSetting: any, customGameSettings: any, players: any[], libElo: number, fasElo: number, logs = List()) {
+	constructor(uid: string, date: any, gameSetting: any, customGameSettings: any, players: any[], libElo: any, fasElo: any, logs = List()) {
 		this._id = uid;
 		this.date = date;
 		this.gameSetting = gameSetting;
