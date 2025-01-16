@@ -189,8 +189,8 @@ export default () => {
 					gameSettingsWithoutBlacklist = gameSettings;
 				}
 
-				let backgroundColor = account?.theme?.background || DEFAULT_THEME_COLORS.baseBackgroundColor;
-				let textColor = account?.theme?.text || DEFAULT_THEME_COLORS.baseTextColor;
+				let backgroundColor = account?.theme?.backgroundColor || DEFAULT_THEME_COLORS.baseBackgroundColor;
+				let textColor = account?.theme?.textColor || DEFAULT_THEME_COLORS.baseTextColor;
 				let [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
 				let [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
 
@@ -204,9 +204,9 @@ export default () => {
 					username,
 					gameSettings: gameSettingsWithoutBlacklist,
 					blacklist,
-					primaryColor: account?.theme?.primary || DEFAULT_THEME_COLORS.primaryColor,
-					secondaryColor: account?.theme?.secondary || DEFAULT_THEME_COLORS.secondaryColor,
-					tertiaryColor: account?.theme?.tertiary || DEFAULT_THEME_COLORS.tertiaryColor,
+					primaryColor: account?.theme?.primaryColor || DEFAULT_THEME_COLORS.primaryColor,
+					secondaryColor: account?.theme?.secondaryColor || DEFAULT_THEME_COLORS.secondaryColor,
+					tertiaryColor: account?.theme?.tertiaryColor || DEFAULT_THEME_COLORS.tertiaryColor,
 					backgroundColor,
 					secondaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
 						backgroundLightness > 50 ? backgroundLightness - 7 : backgroundLightness + 7
@@ -500,7 +500,7 @@ export default () => {
 						if (!dm) {
 							res.status(404).send('Mod thread not found');
 						} else {
-							const chatLog = [];
+							const chatLog: string[] = [];
 
 							for (const message of dm.messages) {
 								chatLog.push(

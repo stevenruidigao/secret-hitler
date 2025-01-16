@@ -1,5 +1,4 @@
 /* eslint-disable spaced-comment */
-// @ts-expect-error: no types for option
 import { none } from 'option';
 import { Range, List } from 'immutable';
 

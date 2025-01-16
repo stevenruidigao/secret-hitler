@@ -18,6 +18,8 @@ import { expandAndSimplify, obfIP, doesIPMatchCIDR } from './socket/ip-obf.mts';
 import { accountCreationDisabled, bypassVPNCheck, verifyBypass, consumeBypass, testIP } from './socket/models.mts';
 import { handleDefaultIPv6Range } from './socket/util.mts';
 
+const app = global.app;
+
 /**
  * @param {object} req - express request object.
  * @param {object} res - express response object.
