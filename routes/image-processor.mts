@@ -9,7 +9,7 @@ import { sendGameList } from './socket/user-requests.mts';
 
 const io = global.io;
 
-export const processImage = (username: string, raw: string, callback: any) => {
+export const processImage = (username: string, raw: string, callback: Function) => {
 	sharp(Buffer.from(raw, 'base64'))
 		.resize(70, 95)
 		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), err => {
@@ -18,13 +18,24 @@ export const processImage = (username: string, raw: string, callback: any) => {
 				return;
 			}
 
-			Account.findOne({ username: username }).then((account: any) => {
+			Account.findOne({ username: username }).then((account) => {
+				if (!account) {
+					callback(null, 'Account not found.');
+					return;
+				}
+
+				if (!account.gameSettings) {
+					account.gameSettings = {};
+				}
+
+				const uid = Math.random()
+					.toString(36)
+					.substring(2);
+
 				account.gameSettings.customCardback = account.gameSettings.customCardback || {};
 				account.gameSettings.customCardback.fileExtension = 'png';
 				account.gameSettings.customCardback.saveTime = Date.now().toString();
-				account.gameSettings.customCardback.uid = Math.random()
-					.toString(36)
-					.substring(2);
+				account.gameSettings.customCardback.uid = uid;
 
 				account.save(() => {
 					const user: any = userList.find((u: any) => u.userName === username);
@@ -32,7 +43,7 @@ export const processImage = (username: string, raw: string, callback: any) => {
 					if (user) {
 						user.customCardback = user.customCardback || {};
 						user.customCardback.fileExtension = 'png';
-						user.customCardback.uid = account.gameSettings.customCardback.uid;
+						user.customCardback.uid = uid;
 						userListEmitter.send = true;
 					}
 

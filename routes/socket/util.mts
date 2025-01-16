@@ -7,11 +7,12 @@ import { Webhook } from 'discord-webhook-node';
 
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
 
+import { ActiveGame } from './game/common.mts';
 import { newStaff } from './models.mts';
 
 const io = global.io;
 
-export const getRoomSockets = (game: any) => {
+export const getRoomSockets = (game: ActiveGame) => {
 	// TODO: remove
 	// console.log(io.sockets.adapter.rooms.get(game.general.uid).values(), io.sockets.sockets);
 
@@ -27,7 +28,7 @@ export const getRoomSockets = (game: any) => {
 /**
  * Debugging function to send a game to Discord after it's been identified to be cyclic
  */
-export const debugSendGame = (game: any, message = '') => {
+export const debugSendGame = (game: ActiveGame, message = '') => {
 	const _game = Object.assign({}, game);
 	delete _game.unsentReports;
 	const webhook = new Webhook(process.env.DISCORDPRIVATEDEVELOPERS);
@@ -50,7 +51,7 @@ const identified: string[] = [];
  * @param {*} game game object
  * @param {string} phase identifier of when this was detected
  */
-export const testGameObject = (game: any) => {
+export const testGameObject = (game: ActiveGame) => {
 	if (identified.indexOf(game.general.uid) !== -1) return;
 	try {
 		// eslint-disable-next-line no-unused-vars
@@ -65,7 +66,7 @@ export const testGameObject = (game: any) => {
  * @param {object} game - game to act on.
  * @return {object} game
  */
-export const secureGame = (game: any) => {
+export const secureGame = (game: ActiveGame) => {
 	const _game = Object.assign({}, game);
 
 	delete _game.private;
@@ -75,18 +76,18 @@ export const secureGame = (game: any) => {
 	return _game;
 };
 
-const combineInProgressChats = (game: any, userName?: string) =>
+const combineInProgressChats = (game: ActiveGame, userName?: string) =>
 	userName && game.gameState.isTracksFlipped
 		? game.private.seatedPlayers.find((player: any) => player.userName === userName).gameChats.concat(game.chats)
 		: game.private.unSeatedGameChats.concat(game.chats);
 
-export const combineCommandChats = (game: any, user: any, commandChats: any) => (commandChats[user] ? game.chats.concat(commandChats[user]) : game.chats);
+export const combineCommandChats = (game: ActiveGame, user: any, commandChats: any) => game.chats ? (commandChats[user] ? game.chats.concat(commandChats[user]) : game.chats) : commandChats[user];
 
 /**
  * @param {object} game - game to act on.
  * @param {boolean} noChats - remove chats for client to handle.
  */
-export const sendInProgressGameUpdate = (game: any, noChats = false) => {
+export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
@@ -145,10 +146,12 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 		}
 	});
 
-	let chatWithHidden = game.chats;
+	let chatWithHidden = game.chats || [];
+
 	if (!noChats && game.private && game.private.hiddenInfoChat && game.private.hiddenInfoSubscriptions.length) {
 		chatWithHidden = [...chatWithHidden, ...game.private.hiddenInfoChat];
 	}
+
 	if (observerSockets.length) {
 		observerSockets.forEach(sock => {
 			if (!sock) return;
@@ -177,7 +180,7 @@ export const sendInProgressGameUpdate = (game: any, noChats = false) => {
 	}
 };
 
-export const sendInProgressModChatUpdate = (game: any, chat: any, specificUser?: any) => {
+export const sendInProgressModChatUpdate = (game: ActiveGame, chat: any, specificUser?: any) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
@@ -208,7 +211,7 @@ export const sendInProgressModChatUpdate = (game: any, chat: any, specificUser?:
 	}
 };
 
-export const sendPlayerChatUpdate = (game: any, chat: any) => {
+export const sendPlayerChatUpdate = (game: ActiveGame, chat: any) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
@@ -222,7 +225,7 @@ export const sendPlayerChatUpdate = (game: any, chat: any) => {
 	});
 };
 
-export const sendCommandChatsUpdate = (game: any) => {
+export const sendCommandChatsUpdate = (game: ActiveGame) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
@@ -299,7 +302,7 @@ const avg = (accounts: any[], accessor: any) => accounts.reduce((prev, curr) => 
 const probToEloPoints = (p: number) => -400 * Math.log10(1 / p - 1);
 
 // The probability of this team winning in this game size, given perfectly equal teams, in terms of elo points
-const winnerBiasPoints = (game: any) => {
+const winnerBiasPoints = (game: ActiveGame) => {
 	const liberalBias = game.gameState.isCompleted === 'liberal' ? 1 : -1;
 	const fascistBias = game.gameState.isCompleted === 'liberal' ? -1 : 1;
 	if (game.general.rebalance6p) {
@@ -328,7 +331,7 @@ const winnerBiasPoints = (game: any) => {
 	}
 };
 
-export const rateEloGame = (game: any, accounts: any[], winningPlayerNames: string[]) => {
+export const rateEloGame = (game: ActiveGame, accounts: any[], winningPlayerNames: string[]) => {
 	const size = game.general.playerCount;
 	// The default starting elo is 1600 (totally arbitrary but now we are stuck with it)
 	const defaultELO = 1600;

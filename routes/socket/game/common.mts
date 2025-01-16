@@ -17,13 +17,13 @@ export type ActiveGame = {
 	cardFlingerState: any[];
 	timeCreated?: number;
 	customGameSettings: any;
-	chats: any[];
-	guesses: Record<string, any>;
+	chats?: any[];
+	guesses?: Record<string, any>;
 	merlinGuesses: Record<string, any>;
 	lastModPing?: number;
 	electionCount?: number;
 	remakeData: any;
-	unsentReports: any[];
+	unsentReports?: any[];
 	summary?: any;
 	summarySaved?: boolean;
 }
