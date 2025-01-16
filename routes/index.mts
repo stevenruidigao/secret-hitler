@@ -299,7 +299,7 @@ export default () => {
 		const authedUser = req.session && req.session.passport && req.session.passport.user;
 		const username = req.query.username;
 
-		Account.findOne({ username }, (err: any, account: any) => {
+		Account.findOne({ username }, (err: any, account) => {
 			if (err) {
 				return new Error(err);
 			}
@@ -495,8 +495,8 @@ export default () => {
 				.replace(/"/g, '&quot;')
 				.replace(/'/g, '&#39;');
 
-		Account.findOne({ username }).then((account: any) => {
-			if (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod') {
+		Account.findOne({ username }).then((account) => {
+			if (account && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')) {
 				ModThread.findById(id)
 					.lean()
 					.exec()
@@ -531,8 +531,8 @@ export default () => {
 
 		const username = req.session.passport.user;
 
-		Account.findOne({ username }).then((account: any) => {
-			if (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod') {
+		Account.findOne({ username }).then((account) => {
+			if (account && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')) {
 				Game.findOne({ uid: id })
 					.lean()
 					.exec()
