@@ -81,8 +81,8 @@ export const newStaff: Record<string, string[]> = {
 export const staffList: Record<string, string> = {};
 
 export const getStaffList = () => {
-	Account.find({ staffRole: { $exists: true } }).then((accounts: any) => {
-		accounts.forEach((user: any) => (staffList[user.username] = user.staffRole));
+	Account.find({ staffRole: { $exists: true } }).then((accounts) => {
+		accounts.forEach((user) => (staffList[user.username] = user.staffRole as string));
 	});
 };
 
