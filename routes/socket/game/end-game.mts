@@ -637,7 +637,8 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			const { uid } = game.general;
 			const tableUidLastLetter = uid.charAt(uid.length - 1);
 			const otherUid = tableUidLastLetter === 'A' ? `${uid.substr(0, uid.length - 1)}B` : `${uid.substr(0, uid.length - 1)}A`;
-			const otherGame = games.find((g: any) => g.general.uid === otherUid);
+
+			const otherGame = games[otherUid]; // TODO: check; used to be `const otherGame = games.find((g: any) => g.general.uid === otherUid);`
 
 			if (!otherGame || otherGame.gameState.isCompleted) {
 				const finalGame = _.cloneDeep(game);
@@ -750,7 +751,8 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 
 						finalGame.private.lock = {};
 						finalGame.general.name = `${game.general.name.slice(0, game.general.name.length - 7)}-tableFINAL`;
-						games.push(finalGame);
+
+						games[finalGame.general.uid] = finalGame; // TODO: check; used to be `games.push(finalGame);`
 						startGame(finalGame); // circular dep.
 						sendGameList();
 					}

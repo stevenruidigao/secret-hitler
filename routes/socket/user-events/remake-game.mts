@@ -286,7 +286,8 @@ export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, soc
 			firstTableUid.charAt(firstTableUid.length - 1) === 'A'
 				? `${firstTableUid.slice(0, firstTableUid.length - 1)}B`
 				: `${firstTableUid.slice(0, firstTableUid.length - 1)}A`;
-		const secondTable = games.find((game: any) => game.general.uid === secondTableUid);
+
+		const secondTable = games[game.general.uid]; // TODO: check; used to be `const secondTable = games.find((game: any) => game.general.uid === secondTableUid);`
 
 		if (secondTable) {
 			secondTable.general.tournyInfo.isCancelled = true;

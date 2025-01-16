@@ -17,6 +17,7 @@ export type ActiveGame = {
 	guesses: any[];
 	merlinGuesses: any[];
 	lastModPing?: number;
+	remakeData: any;
 	unsentReports: any[];
 	summary?: any;
 	summarySaved?: boolean;

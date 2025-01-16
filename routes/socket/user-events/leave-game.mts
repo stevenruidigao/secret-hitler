@@ -119,11 +119,15 @@ const startCountdown = (game: any) => {
 					socket.emit('joinGameRedirect', gameB.general.uid);
 				});
 
-				games.splice(games.indexOf(game), 1);
+				delete games[game.general.uid]; // TODO: check; used to be `games.splice(games.indexOf(game), 1);`
 				gameA.general.tournyInfo.round = gameB.general.tournyInfo.round = 1;
 				gameA.general.name = `${gameA.general.name}-tableA`;
 				gameB.general.name = `${gameB.general.name}-tableB`;
-				games.push(gameA, gameB);
+
+				// TODO: check; used to be `games.push(gameA, gameB);`
+				games[gameA.general.uid] = gameA;
+				games[gameB.general.uid] = gameB;
+
 				delete gameA.general.tournyInfo.queuedPlayers;
 				delete gameB.general.tournyInfo.queuedPlayers;
 
@@ -294,7 +298,7 @@ const playerLeavePretourny = (game: any, playerName: string) => {
 	const { queuedPlayers } = game.general.tournyInfo;
 
 	if (queuedPlayers.length === 1) {
-		games.splice(games.indexOf(game), 1);
+		delete games[game.general.uid]; // TODO: check; used to be `games.splice(games.indexOf(game), 1);`
 		return;
 	}
 

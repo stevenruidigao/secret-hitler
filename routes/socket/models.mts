@@ -52,7 +52,7 @@ export const getPrivateChatTruncate = async () => {
 
 export const emoteList = emotes;
 
-export const games: any = {};
+export const games: Record<string, ActiveGame> = {};
 export const userList: any[] = [];
 export const generalChats: {
 	sticky: string,
