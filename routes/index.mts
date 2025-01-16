@@ -410,8 +410,12 @@ export default () => {
 				_profile.staff.disableVisibleElo = account.gameSettings.staff && account.gameSettings.staff.disableVisibleElo;
 				_profile.playerPronouns = account.gameSettings.playerPronouns || '';
 
-				Account.findOne({ username: authedUser }).then((acc: any) => {
+				Account.findOne({ username: authedUser }).then((acc) => {
 					if (acc && account.username === acc.username) {
+						if (!acc.gameSettings) {
+							acc.gameSettings = {};
+						}
+						
 						acc.gameSettings.hasUnseenBadge = false;
 						acc.save();
 					}
