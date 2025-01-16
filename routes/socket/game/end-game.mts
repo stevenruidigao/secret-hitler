@@ -21,6 +21,8 @@ import startGame from './start-game.mjs';
 
 const debugLogger = debug('game:summary');
 
+const io = global.io;
+
 export const generateGameObject = (game: ActiveGame): IGame => {
 	const casualBool = Boolean(game?.general?.casualGame); // Because Mongo is explicitly typed and integers are not truthy according to it
 	const practiceBool = Boolean(game?.general?.practiceGame);
@@ -823,8 +825,8 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		const lines = new LineGuess({ regs: fasSeats, hit: hittySeat });
 
 		const groupedGuesses: [any, number][][] = Array.from({ length: 5 }, () => []);
-		const perfectGuesses = [];
-		const hittyGuesses = [];
+		const perfectGuesses: [string, any][] = [];
+		const hittyGuesses: [string, any][] = [];
 
 		for (const [user, guess] of Object.entries(guesses)) {
 			const [fasCorrect, hitCorrect] = guess.difference(lines);
