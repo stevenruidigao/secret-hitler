@@ -362,6 +362,11 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 		};
 		if (claimChat && claimChat.chat) {
 			if (game.private.seatedPlayers[playerIndex]) game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
+			
+			if (!game.chats) {
+				game.chats = [];
+			}
+
 			game.chats.push(claimChat);
 			socket.emit('removeClaim');
 			sendInProgressGameUpdate(game);

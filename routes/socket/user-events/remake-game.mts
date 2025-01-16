@@ -36,8 +36,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 	const realPlayerIndex = publicPlayersState.findIndex((player: any) => player.userName === passport.user);
 	const player = remakeData[playerIndex];
 	let chat;
-	const minimumRemakeVoteCount =
-		(game.customGameSettings.fascistCount && game.general.playerCount - game.customGameSettings.fascistCount) || Math.floor(game.general.playerCount / 2) + 2;
+	const minimumRemakeVoteCount = (game.customGameSettings.fascistCount 
+			&& game.general.playerCount - game.customGameSettings.fascistCount) 
+		|| Math.floor(game.general.playerCount / 2) + 2;
 	if (game && game.general && game.general.private && !game.general.privateAnonymousRemakes) {
 		chat = {
 			timestamp: new Date(),
@@ -66,6 +67,10 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 
 	const makeNewGame = () => {
 		if (gameCreationDisabled.status) {
+			if (!game.chats) {
+				game.chats = [];
+			}
+
 			game.chats.push({
 				gameChat: true,
 				timestamp: new Date(),
@@ -292,6 +297,11 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 
 		if (secondTable) {
 			secondTable.general.tournyInfo.isCancelled = true;
+
+			if (!secondTable.chats) {
+				secondTable.chats = [];
+			}
+
 			secondTable.chats.push({
 				gameChat: true,
 				timestamp: new Date(),
@@ -377,6 +387,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			game.general.status = 'Game remaking has been cancelled.';
 			clearInterval(game.private.remakeTimer);
 		}
+
 		chat.chat.push({
 			text: ` has rescinded their vote to ${
 				game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'
@@ -385,7 +396,13 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 	} else {
 		return;
 	}
+
 	socket.emit('updateRemakeVoting', player.isRemaking);
+
+	if (!game.chats) {
+		game.chats = [];
+	}
+
 	game.chats.push(chat);
 	sendInProgressGameUpdate(game);
 };

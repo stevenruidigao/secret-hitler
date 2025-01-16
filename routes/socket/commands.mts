@@ -331,6 +331,10 @@ commands.getCommand = function(name: string) {
 		return;
 	}
 
+	if (!game.guesses) {
+		game.guesses = {};
+	}
+
 	if (game.guesses[user.userName]) {
 		sendMessage(game, user, `Updated line guess. (${guess.toString()})`);
 	} else {
@@ -454,12 +458,17 @@ commands.getCommand = function(name: string) {
 							{ text: ' has been successfully pinged.' }
 						]
 					});
+
 				game.private.hiddenInfoChat.push({
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [{ text: `${player.userName} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName}.` }]
 				});
 			} else {
+				if (!game.chats) {
+					game.chats = [];
+				}
+
 				game.chats.push({
 					gameChat: true,
 					userName: passport.user,
@@ -505,6 +514,10 @@ commands.getCommand = function(name: string) {
 		text: '.'
 	});
 
+	if (!game.chats) {
+		game.chats = [];
+	}
+
 	game.chats.push({
 		gameChat: true,
 		timestamp: new Date(),
@@ -543,6 +556,10 @@ commands.getCommand = function(name: string) {
 				}\nYou have set them to vote: ${vote ? 'ja' : 'nein'}
 				`
 			);
+		}
+
+		if (!game.chats) {
+			game.chats = [];
 		}
 
 		game.chats.push({
@@ -651,6 +668,10 @@ commands.getCommand = function(name: string) {
 		counter++;
 	}
 
+	if (!game.chats) {
+		game.chats = [];
+	}
+
 	game.chats.push({
 		gameChat: true,
 		timestamp: new Date(),
@@ -707,6 +728,11 @@ commands.getCommand = function(name: string) {
 				sendMessage(game, user, `The player in seat ${affectedPlayerNumber + 1} is not hitler.`);
 				return;
 			}
+
+			if (!game.chats) {
+				game.chats = [];
+			}
+
 			game.chats.push({
 				gameChat: true,
 				timestamp: new Date(),
@@ -747,6 +773,10 @@ commands.getCommand = function(name: string) {
 		) {
 			sendMessage(game, user, `The player in seat ${chancellorPick} is not a valid chancellor. (Dead or TL)`);
 			return;
+		}
+		
+		if (!game.chats) {
+			game.chats = [];
 		}
 
 		game.chats.push({
@@ -791,6 +821,10 @@ commands.getCommand = function(name: string) {
 	if (!affectedPlayer) {
 		sendMessage(game, user, `There is no seat ${affectedPlayerNumber + 1}.`);
 		return;
+	}
+	
+	if (!game.chats) {
+		game.chats = [];
 	}
 
 	game.chats.push({
@@ -882,6 +916,10 @@ commands.getCommand = function(name: string) {
 		changedChat.push({
 			text: '.'
 		});
+		
+		if (!game.chats) {
+			game.chats = [];
+		}
 
 		game.chats.push({
 			gameChat: true,

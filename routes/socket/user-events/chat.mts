@@ -375,6 +375,10 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 		data.userName = 'Incognito';
 	}
 
+	if (!game.chats) {
+		game.chats = [];
+	}
+
 	// Attempts to cut down on overloading server resources
 	if (game.general.private && game.chats.length >= 30) {
 		game.chats = game.chats.slice(game.chats.length - 30, game.chats.length);

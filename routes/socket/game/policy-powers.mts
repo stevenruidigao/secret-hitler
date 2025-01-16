@@ -1484,6 +1484,10 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 							const playCard = () => {
 								if (game.general.noTopdecking === 1 || (game.general.noTopdecking === 2 && game.trackState.consecutiveTopdecks >= 1)) {
+									if (!game.chats) {
+										game.chats = [];
+									}
+						
 									game.chats.push({
 										timestamp: new Date(),
 										gameChat: true,

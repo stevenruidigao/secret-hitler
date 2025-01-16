@@ -76,7 +76,13 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 				) {
 					return;
 				}
+				
 				game.general.tournyInfo.queuedPlayers.push(player);
+
+				if (!game.chats) {
+					game.chats = [];
+				}
+	
 				game.chats.push({
 					timestamp: new Date(),
 					gameChat: true,

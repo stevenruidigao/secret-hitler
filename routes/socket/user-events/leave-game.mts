@@ -263,6 +263,11 @@ export const handleSocketDisconnect = (socket: Socket) => {
 							text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${remakePlayerCount -
 								1}/${minimumRemakeVoteCount})`
 						});
+
+						if (!game.chats) {
+							game.chats = [];
+						}
+
 						game.chats.push(chat);
 						game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
 					}
@@ -309,6 +314,10 @@ const playerLeavePretourny = (game: ActiveGame, playerName: string) => {
 		queuedPlayers.findIndex((player: any) => player.userName === playerName),
 		1
 	);
+
+	if (!game.chats) {
+		game.chats = [];
+	}
 
 	game.chats.push({
 		timestamp: new Date(),
@@ -366,6 +375,11 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: any,
 				text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${remakePlayerCount -
 					1}/${minimumRemakeVoteCount})`
 			});
+
+			if (!game.chats) {
+				game.chats = [];
+			}
+			
 			game.chats.push(chat);
 			game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
 		}

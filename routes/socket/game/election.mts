@@ -1598,6 +1598,10 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 		if (game.trackState.electionTrackerCount >= 3) {
 			if (game.general.noTopdecking === 1 || (game.general.noTopdecking === 2 && game.trackState.consecutiveTopdecks >= 1)) {
+				if (!game.chats) {
+					game.chats = [];
+				}
+
 				game.chats.push({
 					timestamp: new Date(),
 					gameChat: true,

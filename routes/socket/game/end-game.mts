@@ -761,6 +761,11 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				}, 1000)[Symbol.toPrimitive]();
 			} else {
 				game.general.tournyInfo.showOtherTournyTable = true;
+
+				if (!game.chats) {
+					game.chats = [];
+				}
+
 				game.chats.push({
 					gameChat: true,
 					timestamp: new Date(),
@@ -783,6 +788,11 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					}
 				});
 			}
+
+			if (!game.chats) {
+				game.chats = [];
+			}
+			
 			game.chats.push({
 				gameChat: true,
 				timestamp: new Date(),
@@ -802,6 +812,10 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	const now = Date.now();
 
 	if (!_.isEmpty(guesses) || !_.isEmpty(merlinGuesses)) {
+		if (!game.chats) {
+			game.chats = [];
+		}
+
 		game.chats.push({
 			gameChat: true,
 			timestamp: now,
@@ -851,6 +865,10 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			]
 		});
 
+		if (!game.chats) {
+			game.chats = [];
+		}
+
 		if (perfectGuesses.length) {
 			game.chats.push(guessesToChat('All fascists AND hitler correct - ', perfectGuesses));
 		}
@@ -880,6 +898,10 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	if (!_.isEmpty(merlinGuesses)) {
 		const merlinSeat = game.private.seatedPlayers.findIndex((p: any) => p.role.cardName === 'merlin') + 1;
 		const groupedGuesses = _.groupBy(Object.entries(merlinGuesses), ([_, g]) => g);
+
+		if (!game.chats) {
+			game.chats = [];
+		}
 
 		if (groupedGuesses[merlinSeat]) {
 			game.chats.push({
