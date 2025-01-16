@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import adjectives from '../../../utils/adjectives.mts';
 import animals from '../../../utils/animals.mts';
@@ -11,6 +11,8 @@ import startGame from '../game/start-game.mts';
 import { games, userList } from '../models.mts';
 import { updateUserStatus, sendGameList, sendUserList } from '../user-requests.mts';
 import { sendCommandChatsUpdate, sendInProgressGameUpdate } from '../util.mts';
+
+const io: Server = global.io;
 
 /**
  * @param {object} game - game to act on.

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Express, Request, Response } from 'express';
 import passport from 'passport'; // eslint-disable-line no-unused-vars
 import dayjs from 'dayjs';
 import fetch from 'node-fetch';
@@ -22,7 +22,7 @@ import { expandAndSimplify, obfIP } from './socket/ip-obf.mts';
 import { userList } from './socket/models.mts';
 import { socketRoutes } from './socket/routes.mts';
 
-const app = global.app;
+const app: Express = global.app;
 
 /**
  * @param {object} req - express request object.
@@ -299,7 +299,7 @@ export default () => {
 		const authedUser = req.session && req.session.passport && req.session.passport.user;
 		const username = req.query.username;
 
-		Account.findOne({ username }, (err: any, account) => {
+		Account.findOne({ username }, (err: any, account: IAccount) => {
 			if (err) {
 				return new Error(err);
 			}
@@ -363,19 +363,19 @@ export default () => {
 				}
 
 				_profile.created = dayjs(account.created).format('MM/DD/YYYY');
-				_profile.customCardback = account.gameSettings.customCardback;
+				_profile.customCardback = account?.gameSettings?.customCardback;
 				_profile.bio = account.bio;
 				_profile.lastConnected = !!account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
 				_profile.badges = account.badges || [];
-				_profile.eloPercentile = Object.keys(account.eloPercentile).length ? account.eloPercentile : undefined;
+				_profile.eloPercentile = Object.keys(account?.eloPercentile || {}).length ? account.eloPercentile : undefined;
 				_profile.maxElo =
-					account.gameSettings.staff && account.gameSettings.staff.disableVisibleElo ? undefined : Math.round(Number.parseFloat(account.maxElo || 1600));
+					account?.gameSettings?.staff?.disableVisibleElo ? undefined : Math.round(account?.maxElo || 1600);
 				_profile.pastElo =
-					account.gameSettings.staff && account.gameSettings.staff.disableVisibleElo
+					account?.gameSettings?.staff?.disableVisibleElo
 						? undefined
-						: account.pastElo.toObject().length
-						? account.pastElo.toObject()
-						: [{ date: new Date(), value: Math.round(Number.parseFloat(account.eloOverall || 1600)) }];
+						: (account.pastElo as any).toObject().length
+						? (account.pastElo as any).toObject()
+						: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
 
 				_profile.overall = account.overall;
 
@@ -388,15 +388,15 @@ export default () => {
 					xp: 0
 				};
 
-				_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER) || defaultSeason : defaultSeason;
+				_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) || defaultSeason : defaultSeason;
 
 				if (account.staffRole) {
-					if (account.gameSettings.staff && account.gameSettings.staff.disableVisibleElo) {
+					if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo) {
 						delete _profile.overall.elo;
 						delete _profile.season.elo;
 					}
 
-					if (account.gameSettings.staff && account.gameSettings.staff.disableVisibleXP) {
+					if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP) {
 						delete _profile.overall.xp;
 						delete _profile.season.xp;
 					}
@@ -406,9 +406,9 @@ export default () => {
 				_profile.isRainbowSeason = account.isRainbowSeason;
 				_profile.staffRole = account.staffRole;
 				_profile.staff = {};
-				_profile.staff.disableVisibleXP = account.gameSettings.staff && account.gameSettings.staff.disableVisibleXP;
-				_profile.staff.disableVisibleElo = account.gameSettings.staff && account.gameSettings.staff.disableVisibleElo;
-				_profile.playerPronouns = account.gameSettings.playerPronouns || '';
+				_profile.staff.disableVisibleXP = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP;
+				_profile.staff.disableVisibleElo = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo;
+				_profile.playerPronouns = account?.gameSettings?.playerPronouns || '';
 
 				Account.findOne({ username: authedUser }).then((acc) => {
 					if (acc && account.username === acc.username) {
@@ -443,13 +443,13 @@ export default () => {
 						_profile.created = dayjs(account.created).format('MM/DD/YYYY h:mm');
 
 						if (acc.staffRole !== 'trialmod') {
-							_profile.blacklist = account.gameSettings.blacklist;
+							_profile.blacklist = account?.gameSettings?.blacklist;
 						}
 					} else {
 						_profile.lastConnectedIP = undefined;
 						_profile.signupIP = undefined;
 
-						if (account.gameSettings.isPrivate) {
+						if (account?.gameSettings?.isPrivate) {
 							// They are private and lastConnectedIP is set to undefined (ie. requester is not AEM)
 							res.status(404).send('Profile not found');
 							return;

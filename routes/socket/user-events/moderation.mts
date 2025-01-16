@@ -1,7 +1,7 @@
 import fs from 'fs';
 import https from 'https';
 
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import Account from '../../../models/account.mts';
 import BannedIP from '../../../models/bannedIP.mts';
@@ -30,6 +30,7 @@ import {
 import { sendUserReports, getModInfo, sendGameList, sendUserList } from '../user-requests.mts';
 import { handleDefaultIPv6Range, sendCommandChatsUpdate } from '../util.mts';
 
+const io: Server = global.io;
 let lagTest: any[] = [];
 
 /**

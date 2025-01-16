@@ -362,7 +362,7 @@ export default () => {
 						? undefined
 						: account.pastElo.toObject().length
 						? account.pastElo.toObject()
-						: [{ date: new Date(), value: Math.round(Number.parseFloat(account.eloOverall || 1600)) }];
+						: [{ date: new Date(), value: Math.round(Number.parseFloat(account.overall.elo || 1600)) }];
 
 				_profile.overall = account.overall;
 

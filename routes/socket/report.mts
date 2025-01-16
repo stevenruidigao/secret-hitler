@@ -175,7 +175,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 				.then(() => {
 					const sortedSeats = Object.keys(matches).sort();
 					if (sortedSeats.length > 0) {
-						const sortedMatches = [];
+						const sortedMatches: any[] = [];
 
 						for (const seat of sortedSeats) {
 							sortedMatches.push(matches[seat]);

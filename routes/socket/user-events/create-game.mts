@@ -1,4 +1,4 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { generateCombination } from 'gfycat-style-urls';
 
 import Account from '../../../models/account.mts';
@@ -11,6 +11,8 @@ import { chatReplacements } from '../chatReplacements.mts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { secureGame } from '../util.mts';
+
+const io: Server = global.io;
 
 /**
  * @param {object} socket - user socket reference.
@@ -34,8 +36,8 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	// Make sure it exists
 	if (!data) return;
 
-	let a;
-	let playerCounts = [];
+	let a: number;
+	let playerCounts: number[] = [];
 	for (a = Math.max(data.minPlayersCount, 5); a <= Math.min(10, data.maxPlayersCount); a++) {
 		if (!data.excludedPlayerCount.includes(a)) playerCounts.push(a);
 	}
@@ -44,7 +46,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		return;
 	}
 
-	const excludes = [];
+	const excludes: number[] = [];
 	for (a = playerCounts[0]; a <= playerCounts[playerCounts.length - 1]; a++) {
 		if (!playerCounts.includes(a)) excludes.push(a);
 	}

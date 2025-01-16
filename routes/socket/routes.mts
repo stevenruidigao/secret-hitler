@@ -79,6 +79,8 @@ import {
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
+const io = global.io
+
 let modUserNames: any[] = [],
 	editorUserNames: any[] = [],
 	adminUserNames: any[] = [];

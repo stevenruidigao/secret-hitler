@@ -8,6 +8,8 @@ import ModThread from '../../../models/modThread.mts';
 import { userList, modDMs, games } from '../models.mts';
 import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../util.mts';
 
+const io = global.io;
+
 export const handleOpenChat = (socket: Socket, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const handshake = socket?.handshake as any;
 

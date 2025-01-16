@@ -1,4 +1,4 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import Account from '../../models/account.mts';
 
@@ -8,6 +8,8 @@ import { selectChancellor } from './game/election-util.mts';
 import { selectVoting } from './game/election.mts';
 import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mts';
 import { makeReport } from './report.mts';
+
+const io: Server = global.io;
 
 const sendMessage = (game: ActiveGame, user: any, message: string, date = new Date()) =>
 	game.private.commandChats[user.userName].push({
@@ -629,7 +631,7 @@ commands.getCommand = function(name: string) {
 		return;
 	}
 	let chancellor = -1;
-	const currentPlayers = [];
+	const currentPlayers: boolean[] = [];
 	for (let i = 0; i < game.private.seatedPlayers.length; i++) {
 		currentPlayers[i] = !(
 			game.private.seatedPlayers[i].isDead ||

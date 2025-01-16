@@ -13,6 +13,7 @@ import version from '../../version.mts';
 import { ActiveGame } from './game/common.mts';
 import { doesIPMatchCIDR } from './ip-obf.mts';
 
+const io = global.io;
 const emotes: Record<string, string> = {};
 
 fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach(file => {

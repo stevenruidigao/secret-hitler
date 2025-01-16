@@ -9,6 +9,8 @@ import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts'
 
 import { newStaff } from './models.mts';
 
+const io = global.io;
+
 export const getRoomSockets = (game: any) => {
 	// TODO: remove
 	// console.log(io.sockets.adapter.rooms.get(game.general.uid).values(), io.sockets.sockets);
