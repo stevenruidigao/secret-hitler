@@ -342,7 +342,7 @@ const playerLeavePretourny = (game: ActiveGame, playerName: string) => {
  * @param {object} data - from socket emit.
  * @param {object} passport - socket authentication.
  */
-export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: any, passport: any) => {
+export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { isRemake: boolean }, passport: any) => {
 	// Authentication Assured in routes.js
 	// In-game Assured in routes.js
 
@@ -379,7 +379,7 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: any,
 			if (!game.chats) {
 				game.chats = [];
 			}
-			
+
 			game.chats.push(chat);
 			game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
 		}
@@ -429,5 +429,6 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: any,
 		updateUserStatus(passport, undefined);
 		socket.emit('gameUpdate', {});
 	}
+
 	sendGameList();
 };

@@ -16,7 +16,7 @@ import { checkStartConditions } from './leave-game.mts'; // this used to be a se
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
+export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: string, password?: string }) => {
 	// Authentication Assured in routes.mts
 	// In-game Assured in routes.mts
 	const game: ActiveGame = games[data.uid];
@@ -76,7 +76,7 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: any) => {
 				) {
 					return;
 				}
-				
+
 				game.general.tournyInfo.queuedPlayers.push(player);
 
 				if (!game.chats) {

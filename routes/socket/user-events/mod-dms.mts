@@ -11,7 +11,7 @@ import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../u
 
 const io = global.io;
 
-export const handleOpenChat = (socket: Socket, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
+export const handleOpenChat = (socket: Socket, data: { aemMember: string, userName: string }, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const handshake = socket?.handshake as any;
 
 	if (!handshake?.session) return;
@@ -227,7 +227,7 @@ export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: any,
 	}
 };
 
-export const handleAddNewModDMChat = (socket: any, passport: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
+export const handleAddNewModDMChat = (socket: any, passport: any, data: { chat: any }, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const receivingPlayer = Object.keys(modDMs).find(x => modDMs[x].username === passport.user || modDMs[x].aemMember === socket.handshake.session.passport.user);
 	if (receivingPlayer) {
 		// add a new chat and push it to AEM chat and player chat
