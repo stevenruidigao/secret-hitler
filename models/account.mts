@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// @ts-expect-error: no types for passport-local-mongoose
 import passportLocalMongoose from 'passport-local-mongoose';
 
 const { Schema } = mongoose;
@@ -319,6 +318,6 @@ const Account = new Schema<IAccount>({
 	isTournamentMod: Boolean
 });
 
-Account.plugin(passportLocalMongoose);
+Account.plugin(passportLocalMongoose as any);
 
 export default mongoose.model<IAccount>('Account', Account);

@@ -1,7 +1,6 @@
 import https from 'https';
 
 import { Socket } from 'socket.io';
-// @ts-expect-error: no types for gfycat-style-urls
 import { generateCombination } from 'gfycat-style-urls';
 
 import ModThread from '../../../models/modThread.mts';

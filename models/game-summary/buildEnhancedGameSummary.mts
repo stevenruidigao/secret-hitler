@@ -1,6 +1,5 @@
 /* eslint-disable spaced-comment */
 import { Map, isIndexed, fromJS } from 'immutable';
-// @ts-expect-error: no types for option
 import { fromNullable, some, none } from 'option';
 import buildTurns from './buildTurns.mts';
 

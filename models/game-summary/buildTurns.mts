@@ -1,6 +1,5 @@
 /* eslint-disable no-use-before-define */
 import { List, Range } from 'immutable';
-// @ts-expect-error: no types for option
 import { some, none, fromNullable } from 'option';
 import { filterOpt, flattenListOpts, pushOpt, mapOpt1, mapOpt2, handDiff, policyToHand, handToPolicy } from '../../utils/index.mts';
 

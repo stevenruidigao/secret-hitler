@@ -22,6 +22,8 @@ import {
 	policyPeekAndDrop
 } from './policy-powers.mts';
 
+const io = global.io;
+
 const powerMapping: Record<string, [Function, string]> = {
 	investigate: [investigateLoyalty, 'The president must investigate the party membership of another player.'],
 	deckpeek: [policyPeek, 'The president must examine the top 3 policies.'],
