@@ -22,7 +22,7 @@ const resetTemplate = _.template(
 	})
 );
 
-const ensureAuthenticated = (req: Request, res: Response, next: any) => {
+const ensureAuthenticated = (req: Request, res: Response, next: Function) => {
 	if (req.isAuthenticated()) {
 		return next();
 	}
@@ -38,13 +38,13 @@ export const verifyRoutes = () => {
 		VerifyAccount.findOneAndDelete({ username, token, expirationDate: { $gte: now } })
 			.then(() => {
 				Account.findOne({ username })
-					.then((account: any) => {
+					.then((account) => {
 						if (!account) {
 							return next();
 						}
 
 						account.verified = true;
-						account.save(() => {
+						(account as any).save(() => {
 							res.redirect('/account');
 						});
 					})
@@ -67,6 +67,7 @@ export const verifyRoutes = () => {
 				if (!reset) {
 					return next();
 				}
+				
 				res.render('page-resetpassword', {});
 			})
 			.catch((err: Error) => {
@@ -97,11 +98,11 @@ export const verifyRoutes = () => {
 					res.status(400).send();
 				} else {
 					Account.findOne({ username: req.body.username })
-						.then((account: any) => {
+						.then((account) => {
 							if (!account || account.staffRole) {
 								res.status(404).send();
 							} else {
-								account.setPassword(password, () => {
+								(account as any).setPassword(password, () => {
 									account.save(() => {
 										req.logIn(account, () => {
 											res.send();
@@ -136,7 +137,7 @@ export const verifyRoutes = () => {
 export const setVerify = ({ username, email, res, isResetPassword }: {
 	username: string;
 	email: string;
-	res?: any;
+	res?: Response;
 	isResetPassword?: boolean;
 }) => {
 	const token = `${Math.random()
@@ -144,6 +145,7 @@ export const setVerify = ({ username, email, res, isResetPassword }: {
 		.substring(2)}${Math.random()
 		.toString(36)
 		.substring(2)}`;
+
 	const modelData = {
 		username,
 		token,

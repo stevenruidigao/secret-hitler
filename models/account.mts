@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// @ts-expect-error: no types for 'passport-local-mongoose'
 import passportLocalMongoose from 'passport-local-mongoose';
 
 const { Schema } = mongoose;
@@ -122,7 +123,7 @@ export interface IHistoricalElo {
 export interface IAccount {
 	save?: (callback: Function) => any;
 	version?: number;
-	username?: string;
+	username: string;
 	password?: string;
 	isLocal?: boolean;
 	staffRole?: string;

@@ -9,6 +9,7 @@ import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts'
 
 import { ActiveGame } from './game/common.mts';
 import { newStaff } from './models.mts';
+import { IAccount } from '../../models/account.mts';
 
 const io = global.io;
 
@@ -331,7 +332,7 @@ const winnerBiasPoints = (game: ActiveGame) => {
 	}
 };
 
-export const rateEloGame = (game: ActiveGame, accounts: any[], winningPlayerNames: string[]) => {
+export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlayerNames: string[]) => {
 	const size = game.general.playerCount;
 	// The default starting elo is 1600 (totally arbitrary but now we are stuck with it)
 	const defaultELO = 1600;
@@ -376,7 +377,9 @@ export const rateEloGame = (game: ActiveGame, accounts: any[], winningPlayerName
 
 		if (account.seasons.get(CURRENT_SEASON_NUMBER.toString())) {
 			currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER.toString());
-		} else {
+		} 
+		
+		if (!currentSeason) {
 			currentSeason = {};
 		}
 
@@ -391,16 +394,22 @@ export const rateEloGame = (game: ActiveGame, accounts: any[], winningPlayerName
 		const xpChangeSeason = changeSeason > 0 ? changeSeason / 1.5 : 1;
 
 		account.overall.elo = eloOverall + change;
-		account.maxElo = Math.max(account.maxElo, account.overall.elo);
+		account.maxElo = Math.max(account.maxElo || 1600, account.overall.elo);
+
+		if (!account.pastElo) {
+			account.pastElo = [];
+		}
+
 		account.pastElo.push({
 			date,
 			value: account.overall.elo
 		});
+
 		account.overall.xp = (account.overall.xp || 0) + xpChange;
 		currentSeason.elo = eloSeason + changeSeason;
-		currentSeason.xp = (account.xpSeason || 0) + xpChangeSeason;
+		currentSeason.xp = (currentSeason.xp || 0) + xpChangeSeason;
 
-		if (account.xpOverall >= 50.0) {
+		if (account.overall?.xp >= 50.0) {
 			account.isRainbowOverall = true;
 			account.dateRainbowOverall = new Date();
 		}
@@ -410,12 +419,13 @@ export const rateEloGame = (game: ActiveGame, accounts: any[], winningPlayerName
 		}
 
 		account.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
+		(account as any).save();
 
-		account.save();
 		ratingUpdates[account.username] = { change, changeSeason, xpChange, xpChangeSeason };
 	});
+
 	return ratingUpdates;
-	// Future work: Someone should make this a single function, applied twice: once to overall and once to seasonal.
+	// TODO: Future work: Someone should make this a single function, applied twice: once to overall and once to seasonal.
 };
 
 export const destroySession = (username: string) => {
