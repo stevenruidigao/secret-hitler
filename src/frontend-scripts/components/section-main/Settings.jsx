@@ -520,7 +520,7 @@ class Settings extends React.Component {
 								}
 
 								socket.emit('handleUpdatedTheme', {
-									[`${name}Color`]: newColor
+									[name]: newColor
 								});
 							}
 						);
@@ -563,8 +563,8 @@ class Settings extends React.Component {
 				},
 				() => {
 					socket.emit('handleUpdatedTheme', {
-						secondaryColor: getAltThemeColors().secondaryColor,
-						tertiaryColor: getAltThemeColors().tertiaryColor
+						secondary: getAltThemeColors().secondaryColor,
+						tertiary: getAltThemeColors().tertiaryColor
 					});
 					docStyle.setProperty('--theme-secondary', getAltThemeColors().secondaryColor);
 					docStyle.setProperty('--theme-tertiary', getAltThemeColors().tertiaryColor);
@@ -583,11 +583,11 @@ class Settings extends React.Component {
 				},
 				() => {
 					socket.emit('handleUpdatedTheme', {
-						primaryColor: 'hsl(225, 73%, 57%)',
-						secondaryColor: 'hsl(225, 48%, 57%)',
-						tertiaryColor: 'hsl(265, 73%, 57%)',
-						backgroundColor: 'hsl(0, 0%, 0%)',
-						textColor: 'hsl(0, 0%, 100%)'
+						primary: 'hsl(225, 73%, 57%)',
+						secondary: 'hsl(225, 48%, 57%)',
+						tertiary: 'hsl(265, 73%, 57%)',
+						background: 'hsl(0, 0%, 0%)',
+						text: 'hsl(0, 0%, 100%)'
 					});
 					docStyle.setProperty('--theme-primary', 'hsl(225, 73%, 57%)');
 					docStyle.setProperty('--theme-secondary', 'hsl(225, 48%, 57%)');

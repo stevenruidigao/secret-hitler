@@ -2,11 +2,12 @@ import { Socket } from 'socket.io';
 // @ts-expect-error: no types for gfycat-style-urls
 import { generateCombination } from 'gfycat-style-urls';
 
-import Account, { IAccount } from '../../../models/account.mts';
+import Account from '../../../models/account.mts';
 import Game from '../../../models/game.mts';
 
 import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.mts';
 
+import { ActiveGame } from '../game/common.mts';
 import { chatReplacements } from '../chatReplacements.mts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
@@ -385,7 +386,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
  * @param {object} game - target game.
  * @param {object} data - from socket emit.
  */
-export const handleUpdateWhitelist = (passport: any, game: any, data: any) => {
+export const handleUpdateWhitelist = (passport: any, game: ActiveGame, data: any) => {
 	const isPrivateSafe =
 		!game.general.private ||
 		(game.general.private && (data.password === game.private.privatePassword || game.general.whitelistedPlayers.includes(passport.user)));

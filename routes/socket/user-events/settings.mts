@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import Account from '../../../models/account.mts';
+import Account, { IAccount, ITheme } from '../../../models/account.mts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 import { userList } from '../models.mts';
@@ -11,16 +11,20 @@ import { sendUserList } from '../user-requests.mts';
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedTheme = (socket: Socket, passport: any, data: any) => {
-	const fields = ['primaryColor', 'secondaryColor', 'tertiaryColor', 'backgroundColor', 'textColor'];
+export const handleUpdatedTheme = (socket: Socket, passport: any, data: ITheme) => {
+	const fields: (keyof ITheme)[] = ['primaryColor', 'secondaryColor', 'tertiaryColor', 'backgroundColor', 'textColor'];
 
-	Account.findOne({ username: passport && passport.user }).then((account: any) => {
+	Account.findOne({ username: passport && passport.user }).then((account) => {
 		if (!account) {
 			return;
 		}
 
+		if (!account.theme) {
+			account.theme = {};
+		}
+
 		for (const field of fields) {
-			if (data[field]) account[field] = data[field];
+			if (data[field]) account.theme[field] = data[field];
 		}
 
 		account.save();

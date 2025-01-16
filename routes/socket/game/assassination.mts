@@ -82,7 +82,7 @@ export const assassinateMerlin = (game: ActiveGame) => {
 	}
 };
 
-export const selectPlayerToAssassinate = (passport: any, game: any, data: any, socket?: Socket) => {
+export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	const { seatedPlayers } = game.private;
 	const target = seatedPlayers[data.playerIndex];
 	const publicTarget = game.publicPlayersState[data.playerIndex];

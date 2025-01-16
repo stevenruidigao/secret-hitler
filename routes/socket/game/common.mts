@@ -12,11 +12,16 @@ export type ActiveGame = {
 	gameState: any;
 	trackState: any;
 	publicPlayersState: any;
+	playersState: any[];
+	flappyState: any;
+	cardFlingerState: any[];
+	timeCreated?: number;
 	customGameSettings: any;
 	chats: any[];
-	guesses: any[];
-	merlinGuesses: any[];
+	guesses: Record<string, any>;
+	merlinGuesses: Record<string, any>;
 	lastModPing?: number;
+	electionCount?: number;
 	remakeData: any;
 	unsentReports: any[];
 	summary?: any;

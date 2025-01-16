@@ -4,15 +4,6 @@ import passportLocalMongoose from 'passport-local-mongoose';
 
 const { Schema } = mongoose;
 
-export interface IStats {
-	xp?: number;
-	elo?: number;
-	wins?: number;
-	losses?: number;
-	rainbowWins?: number;
-	rainbowLosses?: number;
-}
-
 export interface IGameSettings {
 	toObject?: () => IGameSettings;
 	playerPronouns?: string;
@@ -88,6 +79,15 @@ export interface IHistoricalIP {
 	ip: string;
 }
 
+export interface IStats {
+	xp?: number;
+	elo?: number;
+	wins?: number;
+	losses?: number;
+	rainbowWins?: number;
+	rainbowLosses?: number;
+}
+
 export interface IWarning {
 	text?: string;
 	moderator?: string;
@@ -98,6 +98,14 @@ export interface IWarning {
 export interface IFeedbackSubmission {
 	date?: Date;
 	text?: string;
+}
+
+export interface ITheme {
+	primaryColor?: string;
+	secondaryColor?: string;
+	tertiaryColor?: string;
+	backgroundColor?: string;
+	textColor?: string;
 }
 
 export interface IBadge {
@@ -157,13 +165,7 @@ export interface IAccount {
 	};
 	warnings?: IWarning[];
 	feedbackSubmissions?: IFeedbackSubmission[];
-	colors?: {
-		primary?: string;
-		secondary?: string;
-		tertiary?: string;
-		background?: string;
-		text?: string;
-	};
+	theme?: ITheme;
 	eloPercentile?: {
 		seasonal?: number;
 		overall?: number;
@@ -297,12 +299,12 @@ const Account = new Schema<IAccount>({
 	},
 	warnings: Array, // { text: String, moderator: String, time: Date, acknowledged: Boolean },
 	feedbackSubmissions: Array, // { time: Date, text: String }
-	colors: {
-		primary: String,
-		secondary: String,
-		tertiary: String,
-		background: String,
-		text: String
+	theme: {
+		primaryColor: String,
+		secondaryColor: String,
+		tertiaryColor: String,
+		backgroundColor: String,
+		textColor: String
 	},
 	eloPercentile: {
 		seasonal: Number,

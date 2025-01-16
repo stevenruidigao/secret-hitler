@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import adjectives from '../../../utils/adjectives.mts';
 import animals from '../../../utils/animals.mts';
 
+import { ActiveGame } from '../game/common.mts';
 import { saveAndDeleteGame } from '../game/end-game.mts';
 import startGame from '../game/start-game.mts';
 
@@ -15,7 +16,7 @@ import { sendCommandChatsUpdate, sendInProgressGameUpdate } from '../util.mts';
  * @param {object} game - game to act on.
  * @return {string} status text.
  */
-const displayWaitingForPlayers = (game: any) => {
+const displayWaitingForPlayers = (game: ActiveGame) => {
 	if (game.general.isTourny) {
 		const count = game.general.maxPlayersCount - game.general.tournyInfo.queuedPlayers.length;
 
@@ -37,7 +38,7 @@ const displayWaitingForPlayers = (game: any) => {
 /**
  * @param {object} game - game to act on.
  */
-const startCountdown = (game: any) => {
+const startCountdown = (game: ActiveGame) => {
 	if (game.gameState.isStarted) {
 		return;
 	}
@@ -170,7 +171,7 @@ const startCountdown = (game: any) => {
 /**
  * @param {object} game - game to act on.
  */
-export const checkStartConditions = (game: any) => {
+export const checkStartConditions = (game: ActiveGame) => {
 	if (game.gameState.isTracksFlipped) {
 		return;
 	}
@@ -294,7 +295,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
  * @param {object} game - game to act on.
  * @param {string} playerName - name of player leaving pretourny.
  */
-const playerLeavePretourny = (game: any, playerName: string) => {
+const playerLeavePretourny = (game: ActiveGame, playerName: string) => {
 	const { queuedPlayers } = game.general.tournyInfo;
 
 	if (queuedPlayers.length === 1) {
@@ -330,7 +331,7 @@ const playerLeavePretourny = (game: any, playerName: string) => {
  * @param {object} data - from socket emit.
  * @param {object} passport - socket authentication.
  */
-export const handleUserLeaveGame = (socket: Socket, game: any, data: any, passport: any) => {
+export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: any, passport: any) => {
 	// Authentication Assured in routes.js
 	// In-game Assured in routes.js
 

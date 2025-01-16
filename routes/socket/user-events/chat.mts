@@ -1,3 +1,6 @@
+import { Socket } from 'socket.io';
+
+import { ActiveGame } from '../game/common.mts';
 import { chatReplacements } from '../chatReplacements.mts';
 import { runCommand } from '../commands.mts';
 import { makeReport } from '../report.mts';
@@ -14,7 +17,7 @@ const generalChatReplTime = Array(chatReplacements.length + 1).fill(0);
  * @param {array} editorUserNames - list of editors
  * @param {array} adminUserNames - list of admins
  */
-export const handleNewGeneralChat = async (socket: any, passport: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
+export const handleNewGeneralChat = async (socket: Socket, passport: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const user = userList.find(u => u.userName === passport.user);
 	if (!user || user.isPrivate) return;
 
@@ -145,7 +148,7 @@ export const handleNewGeneralChat = async (socket: any, passport: any, data: any
  * @param {function} addNewClaim - links to handleAddNewClaim
  * @param {boolean} isTourneyMod - self explain
  */
-export const handleAddNewGameChat = async (socket: any, passport: any, data: any, game: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[], addNewClaim: Function, isTourneyMod: boolean) => {
+export const handleAddNewGameChat = async (socket: Socket, passport: any, data: any, game: ActiveGame, modUserNames: string[], editorUserNames: string[], adminUserNames: string[], addNewClaim: Function, isTourneyMod: boolean) => {
 	// Authentication Assured in routes.mts
 	if (!game || !game.general || !data.chat) return;
 	const chat = data.chat.trim();

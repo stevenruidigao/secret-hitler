@@ -189,8 +189,8 @@ export default () => {
 					gameSettingsWithoutBlacklist = gameSettings;
 				}
 
-				let backgroundColor = account?.colors?.background || DEFAULT_THEME_COLORS.baseBackgroundColor;
-				let textColor = account?.colors?.text || DEFAULT_THEME_COLORS.baseTextColor;
+				let backgroundColor = account?.theme?.background || DEFAULT_THEME_COLORS.baseBackgroundColor;
+				let textColor = account?.theme?.text || DEFAULT_THEME_COLORS.baseTextColor;
 				let [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
 				let [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
 
@@ -204,9 +204,9 @@ export default () => {
 					username,
 					gameSettings: gameSettingsWithoutBlacklist,
 					blacklist,
-					primaryColor: account?.colors?.primary || DEFAULT_THEME_COLORS.primaryColor,
-					secondaryColor: account?.colors?.secondary || DEFAULT_THEME_COLORS.secondaryColor,
-					tertiaryColor: account?.colors?.tertiary || DEFAULT_THEME_COLORS.tertiaryColor,
+					primaryColor: account?.theme?.primary || DEFAULT_THEME_COLORS.primaryColor,
+					secondaryColor: account?.theme?.secondary || DEFAULT_THEME_COLORS.secondaryColor,
+					tertiaryColor: account?.theme?.tertiary || DEFAULT_THEME_COLORS.tertiaryColor,
 					backgroundColor,
 					secondaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
 						backgroundLightness > 50 ? backgroundLightness - 7 : backgroundLightness + 7

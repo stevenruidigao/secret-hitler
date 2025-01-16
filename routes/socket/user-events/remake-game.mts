@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
+import { ActiveGame } from '../game/common.mts';
 import { saveAndDeleteGame } from '../game/end-game.mts';
 import { chatReplacements } from '../chatReplacements.mts';
 import { gameCreationDisabled, games, userList } from '../models.mts';
@@ -16,7 +17,7 @@ import { checkStartConditions } from './leave-game.mts';
  * @param {object} data - from socket emit.
  * @param {object} socket - socket
  */
-export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, socket: Socket) => {
+export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: any, socket: Socket) => {
 	if (game.general.isRemade) {
 		return; // Games can only be remade once.
 	}
@@ -287,7 +288,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: any, data: any, soc
 				? `${firstTableUid.slice(0, firstTableUid.length - 1)}B`
 				: `${firstTableUid.slice(0, firstTableUid.length - 1)}A`;
 
-		const secondTable = games[game.general.uid]; // TODO: check; used to be `const secondTable = games.find((game: any) => game.general.uid === secondTableUid);`
+		const secondTable = games[game.general.uid]; // TODO: check; used to be `const secondTable = games.find((game: ActiveGame) => game.general.uid === secondTableUid);`
 
 		if (secondTable) {
 			secondTable.general.tournyInfo.isCancelled = true;

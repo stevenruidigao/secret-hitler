@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
 
+import { ActiveGame } from '../game/common.mts';
 import { sendInProgressGameUpdate } from '../util.mts';
 
 /**
@@ -9,7 +10,7 @@ import { sendInProgressGameUpdate } from '../util.mts';
  * @param {object} data - from socket emit.
  * @return {bool} - Success of adding claim
  */
-export const handleAddNewClaim = (socket: Socket, passport: any, game: any, data: any) => {
+export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGame, data: any) => {
 	const playerIndex = game.publicPlayersState.findIndex((player: any) => player.userName === passport.user);
 
 	if (

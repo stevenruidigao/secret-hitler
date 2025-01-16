@@ -795,7 +795,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		}
 	}
 
-	const { guesses, merlinGuesses }: { guesses: any[], merlinGuesses: any[] } = game;
+	const { guesses, merlinGuesses } = game;
 	let guessOrder = 2;
 	const now = Date.now();
 

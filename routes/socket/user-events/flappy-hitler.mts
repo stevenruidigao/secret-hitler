@@ -1,6 +1,7 @@
+import { ActiveGame } from "../game/common.mts";
 import { getRoomSockets } from "../util.mts";
 
-export const handleFlappyEvent = (data: any, game: any) => {
+export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 	if (!game || !io.sockets.adapter.rooms.get(game.general.uid)) {
 		return;
 	}
