@@ -113,12 +113,14 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 		game.gameState.isGameFrozen = now;
 	}
 
-	gameToFreeze.chats.push({
-		userName: `(Staff) ${modUserName}`,
-		chat: `has ${game.gameState.isGameFrozen ? 'frozen' : 'unfrozen'} the game. ${game.gameState.isGameFrozen ? 'All actions are prevented.' : ''}`,
-		isBroadcast: true,
-		timestamp: new Date()
-	});
+	if (gameToFreeze.chats) {
+		gameToFreeze.chats.push({
+			userName: `(Staff) ${modUserName}`,
+			chat: `has ${game.gameState.isGameFrozen ? 'frozen' : 'unfrozen'} the game. ${game.gameState.isGameFrozen ? 'All actions are prevented.' : ''}`,
+			isBroadcast: true,
+			timestamp: new Date()
+		});
+	}
 
 	sendInProgressGameUpdate(game);
 };

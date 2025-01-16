@@ -62,6 +62,7 @@ import version from '../../version.mjs';
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.mts';
 import { handleAEMMessages } from './util.mts';
 
+import { ActiveGame } from './game/common.mts';
 import { selectPlayerToAssassinate } from './game/assassination.mts';
 import { selectChancellor } from './game/election-util.mts';
 import { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } from './game/election.mts';
@@ -173,7 +174,7 @@ const findGame = (data: any) => {
 	}
 };
 
-const ensureInGame = (passport: any, game: any) => {
+const ensureInGame = (passport: any, game?: ActiveGame) => {
 	if (game && game.publicPlayersState && game.gameState && passport && passport.user) {
 		const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
 
@@ -184,9 +185,9 @@ const ensureInGame = (passport: any, game: any) => {
 const gatherStaffUsernames = () => {
 	Account.find({ staffRole: { $exists: true } })
 		.then((accounts) => {
-			modUserNames = accounts.filter((account: any) => account.staffRole === 'moderator').map((account) => account.username);
-			editorUserNames = accounts.filter((account: any) => account.staffRole === 'editor').map((account) => account.username);
-			adminUserNames = accounts.filter((account: any) => account.staffRole === 'admin').map((account) => account.username);
+			modUserNames = accounts.filter((account) => account.staffRole === 'moderator').map((account) => account.username);
+			editorUserNames = accounts.filter((account) => account.staffRole === 'editor').map((account) => account.username);
+			adminUserNames = accounts.filter((account) => account.staffRole === 'admin').map((account) => account.username);
 		})
 		.catch((err: Error) => {
 			console.log(err, 'err in finding staffroles');
@@ -198,12 +199,12 @@ export const socketRoutes = () => {
 
 	gatherStaffUsernames();
 
-	io.on('connection', (socket: Socket) => {
+	io.on('connection', (socket) => {
 		checkUserStatus(socket, () => {
 			socket.emit('version', { current: version });
 
 			// defensively check if game exists
-			socket.use((packet: any, next: any) => {
+			socket.use((packet, next: Function) => {
 				const data = packet[1];
 				const uid = data && data.uid;
 				const isGameFound = uid && findGame(data);

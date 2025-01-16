@@ -97,14 +97,11 @@ const sessionSettings = {
 	saveUninitialized: true
 };
 
-io.use(
-	socketSession(session(sessionSettings), {
-		autoSave: true
-	})
-);
+io.use(socketSession(session(sessionSettings), {
+	autoSave: true
+})	);
 
 app.use(session(sessionSettings) as any);
-
 app.use(passport.initialize() as any);
 app.use(passport.session());
 
@@ -119,7 +116,7 @@ if (process.env.DISCORDCLIENTID) {
 				callbackURL: '/discord/login-callback',
 				scope: ['identify', 'email']
 			},
-			(accessToken: string, refreshToken: string, profile: any, callback: any) => {
+			(accessToken: string, refreshToken: string, profile: any, callback: Function) => {
 				callback(profile);
 			}
 		)
@@ -132,7 +129,7 @@ if (process.env.DISCORDCLIENTID) {
 				clientSecret: process.env.GITHUBCLIENTSECRET || '',
 				callbackURL: '/github/login-callback'
 			},
-			(accessToken: string, refreshToken: string, profile: any, callback: any) => {
+			(accessToken: string, refreshToken: string, profile: any, callback: Function) => {
 				callback(profile);
 			}
 		)
@@ -143,6 +140,7 @@ if (process.env.DISCORDCLIENTID) {
 
 passport.serializeUser((Account as any).serializeUser());
 passport.deserializeUser((Account as any).deserializeUser());
+
 mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
