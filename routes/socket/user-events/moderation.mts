@@ -29,6 +29,7 @@ import {
 } from '../models.mts';
 import { sendUserReports, getModInfo, sendGameList, sendUserList } from '../user-requests.mts';
 import { handleDefaultIPv6Range, sendCommandChatsUpdate } from '../util.mts';
+import game from '../../../models/game.mts';
 
 const io: Server = global.io;
 let lagTest: any[] = [];
@@ -322,13 +323,19 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					}
 
 					if (gameToEnd && gameToEnd.private && gameToEnd.private.seatedPlayers) {
+						if (!gameToEnd.chats) {
+							gameToEnd.chats = [];
+						}
+
 						gameToEnd.chats.push({
 							userName: data.modName,
 							chat: 'This game has been ended by a moderator, game deletes in 5 seconds.',
 							isBroadcast: true,
 							timestamp: new Date()
 						});
+
 						completeGame(gameToEnd, data.winningTeamName);
+
 						setTimeout(() => {
 							gameToEnd.publicPlayersState.forEach((player: any) => (player.leftGame = true));
 							saveAndDeleteGame(gameToEnd.general.uid);
@@ -382,13 +389,13 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'deleteUser':
 					if (isSuperMod) {
 						// let account, profile;
-						Account.findOne({ username: data.userName }).then((acc: any) => {
+						Account.findOne({ username: data.userName }).then((acc) => {
 							// account = acc; // TODO: check if this does anything 
-							acc.delete();
-							Profile.findOne({ _id: data.userName }).then((prof: any) => {
+							(acc as any).delete();
+							Profile.findOne({ _id: data.userName }).then((prof) => {
 								if (!prof) return;
 								// profile = prof; // TODO: check if this does anything
-								prof.delete();
+								(prof as any).delete();
 							});
 						});
 						// TODO: Add Account and Profile Backups (for accidental deletions)
@@ -400,8 +407,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'renameUser':
 					if (isSuperMod) {
 						let success = false;
-						Account.findOne({ username: data.comment }).then((account: any) => {
-							Profile.findOne({ _id: data.comment }).then((profile: any) => {
+						Account.findOne({ username: data.comment }).then((account) => {
+							Profile.findOne({ _id: data.comment }).then((profile) => {
 								if (profile) {
 									socket.emit('sendAlert', `Profile of ${data.comment} already exists`);
 									// TODO: Add Profile Backup (for accidental/bugged renames)
@@ -429,7 +436,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 												return;
 											}
 											success = false;
-											Profile.findOne({ _id: data.userName }).then((profile: any) => {
+											Profile.findOne({ _id: data.userName }).then((profile) => {
 												if (profile) {
 													const newProfile = JSON.parse(JSON.stringify(profile));
 													newProfile._id = data.comment;
@@ -503,6 +510,10 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					}
 
 					Object.keys(games).forEach(gameName => {
+						if (!games[gameName].chats) {
+							games[gameName].chats = [];
+						}
+
 						games[gameName].chats.push({
 							userName: `[BROADCAST] ${data.modName}`,
 							chat: data.comment,
