@@ -11,7 +11,7 @@ import { sendInProgressGameUpdate } from '../util.mts';
  * @return {bool} - Success of adding claim
  */
 export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGame, data: any) => {
-	const playerIndex = game.publicPlayersState.findIndex((player: any) => player.userName === passport.user);
+	const playerIndex = game.publicPlayersState.findIndex((player) => player.userName === passport.user);
 
 	if (!game.private.seatedPlayers) {
 		game.private.seatedPlayers = [];
@@ -37,7 +37,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 	if (!game.private || !game.private.summary || game.publicPlayersState[playerIndex].isDead) {
 		return;
 	}
-	
+
 	const { blindMode } = game.general;
 	const replacementNames = game.general.replacementNames || [];
 

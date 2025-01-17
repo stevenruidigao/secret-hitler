@@ -139,7 +139,7 @@ const checkIP = (config: any) => {
 			type: {
 				$in: ['fragbanSmall', 'fragbanLarge']
 			}
-		}).then((bans: any[]) => {
+		}).then((bans) => {
 			if (bans.some(checkFragban) && !hasBypass) {
 				const fragSignup = new Signups({
 					date: new Date(),
@@ -841,7 +841,7 @@ export const accounts = (torIpsParam: any) => {
 						.json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.' });
 				}
 			} else {
-				passport.authenticate(type, (profile: any) => {
+				passport.authenticate(type, (profile) => {
 					if (!profile || !profile.id) {
 						return next();
 					}

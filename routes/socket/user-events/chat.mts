@@ -153,12 +153,12 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 	if (!game || !game.general || !data.chat) return;
 	const chat = data.chat.trim();
 	const staffUserNames = [...modUserNames, ...editorUserNames, ...adminUserNames];
-	const playerIndex: number = game.publicPlayersState.findIndex((player: any) => player.userName === passport.user);
+	const playerIndex: number = game.publicPlayersState.findIndex((player) => player.userName === passport.user);
 
 	if (chat.length > 300 || !chat.length || /^(\*|[*~_]{2,4})$/i.exec(data.chat)) return;
 
 	const { publicPlayersState } = game;
-	const player = publicPlayersState.find((player: any) => player.userName === passport.user);
+	const player = publicPlayersState.find((player) => player.userName === passport.user);
 
 	const user = userList.find(u => passport.user === u.userName);
 

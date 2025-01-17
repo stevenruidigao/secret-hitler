@@ -97,7 +97,7 @@ export const generalChats: {
 	list: []
 };
 
-export const modDMs: any = {
+export const modDMs: Record<string, any> = {
 	// player username => full object
 };
 
@@ -142,7 +142,7 @@ export const getPowerFromName = (name: string) => {
 	if (newStaff.trialmodUserNames.includes(name)) return getPowerFromRole('trialmod');
 	if (newStaff.contributorUserNames.includes(name)) return getPowerFromRole('contributor');
 
-	const user: any = userList.find((user: any) => user.userName === name);
+	const user = userList.find((user) => user.userName === name);
 	if (user) return getPowerFromRole(user.staffRole);
 	else if (staffList[name]) return getPowerFromRole(staffList[name]);
 	else return -1;
@@ -187,7 +187,7 @@ export const formattedUserList = (isAEM: boolean) => {
 	};
 
 	return userList
-		.map((user: any) => ({
+		.map((user) => ({
 			userName: user.userName,
 			playerPronouns: user.playerPronouns,
 			isPrivate: prune(user.isPrivate),
@@ -202,7 +202,7 @@ export const formattedUserList = (isAEM: boolean) => {
 			isRainbowOverall: user.isRainbowOverall,
 			isRainbowSeason: user.isRainbowSeason,
 			status: user.status && user.status.type && user.status.type != 'none' ? user.status : undefined,
-			season: user.seasons ? user.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {},
+			season: user.season, // TODO: check, used to be `user.seasons ? user.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {}`
 			previousSeasonAward: user.previousSeasonAward,
 			specialTournamentStatus: user.specialTournamentStatus,
 			timeLastGameCreated: user.timeLastGameCreated,
@@ -261,8 +261,8 @@ export const formattedGameList = () => {
 	return Object.keys(games).map(gameName => ({
 		name: games[gameName].general.name,
 		flag: games[gameName].general.flag,
-		userNames: games[gameName].publicPlayersState.map((val: any) => val.userName),
-		customCardback: games[gameName].publicPlayersState.map((val: any) => val.customCardback),
+		userNames: games[gameName].publicPlayersState.map((val) => val.userName),
+		customCardback: games[gameName].publicPlayersState.map((val) => val.customCardback),
 		gameStatus: games[gameName].gameState.isCompleted
 			? games[gameName].gameState.isCompleted
 			: games[gameName].gameState.isTracksFlipped
@@ -367,7 +367,7 @@ export const createNewBypass = () => {
 // There's a mountain of "new" type bans.
 const unbanTime = new Date().valueOf() - 64800000;
 
-BannedIP.deleteMany({ type: 'new', bannedDate: { $lte: unbanTime }, permanent: { $ne: true } }, (err: any) => {
+BannedIP.deleteMany({ type: 'new', bannedDate: { $lte: unbanTime }, permanent: { $ne: true } }, (err) => {
 	if (err) throw err;
 });
 

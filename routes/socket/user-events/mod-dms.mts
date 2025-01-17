@@ -128,7 +128,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 	}
 };
 
-export const handleCloseChat = (socket: any, data: any, modUserNames: any, editorUserNames: any, adminUserNames: any) => {
+export const handleCloseChat = (socket: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	// save, notify, etc
 	const passport = socket.handshake.session.passport;
 
@@ -204,7 +204,7 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: any, edito
 	}
 };
 
-export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: any, editorUserNames: any, adminUserNames: any) => {
+export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const passport = socket.handshake.session.passport;
 
 	const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);

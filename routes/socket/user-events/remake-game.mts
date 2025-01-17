@@ -33,7 +33,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 	const { remakeData, publicPlayersState } = game;
 	if (!remakeData) return;
 	const playerIndex = remakeData.findIndex((player: any) => player.userName === passport.user);
-	const realPlayerIndex = publicPlayersState.findIndex((player: any) => player.userName === passport.user);
+	const realPlayerIndex = publicPlayersState.findIndex((player) => player.userName === passport.user);
 	const player = remakeData[playerIndex];
 	let chat;
 
@@ -180,13 +180,13 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		newGame.general.chatReplTime = Array(chatReplacements.length + 1).fill(0);
 
 		newGame.publicPlayersState = game.publicPlayersState
-			.filter((player: any) =>
+			.filter((player) =>
 				game.remakeData
 					.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
 					.map((rmkPlayer: any) => rmkPlayer.userName)
 					.some((rmkPlayer: any) => rmkPlayer === player.userName)
 			)
-			.map((player: any) => ({
+			.map((player) => ({
 				userName: player.userName,
 				customCardback: player.customCardback,
 				previousSeasonAward: player.previousSeasonAward,
@@ -235,7 +235,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			policies: []
 		};
 
-		game.publicPlayersState.forEach((player: any, i: number) => {
+		game.publicPlayersState.forEach((player, i: number) => {
 			if (game.private?.seatedPlayers && game.private?.seatedPlayers[i] && game.private.seatedPlayers[i].role) {
 				player.cardStatus.cardFront = 'secretrole';
 				player.cardStatus.cardBack = game.private.seatedPlayers[i].role;

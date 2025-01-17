@@ -103,7 +103,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 	// DEBUG ONLY
 	// console.log(game.general.status, 'TimedMode:', game.gameState.timedModeEnabled, 'TimerId:', game.private.timerId ? 'exists' : 'null');
 
-	const seatedPlayerNames = game.publicPlayersState.map((player: any) => player.userName);
+	const seatedPlayerNames = game.publicPlayersState.map((player) => player.userName);
 
 	const roomSockets = getRoomSockets(game);
 	const playerSockets = roomSockets.filter(socket => {

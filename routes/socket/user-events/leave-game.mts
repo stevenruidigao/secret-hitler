@@ -157,7 +157,7 @@ const startCountdown = (game: ActiveGame) => {
 						.slice(0, game.publicPlayersState.length)
 						.map((animal, index) => `${_shuffledAdjectives[index].charAt(0).toUpperCase()}${_shuffledAdjectives[index].slice(1)} ${animal}`);
 				}
-				game.remakeData = game.publicPlayersState.map((player: any) => ({ userName: player.userName, isRemaking: false, timesVoted: 0, remakeTime: 0 }));
+				game.remakeData = game.publicPlayersState.map((player) => ({ userName: player.userName, isRemaking: false, timesVoted: 0, remakeTime: 0 }));
 				startGame(game);
 			}
 		} else {
@@ -194,7 +194,7 @@ export const checkStartConditions = (game: ActiveGame) => {
 			!game.general.excludedPlayerCount.includes(game.publicPlayersState.length)) ||
 		(game.general.isTourny && game.general.tournyInfo.queuedPlayers.length === game.general.maxPlayersCount)
 	) {
-		game.remakeData = game.publicPlayersState.map((player: any) => ({ userName: player.userName, isRemaking: false, timesVoted: 0, remakeTime: 0 }));
+		game.remakeData = game.publicPlayersState.map((player) => ({ userName: player.userName, isRemaking: false, timesVoted: 0, remakeTime: 0 }));
 		startCountdown(game);
 	} else if (!game.gameState.isStarted) {
 		game.general.status = displayWaitingForPlayers(game);
@@ -214,7 +214,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 	if (passport && Object.keys(passport).length) {
 		const userIndex = userList.findIndex(user => user.userName === passport.user);
 		const gameNamesPlayerSeatedIn = Object.keys(games).filter(gameName =>
-			games[gameName].publicPlayersState.find((player: any) => player.userName === passport.user && !player.leftGame)
+			games[gameName].publicPlayersState.find((player) => player.userName === passport.user && !player.leftGame)
 		);
 
 		if (userIndex !== -1) {
@@ -226,11 +226,11 @@ export const handleSocketDisconnect = (socket: Socket) => {
 			gameNamesPlayerSeatedIn.forEach(gameName => {
 				const game = games[gameName];
 				const { gameState, publicPlayersState } = game;
-				const playerIndex = publicPlayersState.findIndex((player: any) => player.userName === passport.user);
+				const playerIndex = publicPlayersState.findIndex((player) => player.userName === passport.user);
 
 				if (
 					(!gameState.isStarted && publicPlayersState.length === 1) ||
-					(gameState.isCompleted && publicPlayersState.filter((player: any) => !player.connected || player.leftGame).length === game.general.playerCount as number - 1) // TODO: fix this
+					(gameState.isCompleted && publicPlayersState.filter((player) => !player.connected || player.leftGame).length === game.general.playerCount as number - 1) // TODO: fix this
 				) {
 					saveAndDeleteGame(gameName);
 				} else if (!gameState.isTracksFlipped && playerIndex > -1) {
@@ -272,7 +272,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 						game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
 					}
 					sendInProgressGameUpdate(game);
-					if (game.publicPlayersState.filter((publicPlayer: any) => publicPlayer.leftGame).length === game.general.playerCount) {
+					if (game.publicPlayersState.filter((publicPlayer) => publicPlayer.leftGame).length === game.general.playerCount) {
 						game.general.timeAbandoned = new Date();
 					}
 				}
@@ -346,7 +346,7 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 	// Authentication Assured in routes.js
 	// In-game Assured in routes.js
 
-	const playerIndex = game.publicPlayersState.findIndex((player: any) => player.userName === passport.user);
+	const playerIndex = game.publicPlayersState.findIndex((player) => player.userName === passport.user);
 
 	if (playerIndex > -1) {
 		const playerRemakeData = game.remakeData && game.remakeData.find((player: any) => player.userName === passport.user);
@@ -386,12 +386,12 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 		if (game.gameState.isTracksFlipped) {
 			game.publicPlayersState[playerIndex].leftGame = true;
 		}
-		if (game.publicPlayersState.filter((publicPlayer: any) => publicPlayer.leftGame).length === game.general.playerCount) {
+		if (game.publicPlayersState.filter((publicPlayer) => publicPlayer.leftGame).length === game.general.playerCount) {
 			game.general.timeAbandoned = new Date();
 		}
 		if (!game.gameState.isTracksFlipped) {
 			game.publicPlayersState.splice(
-				game.publicPlayersState.findIndex((player: any) => player.userName === passport.user),
+				game.publicPlayersState.findIndex((player) => player.userName === passport.user),
 				1
 			);
 			checkStartConditions(game);

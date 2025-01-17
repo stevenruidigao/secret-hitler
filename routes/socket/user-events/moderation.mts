@@ -27,9 +27,8 @@ import {
 	gameCreationDisabled,
 	limitNewPlayers
 } from '../models.mts';
-import { sendUserReports, getModInfo, sendGameList, sendUserList } from '../user-requests.mts';
+import { sendUserReports, sendGameList, sendUserList } from '../user-requests.mts';
 import { handleDefaultIPv6Range, sendCommandChatsUpdate } from '../util.mts';
-import game from '../../../models/game.mts';
 
 const io: Server = global.io;
 let lagTest: any[] = [];
@@ -286,7 +285,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					break;
 				case 'clearTimeoutIP':
-					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err: any) => {
+					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err) => {
 						if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 					});
 					console.log(handleDefaultIPv6Range(data.ip));
@@ -302,7 +301,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 
-							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err: any) => {
+							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err) => {
 								if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 							});
 						})

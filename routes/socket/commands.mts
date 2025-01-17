@@ -281,7 +281,7 @@ export const commands: Command[] & {
  * @return {Command|null} - the command with that name or null if it is not found.
  */
 commands.getCommand = function(name: string) {
-	return this.find((c: any) => c.name.includes(name.toLowerCase())) || null;
+	return this.find((c) => c.name.includes(name.toLowerCase())) || null;
 };
 
 (commands.getCommand('help') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any, AEM: boolean, isSeated: boolean) => {
@@ -399,10 +399,10 @@ commands.getCommand = function(name: string) {
 
 (commands.getCommand('pingmod') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	if (!game.lastModPing || Date.now() > game.lastModPing + 180000) {
-		Account.find({ username: { $in: game.publicPlayersState.map((player: any) => player.userName) } }).then((accounts: any[]) => {
+		Account.find({ username: { $in: game.publicPlayersState.map((player) => player.userName) } }).then((accounts) => {
 			const staffInGame = accounts
 				.filter(
-					(account: any) =>
+					(account) =>
 						account.staffRole === 'altmod' ||
 						account.staffRole === 'moderator' ||
 						account.staffRole === 'editor' ||
@@ -447,7 +447,7 @@ commands.getCommand = function(name: string) {
 
 	const { seatedPlayers } = game.private;
 
-	const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
+	const player = game.publicPlayersState.find((player) => player.userName === passport.user);
 
 	if (!player) {
 		return;
@@ -838,7 +838,7 @@ commands.getCommand = function(name: string) {
 			sendMessage(game, user, `The player in seat ${affectedPlayerNumber + 1} is not president.`);
 			return;
 		}
-		
+
 		game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: fix this
 
 		if (

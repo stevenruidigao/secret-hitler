@@ -43,12 +43,14 @@ export const handleSubscribeModChat = (socket: Socket, passport: any, game: Acti
 		gameChat: true,
 		chat: [{ text: `${passport.user} has subscribed to mod chat. Current deck: ` }]
 	};
-	game.private.policies?.forEach((policy: any) => {
+
+	game.private.policies?.forEach((policy) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
 			type: policy
 		});
 	});
+
 	game.private.hiddenInfoChat?.push(modOnlyChat);
 	game.private.hiddenInfoSubscriptions?.push(passport.user);
 	sendInProgressGameUpdate(game);
@@ -136,7 +138,7 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
  * @param {object} game - game reference.
  * @param {string} modUserName - requesting Moderator's username
  */
-export const handleModPeekVotes = (socket: Socket, passport: any, game: ActiveGame, modUserName: any) => {
+export const handleModPeekVotes = (socket: Socket, passport: any, game: ActiveGame, modUserName: string) => {
 	const gameToPeek = game;
 	let output = '<table class="fullTable"><tr><th>Seat</th><th>Role</th><th>Vote</th></tr>';
 

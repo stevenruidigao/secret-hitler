@@ -10,7 +10,7 @@ import { userList, games } from '../models.mts';
  * @param {object} data - from socket emit.
  * @param {object} callback - response function.
  */
-export const handlePlayerReport = (passport: any, data: any, callback: any) => {
+export const handlePlayerReport = (passport: any, data: any, callback: Function) => {
 	const user = userList.find(u => u.userName === passport.user);
 
 	if (data.userName !== 'from replay' && (!user || (user.overall.wins + user.overall.losses < 2 && !user.isRainbowOverall)) && process.env.NODE_ENV === 'production') {
@@ -54,7 +54,7 @@ export const handlePlayerReport = (passport: any, data: any, callback: any) => {
 
 	const gameType = data.uid ? (game.general.isTourny ? 'tournament' : game.general.casualGame ? 'casual' : 'standard') : 'homepage';
 
-	const playerReport: any = new PlayerReport({
+	const playerReport = new PlayerReport({
 		date: new Date(),
 		gameUid: data.uid,
 		reportingPlayer: passport.user,
@@ -104,7 +104,7 @@ export const handlePlayerReport = (passport: any, data: any, callback: any) => {
 		reportError = true;
 	}
 
-	playerReport.save((err: Error) => {
+	playerReport.save((err) => {
 		if (err) {
 			console.log(err, 'Failed to save player report');
 			callback({ success: false, error: 'Error submitting report.' });

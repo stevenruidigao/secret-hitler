@@ -37,7 +37,7 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 
 	Account.findOne({ username: passport.user }).then((account) => {
 		const isNotMaxedOut = game.publicPlayersState.length < game.general.maxPlayersCount;
-		const isNotInGame = !game.publicPlayersState.find((player: any) => player.userName === passport.user);
+		const isNotInGame = !game.publicPlayersState.find((player) => player.userName === passport.user);
 		const isRainbowSafe = !game.general.rainbowgame || (game.general.rainbowgame && account?.isRainbowOverall);
 		const isPrivateSafe =
 			!game.general.private ||

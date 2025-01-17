@@ -139,7 +139,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			avatar_url: 'https://cdn.discordapp.com/emojis/230161421336313857.png?v=1'
 		};
 
-		game.publicPlayersState.map((state: any) => {
+		game.publicPlayersState.map((state) => {
 			if (state.userName !== player) {
 				otherPlayers.push(state.userName);
 			}

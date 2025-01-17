@@ -34,14 +34,16 @@ import { sendInProgressGameUpdate } from './util.mts';
 /**
  * @param {object} socket - user socket reference.
  */
-export const sendUserList = (socket?: any) => {
+export const sendUserList = (socket?: Socket) => {
 	// eslint-disable-line one-var
 	if (socket) {
 		const staffUserList = Object.keys(staffList).filter(
 			name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
 		);
 
-		if (staffUserList.includes(socket?.handshake?.session?.passport?.user)) {
+		const handshake = socket.handshake as any;
+
+		if (staffUserList.includes(handshake?.session?.passport?.user)) {
 			socket.emit('userList', { list: formattedUserList(true) });
 		} else {
 			socket.emit('userList', { list: formattedUserList(false) });
@@ -58,7 +60,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 		.limit(500 * count)
 		.then((actions) => {
 			const list = users.map(user => {
-				const usr: any = userList.find((userListUser: any) => user.username === userListUser.userName);
+				const usr = userList.find((userListUser) => user.username === userListUser.userName);
 
 				return usr
 					? {
@@ -159,7 +161,7 @@ export const sendPrivateSignups = (socket: Socket) => {
  * @param {boolean} isAEM - true if the user is a AEM member.
  */
 export const sendModInfo = (games: Record<any, ActiveGame>, socket: Socket, count: number, isTrial: boolean, isAEM: boolean) => {
-	const userNames = userList.map((user: any) => user.userName);
+	const userNames = userList.map((user) => user.userName);
 
 	Account.find({ username: { $in: userNames }, 'gameSettings.isPrivate': { $ne: true } })
 		.then((users) => {
@@ -186,7 +188,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 		.then((account) => {
 			socket.emit('gameSettings', account?.gameSettings);
 
-			const userListNames = userList.map((user: any) => user.userName);
+			const userListNames = userList.map((user) => user.userName);
 
 			getProfile(passport.user);
 
@@ -268,7 +270,7 @@ export const sendReplayGameData = (socket: Socket, uid: string) => {
  * @param {object} socket - user socket reference.
  * @param {boolean} isAEM - user AEM designation
  */
-export const sendGameList = (socket?: any, isAEM?: boolean) => {
+export const sendGameList = (socket?: Socket, isAEM?: boolean) => {
 	// eslint-disable-line one-var
 	if (socket) {
 		let gameList = formattedGameList();
@@ -304,7 +306,7 @@ export const sendGeneralChats = (socket: Socket) => {
  * @param {string} override - type of user status to be displayed.
  */
 export const updateUserStatus = (passport: any, game?: ActiveGame, override?: string) => {
-	const user: any = userList.find((user: any) => user.userName === passport.user);
+	const user = userList.find((user) => user.userName === passport.user);
 
 	if (user) {
 		user.status = {
@@ -341,7 +343,7 @@ export const sendGameInfo = (socket: Socket, uid: string) => {
 
 	if (game && game.publicPlayersState && game.general) {
 		if (passport && Object.keys(passport).length) {
-			const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
+			const player = game.publicPlayersState.find((player) => player.userName === passport.user);
 
 			if (player) {
 				player.leftGame = false;

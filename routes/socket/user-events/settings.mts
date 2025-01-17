@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import Account, { ITheme } from '../../../models/account.mts';
+import Account, { IAccount, IGameSettings, ITheme } from '../../../models/account.mts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 import { userList } from '../models.mts';
@@ -40,7 +40,13 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 	// Authentication Assured in routes.mts
 
 	Account.findOne({ username: passport.user })
-		.then((account: any) => {
+		.then((account) => {
+			if (!account) return;
+
+			if (!account.gameSettings) {
+				account.gameSettings = {};
+			}
+
 			const currentPrivate = account.gameSettings.isPrivate;
 			const userIdx = userList.findIndex(user => user.userName === passport.user);
 			const aem = account.staffRole && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin');
@@ -64,7 +70,7 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 					}
 				}
 
-				const allowedSettings = [
+				const allowedSettings: (keyof IGameSettings)[] = [
 					'enableTimestamps',
 					'enableRightSidebarInGame',
 					'disablePlayerColorsInChat',
@@ -93,12 +99,12 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 					'claimButtons'
 				];
 
-				if (allowedSettings.includes(setting) || (setting === 'staff' && (aem || veteran))) {
-					account.gameSettings[setting] = data[setting];
+				if ((allowedSettings as string[]).includes(setting) || (setting === 'staff' && (aem || veteran))) {
+					account.gameSettings[setting as keyof IGameSettings] = data[setting];
 				}
 
 				if (setting === 'staff' && aem) {
-					const userListInfo = {
+					const userListInfo: any = {
 						userName: passport.user,
 						playerPronouns: account.gameSettings.playerPronouns,
 						staffRole: account.staffRole || '',
@@ -113,7 +119,6 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 						previousSeasonAward: account.gameSettings.previousSeasonAward,
 						specialTournamentStatus: account.gameSettings.specialTournamentStatus,
 						overall: account.overall,
-						season: {},
 						status: {
 							type: 'none',
 							gameId: null
@@ -161,7 +166,9 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 export const handleUpdatedBio = (socket: Socket, passport: any, data: any) => {
 	// Authentication Assured in routes.mts
 	if (typeof data !== 'string') return; // otherwise the server will crash if you forge the request
-	Account.findOne({ username: passport.user }).then((account: any) => {
+	Account.findOne({ username: passport.user }).then((account) => {
+		if (!account) return;
+
 		account.bio = data;
 		account.save();
 	});

@@ -176,7 +176,7 @@ const findGame = (data: any) => {
 
 const ensureInGame = (passport: any, game?: ActiveGame) => {
 	if (game && game.publicPlayersState && game.gameState && passport && passport.user) {
-		const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
+		const player = game.publicPlayersState.find((player) => player.userName === passport.user);
 
 		return Boolean(player);
 	}
@@ -274,7 +274,7 @@ export const socketRoutes = () => {
 					socket.emit('touChange', [TOU_CHANGES[TOU_CHANGES.length - 1]]);
 					return true;
 				}
-				const warnings = account?.warnings?.filter((warning: any) => !warning.acknowledged);
+				const warnings = account?.warnings?.filter((warning) => !warning.acknowledged);
 				if (warnings && warnings.length > 0) {
 					const { moderator, acknowledged, ...firstWarning } = warnings[0]; // eslint-disable-line no-unused-vars
 					socket.emit('warningPopup', firstWarning);
@@ -495,8 +495,12 @@ export const socketRoutes = () => {
 
 			socket.on('acknowledgeWarning', () => {
 				if (authenticated && isRestricted) {
-					Account.findOne({ username: passport.user }).then((acc: any) => {
-						acc.warnings[acc.warnings.findIndex((warning: any) => !warning.acknowledged)].acknowledged = true;
+					Account.findOne({ username: passport.user }).then((acc) => {
+						if (!acc?.warnings) {
+							return;
+						}
+
+						acc.warnings[acc.warnings.findIndex((warning) => !warning.acknowledged)].acknowledged = true;
 						acc.markModified('warnings');
 						acc.save(() => (isRestricted = checkRestriction(acc)));
 					});
