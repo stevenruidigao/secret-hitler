@@ -1,7 +1,7 @@
 import React from 'react';
 import { PLAYER_COLORS, getBadWord } from '../../constants.js';
 import PropTypes from 'prop-types';
-import { renderEmotesButton, processEmotes } from '../../emotes';
+import { renderEmotesButton, processEmotes } from '../../emotes.jsx';
 import { Scrollbars } from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
 

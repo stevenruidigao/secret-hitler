@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.js';
 import { Message } from 'semantic-ui-react';
-import { processEmotes } from '../../emotes';
+import { processEmotes } from '../../emotes.jsx';
 
 dayjs.extend(duration);
 

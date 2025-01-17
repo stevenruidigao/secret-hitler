@@ -7,7 +7,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions';
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.js';
-import { renderEmotesButton, processEmotes } from '../../emotes';
+import { renderEmotesButton, processEmotes } from '../../emotes.jsx';
 import Swal from 'sweetalert2';
 
 const mapDispatchToProps = dispatch => ({

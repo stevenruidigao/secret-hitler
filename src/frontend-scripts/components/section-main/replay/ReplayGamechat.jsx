@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { loadReplay, updateUser } from '../../../actions/actions';
-import { processEmotes } from '../../../emotes';
+import { processEmotes } from '../../../emotes.jsx';
 import { PLAYER_COLORS } from '../../../constants.js';
 
 const mapDispatchToProps = dispatch => ({

@@ -21,13 +21,6 @@ import rootSaga from './sagas.js';
 // @ts-expect-error: no types
 import chatanimation from './chatanimation.js';
 
-declare module 'react-redux' {
-	interface ProviderProps<T = any> extends React.PropsWithChildren<{}> {
-		store?: Store<any>;
-		refs?: React.Ref<any>;
-	}
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 	const container = document.getElementById('game-container');
 
