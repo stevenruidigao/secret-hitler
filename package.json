@@ -156,7 +156,7 @@
 		"prettier-check": "prettier \"**/*.{js,scss,json,jsx}\" --check",
 		"format": "prettier \"**/*.{js,scss,json,jsx}\" --write",
 		"dev": "concurrently --names \"SERVER,MONGO,WEBPACK\" -c \"bgCyanBright.black,bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect\" \"yarn:db\" \"yarn:start\"",
-		"dev-new": "concurrently --names \"SERVER,MONGO,WEBPACK\" -c \"bgCyanBright.black,bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect-ts\" \"yarn:db\" \"yarn:start\"",
+		"dev-ts": "concurrently --names \"SERVER,MONGO,WEBPACK\" -c \"bgCyanBright.black,bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect-ts\" \"yarn:db\" \"yarn:start-ts\"",
 		"dev-no-db": "concurrently --names \"SERVER,WEBPACK\" -c \"bgCyanBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect\" \"yarn:start\"",
 		"dev-no-db-inspect": "concurrently --names \"SERVER,WEBPACK\" -c \"bgCyanBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:server\" \"yarn:start\"",
 		"dev-no-server": "concurrently --names \"MONGO,WEBPACK\" -c \"bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:db\" \"yarn:start\"",
@@ -172,6 +172,7 @@
 		"inspect-ts": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.mts",
 		"server": "cross-env NODE_ENV=development nodemon bin/dev.js",
 		"start": "webpack --watch --config webpack/webpack.config.dev --mode development",
+		"start-ts": "webpack --watch --config webpack/webpack-ts.config.dev --mode development",
 		"lint": "esw src/**/*.jsx scripts/ routes/ webpack/ models/ iso/",
 		"build-css:web": "sass -I src/scss src/scss/style-web.scss public/styles/style-web.css",
 		"build-css:dark": "sass -I src/scss src/scss/style-dark.scss public/styles/style-dark.css"

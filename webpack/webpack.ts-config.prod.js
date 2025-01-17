@@ -14,7 +14,7 @@ const Dotenv = require('dotenv-webpack');
 process.env.NODE_ENV = 'production';
 
 module.exports = {
-	entry: './src/frontend-scripts/game-app.jsx',
+	entry: './src/frontend-scripts/game-app.tsx',
 	output: {
 		filename: `bundle.js`,
 		path: path.resolve(__dirname, '../public/scripts')

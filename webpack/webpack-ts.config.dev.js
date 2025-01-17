@@ -6,7 +6,7 @@ const path = require('path');
 process.env.NODE_ENV = 'development';
 
 module.exports = {
-	entry: './src/frontend-scripts/game-app.jsx',
+	entry: './src/frontend-scripts/game-app.tsx',
 	plugins: [
 		// new Reload(),
 		// new CleanWebpackPlugin(['../public/scripts']),

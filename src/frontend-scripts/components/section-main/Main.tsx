@@ -16,7 +16,7 @@ import Signups from './Signups.tsx';
 import Reports from './Reports.tsx';
 import Leaderboards from './Leaderboards.tsx';
 import Colors from './Colors.tsx';
-import socket from '../../socket.js';
+import socket from '../../socket.ts';
 
 export class Main extends React.Component {
 	static propTypes: any;
