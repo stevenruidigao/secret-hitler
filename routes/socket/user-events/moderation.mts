@@ -3,7 +3,7 @@ import https from 'https';
 
 import { Server, Socket } from 'socket.io';
 
-import Account from '../../../models/account.mts';
+import Account, { IAccount } from '../../../models/account.mts';
 import BannedIP from '../../../models/bannedIP.mts';
 import ModAction from '../../../models/modAction.mts';
 import PlayerReport from '../../../models/playerReport.mts';
@@ -59,7 +59,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					}
 				} else {
 					// Try to find the IP from the account specified if possible.
-					Account.findOne({ username: data.userName }, (err: Error, account: any) => {
+					Account.findOne({ username: data.userName }, (err: Error, account: IAccount) => {
 						if (err) console.log(err, 'err finding user');
 						else if (account) data.ip = account.lastConnectedIP || account.signupIP;
 						handleModerationAction(socket, passport, data, true, modUserNames, superModUserNames);
@@ -155,7 +155,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 			// 		console.log(err, 'err in sending mod info');
 			// 	});
 		} else {
-			const modaction: any = new ModAction({
+			const modaction = new ModAction({
 				date: new Date(),
 				modUserName: passport.user,
 				userActedOn: data.userName,
@@ -359,7 +359,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'makeBypass':
 					const key = createNewBypass();
-					if (modaction.modNotes.length) modaction.modNotes += '\n';
+					if (modaction.modNotes && modaction.modNotes.length) modaction.modNotes += '\n';
 					modaction.modNotes += `Created bypass key: ${key}`;
 					socket.emit('sendAlert', `Created bypass key: ${key}`);
 					break;
@@ -554,9 +554,9 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						});
 
 						ipban.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: any) {
+							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
-									users.forEach((user: any) => {
+									users.forEach((user) => {
 										banAccount(user.username);
 									});
 								}
@@ -763,9 +763,9 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 					if (isSuperMod) {
 						ipbanl.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: any) {
+							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
-									users.forEach((user: any) => {
+									users.forEach((user) => {
 										banAccount(user.username);
 									});
 								}
@@ -1073,13 +1073,13 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 						if (game && game.general) {
 							saveAndDeleteGame(game.general.uid);
-							game.publicPlayersState.forEach((player: any) => (player.leftGame = true)); // Causes timed games to stop.
+							game.publicPlayersState.forEach((player) => (player.leftGame = true)); // Causes timed games to stop.
 							sendGameList();
 						}
 					} else if (data.userName.substr(0, 13) === 'RESETGAMENAME') {
 						const game = games[data.userName.slice(13)];
 						if (game && game.general) {
-							if (modaction.modNotes.length > 0) {
+							if (modaction.modNotes && modaction.modNotes.length > 0) {
 								modaction.modNotes += ` - Name: "${game.general.name}" - Creator: "${game.private.gameCreatorName}"`;
 							} else {
 								modaction.modNotes = `Name: "${game.general.name}" - Creator: "${game.private.gameCreatorName}"`;
@@ -1219,6 +1219,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				resetServer: 'Server Restart',
 				regatherAEMList: 'Refresh Staff List'
 			};
+
+			modaction.actionTaken = modaction.actionTaken || '';
 
 			const modAction = JSON.stringify({
 				content: `Date: *${new Date()}*\nStaff member: **${modaction.modUserName}**\nAction: **${niceAction[modaction.actionTaken] ||
