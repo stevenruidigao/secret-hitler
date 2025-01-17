@@ -8,8 +8,7 @@ import { render } from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
-// @ts-expect-error: no types
-import AppComponent from './components/App.jsx';
+import AppComponent from './components/App.tsx';
 // @ts-expect-error: no types
 import account from './account.js';
 // @ts-expect-error: no types
