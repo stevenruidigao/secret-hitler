@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import passport from 'passport';
 import fetch from 'node-fetch';
 
-import Account from '../models/account.mts';
+import Account, { IAccount } from '../models/account.mts';
 import EightEightCounter from '../models/eightEightCounter.mts';
 import BannedIP from '../models/bannedIP.mts';
 import Profile from '../models/profile/index.mts';
@@ -136,7 +136,9 @@ const checkIP = (config: any) => {
 		};
 
 		BannedIP.find({
-			type: ['fragbanSmall', 'fragbanLarge']
+			type: {
+				$in: ['fragbanSmall', 'fragbanLarge']
+			}
 		}).then((bans: any[]) => {
 			if (bans.some(checkFragban) && !hasBypass) {
 				const fragSignup = new Signups({
@@ -323,7 +325,7 @@ const continueSignup = (config: any) => {
 				Math.random()
 					.toString(36)
 					.substring(2),
-				(err: Error, account: any) => {
+				(err: Error, account: IAccount) => {
 					if (err) {
 						// console.log(err, 'err in creating oauth account', accountObj);
 						res.status(503).json({ message: 'There was an error processing your request. Please try again later.' });
@@ -435,8 +437,8 @@ export const accounts = (torIpsParam: any) => {
 	});
 
 	app.post('/account/delete-account', passport.authenticate('local'), (req: any, res) => {
-		Account.findOne({ username: req.user.username }).then((acc: any) => {
-			if (acc.isBanned || (acc.isTimeout && Date.now() < new Date(acc.isTimeout).valueOf())) {
+		Account.findOne({ username: req.user.username }).then((acc) => {
+			if (acc?.isBanned || (acc?.isTimeout && Date.now() < new Date(acc.isTimeout).valueOf())) {
 				res.status(403).json({ message: 'You cannot delete a banned account. ' });
 			} else {
 				Account.deleteOne({ username: req.user.username }).then(() => {
@@ -456,7 +458,7 @@ export const accounts = (torIpsParam: any) => {
 		Account.findOne({
 			'verification.email': req.body.email
 		})
-			.then((account: any) => {
+			.then((account) => {
 				if (!account) {
 					res.status(404).json({ message: 'There is no verified account associated with that email.' });
 				} else {
@@ -548,7 +550,7 @@ export const accounts = (torIpsParam: any) => {
 			const queryObj = email
 				? { $or: [{ username: new RegExp(`\\b${username}\\b`, 'i') }, { 'verification.email': email }] }
 				: { username: new RegExp(`\\b${username}\\b`, 'i') };
-			Account.find(queryObj, (err: Error, accounts: any[]) => {
+			Account.find(queryObj, (err: Error, accounts) => {
 				if (err) {
 					console.log(err);
 					res.status(500).json({ message: err.toString() });
@@ -591,7 +593,7 @@ export const accounts = (torIpsParam: any) => {
 		(req: any, res, next) => {
 			Account.findOne({
 				username: req.user.username
-			}).then((player: any) => {
+			}).then((player) => {
 				if (req.ipBanned && req.ipBanned !== '') {
 					const ipbannedLogin = new Signups({
 						date: new Date(),
@@ -604,7 +606,7 @@ export const accounts = (torIpsParam: any) => {
 
 					ipbannedLogin.save();
 
-					if ((req.ipBanned === 'small' || req.ipBanned === 'big') && !player.gameSettings.ignoreIPBans) {
+					if ((req.ipBanned === 'small' || req.ipBanned === 'big') && !player?.gameSettings?.ignoreIPBans) {
 						req.logOut();
 						res.status(403).json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on Discord.' });
 						return next();
@@ -661,7 +663,7 @@ export const accounts = (torIpsParam: any) => {
 				}
 
 				player.lastConnectedIP = ip;
-				if ((player.ipHistory && player.ipHistory.length === 0) || (player.ipHistory.length > 0 && player.ipHistory[player.ipHistory.length - 1].ip !== ip)) {
+				if ((player.ipHistory && player.ipHistory.length === 0) || (player.ipHistory && player.ipHistory.length > 0 && player.ipHistory[player.ipHistory.length - 1].ip !== ip)) {
 					player.ipHistory.push({
 						date: new Date(),
 						ip: ip
@@ -680,9 +682,16 @@ export const accounts = (torIpsParam: any) => {
 						// TODO: include the reason moderators provided for the account timeout, if it exists
 					});
 				}
-				const email = player.verification.email;
+
+				const email = player?.verification?.email;
+
 				if (email && email.split('@')[1] && bannedEmails.includes(email.split('@')[1])) {
 					player.verified = false;
+
+					if (!player.verification) {
+						player.verification = {};
+					}
+
 					player.verification.email = '';
 				}
 			});
@@ -706,7 +715,7 @@ export const accounts = (torIpsParam: any) => {
 				message: `That doesn't look like a valid email address.`
 			});
 		} else {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: any) => {
+			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
 				if (err) {
 					return next();
 				}
@@ -715,7 +724,13 @@ export const accounts = (torIpsParam: any) => {
 					res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
 				} else {
 					Account.findOne({ username })
-						.then((account: any) => {
+						.then((account) => {
+							if (!account) return;
+
+							if (!account.verification) {
+								account.verification = {};
+							}
+
 							account.verification.email = email;
 							account.save(() => {
 								setVerify({ username: req.user.username, email, res });
@@ -742,7 +757,7 @@ export const accounts = (torIpsParam: any) => {
 				message: `That doesn't look like a valid email address.`
 			});
 		} else {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: any) => {
+			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
 				if (err) {
 					return next();
 				}
@@ -750,14 +765,20 @@ export const accounts = (torIpsParam: any) => {
 				if (account && process.env.NODE_ENV === 'production') {
 					res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
 				} else {
-					Account.findOne({ username }, (err: Error, account: any) => {
+					Account.findOne({ username }, (err: Error, account: IAccount) => {
 						if (err) {
 							return next();
 						}
 
+						if (!account) return;
+
+						if (!account.verification) {
+							account.verification = {};
+						}
+
 						account.verification.email = email;
 						account.verified = false;
-						account.save(() => {
+						(account.save as Function)(() => {
 							setVerify({ username, email, res });
 						});
 					});
@@ -771,7 +792,7 @@ export const accounts = (torIpsParam: any) => {
 		const { email } = verification;
 
 		if (verification && email) {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: any) => {
+			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
 				if (err) {
 					return next();
 				}
@@ -848,7 +869,7 @@ export const accounts = (torIpsParam: any) => {
 						const queryObj = type === 'discord' ? { 'discord.uid': profile.id } : { 'github.username': profile.username };
 
 						Account.findOne(queryObj)
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									req.login(account, () => res.redirect('/game'));
 								} else {
@@ -860,7 +881,7 @@ export const accounts = (torIpsParam: any) => {
 									} else {
 										// see if there's an existing sh account with their oauth name, if so have them select a new username, if not make an account.
 										Account.findOne({ username: new RegExp(profile.username, 'i') })
-											.then((account: any) => {
+											.then((account) => {
 												req.session.oauthType = type;
 												if (account) {
 													req.session.oauthProfile = profile;

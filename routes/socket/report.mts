@@ -1,6 +1,6 @@
 import https from 'https';
 
-import Account from '../../models/account.mts';
+import Account, { IAccount } from '../../models/account.mts';
 
 import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.mts';
@@ -15,7 +15,7 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 
 	const { seatedPlayers } = game.private;
 	
-	Account.find({ staffRole: { $exists: true } }).then((accounts: any[]) => {
+	Account.find({ staffRole: { $exists: true } }).then((accounts) => {
 		const staffUserNames = accounts
 			.filter(
 				account =>
@@ -25,7 +25,7 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 					account.staffRole === 'admin' ||
 					account.staffRole === 'trialmod'
 			)
-			.map((account: any) => account.username);
+			.map((account) => account.username);
 		const players = seatedPlayers.map((player: any) => player.userName);
 		const isStaff = players.some(
 			(n: string) =>
@@ -145,17 +145,17 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			}
 		});
 
-		Account.findOne({ username: player }, (err: Error, account: any) => {
+		Account.findOne({ username: player }, (err: Error, account: IAccount) => {
 			if (err) console.log(err, 'err finding user');
 			else if (account) data.ip = account.lastConnectedIP || account.signupIP;
 			throwerIP = data.ip;
 
 			const matches: Record<string | number, any> = {};
 			Account.find({ username: { $in: otherPlayers } })
-				.then((accounts: any[]) => {
-					accounts.forEach((account: any) => {
-						let ip;
-						if (account) ip = account.lastConnectedIP || account.signupIP;
+				.then((accounts) => {
+					accounts.forEach((account) => {
+						let ip = '';
+						if (account) ip = account.lastConnectedIP || account.signupIP || ip;
 
 						const seat = seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
 						if (ip === throwerIP) {

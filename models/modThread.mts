@@ -2,7 +2,22 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const ModThread = new Schema({
+export interface IModThread {
+	_id?: string;
+	username?: string;
+	aemMember?: string;
+	startDate?: Date;
+	endDate?: Date;
+	messages?: {
+		content?: string;
+		type?: string;
+		author?: string;
+		staffRole?: string;
+		date?: Date;
+	}[];
+}
+
+const ModThread = new Schema<IModThread>({
 	_id: String, // game-name style id
 	username: String, // username of the player
 	aemMember: String, // aem member speaking to the player
@@ -11,4 +26,4 @@ const ModThread = new Schema({
 	messages: Array // { content: String, type: String, author: String, staffRole: String, date: Date }
 });
 
-export default mongoose.model('ModThread', ModThread);
+export default mongoose.model<IModThread>('ModThread', ModThread);

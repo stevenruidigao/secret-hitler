@@ -2,9 +2,14 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const Eighteightcounter = new Schema({
+interface IEightEightCounter {
+	username?: string;
+	date?: Date;
+}
+
+const EightEightCounter = new Schema<IEightEightCounter>({
 	username: String,
 	date: Date
 });
 
-export default mongoose.model('Eighteightcounter', Eighteightcounter);
+export default mongoose.model<IEightEightCounter>('EightEightCounter', EightEightCounter);

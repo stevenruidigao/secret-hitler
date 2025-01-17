@@ -121,7 +121,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 	) {
 		if (data.isReportResolveChange) {
 			PlayerReport.findOne({ _id: data._id })
-				.then((report: any) => {
+				.then((report) => {
 					if (report) {
 						report.isActive = !report.isActive;
 						report.save(() => {
@@ -188,7 +188,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 			 */
 			const banAccount = (username: string) => {
 				Account.findOne({ username })
-					.then((account: any) => {
+					.then((account) => {
 						if (account) {
 							// account.hash = crypto.randomBytes(20).toString('hex');
 							// account.salt = crypto.randomBytes(20).toString('hex');
@@ -220,7 +220,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					return;
 				case 'clearTimeout':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
 								account.isTimeout = new Date(0);
 								account.isBanned = false;
@@ -241,7 +241,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						acknowledged: false
 					};
 
-					Account.findOne({ username: data.userName }).then((user: any) => {
+					Account.findOne({ username: data.userName }).then((user) => {
 						if (user) {
 							if (user.warnings && user.warnings.length > 0) {
 								user.warnings.push(warning);
@@ -262,10 +262,10 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					break;
 				case 'removeWarning':
-					Account.findOne({ username: data.userName }).then((user: any) => {
+					Account.findOne({ username: data.userName }).then((user) => {
 						if (user) {
 							if (user.warnings && user.warnings.length > 0) {
-								socket.emit('sendAlert', `Warning with the message: "${user.warnings.pop().text}" deleted.`);
+								socket.emit('sendAlert', `Warning with the message: "${user?.warnings?.pop()?.text}" deleted.`);
 							} else {
 								socket.emit('sendAlert', `That user doesn't have any warnings.`);
 								return;
@@ -293,7 +293,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'clearTimeoutAndTimeoutIP':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
 								account.isTimeout = new Date(0);
 								account.isBanned = false;
@@ -337,16 +337,21 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						completeGame(gameToEnd, data.winningTeamName);
 
 						setTimeout(() => {
-							gameToEnd.publicPlayersState.forEach((player: any) => (player.leftGame = true));
+							gameToEnd.publicPlayersState.forEach((player) => (player.leftGame = true));
 							saveAndDeleteGame(gameToEnd.general.uid);
 							sendGameList();
 						}, 5000);
 					}
 					break;
 				case 'setVerified':
-					Account.findOne({ username: data.userName }).then((account: any) => {
+					Account.findOne({ username: data.userName }).then((account) => {
 						if (account) {
 							account.verified = true;
+
+							if (!account.verification) {
+								account.verification = {};
+							}
+
 							account.verification.email = account.username + '@verified.secrethitler.io';
 							account.save();
 						} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
@@ -370,7 +375,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'rainbowUser':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isRainbowOverall = true;
 									account.dateRainbowOverall = new Date();
@@ -464,7 +469,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					banAccount(data.userName);
 					break;
 				case 'deleteBio':
-					Account.findOne({ username: data.userName }).then((account: any) => {
+					Account.findOne({ username: data.userName }).then((account) => {
 						if (account) {
 							account.bio = '';
 							account.save();
@@ -472,8 +477,12 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					break;
 				case 'setPlayerPronouns':
-					Account.findOne({ username: data.userName }).then((account: any) => {
+					Account.findOne({ username: data.userName }).then((account) => {
 						if (account) {
+							if (!account.gameSettings) {
+								account.gameSettings = {};
+							}
+
 							account.gameSettings.playerPronouns = data.comment;
 							account.save();
 							const userListUser = userList.find(user => user.userName === data.userName);
@@ -599,7 +608,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					timeout.save(() => {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isTimeout = new Date(Date.now() + 18 * 60 * 60 * 1000);
 									account.save(() => {
@@ -616,7 +625,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'timeOut2':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
 								account.isTimeout = new Date(Date.now() + 18 * 60 * 60 * 1000);
 								account.save(() => {
@@ -638,7 +647,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					timeout3.save(() => {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isTimeout = new Date(Date.now() + 60 * 60 * 1000);
 									account.save(() => {
@@ -655,7 +664,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'timeOut4':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
 								account.isTimeout = new Date(Date.now() + 6 * 60 * 60 * 1000);
 								account.save(() => {
@@ -671,12 +680,16 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'togglePrivate':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
+								if (!account.gameSettings) {
+									account.gameSettings = {};
+								}
+
 								const { isPrivate } = account.gameSettings;
 
 								account.gameSettings.isPrivate = !isPrivate;
-								account.gameSettings.privateToggleTime = !isPrivate ? new Date('2099-01-01 00:00:00.000') : Date.now();
+								account.gameSettings.privateToggleTime = !isPrivate ? new Date('2099-01-01 00:00:00.000').valueOf() : Date.now();
 								account.save(() => {
 									logOutUser(data.userName);
 								});
@@ -690,8 +703,12 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'togglePrivateEighteen':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
+								if (!account.gameSettings) {
+									account.gameSettings = {};
+								}
+
 								const { isPrivate } = account.gameSettings;
 
 								account.gameSettings.isPrivate = !isPrivate;
@@ -830,7 +847,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'removeContributor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isContributor = false;
 									removeBadge(account, 'contributor');
@@ -851,7 +868,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'removeStaffRole':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									const staffRole = account.staffRole;
 									if (staffRole === 'moderator' || staffRole === 'editor') {
@@ -881,7 +898,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'toggleContributor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isContributor = true;
 									checkBadgesAccount(account);
@@ -901,7 +918,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'toggleTourneyMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.isTournamentMod = true;
 									account.save(() => {
@@ -919,7 +936,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'promoteToTrialMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.staffRole = 'trialmod';
 									account.save(() => {
@@ -938,7 +955,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'promoteToAltMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.staffRole = 'altmod';
 									account.save(() => {
@@ -957,7 +974,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'promoteToMod':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.staffRole = 'moderator';
 									checkBadgesAccount(account);
@@ -977,7 +994,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'promoteToEditor':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.staffRole = 'editor';
 									checkBadgesAccount(account);
@@ -997,7 +1014,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				case 'promoteToVeteran':
 					if (isSuperMod) {
 						Account.findOne({ username: data.userName })
-							.then((account: any) => {
+							.then((account) => {
 								if (account) {
 									account.staffRole = 'veteran';
 									checkBadgesAccount(account);
@@ -1090,8 +1107,19 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 						if (!isNaN(parseInt(number, 10)) || isPlusOrMinus) {
 							Account.findOne({ username: data.userName })
-								.then((account: any) => {
+								.then((account) => {
 									if (account) {
+										if (!account.overall) {
+											account.overall = {
+												wins: 0,
+												losses: 0,
+												rainbowWins: 0,
+												rainbowLosses: 0,
+												elo: 1600,
+												xp: 0
+											};
+										}
+
 										account.overall[setType] = isPlusOrMinus
 											? number.charAt(0) === '+'
 												? account.overall[setType] + parseInt(number.substr(1, number.length))
@@ -1103,7 +1131,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 												account.seasons = new Map();
 											}
 
-											let currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER);
+											let currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER.toString()); // TODO: NEED TO CHANGE ON OTHER BRANCHES
 
 											if (!currentSeason) {
 												currentSeason = {
@@ -1124,7 +1152,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 													: parseInt(number.substr(1, number.length))
 												: parseInt(number);
 
-											account.seasons.set(CURRENT_SEASON_NUMBER, currentSeason);
+											account.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason); // TODO: NEED TO CHANGE ON OTHER BRANCHES
 										}
 
 										account.save();

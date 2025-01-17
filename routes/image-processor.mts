@@ -49,7 +49,7 @@ export const processImage = (username: string, raw: string, callback: Function) 
 
 					Object.keys(games).forEach(uid => {
 						const game = games[uid];
-						const foundUser = game.publicPlayersState.find((user: any) => user.userName === username);
+						const foundUser = game.publicPlayersState.find((user) => user.userName === username);
 
 						if (foundUser) {
 							foundUser.customCardback = {}; // reset cardback?

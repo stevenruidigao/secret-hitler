@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import redis from 'redis';
 
 import Account from '../../models/account.mts';
-import BannedIP from '../../models/bannedIP.mts';
+import BannedIP, { IBannedIP } from '../../models/bannedIP.mts';
 import ModAction from '../../models/modAction.mts';
 
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
@@ -382,7 +382,7 @@ export const testIP = (IP: any, callback: any) => {
 	if (!IP) callback('Bad IP!');
 	else if (ipbansNotEnforced.status) callback(null);
 	else {
-		BannedIP.find({}, (err, allIPs: any[]) => {
+		BannedIP.find({}, (err, allIPs: IBannedIP[]) => {
 			if (err) callback(err);
 			else {
 				const ips: any[] = [];

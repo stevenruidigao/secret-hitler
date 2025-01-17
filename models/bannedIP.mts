@@ -2,11 +2,18 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const BannedIP = new Schema({
+export interface IBannedIP {
+	bannedDate?: number;
+	type?: string;
+	ip: string;
+	permanent?: boolean;
+}
+
+const BannedIP = new Schema<IBannedIP>({
 	bannedDate: Date,
 	type: String,
 	ip: String,
 	permanent: Boolean
 });
 
-export default mongoose.model('BannedIP', BannedIP);
+export default mongoose.model<IBannedIP>('BannedIP', BannedIP);

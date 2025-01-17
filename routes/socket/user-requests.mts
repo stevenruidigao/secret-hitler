@@ -56,7 +56,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 	ModAction.find(queryObj)
 		.sort({ $natural: -1 })
 		.limit(500 * count)
-		.then((actions: any[]) => {
+		.then((actions) => {
 			const list = users.map(user => {
 				const usr: any = userList.find((userListUser: any) => user.username === userListUser.userName);
 
@@ -135,7 +135,7 @@ export const sendSignups = (socket: Socket, types = ['local', 'discord', 'github
 		.sort({ $natural: -1 })
 		.limit(500)
 		.select({ unobfuscatedIP: 0 })
-		.then((signups: any[]) => {
+		.then((signups) => {
 			socket.emit('signupsInfo', signups);
 		})
 		.catch((err: Error) => {
@@ -235,7 +235,7 @@ export const sendUserGameSettings = (socket: Socket) => {
  */
 export const sendPlayerNotes = (socket: Socket, data: any) => {
 	PlayerNote.find({ userName: data.userName, notedUser: { $in: data.seatedPlayers } })
-		.then((notes: any) => {
+		.then((notes) => {
 			if (notes) {
 				socket.emit('notesUpdate', notes);
 			}
@@ -286,7 +286,7 @@ export const sendUserReports = (socket: Socket) => {
 	PlayerReport.find()
 		.sort({ $natural: -1 })
 		.limit(500)
-		.then((reports: any[]) => {
+		.then((reports) => {
 			socket.emit('reportInfo', reports);
 		});
 };

@@ -2,7 +2,17 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const Signups = new Schema({
+export interface ISignups {
+	date?: Date;
+	userName?: string;
+	ip?: string;
+	type?: string;
+	email?: string;
+	unobfuscatedIP?: string;
+	oauthID?: string;
+}
+
+const Signups = new Schema<ISignups>({
 	date: Date,
 	userName: String,
 	ip: String,
@@ -12,4 +22,4 @@ const Signups = new Schema({
 	oauthID: String
 });
 
-export default mongoose.model('Signups', Signups);
+export default mongoose.model<ISignups>('Signups', Signups);

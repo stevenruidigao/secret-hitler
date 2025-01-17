@@ -84,7 +84,11 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 		game.private.gameFrozen = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Game Freeze' })
-			.then((action: any) => {
+			.then((action) => {
+				if (!action) {
+					return; // TODO: check safety
+				}
+
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';
@@ -93,6 +97,7 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 					action.modNotes = 'Subsequently frozen/unfrozen by:\n';
 					action.modNotes += passport.user + '\n';
 				}
+
 				action.save();
 			})
 			.catch((err: Error) => {
@@ -156,7 +161,11 @@ export const handleModPeekVotes = (socket: Socket, passport: any, game: ActiveGa
 		game.private.votesPeeked = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Peek Votes' })
-			.then((action: any) => {
+			.then((action) => {
+				if (!action) {
+					return; // TODO: check safety
+				}
+
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';
@@ -165,6 +174,7 @@ export const handleModPeekVotes = (socket: Socket, passport: any, game: ActiveGa
 					action.modNotes = 'Subsequently viewed by:\n';
 					action.modNotes += passport.user + '\n';
 				}
+
 				action.save();
 			})
 			.catch((err: Error) => {
@@ -231,7 +241,11 @@ export const handleModPeekRemakes = (socket: Socket, passport: any, game: Active
 		game.private.remakeVotesPeeked = true;
 	} else {
 		ModAction.findOne({ userActedOn: game.general.uid, actionTaken: 'Get Remakes' })
-			.then((action: any) => {
+			.then((action) => {
+				if (!action) {
+					return; // TODO: check safety
+				}
+
 				if (action.modNotes) {
 					if (action.modNotes.indexOf(passport.user) === -1) {
 						action.modNotes += passport.user + '\n';

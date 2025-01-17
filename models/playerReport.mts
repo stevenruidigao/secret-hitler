@@ -2,7 +2,18 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const playerReport = new Schema({
+export interface IPlayerReport {
+	date?: Date;
+	gameUid?: string;
+	reportedPlayer?: string;
+	reason?: string;
+	reportingPlayer?: string;
+	gameType?: string;
+	comment?: string;
+	isActive?: boolean;
+}
+
+const playerReport = new Schema<IPlayerReport>({
 	date: Date,
 	gameUid: String,
 	reportedPlayer: String,
@@ -13,4 +24,4 @@ const playerReport = new Schema({
 	isActive: Boolean
 });
 
-export default mongoose.model('PlayerReport', playerReport);
+export default mongoose.model<IPlayerReport>('PlayerReport', playerReport);

@@ -2,7 +2,16 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const ModAction = new Schema({
+export interface IModAction {
+	date?: Date;
+	modUserName?: string;
+	ip?: string;
+	userActedOn?: string;
+	modNotes?: string;
+	actionTaken?: string;
+}
+
+const ModAction = new Schema<IModAction>({
 	date: Date,
 	modUserName: String,
 	ip: String,
@@ -11,4 +20,4 @@ const ModAction = new Schema({
 	actionTaken: String
 });
 
-export default mongoose.model('ModAction', ModAction);
+export default mongoose.model<IModAction>('ModAction', ModAction);
