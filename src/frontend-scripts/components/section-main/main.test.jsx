@@ -9,13 +9,13 @@ describe('Main', () => {
 				priv: false,
 				pub: false,
 				unstarted: false,
-				inprogress: false,
+				inProgress: false,
 				completed: false,
 				timedMode: false,
 				rainbow: false,
 				standard: false,
-				customgame: false,
-				casualgame: false
+				custom: false,
+				casual: false
 			},
 			showNewPlayerModal: Boolean(window.hasNotDismissedSignupModal),
 			newPlayerModalPageIndex: 0,

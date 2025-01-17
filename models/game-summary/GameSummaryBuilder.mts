@@ -19,12 +19,12 @@ export default class GameSummaryBuilder {
 	libElo: number;
 	fasElo: number;
 
-	constructor(uid: string, date: any, gameSetting: any, customGameSettings: any, players: any[], libElo: any, fasElo: any, logs = List()) {
+	constructor(uid: string, date: any, gameSetting: any, customGameSettings: any, players?: any[], libElo?: any, fasElo?: any, logs = List()) {
 		this._id = uid;
 		this.date = date;
 		this.gameSetting = gameSetting;
 		this.customGameSettings = customGameSettings;
-		this.players = players;
+		this.players = players || [];
 		this.logs = logs;
 		this.libElo = libElo;
 		this.fasElo = fasElo;
@@ -39,7 +39,7 @@ export default class GameSummaryBuilder {
 
 	// (update: Object, targetAttrs: (?) Object) => GameSummaryBuilder
 	// targetAttrs used to attach claims to the correct log
-	updateLog(update: any, _targetAttrs: any) {
+	updateLog(update: any, _targetAttrs?: any) {
 		const { logs } = this;
 		const targetAttrs = fromNullable(_targetAttrs);
 

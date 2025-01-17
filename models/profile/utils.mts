@@ -7,7 +7,7 @@ import { flattenListOpts } from '../../utils/index.mts';
 
 import Account from '../account.mts';
 
-import Profile from './index.mjs';
+import Profile from './index.mts';
 
 const debugLogger = debug('game:profile');
 

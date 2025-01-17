@@ -9,7 +9,88 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const gameSummary = new Schema({
+export interface IGameSummary {
+	_id: string;
+	date: number;
+	gameSetting: {
+		rebalance6p: boolean;
+		rebalance7p: boolean;
+		rebalance9p: boolean;
+		rerebalance9p: boolean;
+		casualGame: boolean;
+		practiceGame: boolean;
+		unlistedGame: boolean;
+		avalonSH?: {
+			type: {
+				withPercival: boolean;
+			};
+		};
+		noTopdecking: number;
+	};
+	players: {
+		username: string;
+		role: string;
+		icon: number;
+		hashUid: string;
+	}[];
+	libElo: {
+		overall: number;
+		season: number;
+	};
+	fasElo: {
+		overall: number;
+		season: number;
+	};
+	logs: {
+		// election
+		presidentId: number;
+		chancellorId: number;
+		votes: boolean[];
+
+		// policy enaction
+		presidentHand: ('fascist' | 'liberal')[];
+		chancellorHand: string[];
+		enactedPolicy: string;
+
+		presidentClaim: string[];
+		chancellorClaim: string[];
+
+		presidentVeto: boolean;
+		chancellorVeto: boolean;
+
+		// actions
+		policyPeek: string[];
+		policyPeekClaim: string[];
+		investigatorId: number;
+		investigationId: number;
+		investigationClaim: string;
+		specialElection: number;
+		execution: number;
+		assassination: number;
+
+		// other metadata
+		deckState: ('fascist' | 'liberal')[]
+	}[];
+	customGameSettings: {
+		enabled: boolean;
+		powers: (string | null)[];
+		hitlerZone: number;
+		vetoZone: number;
+		fascistCount: number;
+		hitKnowsFas: boolean;
+		deckState: {
+			lib: number;
+			fas: number;
+		};
+		trackState: {
+			lib: number;
+			fas: number;
+		};
+	};
+}
+
+
+const gameSummary = new Schema<IGameSummary>({
 	_id: String,
 	date: Date,
 	gameSetting: {
@@ -94,4 +175,4 @@ const gameSummary = new Schema({
 	}
 });
 
-export default mongoose.model('GameSummary', gameSummary);
+export default mongoose.model<IGameSummary>('GameSummary', gameSummary);

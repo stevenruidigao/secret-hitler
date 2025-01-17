@@ -8,11 +8,11 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import AppComponent from './components/App.jsx';
-import account from './account';
-import shapp from './reducers/sh-app';
+import account from './account.js';
+import shapp from './reducers/sh-app.js';
 import polyfills from '../../iso/polyfills.js';
-import rootSaga from './sagas';
-import chatanimation from './chatanimation';
+import rootSaga from './sagas.js';
+import chatanimation from './chatanimation.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const container = document.getElementById('game-container');
