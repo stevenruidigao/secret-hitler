@@ -1,32 +1,10 @@
 import _ from 'lodash';
 
+import type { ActiveGame } from '../game.d.ts';
 import { sendGameList } from '../user-requests.mts';
-import { sendInProgressGameUpdate } from '../util.mjs';
+import { sendInProgressGameUpdate } from '../util.mts';
 
 import { selectChancellor } from './election-util.mts';
-
-export type ActiveGame = {
-	uid?: string;
-	general: any;
-	private: any;
-	gameState: any;
-	trackState: any;
-	publicPlayersState: any;
-	playersState: any[];
-	flappyState: any;
-	cardFlingerState: any[];
-	timeCreated?: number;
-	customGameSettings: any;
-	chats?: any[];
-	guesses?: Record<string, any>;
-	merlinGuesses: Record<string, any>;
-	lastModPing?: number;
-	electionCount?: number;
-	remakeData: any;
-	unsentReports?: any[];
-	summary?: any;
-	summarySaved?: boolean;
-}
 
 /**
  * @param {object} game - game to act on.
@@ -39,8 +17,8 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 
 	if (isStart) {
 		game.trackState.enactedPolicies = [];
-		if (game.customGameSettings.trackState.lib > 0) {
-			game.trackState.liberalPolicyCount = game.customGameSettings.trackState.lib;
+		if (game.customGameSettings.trackState && game.customGameSettings.trackState.lib > 0) {
+			game.trackState.policyCount.liberal = game.customGameSettings.trackState.lib;
 			_.range(0, game.customGameSettings.trackState.lib).forEach(num => {
 				game.trackState.enactedPolicies.push({
 					cardBack: 'liberal',
@@ -49,8 +27,8 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 				});
 			});
 		}
-		if (game.customGameSettings.trackState.fas > 0) {
-			game.trackState.fascistPolicyCount = game.customGameSettings.trackState.fas;
+		if (game.customGameSettings.trackState && game.customGameSettings.trackState.fas > 0) {
+			game.trackState.policyCount.fascist = game.customGameSettings.trackState.fas;
 			_.range(0, game.customGameSettings.trackState.fas).forEach(num => {
 				game.trackState.enactedPolicies.push({
 					cardBack: 'fascist',
@@ -61,15 +39,20 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 		}
 	}
 
-	const libCount = game.customGameSettings.deckState.lib - game.trackState.liberalPolicyCount;
-	const fasCount = game.customGameSettings.deckState.fas - game.trackState.fascistPolicyCount;
+	const libCount = game.customGameSettings.deckState.lib - game.trackState.policyCount.liberal;
+	const fasCount = game.customGameSettings.deckState.fas - game.trackState.policyCount.fascist;
+
+	if (!game.private) {
+		game.private = {};
+	}
+
 	game.private.policies = _.shuffle(
 		_.range(0, libCount)
 			.map(num => 'liberal')
 			.concat(_.range(0, fasCount).map(num => 'fascist'))
 	);
 
-	game.gameState.undrawnPolicyCount = game.private.policies.length;
+	game.gameState.undrawnPolicyCount = game.private?.policies.length || 0;
 
 	if (!game.general.disableGamechat) {
 		const chat = {
@@ -95,9 +78,19 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 				}
 			]
 		};
-		game.private.seatedPlayers.forEach((player: any) => {
+
+		if (!game.private.seatedPlayers) {
+			game.private.seatedPlayers = [];
+		}
+
+		game.private.seatedPlayers.forEach((player) => {
 			player.gameChats.push(chat);
 		});
+
+		if (!game.private.unSeatedGameChats) {
+			game.private.unSeatedGameChats = [];
+		}
+
 		game.private.unSeatedGameChats.push(chat);
 	}
 
@@ -106,12 +99,18 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 		gameChat: true,
 		chat: [{ text: 'The deck has been shuffled: ' }]
 	};
+
 	game.private.policies.forEach((policy: string) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
 			type: policy
 		});
 	});
+
+	if (!game.private.hiddenInfoChat) {
+		game.private.hiddenInfoChat = [];
+	}
+
 	game.private.hiddenInfoChat.push(modOnlyChat);
 };
 

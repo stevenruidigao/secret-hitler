@@ -5,7 +5,7 @@ import { Socket } from 'socket.io';
 
 import ModAction from '../../../models/modAction.mts';
 
-import { ActiveGame } from '../game/common.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { makeReport } from '../report.mts';
 import { sendInProgressGameUpdate } from '../util.mts';
 
@@ -20,7 +20,7 @@ dayjs.extend(relativeTime);
 export const handleSubscribeModChat = (socket: Socket, passport: any, game: ActiveGame) => {
 	// Authentication Assured in routes.mts
 
-	if (game.private.hiddenInfoSubscriptions.includes(passport.user)) return;
+	if (game.private.hiddenInfoSubscriptions?.includes(passport.user)) return;
 
 	if (game.private.hiddenInfoShouldNotify) {
 		makeReport(
@@ -43,14 +43,14 @@ export const handleSubscribeModChat = (socket: Socket, passport: any, game: Acti
 		gameChat: true,
 		chat: [{ text: `${passport.user} has subscribed to mod chat. Current deck: ` }]
 	};
-	game.private.policies.forEach((policy: any) => {
+	game.private.policies?.forEach((policy: any) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
 			type: policy
 		});
 	});
-	game.private.hiddenInfoChat.push(modOnlyChat);
-	game.private.hiddenInfoSubscriptions.push(passport.user);
+	game.private.hiddenInfoChat?.push(modOnlyChat);
+	game.private.hiddenInfoSubscriptions?.push(passport.user);
 	sendInProgressGameUpdate(game);
 };
 
@@ -102,15 +102,15 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 
 	const now = new Date();
 	if (game.gameState.isGameFrozen) {
-		if (now.valueOf() - game.gameState.isGameFrozen >= 4000) {
-			game.gameState.isGameFrozen = false;
+		if (now.valueOf() - game.gameState.isGameFrozen as number >= 4000) {
+			(game.gameState.isGameFrozen as any) = false; // TODO: uhhhh fix this please
 		} else {
 			// Figured this would get annoying - can add it back if mods want.
 			// socket.emit('sendAlert', `You cannot do this yet, please wait ${Math.ceil((now - game.gameState.isGameFrozen) / 1000)} seconds`);
 			return;
 		}
 	} else {
-		game.gameState.isGameFrozen = now;
+		game.gameState.isGameFrozen = now.valueOf();
 	}
 
 	if (gameToFreeze.chats) {

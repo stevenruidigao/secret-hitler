@@ -56,13 +56,13 @@ import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
 import Account, { IAccount } from '../../models/account.mts';
-import { TOU_CHANGES } from '../../src/frontend-scripts/constants.mjs';
-import version from '../../version.mjs';
+import { TOU_CHANGES } from '../../src/frontend-scripts/constants.mts';
+import version from '../../version.mts';
 
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.mts';
 import { handleAEMMessages } from './util.mts';
 
-import { ActiveGame } from './game/common.mts';
+import type { ActiveGame } from './game.d.ts';
 import { selectPlayerToAssassinate } from './game/assassination.mts';
 import { selectChancellor } from './game/election-util.mts';
 import { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } from './game/election.mts';
@@ -117,7 +117,7 @@ const gamesGarbageCollector = () => {
 		// 	completedTimer
 		// );
 
-		toDelete = (!games[gameName].general.modDeleteDelay && completedTimer && completedTimer < currentTime) || (abandonedTimer && abandonedTimer < currentTime);
+		toDelete = (!games[gameName].general.modDeleteDelay && completedTimer && completedTimer < currentTime) || (abandonedTimer && abandonedTimer < currentTime) || false;
 
 		// if (games[gameName] && modDeleteTimer && modDeleteTimer < currentTime) {
 		// console.log('Mod Delete Delay Timer Expired. Deleting... ');

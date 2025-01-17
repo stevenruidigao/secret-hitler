@@ -40,7 +40,7 @@ export interface IGameSettings {
 	isPrivate?: boolean;
 	privateToggleTime?: number;
 	blacklist?: string[];
-	tournyWins?: string[];
+	tournyWins?: any;
 	hasChangedName?: boolean;
 	previousSeasonAward?: string;
 	specialTournamentStatus?: string;
@@ -80,12 +80,12 @@ export interface IHistoricalIP {
 }
 
 export interface IStats {
-	xp?: number;
-	elo?: number;
-	wins?: number;
-	losses?: number;
-	rainbowWins?: number;
-	rainbowLosses?: number;
+	xp: number;
+	elo: number;
+	wins: number;
+	losses: number;
+	rainbowWins: number;
+	rainbowLosses: number;
 }
 
 export interface IWarning {

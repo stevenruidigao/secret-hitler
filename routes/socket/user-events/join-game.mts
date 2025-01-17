@@ -4,11 +4,11 @@ import Account from '../../../models/account.mts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 import { userInBlacklist } from '../../../utils/index.mts';
 
+import type { ActiveGame, Player } from '../game.d.ts';
 import { games, limitNewPlayers } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { sendCommandChatsUpdate } from '../util.mts';
 
-import { ActiveGame } from '../game/common.mts';
 import { checkStartConditions } from './leave-game.mts'; // this used to be a separate game-countdown.js but that isn't really helpful tbh
 
 /**
@@ -26,7 +26,7 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 		return; // Game already started
 	}
 
-	const isBlacklistSafe = !game.private.gameCreatorBlacklist || !userInBlacklist(passport.user, game.private.gameCreatorBlacklist); // we can check blacklist before hitting mongo
+	const isBlacklistSafe = !game.private?.gameCreatorBlacklist || !userInBlacklist(passport.user, game.private.gameCreatorBlacklist); // we can check blacklist before hitting mongo
 
 	if (!isBlacklistSafe) {
 		socket.emit('gameJoinStatusUpdate', {
@@ -41,7 +41,7 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 		const isRainbowSafe = !game.general.rainbowgame || (game.general.rainbowgame && account?.isRainbowOverall);
 		const isPrivateSafe =
 			!game.general.private ||
-			(game.general.private && (data.password === game.private.privatePassword || game.general.whitelistedPlayers.includes(passport.user)));
+			(game.general.private && (data.password === game.private?.privatePassword || game.general.whitelistedPlayers.includes(passport.user)));
 		const isMeetingEloMinimum = !game.general.eloMinimum || (account?.seasons && game.general.eloMinimum <= (account.seasons.get(CURRENT_SEASON_NUMBER.toString())?.elo || 1600)) || game.general.eloMinimum <= (account?.overall?.elo || 1600);
 		const isMeetingXPMinimum = !game.general.xpMinimum || game.general.xpMinimum <= (account?.overall?.xp || 0);
 
@@ -51,15 +51,15 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 
 		if (isNotMaxedOut && isNotInGame && isRainbowSafe && isPrivateSafe && isBlacklistSafe && isMeetingEloMinimum && isMeetingXPMinimum) {
 			const { publicPlayersState } = game;
-			const player = {
+			const player: Player = {
 				userName: passport.user,
 				connected: true,
 				isDead: false,
 				customCardback: account?.gameSettings?.customCardback,
-				isPrivate: account?.gameSettings?.isPrivate,
+				isPrivate: account?.gameSettings?.isPrivate || false,
 				tournyWins: account?.gameSettings?.tournyWins,
-				previousSeasonAward: account?.gameSettings?.previousSeasonAward,
-				specialTournamentStatus: account?.gameSettings?.specialTournamentStatus,
+				previousSeasonAward: account?.gameSettings?.previousSeasonAward || '',
+				specialTournamentStatus: account?.gameSettings?.specialTournamentStatus || '',
 				staff: account?.gameSettings?.staff,
 				cardStatus: {
 					cardDisplayed: false,

@@ -3,20 +3,29 @@ import _ from 'lodash';
 import Account from '../../../models/account.mts';
 import GameSummaryBuilder from '../../../models/game-summary/GameSummaryBuilder.mts';
 
-import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mjs';
+import type { ActiveGame } from '../game.d.ts';
+import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.mts';
 
-import { ActiveGame, shufflePolicies, startElection } from './common.mts';
+import { shufflePolicies, startElection } from './common.mts';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 /**
  * @param {object} game - game to act on.
  */
 const beginGame = (game: ActiveGame) => {
 	const { experiencedMode } = game.general;
+	const { customGameSettings } = game;
+
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
 
 	game.general.timeStarted = Date.now();
 	game.general.type = Math.floor((game.publicPlayersState.length - 5) / 2);
 
-	const { customGameSettings } = game;
 	if (!customGameSettings.enabled) {
 		// Standard game, this object needs populating.
 		customGameSettings.hitlerZone = 3;
@@ -43,6 +52,7 @@ const beginGame = (game: ActiveGame) => {
 			if (game.general.rebalance9p2f && game.publicPlayersState.length === 9) customGameSettings.deckState.fas = 10;
 		}
 	}
+
 	shufflePolicies(game, true);
 
 	const roles: any[] = [
@@ -104,11 +114,11 @@ const beginGame = (game: ActiveGame) => {
 
 	game.general.status = 'Dealing roles..';
 
-	game.publicPlayersState.forEach((player: any) => {
+	game.publicPlayersState.forEach((player) => {
 		player.cardStatus.cardDisplayed = true;
 	});
 
-	game.private.seatedPlayers.forEach((player: any, i: number) => {
+	seatedPlayers.forEach((player: any, i: number) => { // TODO: check, used to be seatedPlayers
 		const index = Math.floor(Math.random() * roles.length);
 
 		player.role = roles[index];
@@ -213,41 +223,42 @@ const beginGame = (game: ActiveGame) => {
 				}
 			]
 		};
-		game.private.hiddenInfoChat.push(modOnlyChat);
+		game.private.hiddenInfoChat?.push(modOnlyChat);
 		sendInProgressModChatUpdate(game, modOnlyChat);
 	});
 
-	const libPlayers = game.private.seatedPlayers.filter((player: any) => player.role.team === 'liberal');
-	const fasPlayers = game.private.seatedPlayers.filter((player: any) => player.role.team !== 'liberal');
-	const lib = libPlayers.map((player: any) => player.userName);
-	const fas = fasPlayers.map((player: any) => player.userName);
+	const libPlayers = seatedPlayers.filter((player: any) => player.role.team === 'liberal'); // TODO: check, used to be seatedPlayers
+	const fasPlayers = seatedPlayers.filter((player: any) => player.role.team !== 'liberal');
+	const lib = libPlayers.map((player: any) => player.userName) || []; // TODO: check - is this right?
+	const fas = fasPlayers.map((player: any) => player.userName) || [];
 	const libElo = { overall: 1600, season: 1600 };
 	const fasElo = { overall: 1600, season: 1600 };
+
 	Account.find({
-		username: { $in: game.private.seatedPlayers.map((player: any) => player.userName) }
-	}).then((accounts: any[]) => {
+		username: { $in: seatedPlayers?.map((player: any) => player.userName) }
+	}).then((accounts) => {
 		libElo.overall =
 			lib.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account: any) => account.username === curr).eloOverall ? accounts.find((account: any) => account.username === curr).eloOverall : 1600) + prev,
+					(accounts?.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
 				0
 			) / lib.length;
 		libElo.season =
 			lib.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account: any) => account.username === curr).eloSeason ? accounts.find((account: any) => account.username === curr).eloSeason : 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString()) || 1600) + prev,
 				0
 			) / lib.length;
 		fasElo.overall =
 			fas.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account: any) => account.username === curr).eloOverall ? accounts.find((account: any) => account.username === curr).eloOverall : 1600) + prev,
+					(accounts?.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
 				0
 			) / fas.length;
 		fasElo.season =
 			fas.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account: any) => account.username === curr).eloSeason ? accounts.find((account: any) => account.username === curr).eloSeason : 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString()) || 1600) + prev,
 				0
 			) / fas.length;
 	});
@@ -256,10 +267,10 @@ const beginGame = (game: ActiveGame) => {
 		game.general.uid,
 		new Date(),
 		{
-			rebalance6p: game.general.rebalance6p && game.private.seatedPlayers.length === 6,
-			rebalance7p: game.general.rebalance7p && game.private.seatedPlayers.length === 7,
+			rebalance6p: game.general.rebalance6p && seatedPlayers?.length === 6,
+			rebalance7p: game.general.rebalance7p && seatedPlayers?.length === 7,
 			rebalance9p: false,
-			rerebalance9p: game.general.rerebalance9p && game.private.seatedPlayers.length === 9,
+			rerebalance9p: game.general.rerebalance9p && seatedPlayers?.length === 9,
 			casualGame: Boolean(game.general.casualGame),
 			practiceGame: Boolean(game.general.practiceGame),
 			unlistedGame: Boolean(game.general.unlistedGame),
@@ -267,11 +278,11 @@ const beginGame = (game: ActiveGame) => {
 			noTopdecking: game.general.noTopdecking
 		},
 		game.customGameSettings,
-		game.private.seatedPlayers.map((p: any) => ({
+		seatedPlayers?.map((p: any) => ({
 			username: p.userName,
 			role: p.role.cardName,
 			icon: p.role.icon
-		})),
+		})) || [],
 		libElo,
 		fasElo
 	);
@@ -291,7 +302,7 @@ const beginGame = (game: ActiveGame) => {
 	];
 
 	sendInProgressGameUpdate(game);
-	const hitlerPlayer = game.private.seatedPlayers.find((player: any) => player.role.cardName === 'hitler');
+	const hitlerPlayer = seatedPlayers?.find((player: any) => player.role.cardName === 'hitler');
 
 	if (!hitlerPlayer) {
 		return;
@@ -299,17 +310,17 @@ const beginGame = (game: ActiveGame) => {
 
 	setTimeout(
 		() => {
-			game.private.seatedPlayers.forEach((player: any, i: number) => {
-				const { seatedPlayers } = game.private;
+			seatedPlayers?.forEach((player: any, i: number) => {
+				// TODO: check if this is needed: const { seatedPlayers } = game.private;
 				const { cardName } = player.role;
 				player.playersState[seatedPlayers.indexOf(player)].nameStatus = cardName;
 
 				if (cardName === 'fascist' || cardName === 'morgana') {
 					if (customGameSettings.fascistCount === 2) {
-						const otherFascist = seatedPlayers.find(
+						const otherFascist = seatedPlayers?.find(
 							(play: any) => play.role.team === 'fascist' && play.role.cardName !== 'hitler' && play.userName !== player.userName
 						);
-						const otherFascistIndex = seatedPlayers.indexOf(otherFascist);
+						const otherFascistIndex = seatedPlayers?.indexOf(otherFascist);
 
 						if (!otherFascist) {
 							return;
@@ -730,6 +741,7 @@ const beginGame = (game: ActiveGame) => {
 							}
 						]
 					});
+					
 					player.playersState[seatedPlayers.indexOf(candidates[0])].nameStatus = 'merlin_candidate';
 					player.playersState[seatedPlayers.indexOf(candidates[1])].nameStatus = 'merlin_candidate';
 				}
@@ -743,7 +755,7 @@ const beginGame = (game: ActiveGame) => {
 
 	setTimeout(
 		() => {
-			game.private.seatedPlayers.forEach((player: any, i: number) => {
+			seatedPlayers.forEach((player: any, i: number) => { // TODO: used to be `seatedPlayers`
 				if (!player.playersState) {
 					return;
 				}
@@ -769,7 +781,7 @@ const beginGame = (game: ActiveGame) => {
 
 	setTimeout(
 		() => {
-			game.private.seatedPlayers.forEach((player: any) => {
+			seatedPlayers.forEach((player: any) => {
 				player.playersState.forEach((state: any) => {
 					state.cardStatus = {};
 				});

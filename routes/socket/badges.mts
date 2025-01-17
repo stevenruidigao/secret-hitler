@@ -93,6 +93,7 @@ export const awardBadgePrequeried = (user: any, badgeId: any, badgeText: any, ba
 			title: badgeTitle,
 			dateAwarded: new Date()
 		});
+
 		user.gameSettings.hasUnseenBadge = true;
 	}
 };
@@ -113,7 +114,7 @@ export const removeBadge = (user: any, badgeId: any) => {
  * @param {*} badgeTitle
  */
 export const awardBadge = (username: any, badgeId: any, badgeText: any, badgeTitle: any) => {
-	Account.findOne({ username }).then((user: any) => {
+	Account.findOne({ username }).then((user) => {
 		awardBadgePrequeried(user, badgeId, badgeText, badgeTitle);
 	});
 };
@@ -125,14 +126,14 @@ export const awardBadge = (username: any, badgeId: any, badgeText: any, badgeTit
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
 export const checkBadgesELO = (user: any, gameJustPlayed = '') => {
-	if (!user.eloOverall) {
+	if (!user.overall?.elo) {
 		return;
 	}
 
 	for (const badge of ELO_BADGES) {
 		const [elo, badgeId] = badge;
 
-		if (user.eloOverall >= elo) {
+		if (user.overall.elo >= elo) {
 			awardBadgePrequeried(user, badgeId, gameJustPlayed ? `You reached ${elo} ELO in the game ${gameJustPlayed}.` : ``, `You reached ${elo} ELO!`);
 		}
 	}
@@ -145,14 +146,14 @@ export const checkBadgesELO = (user: any, gameJustPlayed = '') => {
  * @param {*} gameJustPlayed the UID of the game this user just played, if this is being called in end-game
  */
 export const checkBadgesXP = (user: any, gameJustPlayed = '') => {
-	if (!user.xpOverall) {
+	if (!user.overall?.xp) {
 		return;
 	}
 
 	for (const badge of XP_BADGES) {
 		const [xp, badgeId] = badge;
 
-		if (user.xpOverall >= xp) {
+		if (user.overall.xp >= xp) {
 			awardBadgePrequeried(user, badgeId, gameJustPlayed ? `You reached ${xp} XP in the game ${gameJustPlayed}.` : ``, `You reached ${xp} XP!`);
 		}
 	}

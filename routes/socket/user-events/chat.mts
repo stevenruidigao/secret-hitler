@@ -1,10 +1,10 @@
 import { Socket } from 'socket.io';
 
-import { ActiveGame } from '../game/common.mts';
 import { chatReplacements } from '../chatReplacements.mts';
 import { runCommand } from '../commands.mts';
-import { makeReport } from '../report.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { emoteList, userList, generalChats, getLastGenchatModPingAsync, setLastGenchatModPingAsync, getPrivateChatTruncate, newStaff } from '../models.mts';
+import { makeReport } from '../report.mts';
 import { sendCommandChatsUpdate, sendInProgressGameUpdate, sendPlayerChatUpdate } from '../util.mts';
 
 const generalChatReplTime = Array(chatReplacements.length + 1).fill(0);
@@ -77,7 +77,7 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 					);
 					return;
 				}
-			} else if (user.wins + user.losses > repl.normalGames) {
+			} else if (user.overall.wins + user.overall.losses > repl.normalGames) {
 				if (
 					Date.now() > generalChatReplTime[0] + 30000 &&
 					(generalChatReplTime[repl.id] === 0 || Date.now() > generalChatReplTime[repl.id] + repl.normalCooldown * 1000)
@@ -98,7 +98,7 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 		}
 	}
 
-	if (user.xpOverall >= 10.0 || user.isRainbowOverall || process.env.NODE_ENV !== 'production') {
+	if (user.overall.xp >= 10.0 || user.isRainbowOverall || process.env.NODE_ENV !== 'production') {
 		const getStaffRole = () => {
 			if (modUserNames.includes(passport.user) || newStaff.modUserNames.includes(passport.user)) {
 				return 'moderator';
@@ -258,7 +258,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 			if (game.general.private && !game.general.whitelistedPlayers.includes(passport.user)) {
 				return;
 			}
-			if (user.xpOverall < 10 && !user.isRainbowOverall) {
+			if (user.overall.xp < 10 && !user.isRainbowOverall) {
 				return;
 			}
 		}
@@ -268,11 +268,13 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 
 	if (
 		player &&
-		(gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy') &&
-		(publicPlayersState.find((play: any) => play.userName === player.userName).governmentStatus === 'isPresident' ||
-			publicPlayersState.find((play: any) => play.userName === player.userName).governmentStatus === 'isChancellor')
-	) {
-		return;
+		(gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy')) {
+		const p = publicPlayersState.find((play) => play.userName === player.userName);
+
+		if (!p || p.governmentStatus === 'isPresident' ||
+			p.governmentStatus === 'isChancellor') {
+			return;
+		}
 	}
 
 	data.timestamp = new Date();
@@ -311,7 +313,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 					);
 					return;
 				}
-			} else if (user.wins + user.losses > repl.normalGames) {
+			} else if (user.overall.wins + user.overall.losses > repl.normalGames) {
 				if (
 					Date.now() > game.general.chatReplTime[0] + 30000 &&
 					(game.general.chatReplTime[repl.id] === 0 || Date.now() > game.general.chatReplTime[repl.id] + repl.normalCooldown * 1000)
@@ -341,10 +343,16 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 		(game.gameState.isStarted && !game.gameState.isCompleted && player && game.general.playerChats === 'disabled') ||
 		(!(AEM || (isTourneyMod && game.general.unlistedGame)) &&
 			((game.gameState.isStarted && !game.gameState.isCompleted && !player && game.general.disableObserver) || (!player && game.general.disableObserverLobby)));
+
 	if (cantUseChat) {
+		if (!game.private.commandChats) {
+			game.private.commandChats = {};
+		}
+
 		if (!game.private.commandChats[user.userName]) {
 			game.private.commandChats[user.userName] = [];
 		}
+
 		const msg = player ? 'Chat is disabled in this game.' : 'Observer chat is disabled in this game.';
 
 		game.private.commandChats[user.userName].push({
@@ -356,6 +364,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 				}
 			]
 		});
+
 		sendInProgressGameUpdate(game);
 		return;
 	}
@@ -369,7 +378,8 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 			return 'admin';
 		}
 	})();
-	if (AEM && user.staff && user.staff.incognito) {
+
+	if (AEM && user.staff?.incognito) {
 		data.hiddenUsername = data.userName;
 		data.staffRole = 'moderator';
 		data.userName = 'Incognito';

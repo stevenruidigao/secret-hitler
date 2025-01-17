@@ -1,4 +1,5 @@
 import debug from 'debug';
+// @ts-expect-error: no types for 'option'
 import { fromNullable } from 'option';
 import { List } from 'immutable';
 

@@ -1,10 +1,20 @@
 import https from 'https';
 
 import Account from '../../models/account.mts';
-import { ActiveGame } from './game/common.mts';
+
+import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.mts';
 
-function sendReport(game: any, report: any, data: any, type: string) {
+function sendReport(game: ActiveGame | undefined, report: any, data: any, type: string) {
+	if (!game) return;
+
+	if (!game.private.seatedPlayers) {
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+		game.private.seatedPlayers = [];
+	}
+
+	const { seatedPlayers } = game.private;
+	
 	Account.find({ staffRole: { $exists: true } }).then((accounts: any[]) => {
 		const staffUserNames = accounts
 			.filter(
@@ -16,7 +26,7 @@ function sendReport(game: any, report: any, data: any, type: string) {
 					account.staffRole === 'trialmod'
 			)
 			.map((account: any) => account.username);
-		const players = game.private.seatedPlayers.map((player: any) => player.userName);
+		const players = seatedPlayers.map((player: any) => player.userName);
 		const isStaff = players.some(
 			(n: string) =>
 				staffUserNames.includes(n) ||
@@ -60,6 +70,13 @@ function sendReport(game: any, report: any, data: any, type: string) {
 
 export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 	const { player, seat, role, election, situation, uid, gameType, homepage } = data;
+
+	if (game && !game.private?.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const seatedPlayers = (game && game.private?.seatedPlayers) || [];
 
 	if (!homepage) {
 		// No Auto-Reports, or Mod Pings from Custom, Unlisted, or Private Games
@@ -140,7 +157,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 						let ip;
 						if (account) ip = account.lastConnectedIP || account.signupIP;
 
-						const seat = game.private.seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
+						const seat = seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
 						if (ip === throwerIP) {
 							matches[seat] = `${account.username} {${seat + 1}}`;
 						} else if (

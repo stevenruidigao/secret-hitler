@@ -11,6 +11,7 @@ import Signups from '../../models/signups.mts';
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
 import version from '../../version.mts';
 
+import type { ActiveGame } from './game.d.ts';
 import { obfIP } from './ip-obf.mts';
 import {
 	games,
@@ -25,10 +26,10 @@ import {
 	formattedUserList,
 	gameListEmitter,
 	formattedGameList,
-	staffList
+	staffList,
+	User
 } from './models.mts';
 import { sendInProgressGameUpdate } from './util.mts';
-import { ActiveGame } from './game/common.mts';
 
 /**
  * @param {object} socket - user socket reference.
@@ -190,15 +191,15 @@ export const sendUserGameSettings = (socket: Socket) => {
 			getProfile(passport.user);
 
 			if (account && !userListNames.includes(passport.user)) {
-				const userListInfo: Record<string, any> = {
+				const userListInfo: User = {
 					userName: passport.user,
 					playerPronouns: account.gameSettings?.playerPronouns,
 					staffRole: account.staffRole || '',
 					isContributor: account.isContributor || false,
 					staff: account.gameSettings?.staff,
-					isRainbowOverall: account.isRainbowOverall,
-					isRainbowSeason: account.isRainbowSeason,
-					isPrivate: account.gameSettings?.isPrivate,
+					isRainbowOverall: account.isRainbowOverall || false,
+					isRainbowSeason: account.isRainbowSeason || false,
+					isPrivate: account.gameSettings?.isPrivate || false,
 					tournyWins: account.gameSettings?.tournyWins,
 					blacklist: account.gameSettings?.blacklist,
 					customCardback: account.gameSettings?.customCardback,

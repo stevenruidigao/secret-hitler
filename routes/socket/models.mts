@@ -1,7 +1,7 @@
 import fs from 'fs';
+import { promisify } from 'util';
 
 import redis from 'redis';
-import { promisify } from 'util';
 
 import Account from '../../models/account.mts';
 import BannedIP from '../../models/bannedIP.mts';
@@ -10,7 +10,7 @@ import ModAction from '../../models/modAction.mts';
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
 import version from '../../version.mts';
 
-import { ActiveGame } from './game/common.mts';
+import type { ActiveGame } from './game.d.ts';
 import { doesIPMatchCIDR } from './ip-obf.mts';
 
 const io = global.io;
@@ -44,9 +44,11 @@ export const cloneSettingsFromRedis = async () => {
 export const getLastGenchatModPingAsync = async () => {
 	return JSON.parse(await getGlobalSetting('genchat-mod-ping') || '{}');
 };
-export const setLastGenchatModPingAsync = async (date: any) => {
+
+export const setLastGenchatModPingAsync = async (date: number) => {
 	await setGlobalSetting('genchat-mod-ping', JSON.stringify(date));
 };
+
 export const getPrivateChatTruncate = async () => {
 	return globalSettingsCache['private-chat-truncate'];
 };
@@ -54,7 +56,39 @@ export const getPrivateChatTruncate = async () => {
 export const emoteList = emotes;
 
 export const games: Record<string, ActiveGame> = {};
-export const userList: any[] = [];
+
+export type User = {
+	isPrivate: boolean;
+	userName: string;
+	playerPronouns?: string;
+	customCardback?: {
+		uid?: string;
+		fileExtension?: string;
+		saveTime?: string;
+	};
+	staffRole: string;
+	staff?: {
+		disableVisibleElo?: boolean;
+		disableVisibleXP?: boolean;
+		disableStaffColor?: boolean;
+		incognito?: boolean;
+	};
+	isContributor: boolean;
+	status: any;
+	timeLastGameCreated?: number;
+	lastMessage?: any;
+	blacklist?: any[];
+	overall: any;
+	season: any;
+	isRainbowOverall: boolean;
+	isRainbowSeason: boolean;
+	previousSeasonAward?: string;
+	specialTournamentStatus?: string;
+	tournyWins: any;
+}
+
+export const userList: User[] = [];
+
 export const generalChats: {
 	sticky: string,
 	list: any[]
@@ -62,14 +96,17 @@ export const generalChats: {
 	sticky: '',
 	list: []
 };
+
 export const modDMs: any = {
 	// player username => full object
 };
+
 export const accountCreationDisabled = { status: false };
 export const bypassVPNCheck = { status: false };
 export const ipbansNotEnforced = { status: false };
 export const gameCreationDisabled = { status: false };
 export const limitNewPlayers = { status: false };
+
 export const newStaff: Record<string, string[]> = {
 	modUserNames: [],
 	editorUserNames: [],
@@ -232,7 +269,7 @@ export const formattedGameList = () => {
 			? 'isStarted'
 			: 'notStarted',
 		seatedCount: games[gameName].publicPlayersState.length,
-		gameCreatorName: games[gameName].private.gameCreatorName,
+		gameCreatorName: games[gameName].private?.gameCreatorName,
 		minPlayersCount: games[gameName].general.minPlayersCount,
 		maxPlayersCount: games[gameName].general.maxPlayersCount || games[gameName].general.minPlayersCount,
 		excludedPlayerCount: games[gameName].general.excludedPlayerCount,
@@ -259,8 +296,8 @@ export const formattedGameList = () => {
 		playerChats: games[gameName].general.playerChats || undefined,
 		disableGamechat: games[gameName].general.disableGamechat || undefined,
 		blindMode: games[gameName].general.blindMode || undefined,
-		enactedLiberalPolicyCount: games[gameName].trackState.liberalPolicyCount,
-		enactedFascistPolicyCount: games[gameName].trackState.fascistPolicyCount,
+		enactedLiberalPolicyCount: games[gameName].trackState.policyCount.liberal,
+		enactedFascistPolicyCount: games[gameName].trackState.policyCount.fascist,
 		electionCount: games[gameName].general.electionCount,
 		rebalance6p: games[gameName].general.rebalance6p || undefined,
 		rebalance7p: games[gameName].general.rebalance7p || undefined,

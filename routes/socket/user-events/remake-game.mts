@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import { ActiveGame } from '../game/common.mts';
-import { saveAndDeleteGame } from '../game/end-game.mts';
 import { chatReplacements } from '../chatReplacements.mts';
+import type { ActiveGame } from '../game.d.ts';
+import { saveAndDeleteGame } from '../game/end-game.mts';
 import { gameCreationDisabled, games, userList } from '../models.mts';
-import { sendInProgressGameUpdate } from '../util.mts';
 import { sendGameList, sendGameInfo } from '../user-requests.mts';
+import { sendInProgressGameUpdate } from '../util.mts';
 
 import { updateSeatedUser } from './join-game.mts';
 import { checkStartConditions } from './leave-game.mts';
@@ -36,6 +36,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 	const realPlayerIndex = publicPlayersState.findIndex((player: any) => player.userName === passport.user);
 	const player = remakeData[playerIndex];
 	let chat;
+
+	game.general.playerCount = game.general.playerCount || 5;
+
 	const minimumRemakeVoteCount = (game.customGameSettings.fascistCount 
 			&& game.general.playerCount - game.customGameSettings.fascistCount) 
 		|| Math.floor(game.general.playerCount / 2) + 2;
@@ -86,7 +89,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		}
 
 		const _game = Object.assign({}, game);
-		delete _game.private;
+		_game.private = {}; // TODO: is this right? used to be `delete _game.private;`
 		const newGame = _.cloneDeep(_game);
 		const remakePlayerNames = remakeData.filter((player: any) => player.isRemaking).map((player: any) => player.userName);
 		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter(
@@ -104,7 +107,8 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			undrawnPolicyCount: 17,
 			discardedPolicyCount: 0,
 			presidentIndex: -1,
-			isCompleted: false,
+			isCompleted: undefined, // TODO: check; used to be `false`
+			isStarted: false, // TODO: check
 			timeCompleted: undefined
 		};
 
@@ -196,17 +200,22 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					cardBack: {}
 				}
 			}));
+
 		newGame.remakeData = [];
 		newGame.playersState = [];
 		newGame.cardFlingerState = [];
 		newGame.guesses = {};
 		newGame.merlinGuesses = {};
+
 		newGame.trackState = {
-			liberalPolicyCount: 0,
-			fascistPolicyCount: 0,
+			policyCount: {
+				liberal: 0,
+				fascist: 0
+			},
 			electionTrackerCount: 0,
 			enactedPolicies: []
 		};
+
 		newGame.private = {
 			reports: {},
 			unSeatedGameChats: [],
@@ -215,16 +224,19 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			lock: {},
 			votesPeeked: false,
 			invIndex: -1,
-			privatePassword: game.private.privatePassword,
+			privatePassword: game.private?.privatePassword,
 			hiddenInfoChat: [],
 			hiddenInfoSubscriptions: [],
 			hiddenInfoShouldNotify: true,
-			gameCreatorName: game.private.gameCreatorName,
-			gameCreatorBlacklist: game.private.gameCreatorBlacklist
+			gameCreatorName: game.private?.gameCreatorName,
+			gameCreatorBlacklist: game.private?.gameCreatorBlacklist,
+			// TODO: CHECK (NEW)
+			seatedPlayers: [],
+			policies: []
 		};
 
 		game.publicPlayersState.forEach((player: any, i: number) => {
-			if (game.private.seatedPlayers && game.private.seatedPlayers[i] && game.private.seatedPlayers[i].role) {
+			if (game.private?.seatedPlayers && game.private?.seatedPlayers[i] && game.private.seatedPlayers[i].role) {
 				player.cardStatus.cardFront = 'secretrole';
 				player.cardStatus.cardBack = game.private.seatedPlayers[i].role;
 				player.cardStatus.cardDisplayed = true;
@@ -233,21 +245,24 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		});
 
 		game.general.status = 'Game is being remade..';
+
 		if (!game.summarySaved) {
-			const summary = game.private.summary.publish();
+			const summary = game.private?.summary.publish();
+
 			if (summary && summary.toObject() && game.general.uid !== 'devgame' && !game.general.private) {
 				summary.save();
 				game.summarySaved = true;
 			}
 		}
+
 		sendInProgressGameUpdate(game);
 
 		setTimeout(() => {
-			game.publicPlayersState.forEach((player: any) => {
+			game.publicPlayersState.forEach((player) => {
 				if (remakePlayerNames.includes(player.userName)) player.leftGame = true;
 			});
 
-			if (game.publicPlayersState.filter((publicPlayer: any) => publicPlayer.leftGame).length === game.general.playerCount) {
+			if (game.publicPlayersState.filter((publicPlayer) => publicPlayer.leftGame).length === game.general.playerCount) {
 				saveAndDeleteGame(game.general.uid);
 			} else {
 				sendInProgressGameUpdate(game);
@@ -272,14 +287,19 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 						handshake.session.passport
 					) {
 						updateSeatedUser(socket, handshake.session.passport, { uid: newGame.general.uid });
-						if (handshake.session.passport.user === newGame.private.gameCreatorName) creatorRemade = true;
+						if (handshake.session.passport.user === newGame.private?.gameCreatorName) creatorRemade = true;
 					}
 				}
 			});
-			if (creatorRemade && newGame.private.gameCreatorBlacklist != null) {
-				const creator = userList.find(user => user.userName === newGame.private.gameCreatorName);
-				if (creator) newGame.private.gameCreatorBlacklist = creator.blacklist;
-			} else newGame.private.gameCreatorBlacklist = null;
+			if (creatorRemade && newGame.private?.gameCreatorBlacklist != null) {
+				const creator = userList.find(user => user.userName === newGame.private?.gameCreatorName);
+				if (creator) newGame.private.gameCreatorBlacklist = creator.blacklist as any[];
+			} else {
+				if (!newGame.private) {
+					newGame.private = {};
+				}
+				newGame.private.gameCreatorBlacklist = []; // TODO: check; used to be `null`
+			}
 			checkStartConditions(newGame);
 		}, 3000);
 	};
@@ -335,14 +355,22 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			game.general.isRemaking = true;
 			game.general.remakeCount = 5;
 
+			if (!game.private) {
+				game.private = {};
+			}
+
 			game.private.remakeTimer = setInterval(() => {
+				if (!game.general.remakeCount) {
+					game.general.remakeCount = 5;
+				}
+
 				if (game.general.remakeCount !== 0) {
 					game.general.status = `Game is ${game.general.isTourny ? 'cancelled ' : 'remade'} in ${game.general.remakeCount} ${
 						game.general.remakeCount === 1 ? 'second' : 'seconds'
 					}.`;
 					game.general.remakeCount--;
 				} else {
-					clearInterval(game.private.remakeTimer);
+					clearInterval(game.private?.remakeTimer);
 					game.general.status = `Game has been ${game.general.isTourny ? 'cancelled' : 'remade'}.`;
 					game.general.isRemade = true;
 
@@ -354,7 +382,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 								text: 'The remaining policies are '
 							},
 							{
-								policies: game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
+								policies: game.private?.policies && game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
 							},
 							{
 								text: '.'
@@ -362,10 +390,13 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 						]
 					};
 
-					game.private.unSeatedGameChats.push(remainingPoliciesChat);
-					game.private.seatedPlayers.forEach((player: any) => {
-						player.gameChats.push(remainingPoliciesChat);
-					});
+					game.private?.unSeatedGameChats?.push(remainingPoliciesChat);
+
+					if (game.private?.seatedPlayers) {
+						game.private.seatedPlayers.forEach((player) => {
+							player.gameChats.push(remainingPoliciesChat);
+						});
+					}
 
 					if (game.general.isTourny) {
 						cancellTourny(game.general.uid);
@@ -385,7 +416,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		if (game.general.isRemaking && remakePlayerCount < minimumRemakeVoteCount) {
 			game.general.isRemaking = false;
 			game.general.status = 'Game remaking has been cancelled.';
-			clearInterval(game.private.remakeTimer);
+			clearInterval(game.private?.remakeTimer);
 		}
 
 		chat.chat.push({

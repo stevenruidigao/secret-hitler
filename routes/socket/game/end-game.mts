@@ -6,18 +6,18 @@ import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhanced
 import Game, { IGame } from '../../../models/game.mts';
 import { updateProfiles } from '../../../models/profile/utils.mts';
 
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mjs';
-import animals from '../../../utils/animals.mjs';
-import adjectives from '../../../utils/adjectives.mjs';
+import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
+import animals from '../../../utils/animals.mts';
+import adjectives from '../../../utils/adjectives.mts';
 
 import { checkBadgesELO, checkBadgesXP } from '../badges.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { userList, games } from '../models.mts';
-import { makeReport } from '../report.mjs';
+import { makeReport } from '../report.mts';
 import { sendUserList, sendGameList } from '../user-requests.mts';
-import { LineGuess, sendInProgressGameUpdate, rateEloGame } from '../util.mjs';
+import { LineGuess, sendInProgressGameUpdate, rateEloGame } from '../util.mts';
 
-import { ActiveGame } from './common.mts';
-import startGame from './start-game.mjs';
+import startGame from './start-game.mts';
 
 const debugLogger = debug('game:summary');
 
@@ -36,7 +36,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 			date: new Date(),
 			guesses: objMap(game?.guesses, (_: any, g: any) => g?.toString()),
 			merlinGuesses: objMap(game?.merlinGuesses, (_: any, g: any) => g),
-			playerChats: game?.general?.playerChats,
+			playerChats: game?.general?.playerChats as any[], // TODO: fix assertion
 			chats: game?.chats?.concat(game?.private?.unSeatedGameChats)?.concat(game?.private?.replayGameChats),
 			hiddenInfoChat: game?.private?.hiddenInfoChat,
 			isVerifiedOnly: game?.general?.isVerifiedOnly,
@@ -87,7 +87,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 		date: new Date(),
 		guesses: objMap(game?.guesses, (_: any, g: any) => g?.toString()),
 		merlinGuesses: objMap(game?.merlinGuesses, (_: any, g: any) => g),
-		playerChats: game?.general?.playerChats,
+		playerChats: game?.general?.playerChats as any[], // TODO: aahhhhhh
 		chats: game?.chats?.concat(game?.private?.unSeatedGameChats)?.concat(game?.private?.replayGameChats),
 		isVerifiedOnly: game?.general?.isVerifiedOnly,
 		season: CURRENT_SEASON_NUMBER,
@@ -189,6 +189,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		game.unsentReports.forEach((report: any) => {
 			makeReport({ ...report }, game, report.type === 'modchat' ? 'modchatdelayed' : 'reportdelayed');
 		});
+
 		game.unsentReports = [];
 	}
 
@@ -226,10 +227,12 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		return;
 	}
 
-	const winningPrivatePlayers = game.private.seatedPlayers.filter((player: any) => player.role.team === winningTeamName);
-	const winningPlayerNames = winningPrivatePlayers.map((player: any) => player.userName);
+	const winningPrivatePlayers = game.private.seatedPlayers?.filter((player: any) => player.role.team === winningTeamName);
+	const winningPlayerNames = winningPrivatePlayers?.map((player: any) => player.userName);
+
 	let { seatedPlayers } = game.private;
 	const { publicPlayersState } = game;
+
 	const chat = {
 		gameChat: true,
 		timestamp: new Date(),
@@ -249,7 +252,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				text: 'The remaining policies are '
 			},
 			{
-				policies: game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
+				policies: game.private.policies?.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
 			},
 			{
 				text: '.'
@@ -258,15 +261,23 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	};
 
 	if (!(game.general.isTourny && game.general.tournyInfo.round === 1)) {
-		winningPrivatePlayers.forEach((player: any, index: number) => {
-			publicPlayersState.find((play: any) => play.userName === player.userName).notificationStatus = 'success';
-			publicPlayersState.find((play: any) => play.userName === player.userName).isConfetti = true;
+		winningPrivatePlayers?.forEach((player: any, index: number) => {
+			const play = publicPlayersState.find((play) => play.userName === player.userName);
+
+			if (!play) return;
+
+			play.notificationStatus = 'success';
+			play.isConfetti = true;
 			player.wonGame = true;
 		});
 
 		setTimeout(() => {
-			winningPrivatePlayers.forEach((player: any, index: number) => {
-				publicPlayersState.find((play: any) => play.userName === player.userName).isConfetti = false;
+			winningPrivatePlayers?.forEach((player: any, index: number) => {
+				const play = publicPlayersState.find((play) => play.userName === player.userName);
+
+				if (!play) return;
+
+				play.isConfetti = false;
 			});
 			sendInProgressGameUpdate(game, true);
 		}, 15000);
@@ -277,15 +288,15 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	game.gameState.timeCompleted = Date.now();
 	sendGameList();
 
-	publicPlayersState.forEach((publicPlayer: any, index: number) => {
-		publicPlayer.nameStatus = seatedPlayers[index].role.cardName;
+	publicPlayersState.forEach((publicPlayer, index: number) => {
+		publicPlayer.nameStatus = seatedPlayers && seatedPlayers[index].role.cardName;
 	});
 
-	seatedPlayers.forEach((player: any) => {
+	seatedPlayers?.forEach((player: any) => {
 		player.gameChats.push(chat, remainingPoliciesChat);
 	});
 
-	game.private.unSeatedGameChats.push(chat, remainingPoliciesChat);
+	game.private.unSeatedGameChats?.push(chat, remainingPoliciesChat);
 
 	game.summary = game.private.summary;
 	debugLogger('Final game summary: %O', game.summary.publish().toObject());
@@ -299,19 +310,19 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	// Don't compute Elo for private, casual, custom, silent, private, or unlisted games
 	if (
 		!game.general.private &&
-		game.general.playerChats !== 'disabled' &&
+		game.general.playerChats as string !== 'disabled' && // TODO: this sucks
 		!game.general.casualGame &&
 		!(game.customGameSettings && game.customGameSettings.enabled) &&
 		!game.general.practiceGame &&
 		!game.general.unlistedGame
 	) {
 		Account.find({
-			username: { $in: seatedPlayers.map((player: any) => player.userName) }
+			username: { $in: seatedPlayers?.map((player: any) => player.userName) }
 		})
-			.then((results: any) => {
+			.then((results) => {
 				const isRainbow = game.general.rainbowgame;
 				const isTournamentFinalGame = game.general.isTourny && game.general.tournyInfo.round === 2;
-				const eloAdjustments = rateEloGame(game, results, winningPlayerNames);
+				const eloAdjustments = rateEloGame(game, results, winningPlayerNames || []); // TODO: there has to be a better way
 
 				const byUsername = (a: any, b: any) => {
 					if (a.userName === b.userName)
@@ -320,6 +331,10 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					if (a.userName > b.userName) return 1;
 					return -1;
 				};
+
+				if (!seatedPlayers) {
+					seatedPlayers = [];
+				}
 
 				seatedPlayers = [
 					...seatedPlayers.filter((e: any) => e.role.cardName === 'hitler'),
@@ -335,7 +350,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					const activeChange = playerChange?.change;
 					const activeChangeXP = playerChange?.xpChange;
 
-					game.private.replayGameChats.push({
+					game.private.replayGameChats?.push({
 						gameChat: true,
 						timestamp: new Date(Date.now() + i),
 						chat: [
@@ -356,7 +371,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						]
 					});
 
-					game.private.replayGameChats.push({
+					game.private.replayGameChats?.push({
 						gameChat: true,
 						timestamp: new Date(Date.now() + i),
 						chat: [
@@ -388,9 +403,9 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						listUser.isRainbowSeason = player.isRainbowSeason;
 					}
 
-					const seatedPlayer = seatedPlayers.find((p: any) => p.userName === player.username);
+					const seatedPlayer = seatedPlayers?.find((p: any) => p.userName === player.username);
 
-					seatedPlayers.forEach((eachPlayer: any, i: number) => {
+					seatedPlayers?.forEach((eachPlayer: any, i: number) => {
 						const playerChange = eloAdjustments[eachPlayer.userName];
 						const activeChange = player.gameSettings.disableSeasonal ? playerChange?.change : playerChange?.changeSeason;
 						const activeChangeXP = player.gameSettings.disableSeasonal ? playerChange?.xpChange : playerChange?.xpChangeSeason;
@@ -465,7 +480,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						};
 					}
 
-					if (winningPlayerNames.includes(player.username)) {
+					if (winningPlayerNames?.includes(player.username)) {
 						winner = true;
 
 						if (isRainbow) {
@@ -583,22 +598,27 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	} else if (game.general.playerChats === 'disabled' || game.general.practiceGame) {
 		// 2 XP for win, 1 for loss
 		Account.find({
-			username: { $in: seatedPlayers.map((player: any) => player.userName) }
-		}).then((results: any) => {
+			username: { $in: seatedPlayers?.map((player: any) => player.userName) }
+		}).then((results) => {
 			for (const player of results) {
 				if (!player.overall) {
-					player.overall = {};
+					player.overall = {
+						xp: 0,
+						elo: 1600,
+						wins: 0,
+						losses: 0,
+						rainbowWins: 0,
+						rainbowLosses: 0
+					};
 				}
 
 				if (!player.seasons) {
 					player.seasons = new Map();
 				}
 
-				let currentSeason;
+				let currentSeason = player.seasons.get(CURRENT_SEASON_NUMBER.toString());
 
-				if (player.seasons.get(CURRENT_SEASON_NUMBER.toString())) {
-					currentSeason = player.seasons.get(CURRENT_SEASON_NUMBER.toString());
-				} else {
+				if (!currentSeason) {
 					currentSeason = {
 						xp: 0,
 						elo: 1600,
@@ -609,7 +629,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					};
 				}
 
-				if (winningPlayerNames.includes(player.username)) {
+				if (winningPlayerNames?.includes(player.username)) {
 					player.overall.xp += 2;
 					currentSeason.xp += 2;
 				} else {
@@ -648,6 +668,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 
 				finalGame.general.uid = `${uid.substr(0, uid.length - 1)}Final`;
 				finalGame.general.timeCreated = new Date();
+
 				finalGame.gameState = {
 					previousElectedGovernment: [],
 					undrawnPolicyCount: 17,
@@ -655,9 +676,12 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					presidentIndex: -1,
 					isStarted: true
 				};
+
 				finalGame.trackState = {
-					liberalPolicyCount: 0,
-					fascistPolicyCount: 0,
+					policyCount: {
+						liberal: 0,
+						fascist: 0
+					},
 					electionTrackerCount: 0,
 					enactedPolicies: []
 				};
@@ -665,21 +689,26 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				const countDown = setInterval(() => {
 					if (gamePause) {
 						game.general.status = `Final game starts in ${gamePause} ${gamePause === 1 ? 'second' : 'seconds'}.`;
+
 						if (otherGame) {
 							otherGame.general.status = `Final game starts in ${gamePause} ${gamePause === 1 ? 'second' : 'seconds'}.`;
 							sendInProgressGameUpdate(otherGame);
 						}
+
 						sendInProgressGameUpdate(game);
 						gamePause--;
 					} else {
 						clearInterval(countDown);
 						game.general.status = 'Final game has begun.';
+
 						if (otherGame) {
 							otherGame.general.status = 'Final game has begun.';
 							sendInProgressGameUpdate(otherGame);
 						}
+
 						game.general.tournyInfo.isRound1TableThatFinished2nd = true;
 						sendInProgressGameUpdate(game);
+
 						const winningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
 							socketId => {
 								const socket = io.sockets.sockets.get(socketId);
@@ -689,7 +718,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 								const handshake = socket.handshake as any;
 
 								return handshake?.session?.passport &&
-									winningPrivatePlayers.map((player: any) => player.userName).includes(handshake.session.passport.user);
+									winningPrivatePlayers?.map((player: any) => player.userName).includes(handshake.session.passport.user);
 							}
 						);
 
@@ -728,8 +757,9 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 
 						finalGame.general.tournyInfo.round = 2;
 						finalGame.general.electionCount = 0;
+
 						finalGame.publicPlayersState = game.general.tournyInfo.winningPlayersFirstCompletedGame
-							.concat(game.private.seatedPlayers.filter((player: any) => player.role.team === winningTeamName))
+							.concat(game.private.seatedPlayers?.filter((player: any) => player.role.team === winningTeamName))
 							.map((player: any) => {
 								player.cardStatus = {
 									cardDisplayed: false,
@@ -775,15 +805,17 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						}
 					]
 				});
-				otherGame.general.tournyInfo.winningPlayersFirstCompletedGame = _.cloneDeep(game.private.seatedPlayers).filter(
+
+				otherGame.general.tournyInfo.winningPlayersFirstCompletedGame = _.cloneDeep(game.private.seatedPlayers)?.filter(
 					(player: any) => player.role.team === winningTeamName
 				);
+
 				sendInProgressGameUpdate(game);
 			}
 		} else {
 			if (!game.general.casualGame) {
-				game.publicPlayersState.forEach((player: any) => {
-					if (winningPlayerNames.includes(player.userName)) {
+				game.publicPlayersState.forEach((player) => {
+					if (winningPlayerNames?.includes(player.userName)) {
 						player.tournyWins.push(new Date().getTime());
 					}
 				});
@@ -829,14 +861,13 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	}
 
 	if (!_.isEmpty(guesses)) {
-		const hittySeat = game.private.seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler') + 1;
-		const fasSeats = game.private.seatedPlayers
-			.map((p: any, i: number) => [p, i])
-			.filter(([p, _]: [any, number]) => p.role.team === 'fascist')
-			.map(([_, i]: [any, number]) => i + 1);
+		const hittySeat = (game.private.seatedPlayers?.findIndex(p => p.role.cardName === 'hitler') || -1) + 1;
+		const fasSeats = game.private.seatedPlayers?.map((p, i: number) => [p, i])
+			.filter(([p, _]: any[]) => p.role.team === 'fascist') // TODO: better types?
+			.map(([_, i]: any[]) => i + 1);
 
-		const numFas = fasSeats.length;
-		const lines = new LineGuess({ regs: fasSeats, hit: hittySeat });
+		const numFas = fasSeats?.length;
+		const lines = new LineGuess({ regs: fasSeats || [], hit: hittySeat });
 
 		const groupedGuesses: [any, number][][] = Array.from({ length: 5 }, () => []);
 		const perfectGuesses: [string, any][] = [];
@@ -873,7 +904,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			game.chats.push(guessesToChat('All fascists AND hitler correct - ', perfectGuesses));
 		}
 
-		for (let i = numFas; i >= 0; i--) {
+		for (let i = numFas || 0; i >= 0; i--) {
 			const prefix =
 				i === numFas
 					? 'All fascists correct - '
@@ -896,7 +927,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	}
 
 	if (!_.isEmpty(merlinGuesses)) {
-		const merlinSeat = game.private.seatedPlayers.findIndex((p: any) => p.role.cardName === 'merlin') + 1;
+		const merlinSeat = (game.private.seatedPlayers?.findIndex((p: any) => p.role.cardName === 'merlin') || -1) + 1;
 		const groupedGuesses = _.groupBy(Object.entries(merlinGuesses), ([_, g]) => g);
 
 		if (!game.chats) {

@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import Account, { IAccount, ITheme } from '../../../models/account.mts';
+import Account, { ITheme } from '../../../models/account.mts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.mts';
 
 import { userList } from '../models.mts';

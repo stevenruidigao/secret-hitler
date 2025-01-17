@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io';
 
+import type { ActiveGame } from '../game.d.ts';
 import { sendInProgressGameUpdate } from '../util.mts';
 
-import { ActiveGame } from './common.mts';
 import { selectVoting } from './election.mts';
 
 /**
@@ -13,7 +13,8 @@ import { selectVoting } from './election.mts';
  * @param {bool} force - whether or not this action was forced.
  */
 export const selectChancellor = (passport: any, game: ActiveGame, data: any, socket?: Socket, force = false) => {
-	if ((game.general.isTourny && game.general.tournyInfo.isCancelled) || data.chancellorIndex >= game.general.playerCount || data.chancellorIndex < 0) {
+	if ((game.general.isTourny && game.general.tournyInfo.isCancelled) 
+		|| data.chancellorIndex >= (game.general.playerCount as number) || data.chancellorIndex < 0) { // TODO: avoid defining the type like this
 		return;
 	}
 
@@ -24,12 +25,18 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 		return;
 	}
 
+	if (!game.private) {
+		game.private = {};
+	}
+
 	const { chancellorIndex } = data;
 	const { presidentIndex } = game.gameState;
 	const { experiencedMode } = game.general;
-	const seatedPlayers = game.private.seatedPlayers.filter((player: any) => !player.isDead);
-	const presidentPlayer = game.private.seatedPlayers[presidentIndex];
-	const chancellorPlayer = game.private.seatedPlayers[chancellorIndex];
+	const seatedPlayers = game.private.seatedPlayers?.filter((player: any) => !player.isDead);
+	const presidentPlayer =  game.private.seatedPlayers && game.private.seatedPlayers[presidentIndex];
+	const chancellorPlayer = game.private.seatedPlayers && game.private.seatedPlayers[chancellorIndex];
+
+	game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: don't cast
 
 	// Make sure the pick is valid
 	if (
@@ -80,8 +87,8 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			});
 
 		sendInProgressGameUpdate(game, true);
-
-		seatedPlayers.forEach((player: any) => {
+		
+		seatedPlayers?.forEach((player: any) => {
 			if (!game.general.disableGamechat) {
 				player.gameChats.push({
 					gameChat: true,
@@ -156,7 +163,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			]
 		};
 
-		game.private.unSeatedGameChats.push(unseatedChat);
+		game.private.unSeatedGameChats?.push(unseatedChat);
 
 		setTimeout(
 			() => {
@@ -169,7 +176,11 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 
 		setTimeout(
 			() => {
-				seatedPlayers.forEach((player: any) => {
+				if (!game.private) {
+					game.private = {};
+				}
+
+				seatedPlayers?.forEach((player: any) => {
 					if (player.cardFlingerState && player.cardFlingerState.length) {
 						player.cardFlingerState[0].cardStatus.isFlipped = player.cardFlingerState[1].cardStatus.isFlipped = true;
 						player.cardFlingerState[0].notificationStatus = player.cardFlingerState[1].notificationStatus = 'notification';
@@ -184,7 +195,9 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 						clearTimeout(game.private.timerId);
 						game.private.timerId = null;
 					}
+
 					game.gameState.timedModeEnabled = true;
+
 					game.private.timerId = setTimeout(
 						() => {
 							const neededPlayers = (() => {
@@ -203,10 +216,12 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 										return 7;
 								}
 							})();
-							const activePlayerCount = game.publicPlayersState.filter((player: any) => !player.leftGame || player.isDead).length;
+
+							const activePlayerCount = game.publicPlayersState.filter((player) => !player.leftGame || player.isDead).length;
+
 							if (activePlayerCount < (neededPlayers || 0)) {
 								if (!game.general.disableGamechat) {
-									seatedPlayers.forEach((player: any) => {
+									seatedPlayers?.forEach((player: any) => {
 										player.gameChats.push({
 											gameChat: true,
 											timestamp: new Date(),
@@ -223,14 +238,15 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 							}
 
 							if (game.gameState.timedModeEnabled) {
-								const unvotedPlayerNames = game.private.seatedPlayers
-									.filter((player: any) => !player.voteStatus.hasVoted && !player.isDead)
+								const unvotedPlayerNames = game.private?.seatedPlayers?.filter(
+										(player: any) => !player.voteStatus.hasVoted && !player.isDead
+									)
 									.map((player: any) => player.userName);
 
 								game.gameState.timedModeEnabled = false;
-								unvotedPlayerNames.forEach((userName: string) => {
+								unvotedPlayerNames?.forEach((userName: string) => {
 									selectVoting({ user: userName }, game, { vote: Boolean(Math.random() > 0.5) }, socket);
-									game.private.replayGameChats.push({
+									game.private?.replayGameChats?.push({
 										gameChat: true,
 										timestamp: new Date(),
 										chat: [

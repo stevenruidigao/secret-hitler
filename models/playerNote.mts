@@ -2,10 +2,16 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const playerNote = new Schema({
+export interface IPlayerNote {
+	userName?: string;
+	notedUser?: string;
+	note?: string;
+}
+
+const playerNote = new Schema<IPlayerNote>({
 	userName: String,
 	notedUser: String,
 	note: String
 });
 
-export default mongoose.model('PlayerNote', playerNote);
+export default mongoose.model<IPlayerNote>('PlayerNote', playerNote);

@@ -8,10 +8,11 @@ import { sendPlayerNotes } from '../user-requests.mts';
  * @param {object} socket - user socket reference.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedPlayerNote = (socket: Socket, data: any) => {
-	PlayerNote.findOne({ userName: data.userName, notedUser: data.notedUser }).then((note: any) => {
+export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: string, userName: string, note: string }) => {
+	PlayerNote.findOne({ userName: data.userName, notedUser: data.notedUser }).then((note) => {
 		if (note) {
 			note.note = data.note;
+			
 			note.save(() => {
 				sendPlayerNotes(socket, { userName: data.userName, seatedPlayers: [data.notedUser] });
 			});

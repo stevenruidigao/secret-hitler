@@ -2,17 +2,23 @@ import { Server, Socket } from 'socket.io';
 
 import Account from '../../models/account.mts';
 
-import { ActiveGame } from './game/common.mts';
+import type { ActiveGame } from './game.d.ts';
 import { selectPlayerToAssassinate } from './game/assassination.mts';
 import { selectChancellor } from './game/election-util.mts';
 import { selectVoting } from './game/election.mts';
-import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mts';
+import { User } from './models.mts';
 import { makeReport } from './report.mts';
+import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.mts';
 
 const io: Server = global.io;
 
-const sendMessage = (game: ActiveGame, user: any, message: string, date = new Date()) =>
-	game.private.commandChats[user.userName].push({
+const sendMessage = (game: ActiveGame, user: User, message: string, date = new Date()) => {
+	if (!game.private.commandChats) {
+		game.private.commandChats = {};
+		console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
+	}
+
+	return game.private.commandChats[user.userName].push({
 		gameChat: true,
 		timestamp: date,
 		chat: [
@@ -21,6 +27,7 @@ const sendMessage = (game: ActiveGame, user: any, message: string, date = new Da
 			}
 		]
 	});
+}
 
 /**
  * Parses a message into a command object.
@@ -60,8 +67,13 @@ export const parseCommand = (msg: string): {
  * @param {boolean} AEM - whether the user is AEM.
  * @param {boolean} isSeated - whether the user is sat in the game.
  */
-export const runCommand = (socket: Socket, passport: any, user: any, game: ActiveGame, msg: string, AEM: boolean, isSeated: boolean) => {
+export const runCommand = (socket: Socket, passport: any, user: User, game: ActiveGame, msg: string, AEM: boolean, isSeated: boolean) => {
 	try {
+		if (!game.private.commandChats) {
+			game.private.commandChats = {};
+			console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
+		}
+	
 		if (!game.private.commandChats[user.userName]) {
 			game.private.commandChats[user.userName] = [];
 		}
@@ -272,9 +284,14 @@ commands.getCommand = function(name: string) {
 	return this.find((c: any) => c.name.includes(name.toLowerCase())) || null;
 };
 
-(commands.getCommand('help') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any, AEM: boolean, isSeated: boolean) => {
+(commands.getCommand('help') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any, AEM: boolean, isSeated: boolean) => {
 	let i = 1;
 	sendMessage(game, user, 'List of Commands:');
+
+	if (!game.private.commandChats) {
+		game.private.commandChats = {};
+		console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
+	}
 
 	for (const command of commands) {
 		const isNotUsable =
@@ -301,19 +318,26 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('g') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('g') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
+
 	if (game.general.private || (game.customGameSettings && game.customGameSettings.enabled)) {
 		sendMessage(game, user, 'Line guessing is only enabled in ranked and practice games.');
 		return;
 	}
 
-	if (game.trackState.fascistPolicyCount >= 3 && !['specialElection', 'deckPeek'].includes(game.gameState.phase)) {
+	if (game.trackState.policyCount.fascist >= 3 && !['specialElection', 'deckPeek'].includes(game.gameState.phase || '')) { // TODO: check
 		sendMessage(game, user, 'Hitler zone has begun, so line guessing has closed.');
 		return;
 	}
 
 	const guess = LineGuess.parse(args[0]);
-	const playerCount = game.private.seatedPlayers.length;
+	const playerCount = seatedPlayers.length;
 	const fasCount = Math.trunc((playerCount - 1) / 2);
 
 	if (!guess) {
@@ -344,7 +368,14 @@ commands.getCommand = function(name: string) {
 	game.guesses[user.userName] = guess;
 };
 
-(commands.getCommand('gm') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('gm') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
+
 	if (!game.general.avalonSH) {
 		sendMessage(game, user, 'Merlin guessing is only enabled in avalon SH games.');
 		return;
@@ -352,7 +383,7 @@ commands.getCommand = function(name: string) {
 
 	const guess = parseInt(args[0], 10);
 
-	if (!guess || guess < 1 || guess > game.private.seatedPlayers.length) {
+	if (!guess || guess < 1 || guess > seatedPlayers.length) {
 		sendMessage(game, user, 'Invalid merlin guess.');
 		return;
 	}
@@ -366,7 +397,7 @@ commands.getCommand = function(name: string) {
 	game.merlinGuesses[user.userName] = guess;
 };
 
-(commands.getCommand('pingmod') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('pingmod') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	if (!game.lastModPing || Date.now() > game.lastModPing + 180000) {
 		Account.find({ username: { $in: game.publicPlayersState.map((player: any) => player.userName) } }).then((accounts: any[]) => {
 			const staffInGame = accounts
@@ -408,8 +439,20 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('ping') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('ping') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
+
 	const player = game.publicPlayersState.find((player: any) => player.userName === passport.user);
+
+	if (!player) {
+		return;
+	}
+
 	const seat = parseInt(args[0]);
 
 	if (seat <= game.publicPlayersState.length && (!player.pingTime || Date.now() - player.pingTime > 180000)) {
@@ -443,7 +486,7 @@ commands.getCommand = function(name: string) {
 				);
 
 			if (game.general.playerChats === 'disabled') {
-				game.private.seatedPlayers
+				seatedPlayers
 					.find((seatedPlayer: any) => seatedPlayer.userName === player.userName)
 					.gameChats.push({
 						timestamp: new Date(),
@@ -459,7 +502,7 @@ commands.getCommand = function(name: string) {
 						]
 					});
 
-				game.private.hiddenInfoChat.push({
+				game.private.hiddenInfoChat?.push({
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [{ text: `${player.userName} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName}.` }]
@@ -493,7 +536,7 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('forcerigdeck') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('forcerigdeck') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	const changedChat: any[] = [
 		{
 			text: 'A staff member has changed the deck to '
@@ -525,7 +568,14 @@ commands.getCommand = function(name: string) {
 	});
 };
 
-(commands.getCommand('forcevote') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('forcevote') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
+
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
 		return;
@@ -535,12 +585,13 @@ commands.getCommand = function(name: string) {
 		return sendMessage(game, user, 'This command can only be used during voting.');
 	}
 
-	const { blindMode, replacementNames } = game.general;
+	const { blindMode } = game.general;
+	const replacementNames = game.general.replacementNames || [];
 
 	const affectedPlayerIndex = parseInt(args[0]) - 1;
 	const voteString = args[1].toLowerCase();
-	if (game.private && game.private.seatedPlayers) {
-		const affectedPlayer = game.private.seatedPlayers[affectedPlayerIndex];
+	if (game.private) {
+		const affectedPlayer = seatedPlayers[affectedPlayerIndex];
 		if (!affectedPlayer) {
 			sendMessage(game, user, `There is no seat {${affectedPlayerIndex + 1}}.`);
 			return;
@@ -619,14 +670,23 @@ commands.getCommand = function(name: string) {
 				}
 			]
 		};
-		game.private.hiddenInfoChat.push(modOnlyChat);
+
+		game.private.hiddenInfoChat?.push(modOnlyChat);
 
 		selectVoting({ user: affectedPlayer.userName }, game, { vote }, undefined, true);
 	}
 };
 
-(commands.getCommand('forceskip') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
-	const { blindMode, replacementNames } = game.general;
+(commands.getCommand('forceskip') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	const { blindMode } = game.general;
+	const replacementNames = game.general.replacementNames || [];
+
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
 
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
@@ -638,20 +698,25 @@ commands.getCommand = function(name: string) {
 	}
 
 	const affectedPlayerIndex = args[0] !== undefined ? parseInt(args[0]) - 1 : game.gameState.presidentIndex;
-	const affectedPlayer = game.private.seatedPlayers[affectedPlayerIndex];
+	const affectedPlayer = seatedPlayers[affectedPlayerIndex];
+
 	if (!affectedPlayer) {
 		sendMessage(game, user, `There is no seat ${affectedPlayerIndex + 1}.`);
 		return;
 	}
+
 	if (affectedPlayerIndex !== game.gameState.presidentIndex) {
 		sendMessage(game, user, `The player in seat ${affectedPlayerIndex + 1} is not president.`);
 		return;
 	}
+
 	let chancellor = -1;
 	const currentPlayers: boolean[] = [];
-	for (let i = 0; i < game.private.seatedPlayers.length; i++) {
+	game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: fix this
+
+	for (let i = 0; i < seatedPlayers.length; i++) {
 		currentPlayers[i] = !(
-			game.private.seatedPlayers[i].isDead ||
+			seatedPlayers[i].isDead ||
 			(i === game.gameState.previousElectedGovernment[0] && game.general.livingPlayerCount > 5) ||
 			i === game.gameState.previousElectedGovernment[1]
 		);
@@ -690,14 +755,22 @@ commands.getCommand = function(name: string) {
 	});
 	selectChancellor({ user: affectedPlayer.userName }, game, { chancellorIndex: chancellor }, undefined, true);
 	setTimeout(() => {
-		for (const p of game.private.seatedPlayers.filter((player: any) => !player.isDead)) {
+		for (const p of seatedPlayers.filter((player: any) => !player.isDead)) {
 			selectVoting({ user: p.userName }, game, { vote: false }, undefined, true);
 		}
 	}, 1000);
 };
 
-(commands.getCommand('forcepick') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
-	const { blindMode, replacementNames } = game.general;
+(commands.getCommand('forcepick') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	const { blindMode } = game.general;
+	const replacementNames = game.general.replacementNames || [];
+
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
 
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
@@ -711,9 +784,9 @@ commands.getCommand = function(name: string) {
 	const affectedPlayerNumber = args[0] !== undefined ? parseInt(args[0]) - 1 : game.gameState.presidentIndex;
 	const chancellorPick = parseInt(args[1]);
 
-	if (game && game.private && game.private.seatedPlayers) {
-		const affectedPlayer = game.private.seatedPlayers[affectedPlayerNumber];
-		const affectedChancellor = game.private.seatedPlayers[chancellorPick - 1];
+	if (game && game.private) {
+		const affectedPlayer = seatedPlayers[affectedPlayerNumber];
+		const affectedChancellor = seatedPlayers[chancellorPick - 1];
 		if (!affectedPlayer) {
 			sendMessage(game, user, `There is no seat ${affectedPlayerNumber + 1}.`);
 			return;
@@ -765,6 +838,9 @@ commands.getCommand = function(name: string) {
 			sendMessage(game, user, `The player in seat ${affectedPlayerNumber + 1} is not president.`);
 			return;
 		}
+		
+		game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: fix this
+
 		if (
 			game.publicPlayersState[chancellorPick - 1].isDead ||
 			chancellorPick - 1 === affectedPlayerNumber ||
@@ -808,8 +884,16 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('forceping') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
-	const { blindMode, replacementNames } = game.general;
+(commands.getCommand('forceping') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
+	const { blindMode } = game.general;
+	const replacementNames = game.general.replacementNames || [];
+	
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
 
 	if (game.general.isRemade) {
 		socket.emit('sendAlert', 'This game has been remade.');
@@ -817,7 +901,7 @@ commands.getCommand = function(name: string) {
 	}
 
 	const affectedPlayerNumber = parseInt(args[0]) - 1;
-	const affectedPlayer = game.private.seatedPlayers[affectedPlayerNumber];
+	const affectedPlayer = seatedPlayers[affectedPlayerNumber];
 	if (!affectedPlayer) {
 		sendMessage(game, user, `There is no seat ${affectedPlayerNumber + 1}.`);
 		return;
@@ -873,7 +957,7 @@ commands.getCommand = function(name: string) {
 	}
 };
 
-(commands.getCommand('forcerigrole') as Command).run = (socket: Socket, passport: any, user: any, game: ActiveGame, args: any) => {
+(commands.getCommand('forcerigrole') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	if (game && game.private) {
 		const seat = parseInt(args[0], 10);
 		const role = (r => {

@@ -7,7 +7,7 @@ import { Webhook } from 'discord-webhook-node';
 
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.mts';
 
-import { ActiveGame } from './game/common.mts';
+import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.mts';
 import { IAccount } from '../../models/account.mts';
 
@@ -70,7 +70,8 @@ export const testGameObject = (game: ActiveGame) => {
 export const secureGame = (game: ActiveGame) => {
 	const _game = Object.assign({}, game);
 
-	delete _game.private;
+	// delete _game.private;
+	_game.private = {};
 	delete _game.remakeData;
 	delete _game.guesses;
 	delete _game.unsentReports;
@@ -79,8 +80,8 @@ export const secureGame = (game: ActiveGame) => {
 
 const combineInProgressChats = (game: ActiveGame, userName?: string) =>
 	userName && game.gameState.isTracksFlipped
-		? game.private.seatedPlayers.find((player: any) => player.userName === userName).gameChats.concat(game.chats)
-		: game.private.unSeatedGameChats.concat(game.chats);
+		? game.private?.seatedPlayers?.find((player: any) => player.userName === userName).gameChats.concat(game.chats)
+		: game.private?.unSeatedGameChats?.concat(game.chats);
 
 export const combineCommandChats = (game: ActiveGame, user: any, commandChats: any) => game.chats ? (commandChats[user] ? game.chats.concat(commandChats[user]) : game.chats) : commandChats[user];
 
@@ -126,7 +127,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 		const { user } = handshake?.session?.passport;
 
 		if (!game.gameState.isCompleted && game.gameState.isTracksFlipped) {
-			const privatePlayer = _game.private.seatedPlayers.find((player: any) => user === player.userName);
+			const privatePlayer = _game.private?.seatedPlayers?.find((player: any) => user === player.userName);
 
 			if (!_game || !privatePlayer) {
 				return;
@@ -136,7 +137,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 			_game.cardFlingerState = privatePlayer.cardFlingerState || [];
 		}
 
-		_game.chats = combineCommandChats(_game, user, game.private.commandChats);
+		_game.chats = combineCommandChats(_game, user, game.private?.commandChats);
 
 		if (noChats) {
 			delete _game.chats;
@@ -149,7 +150,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 
 	let chatWithHidden = game.chats || [];
 
-	if (!noChats && game.private && game.private.hiddenInfoChat && game.private.hiddenInfoSubscriptions.length) {
+	if (!noChats && game.private && game.private.hiddenInfoChat && game.private.hiddenInfoSubscriptions?.length) {
 		chatWithHidden = [...chatWithHidden, ...game.private.hiddenInfoChat];
 	}
 
@@ -171,7 +172,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 				sock.emit('gameUpdate', secureGame(_game), true);
 			} else {
 				_game.chats = combineInProgressChats(_game);
-				_game.chats = combineCommandChats(_game, user, game.private.commandChats);
+				_game.chats = combineCommandChats(_game, user, game.private?.commandChats);
 
 				sock.emit('gameUpdate', secureGame(_game));
 			}
@@ -197,7 +198,7 @@ export const sendInProgressModChatUpdate = (game: ActiveGame, chat: any, specifi
 			if (handshake && handshake.passport && handshake.passport.user) {
 				const { user } = handshake.session.passport;
 
-				if (game.private.hiddenInfoSubscriptions.includes(user)) {
+				if (game.private?.hiddenInfoSubscriptions?.includes(user)) {
 					// AEM status is ensured when adding to the subscription list
 					if (!specificUser) {
 						// single message
@@ -241,7 +242,7 @@ export const sendCommandChatsUpdate = (game: ActiveGame) => {
 		const user = handshake?.session?.passport?.user;
 
 		if (user) {
-			_game.chats = combineCommandChats(_game, user, game.private.commandChats);
+			_game.chats = combineCommandChats(_game, user, game.private?.commandChats);
 			sock.emit('gameUpdate', secureGame(_game));
 		}
 	});
@@ -333,7 +334,7 @@ const winnerBiasPoints = (game: ActiveGame) => {
 };
 
 export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlayerNames: string[]) => {
-	const size = game.general.playerCount;
+	const size = game.general.playerCount as number; // TODO: fix this
 	// The default starting elo is 1600 (totally arbitrary but now we are stuck with it)
 	const defaultELO = 1600;
 	// The maximum change for rainbow games is rk
@@ -366,7 +367,14 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 
 	accounts.forEach(account => {
 		if (!account.overall) {
-			account.overall = {};
+			account.overall = {
+				xp: 0,
+				elo: 1600,
+				wins: 0,
+				losses: 0,
+				rainbowWins: 0,
+				rainbowLosses: 0
+			};
 		}
 
 		if (!account.seasons) {
@@ -380,7 +388,14 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 		} 
 		
 		if (!currentSeason) {
-			currentSeason = {};
+			currentSeason = {
+				xp: 0,
+				elo: 1600,
+				wins: 0,
+				losses: 0,
+				rainbowWins: 0,
+				rainbowLosses: 0
+			};
 		}
 
 		const eloOverall = account.overall.elo ? account.overall.elo : defaultELO;

@@ -416,7 +416,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									if (account) {
 										socket.emit('sendAlert', `User ${data.comment} already exists`);
 									} else {
-										Account.findOne({ username: data.userName }).then((account: any) => {
+										Account.findOne({ username: data.userName }).then((account) => {
 											const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
 											if (affectedSocket) {
@@ -761,17 +761,21 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'deleteCardback':
 					Account.findOne({ username: data.userName })
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
-								account.gameSettings.customCardback = '';
+								if (!account.gameSettings) {
+									account.gameSettings = {};
+								}
+
+								account.gameSettings.customCardback = {};
 								const user = userList.find(u => u.userName === data.userName);
 								if (user) {
-									user.customCardback = '';
+									user.customCardback = {};
 									userListEmitter.send = true;
 								}
 								Object.keys(games).forEach(uid => {
 									const game = games[uid];
-									const foundUser = game.publicPlayersState.find((user: any) => user.userName === data.userName);
+									const foundUser = game.publicPlayersState.find((user) => user.userName === data.userName);
 									if (foundUser) {
 										foundUser.customCardback = '';
 										sendCommandChatsUpdate(game);

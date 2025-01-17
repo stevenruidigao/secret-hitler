@@ -7,10 +7,10 @@ export interface IGame {
 	name?: string;
 	flag?: string;
 	date?: Date;
-	playerChats?: 'silent' | 'emote' | 'regular';
+	playerChats?: any[];
 	playerCount?: number;
-	winningPlayers?: string[];
-	losingPlayers?: string[];
+	winningPlayers?: any[];
+	losingPlayers?: any[];
 	winningTeam?: string;
 	season?: number;
 	isRainbow?: boolean;

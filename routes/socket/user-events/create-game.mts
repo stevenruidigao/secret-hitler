@@ -7,8 +7,8 @@ import Game from '../../../models/game.mts';
 
 import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.mts';
 
-import { ActiveGame } from '../game/common.mts';
 import { chatReplacements } from '../chatReplacements.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.mts';
 import { updateUserStatus, sendGameList } from '../user-requests.mts';
 import { secureGame } from '../util.mts';
@@ -29,7 +29,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	const user = userList.find(obj => obj.userName === passport.user);
 	const currentTime = new Date();
 
-	if (!user || currentTime.valueOf() - user.timeLastGameCreated < 8000 || user.status.type !== 'none') {
+	if (!user || user.timeLastGameCreated && currentTime.valueOf() - user.timeLastGameCreated < 8000 || user.status.type !== 'none') {
 		// Check if !user here in case of bug where user doesn't appear on userList
 		return;
 	}
@@ -58,7 +58,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	}
 
 	if (data.eloSliderValue) {
-		if (user.eloSeason < data.eloSliderValue || user.eloOverall < data.eloSliderValue) {
+		if (user.season.elo < data.eloSliderValue || user.overall.elo < data.eloSliderValue) {
 			return;
 		}
 
@@ -69,7 +69,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	}
 
 	if (data.xpSliderValue) {
-		if (user.xpOverall < data.xpSliderValue) {
+		if (user.overall.xp < data.xpSliderValue) {
 			return;
 		}
 
@@ -152,7 +152,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		!casualGame &&
 		!customGame;
 
-	const newGame: any = {
+	const newGame: ActiveGame = {
 		gameState: {
 			previousElectedGovernment: [],
 			undrawnPolicyCount: 17,
@@ -204,13 +204,16 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			avalonSH: data.avalonSH ? { withPercival: Boolean(data.withPercival) } : null,
 			noTopdecking: data.noTopdecking
 		},
+		private: {},
 		customGameSettings: data.customGameSettings,
 		publicPlayersState: [],
 		playersState: [],
 		cardFlingerState: [],
 		trackState: {
-			liberalPolicyCount: 0,
-			fascistPolicyCount: 0,
+			policyCount: {
+				liberal: 0,
+				fascist: 0
+			},
 			electionTrackerCount: 0,
 			enactedPolicies: [],
 			consecutiveTopdecks: 0
@@ -249,7 +252,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			]
 		};
 		const t = chat.timestamp.getMilliseconds();
-		newGame.chats.push(chat);
+		newGame.chats?.push(chat);
 		chat = {
 			timestamp: new Date(),
 			gameChat: true,
@@ -274,7 +277,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			]
 		};
 		chat.timestamp.setMilliseconds(t + 1);
-		newGame.chats.push(chat);
+		newGame.chats?.push(chat);
 	}
 
 	if (data.isTourny) {
@@ -300,8 +303,8 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			{
 				userName: user.userName,
 				customCardback: user.customCardback,
-				previousSeasonAward: user.previousSeasonAward,
-				specialTournamentStatus: user.specialTournamentStatus,
+				previousSeasonAward: user.previousSeasonAward || '',
+				specialTournamentStatus: user.specialTournamentStatus || '',
 				tournyWins: user.tournyWins,
 				connected: true,
 				isPrivate: user.isPrivate,
@@ -320,7 +323,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 
 		newGame.general.minPlayersCount = newGame.general.maxPlayersCount = minPlayersCount === 1 ? 14 : minPlayersCount === 2 ? 16 : 18;
 		newGame.general.status = `Waiting for ${newGame.general.minPlayersCount - 1} more players..`;
-		newGame.chats.push({
+		newGame.chats?.push({
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
@@ -335,7 +338,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		});
 	}
 
-	user.timeLastGameCreated = currentTime;
+	user.timeLastGameCreated = currentTime.valueOf();
 	Account.findOne({ username: user.userName }).then((account) => {
 		newGame.private = {
 			reports: {},
@@ -354,7 +357,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		};
 
 		if (newGame.general.private) {
-			newGame.private.privatePassword = newGame.general.private;
+			newGame.private.privatePassword = newGame.general.private as string;
 			newGame.general.private = true;
 		}
 
@@ -377,7 +380,8 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		socket.join(newGame.general.uid);
 		socket.emit('updateSeatForUser');
 		const cloneNewGame = Object.assign({}, newGame);
-		delete cloneNewGame.private;
+		// delete cloneNewGame.private;
+		cloneNewGame.private = {};
 		socket.emit('gameUpdate', cloneNewGame);
 		socket.emit('joinGameRedirect', newGame.general.uid);
 	});

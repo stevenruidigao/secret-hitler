@@ -25,7 +25,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 		return;
 	}
 
-	const dmReceiver = userList.find(x => x.userName === data.userName) || {};
+	const dmReceiver = userList.find(x => x.userName === data.userName);
 	const modInDM = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(data.aemMember) !== -1);
 	const modInGame = Object.keys(games).find(x => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y: any) => y.userName === data.aemMember));
 
@@ -37,11 +37,15 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 	if (modInDM) {
 		// if the mod is already DMing someone, we should send them the DM they were in instead of opening a new one
 		socket.emit('preOpenModDMs'); // this is necessary in order to allow the socket on the client to prepare for the openModDMs event
-		socket.emit('openModDMs', handleAEMMessages(modDMs[dmReceiver], passport.user, modUserNames, editorUserNames, adminUserNames));
+
+		if (dmReceiver) {
+			socket.emit('openModDMs', handleAEMMessages(modDMs[dmReceiver.userName], passport.user, modUserNames, editorUserNames, adminUserNames));
+		}
+
 		return; // something fucky happened and they got disconnected from the chat
 	}
 
-	if (modDMs[dmReceiver.userName]) {
+	if (dmReceiver && modDMs[dmReceiver.userName]) {
 		// if there is an open DM but the mod is not the one who created it, they should start observing
 		const dm = modDMs[dmReceiver.userName];
 		dm.subscribedPlayers.push(data.aemMember);
@@ -54,7 +58,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 		});
 
 		socket.emit('preOpenModDMs');
-		socket.emit('openModDMs', handleAEMMessages(modDMs[dmReceiver], data.aemMember, modUserNames, editorUserNames, adminUserNames));
+		socket.emit('openModDMs', handleAEMMessages(modDMs[dmReceiver.userName], data.aemMember, modUserNames, editorUserNames, adminUserNames));
 		return sendInProgressModDMUpdate(dm, modUserNames, editorUserNames, adminUserNames);
 	}
 
@@ -71,7 +75,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 	);
 	const dmReceiverSocket = dmReceiverSocketID && io.sockets.sockets.get(dmReceiverSocketID);
 
-	if (!Object.keys(dmReceiver).length || dmReceiverSocketID == null || !dmReceiverSocket) {
+	if (!dmReceiver || !Object.keys(dmReceiver).length || dmReceiverSocketID == null || !dmReceiverSocket) {
 		return socket.emit('sendAlert', 'That player is not online!');
 	}
 

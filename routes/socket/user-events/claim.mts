@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import { ActiveGame } from '../game/common.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { sendInProgressGameUpdate } from '../util.mts';
 
 /**
@@ -13,15 +13,22 @@ import { sendInProgressGameUpdate } from '../util.mts';
 export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGame, data: any) => {
 	const playerIndex = game.publicPlayersState.findIndex((player: any) => player.userName === passport.user);
 
+	if (!game.private.seatedPlayers) {
+		game.private.seatedPlayers = [];
+		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
+	}
+
+	const { seatedPlayers } = game.private;
+
 	if (
 		game &&
 		game.private &&
-		game.private.seatedPlayers &&
-		game.private.seatedPlayers[playerIndex] &&
-		game.private.seatedPlayers[playerIndex].playersState &&
-		game.private.seatedPlayers[playerIndex].playersState[playerIndex] &&
+		seatedPlayers &&
+		seatedPlayers[playerIndex] &&
+		seatedPlayers[playerIndex].playersState &&
+		seatedPlayers[playerIndex].playersState[playerIndex] &&
 		!/^(wasPresident|wasChancellor|didSinglePolicyPeek|didPolicyPeek|didInvestigateLoyalty)$/.exec(
-			game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim
+			seatedPlayers[playerIndex].playersState[playerIndex].claim
 		)
 	) {
 		return;
@@ -30,7 +37,9 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 	if (!game.private || !game.private.summary || game.publicPlayersState[playerIndex].isDead) {
 		return;
 	}
-	const { blindMode, replacementNames } = game.general;
+	
+	const { blindMode } = game.general;
+	const replacementNames = game.general.replacementNames || [];
 
 	const chat = (() => {
 		let text;
@@ -76,6 +85,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 						validClaim = true;
 						break;
 				}
+
 				if (validClaim) {
 					text = [
 						{
@@ -274,7 +284,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				return;
 			case 'didInvestigateLoyalty':
 				const { invIndex } = game.private;
-				if (invIndex != -1 && invIndex < game.private.seatedPlayers.length) {
+				if (invIndex && invIndex != -1 && invIndex < seatedPlayers.length) {
 					text = [
 						{
 							text: 'President '
@@ -289,7 +299,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 						{
 							text: blindMode
 								? `${replacementNames[invIndex]} {${invIndex + 1}} `
-								: `${game.private.seatedPlayers[invIndex] && game.private.seatedPlayers[invIndex].userName} {${invIndex + 1}} `,
+								: `${seatedPlayers[invIndex] && seatedPlayers[invIndex].userName} {${invIndex + 1}} `,
 							type: 'player'
 						},
 						{
@@ -348,8 +358,8 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 
 	if (
 		Number.isInteger(playerIndex) &&
-		game.private.seatedPlayers[playerIndex] &&
-		game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim !== ''
+		seatedPlayers[playerIndex] &&
+		seatedPlayers[playerIndex].playersState[playerIndex].claim !== ''
 	) {
 		const claimChat = {
 			chat: chat,
@@ -361,7 +371,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 			claimState: data.claimState
 		};
 		if (claimChat && claimChat.chat) {
-			if (game.private.seatedPlayers[playerIndex]) game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
+			if (seatedPlayers[playerIndex]) seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
 			
 			if (!game.chats) {
 				game.chats = [];

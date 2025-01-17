@@ -13,7 +13,7 @@ import { userList, games } from '../models.mts';
 export const handlePlayerReport = (passport: any, data: any, callback: any) => {
 	const user = userList.find(u => u.userName === passport.user);
 
-	if (data.userName !== 'from replay' && (!user || (user.wins + user.losses < 2 && !user.isRainbowOverall)) && process.env.NODE_ENV === 'production') {
+	if (data.userName !== 'from replay' && (!user || (user.overall.wins + user.overall.losses < 2 && !user.isRainbowOverall)) && process.env.NODE_ENV === 'production') {
 		return;
 	}
 

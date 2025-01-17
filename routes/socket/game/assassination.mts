@@ -1,14 +1,18 @@
 import { Socket } from 'socket.io';
 
+import type { ActiveGame } from '../game.d.ts';
 import { sendInProgressGameUpdate } from '../util.mts';
 
-import { ActiveGame } from './common.mts';
 import { completeGame } from './end-game.mts';
 
 export const assassinateMerlin = (game: ActiveGame) => {
+	if (!game.private) {
+		game.private = {};
+	}
+
 	const { seatedPlayers } = game.private;
-	const hitlerIndex = seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler');
-	const hitler = seatedPlayers[hitlerIndex];
+	const hitlerIndex = seatedPlayers?.findIndex((p: any) => p.role.cardName === 'hitler');
+	const hitler = seatedPlayers && hitlerIndex && seatedPlayers[hitlerIndex];
 
 	if (!game.private.lock.assassinateMerlin && game.general.avalonSH && !(game.general.isTourny && game.general.tournyInfo.isCancelled)) {
 		game.private.lock.assassinateMerlin = true;
@@ -17,16 +21,22 @@ export const assassinateMerlin = (game: ActiveGame) => {
 			p.cardStatus.cardDisplayed = false;
 			p.cardStatus.cardFront = '';
 		});
-		game.publicPlayersState[hitlerIndex].cardStatus.cardDisplayed = true;
-		game.publicPlayersState[hitlerIndex].cardStatus.cardFront = 'secretrole';
+
+		if (hitlerIndex) {
+			game.publicPlayersState[hitlerIndex].cardStatus.cardDisplayed = true;
+			game.publicPlayersState[hitlerIndex].cardStatus.cardFront = 'secretrole';
+		}
+
 		sendInProgressGameUpdate(game);
 
 		setTimeout(() => {
-			game.publicPlayersState[hitlerIndex].cardStatus.cardBack = hitler.role;
-			game.publicPlayersState[hitlerIndex].cardStatus.isFlipped = true;
-			game.publicPlayersState[hitlerIndex].isLoader = true;
+			if (hitlerIndex) {
+				game.publicPlayersState[hitlerIndex].cardStatus.cardBack = hitler.role;
+				game.publicPlayersState[hitlerIndex].cardStatus.isFlipped = true;
+				game.publicPlayersState[hitlerIndex].isLoader = true;
+			}
 
-			game.publicPlayersState.forEach((p: any) => (p.isDead = false));
+			game.publicPlayersState.forEach((p) => (p.isDead = false));
 
 			if (!game.general.disableGamechat) {
 				hitler.gameChats.push({
@@ -45,37 +55,38 @@ export const assassinateMerlin = (game: ActiveGame) => {
 					]
 				};
 
-				seatedPlayers.forEach((player: any, i: number) => {
+				seatedPlayers?.forEach((player: any, i: number) => {
 					if (i !== hitlerIndex) {
 						player.gameChats.push(chat);
 					}
 				});
 
-				game.private.unSeatedGameChats.push(chat);
+				game.private?.unSeatedGameChats?.push(chat);
 			}
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers[index].role.cardName === 'fascist')
+				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.cardName === 'fascist')
 				.forEach((player: any) => {
 					player.nameStatus = 'fascist';
 				});
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers[index].role.cardName === 'morgana')
+				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.cardName === 'morgana')
 				.forEach((player: any) => {
 					player.nameStatus = 'morgana';
 				});
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers[index].role.team === 'liberal')
+				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
 				.forEach((player: any) => {
 					player.notificationStatus = 'notification';
 				});
 
 			game.gameState.clickActionInfo = [
 				hitler.userName,
-				seatedPlayers.filter((player: any, index: number) => seatedPlayers[index].role.team === 'liberal').map((player: any) => seatedPlayers.indexOf(player))
+				seatedPlayers && seatedPlayers.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal').map((player: any) => seatedPlayers && seatedPlayers.indexOf(player))
 			];
+
 			game.gameState.phase = 'assassination';
 			sendInProgressGameUpdate(game);
 		}, 2000);
@@ -83,13 +94,17 @@ export const assassinateMerlin = (game: ActiveGame) => {
 };
 
 export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
+	if (!game.private) {
+		game.private = {};
+	}
+
 	const { seatedPlayers } = game.private;
-	const target = seatedPlayers[data.playerIndex];
+	const target = seatedPlayers && seatedPlayers[data.playerIndex];
 	const publicTarget = game.publicPlayersState[data.playerIndex];
-	const merlinIndex = seatedPlayers.findIndex((p: any) => p.role.cardName === 'merlin');
-	const merlin = seatedPlayers[merlinIndex];
+	const merlinIndex = seatedPlayers && seatedPlayers.findIndex((p: any) => p.role.cardName === 'merlin');
+	const merlin = seatedPlayers && merlinIndex && seatedPlayers[merlinIndex];
 	const winningTeam = target.role.cardName === 'merlin' ? 'fascist' : 'liberal';
-	const hitlerIndex = seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler');
+	const hitlerIndex = seatedPlayers && seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler');
 
 	if (game.gameState.isGameFrozen) {
 		if (socket) {
@@ -105,7 +120,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		return;
 	}
 
-	if (game.publicPlayersState[hitlerIndex].userName !== passport.user) {
+	if (hitlerIndex && game.publicPlayersState[hitlerIndex].userName !== passport.user) {
 		return;
 	}
 
@@ -121,14 +136,25 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	game.private.summary = game.private.summary.updateLog({
 		assassination: data.playerIndex
 	});
-	console.log(game.private.summary.logs);
 
-	game.publicPlayersState[hitlerIndex].isLoader = false;
+	console.log(game.private.summary.logs); // TODO: remove?
+
+	if (hitlerIndex) {
+		game.publicPlayersState[hitlerIndex].isLoader = false;
+	}
+
+	if (!game.gameState.clickActionInfo) {
+		game.gameState.clickActionInfo = [];
+	}
+
 	game.gameState.clickActionInfo[1] = [];
 
-	seatedPlayers[hitlerIndex].playersState.forEach((player: any) => {
-		player.notificationStatus = '';
-	});
+
+	if (hitlerIndex) {
+		seatedPlayers[hitlerIndex].playersState.forEach((player: any) => {
+			player.notificationStatus = '';
+		});
+	}
 
 	publicTarget.cardStatus.cardFront = 'secretrole';
 	publicTarget.cardStatus.cardBack = target.role;
@@ -175,7 +201,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 							},
 							{ text: ', but ' },
 							{
-								text: `${merlin.userName} {${merlinIndex + 1}}`,
+								text: `${merlin.userName} {${merlinIndex as number + 1}}`,
 								type: 'player'
 							},
 							{ text: ' was ' },
@@ -186,9 +212,20 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 							{ text: '.' }
 					  ]
 		};
-		seatedPlayers.forEach((player: any) => {
-			player.gameChats.push(winningChat);
-		});
+		
+		if (seatedPlayers) {
+			seatedPlayers.forEach((player: any) => {
+				player.gameChats.push(winningChat);
+			});
+		}
+
+		if (!game.private) {
+			game.private = {};
+		}
+
+		if (!game.private.unSeatedGameChats) {
+			game.private.unSeatedGameChats = []
+		}
 
 		game.private.unSeatedGameChats.push(winningChat);
 
@@ -196,10 +233,10 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}, 1000);
 
 	setTimeout(() => {
-		game.publicPlayersState.forEach((player: any, i: number) => {
+		game.publicPlayersState.forEach((player, i: number) => {
 			if (i !== data.playerIndex && i !== hitlerIndex) {
 				player.cardStatus.cardFront = 'secretrole';
-				player.cardStatus.cardBack = game.private.seatedPlayers[i].role;
+				player.cardStatus.cardBack = game.private?.seatedPlayers && game.private.seatedPlayers[i].role || '';
 				player.cardStatus.cardDisplayed = true;
 				player.cardStatus.isFlipped = false;
 			}
@@ -209,9 +246,10 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}, 2000);
 
 	setTimeout(() => {
-		game.publicPlayersState.forEach((player: any, i: number) => {
+		game.publicPlayersState.forEach((player, i: number) => {
 			player.cardStatus.isFlipped = true;
 		});
+
 		game.gameState.audioCue = '';
 
 		completeGame(game, winningTeam);

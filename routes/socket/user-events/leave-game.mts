@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io';
 import adjectives from '../../../utils/adjectives.mts';
 import animals from '../../../utils/animals.mts';
 
-import { ActiveGame } from '../game/common.mts';
+import type { ActiveGame } from '../game.d.ts';
 import { saveAndDeleteGame } from '../game/end-game.mts';
 import startGame from '../game/start-game.mts';
 
@@ -230,7 +230,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 
 				if (
 					(!gameState.isStarted && publicPlayersState.length === 1) ||
-					(gameState.isCompleted && publicPlayersState.filter((player: any) => !player.connected || player.leftGame).length === game.general.playerCount - 1)
+					(gameState.isCompleted && publicPlayersState.filter((player: any) => !player.connected || player.leftGame).length === game.general.playerCount as number - 1) // TODO: fix this
 				) {
 					saveAndDeleteGame(gameName);
 				} else if (!gameState.isTracksFlipped && playerIndex > -1) {
@@ -242,7 +242,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 					publicPlayersState[playerIndex].leftGame = true;
 					const playerRemakeData = game.remakeData && game.remakeData.find((player: any) => player.userName === passport.user);
 					if (playerRemakeData && playerRemakeData.isRemaking) {
-						const minimumRemakeVoteCount = game.general.playerCount - game.customGameSettings.fascistCount;
+						const minimumRemakeVoteCount = game.general.playerCount as number - game.customGameSettings.fascistCount; // TODO: fix this
 						const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
 
 						if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
@@ -353,8 +353,8 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 		if (playerRemakeData && playerRemakeData.isRemaking) {
 			// Count leaving the game as rescinded remake vote.
 			const minimumRemakeVoteCount =
-				(game.customGameSettings.fascistCount && game.general.playerCount - game.customGameSettings.fascistCount) ||
-				Math.floor(game.general.playerCount / 2) + 2;
+				(game.customGameSettings.fascistCount && game.general.playerCount as number - game.customGameSettings.fascistCount) || // TODO: fix this
+				Math.floor(game.general.playerCount as number / 2) + 2; // TODO: fix this
 			const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
 
 			if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
