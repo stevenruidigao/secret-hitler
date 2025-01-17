@@ -1064,7 +1064,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 												account.seasons = new Map();
 											}
 
-											let currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER);
+											let currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER.toString());
 
 											if (!currentSeason) {
 												currentSeason = {
@@ -1085,7 +1085,7 @@ export const handleModerationAction = (socket, passport, data, skipCheck, modUse
 													: parseInt(number.substr(1, number.length))
 												: parseInt(number);
 
-											account.seasons.set(CURRENT_SEASON_NUMBER, currentSeason);
+											account.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
 										}
 
 										account.save();
