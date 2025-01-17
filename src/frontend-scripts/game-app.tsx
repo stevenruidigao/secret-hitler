@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		);
 	}
 
-	$(document).keydown(e => {
+	$(document).keydown((e: JQuery.KeyDownEvent) => {
+		// uhhh idk tbh
 		if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 		if (e.ctrlKey && [65, 83].includes(e.keyCode)) {
 			e.preventDefault();
