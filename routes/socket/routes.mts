@@ -723,7 +723,7 @@ export const socketRoutes = () => {
 				const game = findGame(data);
 				
 				if (authenticated && game && ensureInGame(passport, game)) {
-					selectChancellor(socket, passport, game, data);
+					selectChancellor(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedVoting', (data: any) => {

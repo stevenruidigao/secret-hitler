@@ -32,17 +32,23 @@ export const getRoomSockets = (game: ActiveGame) => {
 export const debugSendGame = (game: ActiveGame, message = '') => {
 	const _game = Object.assign({}, game);
 	delete _game.unsentReports;
-	const webhook = new Webhook(process.env.DISCORDPRIVATEDEVELOPERS);
 	const gameStr = util.inspect(_game, { showHidden: true, depth: null, colors: false });
 
-	tempy.write.task(
-		gameStr,
-		filename => {
-			if (message) webhook.send(message);
-			webhook.sendFile(filename);
-		},
-		{ extension: '.txt' }
-	);
+	try {
+		const webhook = new Webhook(process.env.DISCORDPRIVATEDEVELOPERS);
+
+		tempy.write.task(
+			gameStr,
+			filename => {
+				if (message) webhook.send(message);
+				webhook.sendFile(filename);
+			},
+			{ extension: '.txt' }
+		);
+
+	} catch {
+		console.error(message, gameStr);
+	}
 };
 
 const identified: string[] = [];

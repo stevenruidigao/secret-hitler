@@ -240,25 +240,25 @@ const beginGame = (game: ActiveGame) => {
 		libElo.overall =
 			lib.reduce(
 				(prev: any, curr: any) =>
-					(accounts?.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
 				0
 			) / lib.length;
 		libElo.season =
 			lib.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString()) || 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString())?.elo || 1600) + prev,
 				0
 			) / lib.length;
 		fasElo.overall =
 			fas.reduce(
 				(prev: any, curr: any) =>
-					(accounts?.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.overall?.elo || 1600) + prev,
 				0
 			) / fas.length;
 		fasElo.season =
 			fas.reduce(
 				(prev: any, curr: any) =>
-					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString()) || 1600) + prev,
+					(accounts.find((account) => account.username === curr)?.seasons?.get(CURRENT_SEASON_NUMBER.toString())?.elo || 1600) + prev,
 				0
 			) / fas.length;
 	});
