@@ -1,13 +1,13 @@
 import React from 'react';
 
-import Tracks from './Tracks.jsx';
-import GameChat from './GameChat.jsx';
-import Players from './Players.jsx';
-import Confetti from './Confetti.jsx';
-import Balloons from './Balloons.jsx';
-import Flappy from './Flappy.jsx';
+import Tracks from './Tracks.tsx';
+import GameChat from './GameChat.tsx';
+import Players from './Players.tsx';
+import Confetti from './Confetti.tsx';
+import Balloons from './Balloons.tsx';
+import Flappy from './Flappy.tsx';
 import PropTypes from 'prop-types';
-import playSound from '../reusable/playSound';
+import playSound from '../reusable/playSound.ts';
 
 export default class Game extends React.Component {
 	componentDidUpdate(prevProps) {

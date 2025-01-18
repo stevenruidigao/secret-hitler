@@ -1,17 +1,17 @@
 import { connect } from 'react-redux';
-import { fetchReplay } from '../../actions/actions';
-import Table from '../reusable/Table.jsx';
+import { fetchReplay } from '../../actions/actions.ts';
+import Table from '../reusable/Table.tsx';
 import React from 'react'; // eslint-disable-line no-unused-vars
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { PLAYER_COLORS } from '../../constants.js';
+import { PLAYER_COLORS } from '../../constants.ts';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import { Dropdown } from 'semantic-ui-react';
 import dayjs from 'dayjs';
-import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
-import UserPopup from '../reusable/UserPopup.jsx';
-import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.js';
+import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
+import UserPopup from '../reusable/UserPopup.tsx';
+import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.ts';
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });

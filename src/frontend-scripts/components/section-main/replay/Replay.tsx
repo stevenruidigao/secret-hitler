@@ -1,18 +1,19 @@
 /* eslint-disable spaced-comment */
 import React from 'react'; // eslint-disable-line no-unused-vars
 import { connect } from 'react-redux';
-import toGameInfo from '../../../replay/toGameInfo.js';
-import toDescription from '../../../replay/toDescription.js';
 import classnames from 'classnames';
 import { Map, List } from 'immutable';
+// @ts-expect-error: no types for 'option'
 import { some, none, fromNullable } from 'option';
-import Tracks from '../Tracks.jsx';
-import Players from '../Players.jsx';
-import ReplayGamechat from './ReplayGamechat.jsx';
-import ReplayOverlay from './ReplayOverlay.jsx';
-import ReplayControls from './ReplayControls.jsx';
-import TrackPieces from './TrackPieces.jsx';
-import socket from '../../../socket.js';
+import toGameInfo from '../../../replay/toGameInfo.ts';
+import toDescription from '../../../replay/toDescription.ts';
+import Tracks from '../Tracks.tsx';
+import Players from '../Players.tsx';
+import ReplayGamechat from './ReplayGamechat.tsx';
+import ReplayOverlay from './ReplayOverlay.tsx';
+import ReplayControls from './ReplayControls.tsx';
+import TrackPieces from './TrackPieces.tsx';
+import socket from '../../../socket.ts';
 import PropTypes from 'prop-types';
 import * as Swal from 'sweetalert2';
 

@@ -13,6 +13,7 @@
 	"author": "Chris Ozols <chris.v.ozols@gmail.com> (http://twolongos.com)",
 	"homepage": "https://secrethitler.io",
 	"bugs": "https://github.com/cozuya/secret-hitler/issues",
+	"type": "module",
 	"engines": {
 		"node": "^20"
 	},
@@ -156,7 +157,6 @@
 		"prettier-check": "prettier \"**/*.{js,scss,json,jsx}\" --check",
 		"format": "prettier \"**/*.{js,scss,json,jsx}\" --write",
 		"dev": "concurrently --names \"SERVER,MONGO,WEBPACK\" -c \"bgCyanBright.black,bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect\" \"yarn:db\" \"yarn:start\"",
-		"dev-ts": "concurrently --names \"SERVER,MONGO,WEBPACK\" -c \"bgCyanBright.black,bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect-ts\" \"yarn:db\" \"yarn:start-ts\"",
 		"dev-no-db": "concurrently --names \"SERVER,WEBPACK\" -c \"bgCyanBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:inspect\" \"yarn:start\"",
 		"dev-no-db-inspect": "concurrently --names \"SERVER,WEBPACK\" -c \"bgCyanBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:server\" \"yarn:start\"",
 		"dev-no-server": "concurrently --names \"MONGO,WEBPACK\" -c \"bgYellowBright.black,bgMagentaBright.whiteBright\" --handle-input \"yarn:db\" \"yarn:start\"",
@@ -167,13 +167,11 @@
 		"test:coverage": "jest --coverage",
 		"db": "mongod --dbpath data",
 		"db-docker": "docker run -it --rm -p 27017:27017 -v \"$(PWD)/data\":/data/db --name Secret-Hitler-Dev-MongoDB mongo:latest --port 27017",
-		"build": "webpack --config webpack/webpack.config.prod --mode production",
-		"inspect": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.js",
-		"inspect-ts": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.mts",
-		"server": "cross-env NODE_ENV=development nodemon bin/dev.js",
-		"start": "webpack --watch --config webpack/webpack.config.dev --mode development",
-		"start-ts": "webpack --watch --config webpack/webpack-ts.config.dev --mode development",
-		"lint": "esw src/**/*.jsx scripts/ routes/ webpack/ models/ iso/",
+		"build": "webpack --config webpack/webpack.config.prod.js --mode production",
+		"inspect": "cross-env NODE_ENV=development nodemon --inspect=9137 bin/dev.ts",
+		"server": "cross-env NODE_ENV=development nodemon bin/dev.ts",
+		"start": "webpack --watch --config webpack/webpack.config.dev.js --mode development",
+		"lint": "esw src/**/*.tsx scripts/ routes/ webpack/ models/ iso/",
 		"build-css:web": "sass -I src/scss src/scss/style-web.scss public/styles/style-web.css",
 		"build-css:dark": "sass -I src/scss src/scss/style-dark.scss public/styles/style-dark.css"
 	},
@@ -188,28 +186,12 @@
 			"^.+\\.m?(t|j)sx?$": "babel-jest"
 		},
 		"coverageProvider": "v8",
-		"moduleFileExtensions": [
-			"js",
-			"mjs",
-			"cjs",
-			"jsx",
-			"ts",
-			"mts",
-			"tsx",
-			"json",
-			"node"
-		],
 		"testEnvironment": "jsdom",
-		"extensionsToTreatAsEsm": [
-			".jsx",
-			".tsx",
-			".mts"
-		],
 		"setupFilesAfterEnv": [
-			"<rootDir>/__test__/test-setup.mts"
+			"<rootDir>/__test__/test-setup.ts"
 		],
 		"moduleNameMapper": {
-			"\\.(css|scss)$": "<rootDir>/__test__/mocks/styleMock.js"
+			"\\.(css|scss)$": "<rootDir>/__test__/mocks/styleMock.ts"
 		}
 	},
 	"resolutions": {

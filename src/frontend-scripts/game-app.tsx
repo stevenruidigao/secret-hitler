@@ -9,16 +9,11 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import AppComponent from './components/App.tsx';
-// @ts-expect-error: no types
-import account from './account.js';
-// @ts-expect-error: no types
-import shapp from './reducers/sh-app.js';
-// @ts-expect-error: no types
-import polyfills from '../../iso/polyfills.js';
-// @ts-expect-error: no types
-import rootSaga from './sagas.js';
-// @ts-expect-error: no types
-import chatanimation from './chatanimation.js';
+import account from './account.ts';
+import shapp from './reducers/sh-app.ts';
+import polyfills from '../../iso/polyfills.ts';
+import rootSaga from './sagas.ts';
+import chatanimation from './chatanimation.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const container = document.getElementById('game-container');

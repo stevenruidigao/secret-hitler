@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
-import PlayerList from './PlayerList.jsx';
-import GeneralChat from './GeneralChat.jsx';
+import PlayerList from './PlayerList.tsx';
+import GeneralChat from './GeneralChat.tsx';
 import PropTypes from 'prop-types';
 
 const RightSidebar = props => {

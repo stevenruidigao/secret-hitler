@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { viewPatchNotes } from '../../actions/actions';
 import { Popup } from 'semantic-ui-react';
 import Swal from 'sweetalert2';
-import socket from '../../socket';
+import { viewPatchNotes } from '../../actions/actions.ts';
+import socket from '../../socket.ts';
 
 const mapStateToProps = ({ version }) => ({ version });
 

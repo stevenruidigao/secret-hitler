@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getNumberWithOrdinal, PLAYERCOLORS } from '../../constants.mjs';
+import { getNumberWithOrdinal, PLAYERCOLORS } from '../../constants.js';
 import { processEmotes } from '../../emotes';
 
 const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, allEmotes, gameInfo }) => {

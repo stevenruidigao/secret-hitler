@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { toggleNotes } from '../actions/actions';
+import { toggleNotes } from '../actions/actions.ts';
 import PropTypes from 'prop-types';
 
 const mapDispatchToProps = dispatch => ({

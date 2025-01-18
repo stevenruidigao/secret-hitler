@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
-import { viewPatchNotes } from '../../actions/actions';
+import { viewPatchNotes } from '../../actions/actions.ts';
 import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
 

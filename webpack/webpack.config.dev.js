@@ -1,12 +1,12 @@
-const path = require('path');
+import path from 'path';
 // const Reload = require('webpack-livereload-plugin');
 // const CleanWebpackPlugin = require('clean-webpack-plugin');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 process.env.NODE_ENV = 'development';
 
-module.exports = {
-	entry: './src/frontend-scripts/game-app.jsx',
+export default {
+	entry: './src/frontend-scripts/game-app.tsx',
 	plugins: [
 		// new Reload(),
 		// new CleanWebpackPlugin(['../public/scripts']),
@@ -16,7 +16,7 @@ module.exports = {
 	],
 	output: {
 		filename: 'bundle.js',
-		path: path.resolve(__dirname, '../public/scripts')
+		path: path.resolve(import.meta.dirname, '../public/scripts')
 	},
 	devtool: 'inline-source-map',
 	module: {

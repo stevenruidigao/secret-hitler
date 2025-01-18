@@ -5,9 +5,9 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-import { loadReplay, toggleNotes, updateUser } from '../../actions/actions';
-import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.js';
-import { renderEmotesButton, processEmotes } from '../../emotes.jsx';
+import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
+import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.ts';
+import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 import Swal from 'sweetalert2';
 
 const mapDispatchToProps = dispatch => ({

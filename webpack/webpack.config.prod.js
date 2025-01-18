@@ -1,6 +1,7 @@
-const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import path from 'path';
+import TerserPlugin from 'terser-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import Dotenv from 'dotenv-webpack';
 
 const extractSass =
 	process.env.NODE_ENV !== 'development'
@@ -9,20 +10,18 @@ const extractSass =
 		  })
 		: undefined;
 
-const Dotenv = require('dotenv-webpack');
-
 process.env.NODE_ENV = 'production';
 
-module.exports = {
-	entry: './src/frontend-scripts/game-app.jsx',
+export default {
+	entry: './src/frontend-scripts/game-app.tsx',
 	output: {
 		filename: `bundle.js`,
-		path: path.resolve(__dirname, '../public/scripts')
+		path: path.resolve(import.meta.dirname, '../public/scripts')
 	},
 	plugins: [
 		extractSass,
 		new Dotenv({
-			path: path.resolve(__dirname, '..', '.env')
+			path: path.resolve(import.meta.dirname, '..', '.env')
 		})
 	].filter(plugin => plugin !== undefined),
 	optimization: {

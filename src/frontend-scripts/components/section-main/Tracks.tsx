@@ -1,9 +1,9 @@
 import React from 'react';
-import CardFlinger from './CardFlinger.jsx';
-import EnactedPolicies from './EnactedPolicies.jsx';
+import CardFlinger from './CardFlinger.tsx';
+import EnactedPolicies from './EnactedPolicies.tsx';
 import PropTypes from 'prop-types';
 import { Popup } from 'semantic-ui-react';
-import playSound from '../reusable/playSound.js';
+import playSound from '../reusable/playSound.ts';
 import dayjs from 'dayjs';
 import * as Swal from 'sweetalert2';
 

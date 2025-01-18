@@ -1,0 +1,78 @@
+import path from 'path';
+import sharp from 'sharp';
+
+import Account from '../models/account.ts';
+
+import { userList, userListEmitter, games } from './socket/models.ts';
+import { sendCommandChatsUpdate } from './socket/util.ts';
+import { sendGameList } from './socket/user-requests.ts';
+
+const io = global.io;
+
+export const processImage = (username: string, raw: string, callback: Function) => {
+	sharp(Buffer.from(raw, 'base64'))
+		.resize(70, 95)
+		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), err => {
+			if (err) {
+				callback(null, err);
+				return;
+			}
+
+			Account.findOne({ username: username }).then((account) => {
+				if (!account) {
+					callback(null, 'Account not found.');
+					return;
+				}
+
+				if (!account.gameSettings) {
+					account.gameSettings = {};
+				}
+
+				const uid = Math.random()
+					.toString(36)
+					.substring(2);
+
+				account.gameSettings.customCardback = account.gameSettings.customCardback || {};
+				account.gameSettings.customCardback.fileExtension = 'png';
+				account.gameSettings.customCardback.saveTime = Date.now().toString();
+				account.gameSettings.customCardback.uid = uid;
+
+				account.save(() => {
+					const user: any = userList.find((u: any) => u.userName === username);
+
+					if (user) {
+						user.customCardback = user.customCardback || {};
+						user.customCardback.fileExtension = 'png';
+						user.customCardback.uid = uid;
+						userListEmitter.send = true;
+					}
+
+					Object.keys(games).forEach(uid => {
+						const game = games[uid];
+						const foundUser = game.publicPlayersState.find((user) => user.userName === username);
+
+						if (foundUser) {
+							foundUser.customCardback = {}; // reset cardback?
+							sendCommandChatsUpdate(game);
+							sendGameList();
+						}
+					});
+
+					const socketId = Array.from(io.sockets.sockets.keys()).find(socketId => {
+						const socket = io.sockets.sockets.get(socketId);
+						const handshake = socket?.handshake as any;
+
+						return handshake?.session?.passport?.user === username;
+					});
+
+					const socket = socketId && io.sockets.sockets.get(socketId);
+
+					if (socketId && socket) {
+						socket.emit('gameSettings', account.gameSettings);
+					}
+
+					callback('Image uploaded successfully.');
+				});
+			});
+		});
+};

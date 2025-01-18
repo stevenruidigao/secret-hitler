@@ -9,7 +9,7 @@ import { SketchPicker } from 'react-color';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import SweetAlert2 from 'react-sweetalert2';
-import CollapsibleSegment from '../reusable/CollapsibleSegment.jsx';
+import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 
 $.fn.checkbox = Checkbox;
 $.fn.modal = Modal;

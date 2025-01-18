@@ -3194,7 +3194,7 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
-"@types/jquery@^3.5.32":
+"@types/jquery@*", "@types/jquery@^3.5.32":
   version "3.5.32"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.32.tgz#3eb0da20611b92c7c49ebed6163b52a4fdc57def"
   integrity sha512-b9Xbf4CkMqS02YH8zACqN1xzdxc3cO735Qe5AbSUFmyOiaWAbcpqh9Wna+Uk0vgACvoQHpWDg2rGdHkYPLmCiQ==
@@ -3418,6 +3418,21 @@
   version "0.16.8"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.8.tgz#ce5ace04cfeabe7ef87c0091e50752e36707deff"
   integrity sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==
+
+"@types/semantic-ui-api@*":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/semantic-ui-api/-/semantic-ui-api-2.2.7.tgz#fc6e1ceac911f76682bdbfd659bfb6cbaf5f264d"
+  integrity sha512-QO11dj4pWs3Wph1z8cL80t1u9qpZB45geUKsCsMTovdJRFV3yosOjsHqHhsEzLFVdt6rt3ZmGhXsZRDIECi0SA==
+  dependencies:
+    "@types/jquery" "*"
+
+"@types/semantic-ui-dropdown@^2.2.9":
+  version "2.2.9"
+  resolved "https://registry.yarnpkg.com/@types/semantic-ui-dropdown/-/semantic-ui-dropdown-2.2.9.tgz#146b97d8bf690ddc0633ab67ad12e17e1952bc04"
+  integrity sha512-xexijVzkwUNPNfuTLuQETcKqGwKjJFb9ymvpVu/UFy+PNHJRz08rV3SZFdb73Gh+pEJC+8aN9op5ZWiHrB/6NA==
+  dependencies:
+    "@types/jquery" "*"
+    "@types/semantic-ui-api" "*"
 
 "@types/send@*":
   version "0.17.4"

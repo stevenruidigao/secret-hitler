@@ -1,12 +1,12 @@
 import React from 'react'; // eslint-disable-line
-import DisplayLobbies from './DisplayLobbies.jsx';
+import DisplayLobbies from './DisplayLobbies.tsx';
 import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
-import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.js';
+import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.ts';
 import { Message } from 'semantic-ui-react';
-import { processEmotes } from '../../emotes.jsx';
+import { processEmotes } from '../../emotes.tsx';
 
 dayjs.extend(duration);
 
