@@ -132,7 +132,7 @@ const gamesGarbageCollector = () => {
 
 						if (!socket) return false;
 
-						const handshake = socket.handshake as any;
+						const handshake: any = socket.handshake;
 
 						return handshake?.session?.passport &&
 							handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
@@ -159,7 +159,7 @@ const gamesGarbageCollector = () => {
 };
 
 const ensureAuthenticated = (socket: Socket) => {
-	const handshake = socket?.handshake as any;
+	const handshake: any = socket?.handshake;
 
 	if (handshake && handshake?.session) {
 		const { passport } = handshake?.session;
@@ -650,7 +650,8 @@ export const socketRoutes = () => {
 						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then((accounts) => {
 							const staff = accounts
 								.filter((acc) => {
-									acc.staffRole && acc.staffRole.length > 0 && players.includes(acc.username);
+									// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+									acc.staffRole && acc.staffRole.length > 0 && players.includes(acc.username); // TODO: check - error?
 								})
 								.map(acc => acc.username);
 								

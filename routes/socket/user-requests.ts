@@ -41,7 +41,7 @@ export const sendUserList = (socket?: Socket) => {
 			name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
 		);
 
-		const handshake = socket.handshake as any;
+		const handshake: any = socket.handshake;
 
 		if (staffUserList.includes(handshake?.session?.passport?.user)) {
 			socket.emit('userList', { list: formattedUserList(true) });
@@ -176,7 +176,7 @@ export const sendModInfo = (games: Record<any, ActiveGame>, socket: Socket, coun
  * @param {object} socket - user socket reference.
  */
 export const sendUserGameSettings = (socket: Socket) => {
-	const handshake = socket?.handshake as any;
+	const handshake: any = socket?.handshake;
 
 	if (!handshake?.session) return;
 
@@ -335,7 +335,7 @@ export const updateUserStatus = (passport: any, game?: ActiveGame, override?: st
  */
 export const sendGameInfo = (socket: Socket, uid: string) => {
 	const game = games[uid];
-	const handshake = socket?.handshake as any;
+	const handshake: any = socket?.handshake;
 
 	if (!handshake?.session) return;
 

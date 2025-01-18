@@ -1,8 +1,7 @@
 import mongodb from 'mongodb';
 import tempy from 'tempy';
 import util from 'util';
-
-// @ts-ignore: no types for discord-webhook-node 
+// @ts-expect-error: no types for 'discord-webhook-node' 
 import { Webhook } from 'discord-webhook-node';
 
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.ts';
@@ -28,6 +27,9 @@ export const getRoomSockets = (game: ActiveGame) => {
 
 /**
  * Debugging function to send a game to Discord after it's been identified to be cyclic
+ * 
+ * @param {ActiveGame} game: the game to be sent/debugged
+ * @param {string} message: the message to be sent
  */
 export const debugSendGame = (game: ActiveGame, message = '') => {
 	const _game = Object.assign({}, game);

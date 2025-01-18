@@ -6,10 +6,10 @@ import { sendInProgressGameUpdate } from '../util.ts';
 import { selectVoting } from './election.ts';
 
 /**
- * @param {object} socket - socket reference.
  * @param {object} passport - socket authentication.
  * @param {object} game - verifyed target game.
  * @param {object} data - from socket emit.
+ * @param {object} socket - socket reference.
  * @param {bool} force - whether or not this action was forced.
  */
 export const selectChancellor = (passport: any, game: ActiveGame, data: any, socket?: Socket, force = false) => {

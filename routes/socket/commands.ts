@@ -30,97 +30,6 @@ const sendMessage = (game: ActiveGame, user: User, message: string, date = new D
 }
 
 /**
- * Parses a message into a command object.
- *
- * @param {string} msg - the message string.
- *
- * @return {{ name: string, args: (string[]|null), command: (Command|null) }} - the name of the invoked command, as well as the parsed arguments and command object.
- */
-export const parseCommand = (msg: string): {
-	name: string;
-	args: (string[] | null);
-	command: (Command | null);
-} => {
-	const trimPrefix = (s: string, prefix: string) => (s.startsWith(prefix) ? s.slice(prefix.length) : s);
-	const cmdRegex = /^\/(\w*)/i;
-	const name = cmdRegex.exec(msg.trim()) as RegExpExecArray;
-	const cmd = commands.getCommand(name[1]);
-
-	if (!cmd) {
-		return { name: name[1], args: null, command: null };
-	}
-
-	msg = trimPrefix(msg, name[0]).trim();
-	const parsedArgs = cmd.argumentsFormat.exec(msg);
-
-	return { name: name[1].toLowerCase(), args: parsedArgs && parsedArgs.slice(1), command: cmd };
-};
-
-/**
- * Runs a command given a user message.
- *
- * @param {Object} socket - socket reference for the user who invoked the command.
- * @param {Object} passport - socket authentication.
- * @param {Object} user - user object who invoked the command.
- * @param {Object} game - game object.
- * @param {string} msg - the message sent by the user.
- * @param {boolean} AEM - whether the user is AEM.
- * @param {boolean} isSeated - whether the user is sat in the game.
- */
-export const runCommand = (socket: Socket, passport: any, user: User, game: ActiveGame, msg: string, AEM: boolean, isSeated: boolean) => {
-	try {
-		if (!game.private.commandChats) {
-			game.private.commandChats = {};
-			console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
-		}
-	
-		if (!game.private.commandChats[user.userName]) {
-			game.private.commandChats[user.userName] = [];
-		}
-
-		const { name, command, args } = parseCommand(msg);
-
-		if (!command) {
-			sendMessage(game, user, `Unknown command /${name}. Use /help for a list of commands.`);
-			return;
-		}
-
-		if (command.aemOnly && !AEM) {
-			sendMessage(game, user, 'You do not have permission to use this command.');
-			return;
-		}
-
-		if (command.observerOnly && isSeated) {
-			sendMessage(game, user, 'This command cannot be used by seated players.');
-			return;
-		}
-
-		if (command.seatedOnly && !isSeated) {
-			sendMessage(game, user, 'This command cannot be used by observers.');
-			return;
-		}
-
-		if (command.gameStartedOnly && (!game.gameState.isStarted || game.gameState.isCompleted)) {
-			sendMessage(game, user, 'This command can only be used during an in-progress game.');
-			return;
-		}
-
-		if (!args) {
-			sendMessage(game, user, `You're not doing this right. Some examples: ${command.examples.join(', ')}`);
-			return;
-		}
-
-		command.run(socket, passport, user, game, args, AEM, isSeated);
-	} finally {
-		if (game.gameState.isTracksFlipped) {
-			sendInProgressGameUpdate(game, false);
-		} else {
-			sendCommandChatsUpdate(game);
-		}
-	}
-};
-
-/**
  * @callback Run
  * @param {Object} socket - socket reference for the user who invoked the command.
  * @param {Object} passport - socket authentication.
@@ -272,6 +181,97 @@ export const commands: Command[] & {
 		gameStartedOnly: true
 	}
 ] as any;
+
+/**
+ * Parses a message into a command object.
+ *
+ * @param {string} msg - the message string.
+ *
+ * @return {{ name: string, args: (string[]|null), command: (Command|null) }} - the name of the invoked command, as well as the parsed arguments and command object.
+ */
+export const parseCommand = (msg: string): {
+	name: string;
+	args: (string[] | null);
+	command: (Command | null);
+} => {
+	const trimPrefix = (s: string, prefix: string) => (s.startsWith(prefix) ? s.slice(prefix.length) : s);
+	const cmdRegex = /^\/(\w*)/i;
+	const name = cmdRegex.exec(msg.trim()) as RegExpExecArray;
+	const cmd = commands.getCommand(name[1]);
+
+	if (!cmd) {
+		return { name: name[1], args: null, command: null };
+	}
+
+	msg = trimPrefix(msg, name[0]).trim();
+	const parsedArgs = cmd.argumentsFormat.exec(msg);
+
+	return { name: name[1].toLowerCase(), args: parsedArgs && parsedArgs.slice(1), command: cmd };
+};
+
+/**
+ * Runs a command given a user message.
+ *
+ * @param {Object} socket - socket reference for the user who invoked the command.
+ * @param {Object} passport - socket authentication.
+ * @param {Object} user - user object who invoked the command.
+ * @param {Object} game - game object.
+ * @param {string} msg - the message sent by the user.
+ * @param {boolean} AEM - whether the user is AEM.
+ * @param {boolean} isSeated - whether the user is sat in the game.
+ */
+export const runCommand = (socket: Socket, passport: any, user: User, game: ActiveGame, msg: string, AEM: boolean, isSeated: boolean) => {
+	try {
+		if (!game.private.commandChats) {
+			game.private.commandChats = {};
+			console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
+		}
+	
+		if (!game.private.commandChats[user.userName]) {
+			game.private.commandChats[user.userName] = [];
+		}
+
+		const { name, command, args } = parseCommand(msg);
+
+		if (!command) {
+			sendMessage(game, user, `Unknown command /${name}. Use /help for a list of commands.`);
+			return;
+		}
+
+		if (command.aemOnly && !AEM) {
+			sendMessage(game, user, 'You do not have permission to use this command.');
+			return;
+		}
+
+		if (command.observerOnly && isSeated) {
+			sendMessage(game, user, 'This command cannot be used by seated players.');
+			return;
+		}
+
+		if (command.seatedOnly && !isSeated) {
+			sendMessage(game, user, 'This command cannot be used by observers.');
+			return;
+		}
+
+		if (command.gameStartedOnly && (!game.gameState.isStarted || game.gameState.isCompleted)) {
+			sendMessage(game, user, 'This command can only be used during an in-progress game.');
+			return;
+		}
+
+		if (!args) {
+			sendMessage(game, user, `You're not doing this right. Some examples: ${command.examples.join(', ')}`);
+			return;
+		}
+
+		command.run(socket, passport, user, game, args, AEM, isSeated);
+	} finally {
+		if (game.gameState.isTracksFlipped) {
+			sendInProgressGameUpdate(game, false);
+		} else {
+			sendCommandChatsUpdate(game);
+		}
+	}
+};
 
 /**
  * Finds a command in the commands array by name, case-insensitive.

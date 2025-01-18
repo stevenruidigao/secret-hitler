@@ -7,7 +7,6 @@ import Account from '../../models/account.ts';
 import BannedIP, { IBannedIP } from '../../models/bannedIP.ts';
 import ModAction from '../../models/modAction.ts';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.ts';
 import version from '../../version.ts';
 
 import type { ActiveGame } from './game.d.ts';

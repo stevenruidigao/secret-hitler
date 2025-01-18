@@ -1,4 +1,4 @@
-const { LineGuess } = require('./util.ts');
+import { LineGuess } from './util.ts';
 
 test('parseLineGuess', done => {
 	const data = [

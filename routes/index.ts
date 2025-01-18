@@ -176,12 +176,12 @@ export default () => {
 				checkBadgesAccount(account);
 
 				let blacklist: string[] = [];
-				let gameSettingsWithoutBlacklist: IGameSettings | {} = {};
+				let gameSettingsWithoutBlacklist: IGameSettings | unknown = {};
 
 				if (account.gameSettings) {
 					blacklist = account.gameSettings.blacklist || blacklist;
 					const gameSettings = (account.gameSettings.toObject as Function)();
-					
+
 					if (gameSettings.blacklist) {
 						delete gameSettings.blacklist;
 					}
@@ -189,10 +189,10 @@ export default () => {
 					gameSettingsWithoutBlacklist = gameSettings;
 				}
 
-				let backgroundColor = account?.theme?.backgroundColor || DEFAULT_THEME_COLORS.baseBackgroundColor;
-				let textColor = account?.theme?.textColor || DEFAULT_THEME_COLORS.baseTextColor;
-				let [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
-				let [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
+				const backgroundColor = account?.theme?.backgroundColor || DEFAULT_THEME_COLORS.baseBackgroundColor;
+				const textColor = account?.theme?.textColor || DEFAULT_THEME_COLORS.baseTextColor;
+				const [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
+				const [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
 
 				const gameObj: Record<string, any> = {
 					game: true,
@@ -365,17 +365,15 @@ export default () => {
 				_profile.created = dayjs(account.created).format('MM/DD/YYYY');
 				_profile.customCardback = account?.gameSettings?.customCardback;
 				_profile.bio = account.bio;
-				_profile.lastConnected = !!account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
+				_profile.lastConnected = account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
 				_profile.badges = account.badges || [];
 				_profile.eloPercentile = Object.keys(account?.eloPercentile || {}).length ? account.eloPercentile : undefined;
-				_profile.maxElo =
-					account?.gameSettings?.staff?.disableVisibleElo ? undefined : Math.round(account?.maxElo || 1600);
-				_profile.pastElo =
-					account?.gameSettings?.staff?.disableVisibleElo
-						? undefined
-						: (account.pastElo as any).toObject().length
-						? (account.pastElo as any).toObject()
-						: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
+				_profile.maxElo = account?.gameSettings?.staff?.disableVisibleElo ? undefined : Math.round(account?.maxElo || 1600);
+				_profile.pastElo = account?.gameSettings?.staff?.disableVisibleElo
+					? undefined
+					: (account.pastElo as any).toObject().length
+					? (account.pastElo as any).toObject()
+					: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
 
 				_profile.overall = account.overall;
 
@@ -410,12 +408,12 @@ export default () => {
 				_profile.staff.disableVisibleElo = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo;
 				_profile.playerPronouns = account?.gameSettings?.playerPronouns || '';
 
-				Account.findOne({ username: authedUser }).then((acc) => {
+				Account.findOne({ username: authedUser }).then(acc => {
 					if (acc && account.username === acc.username) {
 						if (!acc.gameSettings) {
 							acc.gameSettings = {};
 						}
-						
+
 						acc.gameSettings.hasUnseenBadge = false;
 						acc.save();
 					}
@@ -495,8 +493,11 @@ export default () => {
 				.replace(/"/g, '&quot;')
 				.replace(/'/g, '&#39;');
 
-		Account.findOne({ username }).then((account) => {
-			if (account && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')) {
+		Account.findOne({ username }).then(account => {
+			if (
+				account &&
+				(account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')
+			) {
 				ModThread.findById(id)
 					.lean()
 					.exec()
@@ -531,12 +532,15 @@ export default () => {
 
 		const username = req.session.passport.user;
 
-		Account.findOne({ username }).then((account) => {
-			if (account && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')) {
+		Account.findOne({ username }).then(account => {
+			if (
+				account &&
+				(account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')
+			) {
 				Game.findOne({ uid: id })
 					.lean()
 					.exec()
-					.then((game) => {
+					.then(game => {
 						if (!game) {
 							res.status(404).send('Game not found');
 						} else {
@@ -574,7 +578,7 @@ export default () => {
 			const username = req.session.passport.user;
 
 			Account.findOne({ username })
-				.then((account) => {
+				.then(account => {
 					if (!account || !account.isRainbowOverall) {
 						res.json({
 							message: 'You need to be rainbow to upload a cardback.'
@@ -586,7 +590,7 @@ export default () => {
 					if (!account.gameSettings) {
 						account.gameSettings = {};
 					}
-					
+
 					account.gameSettings.customCardback = account.gameSettings.customCardback || {};
 
 					if (
@@ -603,7 +607,7 @@ export default () => {
 						});
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log(err, 'account err in cardbacks');
 				});
 		} catch (err) {

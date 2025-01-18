@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import Account, { IAccount, IGameSettings, ITheme } from '../../../models/account.ts';
+import Account, { IGameSettings, ITheme } from '../../../models/account.ts';
 import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.ts';
 
 import { userList } from '../models.ts';
