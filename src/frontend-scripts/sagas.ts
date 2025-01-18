@@ -1,9 +1,11 @@
-import { put, call, takeLatest } from 'redux-saga/effects';
+import { effects } from 'redux-saga';
 import buildEnhancedGameSummary from '../../models/game-summary/buildEnhancedGameSummary.ts';
 import buildReplay from './replay/buildReplay.ts';
 import { updateMidsection } from './actions/actions.ts';
 
-function* fetchProfile(action) {
+const { put, call, takeLatest } = effects;
+
+function* fetchProfile(action: any): any {
 	const { username } = action;
 
 	yield put(updateMidsection('profile'));
@@ -22,7 +24,7 @@ function* closeReplay() {
 	yield put(updateMidsection('default'));
 }
 
-function* loadReplay(action) {
+function* loadReplay(action: any) {
 	const { summary } = action;
 
 	const game = buildEnhancedGameSummary(summary);
@@ -32,7 +34,7 @@ function* loadReplay(action) {
 	yield put(updateMidsection('replay'));
 }
 
-function* fetchReplay(action) {
+function* fetchReplay(action: any): any {
 	const { gameId } = action;
 
 	yield put({ type: 'REQUEST_REPLAY' });

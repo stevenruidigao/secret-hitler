@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	polyfills();
 
 	if (container) {
-		const sagaMiddleware = createSagaMiddleware();
+		const sagaMiddleware = createSagaMiddleware.default(); // TODO: WHY??????
 		const store = createStore(shapp, applyMiddleware(sagaMiddleware));
 		sagaMiddleware.run(rootSaga);
 		render(
