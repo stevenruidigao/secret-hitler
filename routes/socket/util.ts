@@ -4,11 +4,11 @@ import util from 'util';
 // @ts-expect-error: no types for 'discord-webhook-node'
 import { Webhook } from 'discord-webhook-node';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.ts';
+import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
 
 import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.ts';
-import { IAccount } from '../../models/account.ts';
+import { IAccount } from '@/models/account.ts';
 
 const io = global.io;
 

@@ -1,7 +1,7 @@
 import path from 'path';
 import sharp from 'sharp';
 
-import Account from '../models/account.ts';
+import Account from '@/models/account.ts';
 
 import { userList, userListEmitter, games } from './socket/models.ts';
 import { sendCommandChatsUpdate } from './socket/util.ts';

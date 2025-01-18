@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
-import PropTypes from 'prop-types';
+import PropTypes, { any } from 'prop-types';
 import _ from 'lodash';
 
 import {
@@ -82,9 +82,10 @@ export class App extends React.Component {
 	lastReconnectAttempt = new Date().valueOf();
 	props: any;
 	state: any;
+	static propTypes: any;
 
-	constructor() {
-		super({});
+	constructor(props: any) {
+		super(props);
 
 		this.handleSeatingUser = this.handleSeatingUser.bind(this);
 		this.handleLeaveGame = this.handleLeaveGame.bind(this);

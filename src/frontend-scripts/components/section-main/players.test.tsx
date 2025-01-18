@@ -2,17 +2,17 @@ import React from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { createMockStore } from 'redux-test-utils';
 import { shallowWithStore } from 'enzyme-redux';
-import Players from './Players';
+import Players from './Players.tsx';
 
 describe('Players', () => {
-	let store;
+	let store: any;
 
 	beforeEach(() => {
 		store = createMockStore({});
 	});
 
 	it('should initialize correctly', () => {
-		const mapStateToProps = (state) => ({
+		const mapStateToProps = (state: any) => ({
 			state,
 		});
 		const ConnectedComponent = connect(mapStateToProps)(Players);

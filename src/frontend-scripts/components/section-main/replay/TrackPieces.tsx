@@ -4,7 +4,7 @@ import { Map } from 'immutable';
 import classnames from 'classnames';
 import { handToCards } from './replay-utils.tsx';
 
-const ElectionTracker = ({ position }) => {
+const ElectionTracker = ({ position }: { position: number }) => {
 	const positionToClassName = Map([
 		[0, 'zero'],
 		[1, 'one'],

@@ -1,4 +1,4 @@
-import { makeReport } from '../../../../routes/socket/report.ts';
+import { makeReport } from '@/routes/socket/report.ts';
 
 describe('util', () => {
 	it('has a makeReport function', () => {

@@ -8,7 +8,7 @@ import {
 	sendUserReports,
 	sendGeneralChats,
 	sendGameInfo,
-} from '../../../../routes/socket/user-requests.ts';
+} from '@/routes/socket/user-requests.ts';
 
 describe('user requests', () => {
 	it('has an sendModInfo function', () => {

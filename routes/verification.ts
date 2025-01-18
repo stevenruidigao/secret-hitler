@@ -6,9 +6,9 @@ import passport from 'passport'; // eslint-disable-line no-unused-vars
 import nodemailer from 'nodemailer';
 import mg from 'nodemailer-mailgun-transport';
 
-import Account from '../models/account.ts';
-import VerifyAccount from '../models/verifyAccount.ts';
-import ResetPassword from '../models/resetPassword.ts';
+import Account from '@/models/account.ts';
+import VerifyAccount from '@/models/verifyAccount.ts';
+import ResetPassword from '@/models/resetPassword.ts';
 
 const verifyTemplate = _.template(
 	fs.readFileSync('./routes/account-verification-email.template', {

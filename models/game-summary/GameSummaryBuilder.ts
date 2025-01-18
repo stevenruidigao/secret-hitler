@@ -3,7 +3,7 @@ import debug from 'debug';
 import { fromNullable } from 'option';
 import { List } from 'immutable';
 
-import { objectContains } from '../../utils/index.ts';
+import { objectContains } from '@/utils/index.ts';
 
 import GameSummary from './index.ts';
 

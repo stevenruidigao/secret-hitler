@@ -1,4 +1,4 @@
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
 import { mockGameSummary } from '../../mocks/index.ts';
 import '../../matchers.ts';
 

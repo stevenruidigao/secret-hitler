@@ -3,11 +3,11 @@ import { promisify } from 'util';
 
 import redis from 'redis';
 
-import Account from '../../models/account.ts';
-import BannedIP, { IBannedIP } from '../../models/bannedIP.ts';
-import ModAction from '../../models/modAction.ts';
+import Account from '@/models/account.ts';
+import BannedIP, { IBannedIP } from '@/models/bannedIP.ts';
+import ModAction from '@/models/modAction.ts';
 
-import version from '../../version.ts';
+import version from '@/version.ts';
 
 import type { ActiveGame } from './game.d.ts';
 import { doesIPMatchCIDR } from './ip-obf.ts';

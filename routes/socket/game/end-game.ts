@@ -1,14 +1,14 @@
 import debug from 'debug';
 import _ from 'lodash';
 
-import Account from '../../../models/account.ts';
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
-import Game, { IGame } from '../../../models/game.ts';
-import { updateProfiles } from '../../../models/profile/utils.ts';
+import Account from '@/models/account.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
+import Game, { IGame } from '@/models/game.ts';
+import { updateProfiles } from '@/models/profile/utils.ts';
 
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.ts';
-import animals from '../../../utils/animals.ts';
-import adjectives from '../../../utils/adjectives.ts';
+import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
+import animals from '@/utils/animals.ts';
+import adjectives from '@/utils/adjectives.ts';
 
 import { checkBadgesELO, checkBadgesXP } from '../badges.ts';
 import type { ActiveGame } from '../game.d.ts';

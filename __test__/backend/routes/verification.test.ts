@@ -1,4 +1,4 @@
-import { verifyRoutes, setVerify } from '../../../routes/verification.ts';
+import { verifyRoutes, setVerify } from '@/routes/verification.ts';
 
 describe('verifyRoutes', () => {
 	it('is a function', () => {

@@ -1,4 +1,4 @@
-import { accounts } from '../../../routes/accounts.ts';
+import { accounts } from '@/routes/accounts.ts';
 
 describe('accounts', () => {
 	it('is a function', () => {

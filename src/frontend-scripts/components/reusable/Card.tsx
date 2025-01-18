@@ -6,7 +6,7 @@ import classnames from 'classnames';
  * @param {object} icon - todo
  * @return {jsx}
  */
-const Card = ({ type, icon }) => {
+const Card = ({ type, icon }: { type: string; icon?: string }) => {
 	const renderedIcon = icon ? <i className={classnames(icon, 'icon')} /> : null;
 
 	return <div className={classnames(type, 'card')}>{renderedIcon}</div>;

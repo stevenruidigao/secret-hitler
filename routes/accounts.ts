@@ -2,14 +2,14 @@ import { Request, Response } from 'express';
 import passport from 'passport';
 import fetch from 'node-fetch';
 
-import Account, { IAccount } from '../models/account.ts';
-import EightEightCounter from '../models/eightEightCounter.ts';
-import BannedIP from '../models/bannedIP.ts';
-import Profile from '../models/profile/index.ts';
-import Signups from '../models/signups.ts';
+import Account, { IAccount } from '@/models/account.ts';
+import EightEightCounter from '@/models/eightEightCounter.ts';
+import BannedIP from '@/models/bannedIP.ts';
+import Profile from '@/models/profile/index.ts';
+import Signups from '@/models/signups.ts';
 
-import blacklistedWords from '../iso/blacklistedWords.ts';
-import bannedEmails from '../utils/disposableEmails.ts';
+import blacklistedWords from '@/iso/blacklistedWords.ts';
+import bannedEmails from '@/utils/disposableEmails.ts';
 
 import { verifyRoutes, setVerify } from './verification.ts';
 import prodCacheBustToken from './prodCacheBustToken.ts';

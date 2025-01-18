@@ -1,4 +1,4 @@
-import userEvents from '../../../../routes/socket/user-events.ts';
+import userEvents from '@/routes/socket/user-events.ts';
 
 const {
 	handleUpdatedPlayerNote,

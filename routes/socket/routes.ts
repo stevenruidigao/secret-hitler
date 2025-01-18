@@ -55,9 +55,9 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
-import Account, { IAccount } from '../../models/account.ts';
-import { TOU_CHANGES } from '../../src/frontend-scripts/constants.ts';
-import version from '../../version.ts';
+import Account, { IAccount } from '@/models/account.ts';
+import { TOU_CHANGES } from '@/src/frontend-scripts/constants.ts';
+import version from '@/version.ts';
 
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.ts';
 import { handleAEMMessages } from './util.ts';

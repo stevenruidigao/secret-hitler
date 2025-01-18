@@ -1,9 +1,9 @@
 import debug from 'debug';
 import { List } from 'immutable';
 
-import { checkBadgesGamesPlayed } from '../../routes/socket/badges.ts';
-import { profiles } from '../../routes/socket/models.ts';
-import { flattenListOpts } from '../../utils/index.ts';
+import { checkBadgesGamesPlayed } from '@/routes/socket/badges.ts';
+import { profiles } from '@/routes/socket/models.ts';
+import { flattenListOpts } from '@/utils/index.ts';
 
 import Account from '../account.ts';
 

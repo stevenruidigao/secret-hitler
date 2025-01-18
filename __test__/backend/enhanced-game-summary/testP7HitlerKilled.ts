@@ -1,8 +1,8 @@
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
 import { p7HitlerKilled } from '../../mocks/index.ts';
 import { List, Range } from 'immutable';
 // @ts-expect-error: no types for 'option'
-import { some, none } from 'option';
+import { some } from 'option';
 // import matches from '../../matchers.ts';
 
 export default () => {

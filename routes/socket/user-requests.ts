@@ -1,15 +1,15 @@
 import { Socket } from 'socket.io';
 
-import Account from '../../models/account.ts';
-import Game from '../../models/game.ts';
-import ModAction from '../../models/modAction.ts';
-import PlayerNote from '../../models/playerNote.ts';
-import PlayerReport from '../../models/playerReport.ts';
-import { getProfile } from '../../models/profile/utils.ts';
-import Signups from '../../models/signups.ts';
+import Account from '@/models/account.ts';
+import Game from '@/models/game.ts';
+import ModAction from '@/models/modAction.ts';
+import PlayerNote from '@/models/playerNote.ts';
+import PlayerReport from '@/models/playerReport.ts';
+import { getProfile } from '@/models/profile/utils.ts';
+import Signups from '@/models/signups.ts';
 
-import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.ts';
-import version from '../../version.ts';
+import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
+import version from '@/version.ts';
 
 import type { ActiveGame } from './game.d.ts';
 import { obfIP } from './ip-obf.ts';

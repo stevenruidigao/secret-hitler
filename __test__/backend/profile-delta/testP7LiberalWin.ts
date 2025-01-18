@@ -1,5 +1,5 @@
-import { profileDelta } from '../../../models/profile/utils.ts';
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
+import { profileDelta } from '@/models/profile/utils.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
 import { p7LiberalWin } from '../../mocks/index.ts';
 
 export default () => {

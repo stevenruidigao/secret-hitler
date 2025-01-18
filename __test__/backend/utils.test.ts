@@ -12,7 +12,7 @@ import {
 	capitalize,
 	pushOpt,
 	objectContains,
-} from '../../utils/index.ts';
+} from '@/utils/index.ts';
 // @ts-expect-error: no types for 'option';
 import { none, some } from 'option';
 import { List } from 'immutable';

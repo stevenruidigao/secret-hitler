@@ -1,9 +1,9 @@
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
 import { veto2 } from '../../mocks/index.ts';
-import { List, Range } from 'immutable';
+// import { List, Range } from 'immutable';
 // @ts-expect-error: no types for 'option'
 import { some, none } from 'option';
-import '../../matchers';
+import '../../matchers.ts';
 
 export default () => {
 	describe('Veto top deck', () => {

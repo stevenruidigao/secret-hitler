@@ -8,7 +8,7 @@ import {
 	profiles,
 	formattedUserList,
 	userListEmitter,
-} from '../../../../routes/socket/models.ts';
+} from '@/routes/socket/models.ts';
 
 describe('models', () => {
 	it('has a games object', () => {

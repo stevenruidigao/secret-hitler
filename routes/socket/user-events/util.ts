@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import Account from '../../../models/account.ts';
+import Account from '@/models/account.ts';
 
 import { games, userList, testIP } from '../models.ts';
 import { sendUserList } from '../user-requests.ts';

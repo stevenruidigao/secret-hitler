@@ -8,10 +8,12 @@ import { render } from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
+
+import polyfills from '@/iso/polyfills.ts';
+
 import AppComponent from './components/App.tsx';
 import account from './account.ts';
 import shapp from './reducers/sh-app.ts';
-import polyfills from '../../iso/polyfills.ts';
 import rootSaga from './sagas.ts';
 import chatanimation from './chatanimation.ts';
 

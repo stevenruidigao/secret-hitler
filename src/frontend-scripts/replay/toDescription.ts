@@ -1,4 +1,4 @@
-import { text, handToText, mapOpt1, capitalize } from '../../../utils/index.ts';
+import { text, handToText, mapOpt1, capitalize } from '@/utils/index.ts';
 
 export default function (snapshot, game, userInfo, hideHand) {
 	const { isVotePassed, jas, neins } = game.turns.get(snapshot.turnNum);

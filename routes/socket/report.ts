@@ -1,6 +1,6 @@
 import https from 'https';
 
-import Account, { IAccount } from '../../models/account.ts';
+import Account, { IAccount } from '@/models/account.ts';
 
 import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.ts';

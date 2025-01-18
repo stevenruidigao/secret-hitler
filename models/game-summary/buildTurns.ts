@@ -2,7 +2,7 @@
 import { List, Range } from 'immutable';
 // @ts-expect-error: no types for 'option'
 import { some, none, fromNullable } from 'option';
-import { filterOpt, flattenListOpts, pushOpt, mapOpt1, mapOpt2, handDiff, policyToHand, handToPolicy } from '../../utils/index.ts';
+import { filterOpt, flattenListOpts, pushOpt, mapOpt1, mapOpt2, handDiff, policyToHand, handToPolicy } from '@/utils/index.ts';
 
 export default (
 	logs: List<any>,

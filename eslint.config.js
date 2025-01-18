@@ -14,6 +14,11 @@ export default tseslint.config(
 	{
 		name: 'SH',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+		settings: {
+			react: {
+				version: 'detect',
+			},
+		},
 		languageOptions: {
 			// parser: babel,
 			// parserOptions: {

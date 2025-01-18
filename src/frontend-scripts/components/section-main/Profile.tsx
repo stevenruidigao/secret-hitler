@@ -11,7 +11,7 @@ import { Dropdown } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 import UserPopup from '../reusable/UserPopup.tsx';
-import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.ts';
+import { getBlacklistIndex, userInBlacklist } from '@/utils/index.ts';
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });

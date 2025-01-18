@@ -1,4 +1,4 @@
-import { secureGame, rateEloGame, sendInProgressGameUpdate } from '../../../../routes/socket/util.ts';
+import { secureGame, rateEloGame, sendInProgressGameUpdate } from '@/routes/socket/util.ts';
 
 describe('util', () => {
 	it('has a secureGame function', () => {

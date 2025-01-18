@@ -1,9 +1,9 @@
-import buildEnhancedGameSummary from '../../../models/game-summary/buildEnhancedGameSummary.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
 import { p5HitlerElected } from '../../mocks/index.ts';
 import { List, Range } from 'immutable';
-// @ts-expect-error: no types for 'option'
-import { some, none } from 'option';
-import '../../matchers.ts';
+// @-ts-expect-error: no types for 'option'
+// import { some, none } from 'option';
+// import '../../matchers.ts';
 
 export default () => {
 	describe('Hitler elected: 5p', () => {

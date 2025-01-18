@@ -9,7 +9,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { fetchProfile } from '../../actions/actions.ts';
 import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.ts';
 import UserPopup from '../reusable/UserPopup.tsx';
-import { userInBlacklist } from '../../../../utils/index.ts';
+import { userInBlacklist } from '@/utils/index.ts';
 
 $.fn.modal = Modal;
 
