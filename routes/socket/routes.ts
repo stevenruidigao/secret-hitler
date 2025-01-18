@@ -29,7 +29,7 @@ const {
 	handleOpenChat,
 	handleCloseChat,
 	handleUnsubscribeChat,
-	handleAddNewModDMChat
+	handleAddNewModDMChat,
 } = userEvents;
 
 import {
@@ -45,7 +45,7 @@ import {
 	sendSignups,
 	sendAllSignups,
 	sendPrivateSignups,
-	updateUserStatus
+	updateUserStatus,
 } from './user-requests.ts';
 
 import https from 'https';
@@ -74,13 +74,13 @@ import {
 	selectPlayerToExecute,
 	selectPartyMembershipInvestigateReverse,
 	selectOnePolicy,
-	selectBurnCard
+	selectBurnCard,
 } from './game/policy-powers.ts';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const io = global.io
+const io = global.io;
 
 let modUserNames: any[] = [],
 	editorUserNames: any[] = [],
@@ -88,7 +88,7 @@ let modUserNames: any[] = [],
 
 const gamesGarbageCollector = () => {
 	const currentTime = new Date();
-	Object.keys(games).forEach(gameName => {
+	Object.keys(games).forEach((gameName) => {
 		let toDelete = false;
 		const currentGame = games[gameName];
 		if (!currentGame) return;
@@ -117,7 +117,8 @@ const gamesGarbageCollector = () => {
 		// 	completedTimer
 		// );
 
-		toDelete = (!games[gameName].general.modDeleteDelay && completedTimer && completedTimer < currentTime) || (abandonedTimer && abandonedTimer < currentTime) || false;
+		toDelete =
+			(!games[gameName].general.modDeleteDelay && completedTimer && completedTimer < currentTime) || (abandonedTimer && abandonedTimer < currentTime) || false;
 
 		// if (games[gameName] && modDeleteTimer && modDeleteTimer < currentTime) {
 		// console.log('Mod Delete Delay Timer Expired. Deleting... ');
@@ -126,18 +127,15 @@ const gamesGarbageCollector = () => {
 
 		if (toDelete && currentGame.publicPlayersState) {
 			for (let affectedPlayerNumber = 0; affectedPlayerNumber < currentGame.publicPlayersState.length; affectedPlayerNumber++) {
-				const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-					socketId => {
-						const socket = io.sockets.sockets.get(socketId);
+				const affectedSocketId = Array.from(io.sockets.sockets.keys()).find((socketId) => {
+					const socket = io.sockets.sockets.get(socketId);
 
-						if (!socket) return false;
+					if (!socket) return false;
 
-						const handshake: any = socket.handshake;
+					const handshake: any = socket.handshake;
 
-						return handshake?.session?.passport &&
-							handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName
-					}
-				);
+					return handshake?.session?.passport && handshake.session.passport.user === currentGame.publicPlayersState[affectedPlayerNumber].userName;
+				});
 
 				const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
@@ -263,7 +261,7 @@ export const socketRoutes = () => {
 				if (account.touLastAgreed && account.touLastAgreed.length) {
 					const changesSince: any[] = [];
 					const myVer = parseVer(account.touLastAgreed);
-					TOU_CHANGES.forEach(change => {
+					TOU_CHANGES.forEach((change) => {
 						if (!firstVerNew(myVer, parseVer(change.changeVer))) changesSince.push(change);
 					});
 					if (changesSince.length) {
@@ -301,7 +299,7 @@ export const socketRoutes = () => {
 
 				// sockets should not be unauthenticated but let's make sure anyway
 				if (passport && passport.user) {
-					const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
+					const dmID = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
 					if (dmID) {
 						socket.emit('preOpenModDMs');
 						socket.emit('openModDMs', handleAEMMessages(modDMs[dmID], passport.user, modUserNames, editorUserNames, adminUserNames));
@@ -363,12 +361,15 @@ export const socketRoutes = () => {
 
 						const newFeedback = {
 							date: new Date(),
-							feedback: data.feedback
+							feedback: data.feedback,
 						};
 
 						if (account.feedbackSubmissions.length >= 2) {
 							const secondMostRecentIndex = account.feedbackSubmissions.length - 2;
-							if (!account.feedbackSubmissions[secondMostRecentIndex].date || newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf() > 1000 * 60 * 60 * 24) {
+							if (
+								!account.feedbackSubmissions[secondMostRecentIndex].date ||
+								newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf() > 1000 * 60 * 60 * 24
+							) {
 								// if it's been 24 hours since the *2nd* most recent feedback submission
 								account.feedbackSubmissions.push(newFeedback);
 							} else {
@@ -376,8 +377,10 @@ export const socketRoutes = () => {
 									status: 'error',
 									message:
 										'You can only submit feedback twice a day. You can submit feedback again in ' +
-										dayjs.duration(24 * 60 * 60 * 1000 - (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf())).humanize() +
-										'.'
+										dayjs
+											.duration(24 * 60 * 60 * 1000 - (newFeedback.date.valueOf() - account.feedbackSubmissions[secondMostRecentIndex].date.valueOf()))
+											.humanize() +
+										'.',
 								});
 								return;
 							}
@@ -388,7 +391,7 @@ export const socketRoutes = () => {
 						let feedback: any = {
 							content: `__**Player**__: ${passport.user}\n__**Feedback**__: ${data.feedback}`,
 							username: 'Feedback',
-							allowed_mentions: { parse: [] }
+							allowed_mentions: { parse: [] },
 						};
 
 						try {
@@ -399,8 +402,8 @@ export const socketRoutes = () => {
 								method: 'POST',
 								headers: {
 									'Content-Type': 'application/json',
-									'Content-Length': Buffer.byteLength(feedback)
-								}
+									'Content-Length': Buffer.byteLength(feedback),
+								},
 							});
 							req.end(feedback);
 							socket.emit('feedbackResponse', { status: 'success', message: 'Thank you for submitting feedback!' });
@@ -418,9 +421,9 @@ export const socketRoutes = () => {
 
 			socket.on('flappyEvent', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					handleFlappyEvent(data, game);
 				}
@@ -643,7 +646,7 @@ export const socketRoutes = () => {
 			});
 			socket.on('subscribeModChat', (uid: string) => {
 				const game = findGame({ uid });
-				
+
 				if (game && game.private && game.private.seatedPlayers) {
 					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
 						const players = game.private.seatedPlayers.map((player: any) => player.userName);
@@ -653,8 +656,8 @@ export const socketRoutes = () => {
 									// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 									acc.staffRole && acc.staffRole.length > 0 && players.includes(acc.username); // TODO: check - error?
 								})
-								.map(acc => acc.username);
-								
+								.map((acc) => acc.username);
+
 							if (staff.length) {
 								socket.emit('sendAlert', `AEM members are present: ${JSON.stringify(staff)}`);
 								return;
@@ -686,7 +689,7 @@ export const socketRoutes = () => {
 
 				if (game && game.private && game.private.seatedPlayers) {
 					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-							handleModPeekRemakes(socket, passport, game, data.modName);
+						handleModPeekRemakes(socket, passport, game, data.modName);
 					}
 				} else {
 					socket.emit('sendAlert', 'Game is missing.');
@@ -724,9 +727,9 @@ export const socketRoutes = () => {
 
 			socket.on('presidentSelectedChancellor', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectChancellor(passport, game, data, socket);
 				}
@@ -772,25 +775,25 @@ export const socketRoutes = () => {
 				if (isRestricted) return;
 
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigate(passport, game, data, socket);
 				}
 			});
 			socket.on('selectPartyMembershipInvestigateReverse', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPartyMembershipInvestigateReverse(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPolicies', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					if (game.private.lock.policyPeekAndDrop) selectOnePolicy(passport, game);
 					else selectPolicies(passport, game, socket);
@@ -798,36 +801,36 @@ export const socketRoutes = () => {
 			});
 			socket.on('selectedPresidentVoteOnBurn', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectBurnCard(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPlayerToExecute', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPlayerToExecute(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedSpecialElection', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectSpecialElection(passport, game, data, socket);
 				}
 			});
 			socket.on('selectedPlayerToAssassinate', (data: any) => {
 				if (isRestricted) return;
-                                
+
 				const game = findGame(data);
-				
+
 				if (authenticated && game && ensureInGame(passport, game)) {
 					selectPlayerToAssassinate(passport, game, data, socket);
 				}

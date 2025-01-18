@@ -31,8 +31,8 @@ export default tseslint.config(
 				window: true,
 				expect: true,
 				describe: true,
-				it: true
-			}
+				it: true,
+			},
 		},
 		rules: {
 			'linebreak-style': 'off',
@@ -43,8 +43,8 @@ export default tseslint.config(
 				'warn',
 				{
 					functions: true,
-					classes: true
-				}
+					classes: true,
+				},
 			],
 			'no-warning-comments': 'off',
 			'brace-style': 'off',
@@ -77,7 +77,7 @@ export default tseslint.config(
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/no-unused-vars': 'off',
 			'@typescript-eslint/no-unsafe-function-type': 'off',
-			'no-case-declarations': 'off'
-		}
-	}
+			'no-case-declarations': 'off',
+		},
+	},
 );

@@ -8,7 +8,7 @@ let count = 0;
 
 Account.findOne({ $or: [{ eloSeason: { $ne: 1600 } }, { xpSeason: { $exists: true, $ne: 0 } }] })
 	.cursor()
-	.eachAsync(account => {
+	.eachAsync((account) => {
 		account.eloSeason = 1600;
 		account.xpSeason = 0;
 		account.isRainbowSeason = false;
@@ -19,6 +19,6 @@ Account.findOne({ $or: [{ eloSeason: { $ne: 1600 } }, { xpSeason: { $exists: tru
 			console.log('processed account ' + count);
 		}
 	})
-	.catch(err => {
+	.catch((err) => {
 		console.log(err, 'caught err');
 	});

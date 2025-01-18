@@ -14,7 +14,7 @@ const ELO_BADGES: [number, string][] = [
 	[2000, 'elo2000'],
 	[2100, 'elo2100'],
 	[2200, 'elo2200'],
-	[2300, 'elo2300']
+	[2300, 'elo2300'],
 ];
 
 const XP_BADGES: [number, string][] = [
@@ -27,7 +27,7 @@ const XP_BADGES: [number, string][] = [
 	[5000, 'xp5000'],
 	[7500, 'xp7500'],
 	[10000, 'xp10000'],
-	[15000, 'xp15000']
+	[15000, 'xp15000'],
 ];
 
 const ACCOUNT_AGE_BADGES: [number, string][] = [
@@ -36,7 +36,7 @@ const ACCOUNT_AGE_BADGES: [number, string][] = [
 	[2, 'birthday2'],
 	[3, 'birthday3'],
 	[4, 'birthday4'],
-	[5, 'birthday5']
+	[5, 'birthday5'],
 ];
 
 const GAMES_PLAYED_BADGES: [number, string][] = [
@@ -47,7 +47,7 @@ const GAMES_PLAYED_BADGES: [number, string][] = [
 	[1000, 'games1000'],
 	[2000, 'games2000'],
 	[3000, 'games3000'],
-	[5000, 'games5000']
+	[5000, 'games5000'],
 ];
 
 const GAMES_WON_BADGES: [number, string][] = [
@@ -56,25 +56,25 @@ const GAMES_WON_BADGES: [number, string][] = [
 	[200, 'won200'],
 	[500, 'won500'],
 	[1000, 'won1000'],
-	[2000, 'won2000']
+	[2000, 'won2000'],
 ];
 
 const CUSTOM_GAME_BADGES: [number, string][] = [
 	// Number of custom games played to badge
 	[gameTypeCount, 'customPlayer'],
-	[2 * gameTypeCount, 'customPro']
+	[2 * gameTypeCount, 'customPro'],
 ];
 
 const SILENT_GAME_BADGES: [number, string][] = [
 	// Number of silent games played to badge
 	[gameTypeCount, 'silentPlayer'],
-	[2 * gameTypeCount, 'silentPro']
+	[2 * gameTypeCount, 'silentPro'],
 ];
 
 const EMOTE_GAME_BADGES: [number, string][] = [
 	// Number of emote games played to badge
 	[gameTypeCount, 'emotePlayer'],
-	[2 * gameTypeCount, 'emotePro']
+	[2 * gameTypeCount, 'emotePro'],
 ];
 
 /**
@@ -91,7 +91,7 @@ export const awardBadgePrequeried = (user: any, badgeId: any, badgeText: any, ba
 			id: badgeId,
 			text: badgeText,
 			title: badgeTitle,
-			dateAwarded: new Date()
+			dateAwarded: new Date(),
 		});
 
 		user.gameSettings.hasUnseenBadge = true;
@@ -101,7 +101,7 @@ export const awardBadgePrequeried = (user: any, badgeId: any, badgeText: any, ba
 export const removeBadge = (user: any, badgeId: any) => {
 	user.badges.splice(
 		user.badges.findIndex((badge: any) => badge.id === badgeId),
-		1
+		1,
 	);
 };
 
@@ -172,18 +172,12 @@ export const checkBadgesAccount = (user: any) => {
 	for (const badge of ACCOUNT_AGE_BADGES) {
 		const [years, badgeId] = badge;
 
-		if (
-			user.created <=
-			dayjs()
-				.utc()
-				.subtract(years, 'years')
-				.toDate()
-		) {
+		if (user.created <= dayjs().utc().subtract(years, 'years').toDate()) {
 			awardBadgePrequeried(
 				user,
 				badgeId,
 				`Your account is now ${years} year${years === 1 ? '' : 's'} old!`,
-				`Happy ${years}${years === 1 ? 'st' : years === 2 ? 'nd' : years === 3 ? 'rd' : 'th'} birthday!`
+				`Happy ${years}${years === 1 ? 'st' : years === 2 ? 'nd' : years === 3 ? 'rd' : 'th'} birthday!`,
 			);
 		}
 	}
@@ -227,7 +221,7 @@ export const checkBadgesGamesPlayed = (
 	customGamesPlayed: any,
 	silentGamesPlayed: any,
 	emoteGamesPlayed: any,
-	gameJustPlayed = ''
+	gameJustPlayed = '',
 ) => {
 	for (const badge of GAMES_PLAYED_BADGES) {
 		const [gamesPlayed, badgeId] = badge;
@@ -237,7 +231,7 @@ export const checkBadgesGamesPlayed = (
 				user,
 				badgeId,
 				gameJustPlayed ? `You reached ${gamesPlayed} games played in the game ${gameJustPlayed}.` : ``,
-				`You reached ${gamesPlayed} games played!`
+				`You reached ${gamesPlayed} games played!`,
 			);
 		}
 	}
@@ -250,7 +244,7 @@ export const checkBadgesGamesPlayed = (
 				user,
 				badgeId,
 				gameJustPlayed ? `You reached ${gamesPlayed} games won in the game ${gameJustPlayed}.` : ``,
-				`You reached ${gamesPlayed} games won!`
+				`You reached ${gamesPlayed} games won!`,
 			);
 		}
 	}
@@ -263,7 +257,7 @@ export const checkBadgesGamesPlayed = (
 				user,
 				badgeId,
 				gameJustPlayed ? `You reached ${gamesPlayed} custom games played in the game ${gameJustPlayed}.` : ``,
-				`You reached ${gamesPlayed} custom games played!`
+				`You reached ${gamesPlayed} custom games played!`,
 			);
 		}
 	}
@@ -276,7 +270,7 @@ export const checkBadgesGamesPlayed = (
 				user,
 				badgeId,
 				gameJustPlayed ? `You reached ${gamesPlayed} silent games played in the game ${gameJustPlayed}.` : ``,
-				`You reached ${gamesPlayed} silent games played!`
+				`You reached ${gamesPlayed} silent games played!`,
 			);
 		}
 	}
@@ -289,7 +283,7 @@ export const checkBadgesGamesPlayed = (
 				user,
 				badgeId,
 				gameJustPlayed ? `You reached ${gamesPlayed} emote games played in the game ${gameJustPlayed}.` : ``,
-				`You reached ${gamesPlayed} emote games played!`
+				`You reached ${gamesPlayed} emote games played!`,
 			);
 		}
 	}

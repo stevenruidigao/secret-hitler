@@ -23,11 +23,11 @@ const sendMessage = (game: ActiveGame, user: User, message: string, date = new D
 		timestamp: date,
 		chat: [
 			{
-				text: message
-			}
-		]
+				text: message,
+			},
+		],
 	});
-}
+};
 
 /**
  * @callback Run
@@ -62,7 +62,7 @@ type Command = {
 	seatedOnly: boolean;
 	gameStartedOnly: boolean;
 	run?: any;
-}
+};
 
 /**
  * @type {Command[]}
@@ -78,7 +78,7 @@ export const commands: Command[] & {
 		aemOnly: false,
 		observerOnly: false,
 		seatedOnly: false,
-		gameStartedOnly: false
+		gameStartedOnly: false,
 	},
 	{
 		name: ['g', 'gl', 'guessline', 'guesslines', 'guesslimes'],
@@ -88,7 +88,7 @@ export const commands: Command[] & {
 		aemOnly: false,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['gm', 'guessmerlin'],
@@ -98,7 +98,7 @@ export const commands: Command[] & {
 		aemOnly: false,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['pingmod', 'pingmods', 'pingmoderator', 'pingaem', 'pingeditor'],
@@ -108,7 +108,7 @@ export const commands: Command[] & {
 		aemOnly: false,
 		observerOnly: false,
 		seatedOnly: true,
-		gameStartedOnly: false
+		gameStartedOnly: false,
 	},
 	{
 		name: ['ping'],
@@ -118,7 +118,7 @@ export const commands: Command[] & {
 		aemOnly: false,
 		observerOnly: false,
 		seatedOnly: true,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forcerigdeck'],
@@ -128,7 +128,7 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forcevote', 'fv'],
@@ -138,7 +138,7 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forceskip', 'fs'],
@@ -148,7 +148,7 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forcepick'],
@@ -158,7 +158,7 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forceping'],
@@ -168,7 +168,7 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
+		gameStartedOnly: true,
 	},
 	{
 		name: ['forcerigrole'],
@@ -178,8 +178,8 @@ export const commands: Command[] & {
 		aemOnly: true,
 		observerOnly: true,
 		seatedOnly: false,
-		gameStartedOnly: true
-	}
+		gameStartedOnly: true,
+	},
 ] as any;
 
 /**
@@ -189,10 +189,12 @@ export const commands: Command[] & {
  *
  * @return {{ name: string, args: (string[]|null), command: (Command|null) }} - the name of the invoked command, as well as the parsed arguments and command object.
  */
-export const parseCommand = (msg: string): {
+export const parseCommand = (
+	msg: string,
+): {
 	name: string;
-	args: (string[] | null);
-	command: (Command | null);
+	args: string[] | null;
+	command: Command | null;
 } => {
 	const trimPrefix = (s: string, prefix: string) => (s.startsWith(prefix) ? s.slice(prefix.length) : s);
 	const cmdRegex = /^\/(\w*)/i;
@@ -226,7 +228,7 @@ export const runCommand = (socket: Socket, passport: any, user: User, game: Acti
 			game.private.commandChats = {};
 			console.warn('game.private.commandChats was undefined, setting to empty object, game:', JSON.stringify(game));
 		}
-	
+
 		if (!game.private.commandChats[user.userName]) {
 			game.private.commandChats[user.userName] = [];
 		}
@@ -280,7 +282,7 @@ export const runCommand = (socket: Socket, passport: any, user: User, game: Acti
  *
  * @return {Command|null} - the command with that name or null if it is not found.
  */
-commands.getCommand = function(name: string) {
+commands.getCommand = function (name: string) {
 	return this.find((c) => c.name.includes(name.toLowerCase())) || null;
 };
 
@@ -307,12 +309,12 @@ commands.getCommand = function(name: string) {
 				chat: [
 					{
 						text: `/${command.name[0]}`,
-						type: 'player'
+						type: 'player',
 					},
 					{
-						text: ` - ${command.description}`
-					}
-				]
+						text: ` - ${command.description}`,
+					},
+				],
 			});
 		}
 	}
@@ -331,7 +333,8 @@ commands.getCommand = function(name: string) {
 		return;
 	}
 
-	if (game.trackState.policyCount.fascist >= 3 && !['specialElection', 'deckPeek'].includes(game.gameState.phase || '')) { // TODO: check
+	if (game.trackState.policyCount.fascist >= 3 && !['specialElection', 'deckPeek'].includes(game.gameState.phase || '')) {
+		// TODO: check
 		sendMessage(game, user, 'Hitler zone has begun, so line guessing has closed.');
 		return;
 	}
@@ -350,7 +353,7 @@ commands.getCommand = function(name: string) {
 		return;
 	}
 
-	if (guess.regs.some(x => x > playerCount)) {
+	if (guess.regs.some((x) => x > playerCount)) {
 		sendMessage(game, user, 'Invalid seat number.');
 		return;
 	}
@@ -407,14 +410,14 @@ commands.getCommand = function(name: string) {
 						account.staffRole === 'moderator' ||
 						account.staffRole === 'editor' ||
 						account.staffRole === 'admin' ||
-						account.staffRole === 'trialmod'
+						account.staffRole === 'trialmod',
 				)
-				.map(account => account.username);
+				.map((account) => account.username);
 			if (staffInGame.length !== 0) {
 				sendMessage(
 					game,
 					user,
-					`An account used by a moderator or a trial moderator is in this game. Please use the report function in this game and make sure to not out crucial information or just DM another moderator.`
+					`An account used by a moderator or a trial moderator is in this game. Please use the report function in this game and make sure to not out crucial information or just DM another moderator.`,
 				);
 				game.lastModPing = Date.now(); // prevent overquerying
 			} else {
@@ -427,10 +430,10 @@ commands.getCommand = function(name: string) {
 						election: game.general.electionCount,
 						title: game.general.name,
 						uid: game.general.uid,
-						gameType: game.general.casualGame ? 'Casual' : game.general.practiceGame ? 'Practice' : 'Ranked'
+						gameType: game.general.casualGame ? 'Casual' : game.general.practiceGame ? 'Practice' : 'Ranked',
 					},
 					game,
-					'ping'
+					'ping',
 				);
 			}
 		});
@@ -458,18 +461,15 @@ commands.getCommand = function(name: string) {
 	if (seat <= game.publicPlayersState.length && (!player.pingTime || Date.now() - player.pingTime > 180000)) {
 		try {
 			const affectedPlayerIndex = seat - 1;
-			const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-				socketId => {
-					const s = io.sockets.sockets.get(socketId);
+			const affectedSocketId = Array.from(io.sockets.sockets.keys()).find((socketId) => {
+				const s = io.sockets.sockets.get(socketId);
 
-					if (!s) return false;
+				if (!s) return false;
 
-					const handshake = s.handshake as any;
+				const handshake = s.handshake as any;
 
-					return handshake?.session?.passport &&
-						handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName
-				}
-			);
+				return handshake?.session?.passport && handshake.session.passport.user === game.publicPlayersState[affectedPlayerIndex].userName;
+			});
 
 			const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
@@ -477,13 +477,12 @@ commands.getCommand = function(name: string) {
 
 			if (!affectedSocket) return;
 
-			affectedSocket
-				.emit(
-					'pingPlayer',
-					game.general.blindMode || game.general.playerChats === 'disabled'
-						? 'Secret Hitler IO: A player has pinged you.'
-						: `Secret Hitler IO: Player ${user.userName} just pinged you.`
-				);
+			affectedSocket.emit(
+				'pingPlayer',
+				game.general.blindMode || game.general.playerChats === 'disabled'
+					? 'Secret Hitler IO: A player has pinged you.'
+					: `Secret Hitler IO: Player ${user.userName} just pinged you.`,
+			);
 
 			if (game.general.playerChats === 'disabled') {
 				seatedPlayers
@@ -496,16 +495,16 @@ commands.getCommand = function(name: string) {
 								text: game.general.blindMode
 									? `{${affectedPlayerIndex + 1}}`
 									: `${game.publicPlayersState[affectedPlayerIndex].userName} (${affectedPlayerIndex + 1})`,
-								type: 'player'
+								type: 'player',
 							},
-							{ text: ' has been successfully pinged.' }
-						]
+							{ text: ' has been successfully pinged.' },
+						],
 					});
 
 				game.private.hiddenInfoChat?.push({
 					timestamp: new Date(),
 					gameChat: true,
-					chat: [{ text: `${player.userName} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName}.` }]
+					chat: [{ text: `${player.userName} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName}.` }],
 				});
 			} else {
 				if (!game.chats) {
@@ -520,12 +519,12 @@ commands.getCommand = function(name: string) {
 						{
 							text: game.general.blindMode
 								? `A player has pinged player number ${affectedPlayerIndex + 1}.`
-								: `${passport.user} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName} (${affectedPlayerIndex + 1}).`
-						}
+								: `${passport.user} has pinged ${game.publicPlayersState[affectedPlayerIndex].userName} (${affectedPlayerIndex + 1}).`,
+						},
 					],
 					previousSeasonAward: user.previousSeasonAward,
 					uid: game.uid,
-					inProgress: game.gameState.isStarted
+					inProgress: game.gameState.isStarted,
 				});
 			}
 		} catch (e) {
@@ -539,8 +538,8 @@ commands.getCommand = function(name: string) {
 (commands.getCommand('forcerigdeck') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	const changedChat: any[] = [
 		{
-			text: 'A staff member has changed the deck to '
-		}
+			text: 'A staff member has changed the deck to ',
+		},
 	];
 
 	for (let card of args[0]) {
@@ -548,13 +547,13 @@ commands.getCommand = function(name: string) {
 		if (card === 'R' || card === 'B') {
 			changedChat.push({
 				text: card,
-				type: `${card === 'R' ? 'fascist' : 'liberal'}`
+				type: `${card === 'R' ? 'fascist' : 'liberal'}`,
 			});
 		}
 	}
 
 	changedChat.push({
-		text: '.'
+		text: '.',
 	});
 
 	if (!game.chats) {
@@ -564,7 +563,7 @@ commands.getCommand = function(name: string) {
 	game.chats.push({
 		gameChat: true,
 		timestamp: new Date(),
-		chat: changedChat
+		chat: changedChat,
 	});
 };
 
@@ -605,7 +604,7 @@ commands.getCommand = function(name: string) {
 				`${affectedPlayer.userName} {${affectedPlayerIndex + 1}} has already voted.\nThey were voting: ${
 					affectedPlayer.voteStatus?.didVoteYes ? 'ja' : 'nein'
 				}\nYou have set them to vote: ${vote ? 'ja' : 'nein'}
-				`
+				`,
 			);
 		}
 
@@ -618,18 +617,18 @@ commands.getCommand = function(name: string) {
 			timestamp: new Date(),
 			chat: [
 				{
-					text: 'A staff member has forced '
+					text: 'A staff member has forced ',
 				},
 				{
 					text: blindMode
 						? `${replacementNames[affectedPlayerIndex]} {${affectedPlayerIndex + 1}} `
 						: `${affectedPlayer.userName} {${affectedPlayerIndex + 1}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' to vote.'
-				}
-			]
+					text: ' to vote.',
+				},
+			],
 		});
 
 		const modOnlyChat = {
@@ -638,37 +637,37 @@ commands.getCommand = function(name: string) {
 			chat: [
 				{
 					text: `${passport.user}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' has forced '
+					text: ' has forced ',
 				},
 				{
 					text: `${affectedPlayer.userName} {${affectedPlayerIndex + 1}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' to vote '
+					text: ' to vote ',
 				},
 				{
 					text: `${vote ? 'ja' : 'nein'}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ', '
+					text: ', ',
 				},
 				{
 					text: `${affectedPlayer.userName}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: `${affectedPlayer.voteStatus?.hasVoted ? ' had originally voted ' : ' had not voted.'}`
+					text: `${affectedPlayer.voteStatus?.hasVoted ? ' had originally voted ' : ' had not voted.'}`,
 				},
 				{
 					text: `${affectedPlayer.voteStatus?.hasVoted ? (affectedPlayer.voteStatus?.didVoteYes ? ' ja' : ' nein') : ''}`,
-					type: 'player'
-				}
-			]
+					type: 'player',
+				},
+			],
 		};
 
 		game.private.hiddenInfoChat?.push(modOnlyChat);
@@ -712,7 +711,7 @@ commands.getCommand = function(name: string) {
 
 	let chancellor = -1;
 	const currentPlayers: boolean[] = [];
-	game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: fix this
+	game.general.livingPlayerCount = game.general.livingPlayerCount || (game.general.playerCount as number); // TODO: fix this
 
 	for (let i = 0; i < seatedPlayers.length; i++) {
 		currentPlayers[i] = !(
@@ -742,16 +741,16 @@ commands.getCommand = function(name: string) {
 		timestamp: new Date(),
 		chat: [
 			{
-				text: 'A staff member has force skipped the government with '
+				text: 'A staff member has force skipped the government with ',
 			},
 			{
 				text: blindMode ? `${replacementNames[affectedPlayerIndex]} {${affectedPlayerIndex + 1}} ` : `${affectedPlayer.userName} {${affectedPlayerIndex + 1}}`,
-				type: 'player'
+				type: 'player',
 			},
 			{
-				text: ' as president.'
-			}
-		]
+				text: ' as president.',
+			},
+		],
 	});
 	selectChancellor({ user: affectedPlayer.userName }, game, { chancellorIndex: chancellor }, undefined, true);
 	setTimeout(() => {
@@ -811,23 +810,23 @@ commands.getCommand = function(name: string) {
 				timestamp: new Date(),
 				chat: [
 					{
-						text: 'An AEM member has forced '
+						text: 'An AEM member has forced ',
 					},
 					{
 						text: `${affectedPlayer.userName} {${affectedPlayerNumber + 1}}`,
-						type: 'player'
+						type: 'player',
 					},
 					{
-						text: ' to assassinate '
+						text: ' to assassinate ',
 					},
 					{
 						text: `${affectedChancellor.userName} {${chancellorPick}}`,
-						type: 'player'
+						type: 'player',
 					},
 					{
-						text: '.'
-					}
-				]
+						text: '.',
+					},
+				],
 			});
 
 			selectPlayerToAssassinate({ user: affectedPlayer.userName }, game, { playerIndex: chancellorPick - 1 });
@@ -839,7 +838,7 @@ commands.getCommand = function(name: string) {
 			return;
 		}
 
-		game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: fix this
+		game.general.livingPlayerCount = game.general.livingPlayerCount || (game.general.playerCount as number); // TODO: fix this
 
 		if (
 			game.publicPlayersState[chancellorPick - 1].isDead ||
@@ -850,7 +849,7 @@ commands.getCommand = function(name: string) {
 			sendMessage(game, user, `The player in seat ${chancellorPick} is not a valid chancellor. (Dead or TL)`);
 			return;
 		}
-		
+
 		if (!game.chats) {
 			game.chats = [];
 		}
@@ -860,25 +859,25 @@ commands.getCommand = function(name: string) {
 			timestamp: new Date(),
 			chat: [
 				{
-					text: 'A staff member has forced '
+					text: 'A staff member has forced ',
 				},
 				{
 					text: blindMode
 						? `${replacementNames[affectedPlayerNumber]} {${affectedPlayerNumber + 1}} `
 						: `${affectedPlayer.userName} {${affectedPlayerNumber + 1}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' to pick '
+					text: ' to pick ',
 				},
 				{
 					text: blindMode ? `${replacementNames[chancellorPick - 1]} {${chancellorPick}} ` : `${affectedChancellor.userName} {${chancellorPick}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' as chancellor.'
-				}
-			]
+					text: ' as chancellor.',
+				},
+			],
 		});
 		selectChancellor({ user: affectedPlayer.userName }, game, { chancellorIndex: chancellorPick - 1 }, undefined, true);
 	}
@@ -887,7 +886,7 @@ commands.getCommand = function(name: string) {
 (commands.getCommand('forceping') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	const { blindMode } = game.general;
 	const replacementNames = game.general.replacementNames || [];
-	
+
 	if (!game.private.seatedPlayers) {
 		game.private.seatedPlayers = [];
 		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
@@ -906,7 +905,7 @@ commands.getCommand = function(name: string) {
 		sendMessage(game, user, `There is no seat ${affectedPlayerNumber + 1}.`);
 		return;
 	}
-	
+
 	if (!game.chats) {
 		game.chats = [];
 	}
@@ -916,33 +915,30 @@ commands.getCommand = function(name: string) {
 		timestamp: new Date(),
 		chat: [
 			{
-				text: 'A staff member has pinged '
+				text: 'A staff member has pinged ',
 			},
 			{
 				text: blindMode
 					? `${replacementNames[affectedPlayerNumber]} {${affectedPlayerNumber + 1}} `
 					: `${affectedPlayer.userName} {${affectedPlayerNumber + 1}}`,
-				type: 'player'
+				type: 'player',
 			},
 			{
-				text: '.'
-			}
-		]
+				text: '.',
+			},
+		],
 	});
 
 	try {
-		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-			socketId => {
-				const s = io.sockets.sockets.get(socketId);
+		const affectedSocketId = Array.from(io.sockets.sockets.keys()).find((socketId) => {
+			const s = io.sockets.sockets.get(socketId);
 
-				if (!s) return false;
+			if (!s) return false;
 
-				const handshake = s.handshake as any;
+			const handshake = s.handshake as any;
 
-				return handshake?.session?.passport &&
-					handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
-			}
-		);
+			return handshake?.session?.passport && handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
+		});
 
 		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
@@ -950,7 +946,7 @@ commands.getCommand = function(name: string) {
 			sendMessage(game, user, 'Unable to send ping.');
 			return;
 		}
-		
+
 		affectedSocket.emit('pingPlayer', 'Secret Hitler IO: A moderator has pinged you.');
 	} catch (e) {
 		console.log(e, 'caught exception in ping chat');
@@ -960,7 +956,7 @@ commands.getCommand = function(name: string) {
 (commands.getCommand('forcerigrole') as Command).run = (socket: Socket, passport: any, user: User, game: ActiveGame, args: any) => {
 	if (game && game.private) {
 		const seat = parseInt(args[0], 10);
-		const role = (r => {
+		const role = ((r) => {
 			if (['f', 'fas', 'fascist'].includes(r)) {
 				return 'fascist';
 			} else if (['l', 'lib', 'liberal'].includes(r)) {
@@ -979,28 +975,28 @@ commands.getCommand = function(name: string) {
 
 		const changedChat: any[] = [
 			{
-				text: 'A staff member has changed the role of player '
-			}
+				text: 'A staff member has changed the role of player ',
+			},
 		];
 
 		changedChat.push({
 			text: `${game.publicPlayersState[seat - 1].userName} (${seat})`,
-			type: 'player'
+			type: 'player',
 		});
 
 		changedChat.push({
-			text: ' to '
+			text: ' to ',
 		});
 
 		changedChat.push({
 			text: role,
-			type: role
+			type: role,
 		});
 
 		changedChat.push({
-			text: '.'
+			text: '.',
 		});
-		
+
 		if (!game.chats) {
 			game.chats = [];
 		}
@@ -1008,7 +1004,7 @@ commands.getCommand = function(name: string) {
 		game.chats.push({
 			gameChat: true,
 			timestamp: new Date(),
-			chat: changedChat
+			chat: changedChat,
 		});
 	}
 };

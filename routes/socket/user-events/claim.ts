@@ -27,9 +27,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 		seatedPlayers[playerIndex] &&
 		seatedPlayers[playerIndex].playersState &&
 		seatedPlayers[playerIndex].playersState[playerIndex] &&
-		!/^(wasPresident|wasChancellor|didSinglePolicyPeek|didPolicyPeek|didInvestigateLoyalty)$/.exec(
-			seatedPlayers[playerIndex].playersState[playerIndex].claim
-		)
+		!/^(wasPresident|wasChancellor|didSinglePolicyPeek|didPolicyPeek|didInvestigateLoyalty)$/.exec(seatedPlayers[playerIndex].playersState[playerIndex].claim)
 	) {
 		return;
 	}
@@ -51,36 +49,36 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 					case 'rrr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								presidentClaim: ['fascist', 'fascist', 'fascist']
+								presidentClaim: ['fascist', 'fascist', 'fascist'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rrb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								presidentClaim: ['fascist', 'fascist', 'liberal']
+								presidentClaim: ['fascist', 'fascist', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rbb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								presidentClaim: ['fascist', 'liberal', 'liberal']
+								presidentClaim: ['fascist', 'liberal', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'bbb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								presidentClaim: ['liberal', 'liberal', 'liberal']
+								presidentClaim: ['liberal', 'liberal', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
@@ -89,21 +87,21 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				if (validClaim) {
 					text = [
 						{
-							text: 'President '
+							text: 'President ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: 'claims '
+							text: 'claims ',
 						},
 						{
-							claim: data.claimState
+							claim: data.claimState,
 						},
 						{
-							text: '.'
-						}
+							text: '.',
+						},
 					];
 					return text;
 				}
@@ -114,27 +112,27 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 					case 'rr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								chancellorClaim: ['fascist', 'fascist']
+								chancellorClaim: ['fascist', 'fascist'],
 							},
-							{ chancellorId: playerIndex }
+							{ chancellorId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								chancellorClaim: ['fascist', 'liberal']
+								chancellorClaim: ['fascist', 'liberal'],
 							},
-							{ chancellorId: playerIndex }
+							{ chancellorId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'bb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								chancellorClaim: ['liberal', 'liberal']
+								chancellorClaim: ['liberal', 'liberal'],
 							},
-							{ chancellorId: playerIndex }
+							{ chancellorId: playerIndex },
 						);
 						validClaim = true;
 						break;
@@ -143,21 +141,21 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				if (validClaim) {
 					text = [
 						{
-							text: 'Chancellor '
+							text: 'Chancellor ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: 'claims '
+							text: 'claims ',
 						},
 						{
-							claim: data.claimState
+							claim: data.claimState,
 						},
 						{
-							text: '.'
-						}
+							text: '.',
+						},
 					];
 					return text;
 				}
@@ -166,22 +164,22 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				if (data.claimState === 'liberal' || data.claimState === 'fascist') {
 					text = [
 						{
-							text: 'President '
+							text: 'President ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: ' claims to have peeked at a '
+							text: ' claims to have peeked at a ',
 						},
 						{
 							text: data.claimState,
-							type: data.claimState
+							type: data.claimState,
 						},
 						{
-							text: ' policy.'
-						}
+							text: ' policy.',
+						},
 					];
 					return text;
 				}
@@ -190,72 +188,72 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 					case 'rrr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['fascist', 'fascist', 'fascist']
+								policyPeekClaim: ['fascist', 'fascist', 'fascist'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rbr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['fascist', 'liberal', 'fascist']
+								policyPeekClaim: ['fascist', 'liberal', 'fascist'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'brr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['liberal', 'fascist', 'fascist']
+								policyPeekClaim: ['liberal', 'fascist', 'fascist'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rrb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['fascist', 'fascist', 'liberal']
+								policyPeekClaim: ['fascist', 'fascist', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'rbb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['fascist', 'liberal', 'liberal']
+								policyPeekClaim: ['fascist', 'liberal', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'bbr':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['liberal', 'liberal', 'fascist']
+								policyPeekClaim: ['liberal', 'liberal', 'fascist'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'brb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['liberal', 'fascist', 'liberal']
+								policyPeekClaim: ['liberal', 'fascist', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
 					case 'bbb':
 						game.private.summary = game.private.summary.updateLog(
 							{
-								policyPeekClaim: ['liberal', 'liberal', 'liberal']
+								policyPeekClaim: ['liberal', 'liberal', 'liberal'],
 							},
-							{ presidentId: playerIndex }
+							{ presidentId: playerIndex },
 						);
 						validClaim = true;
 						break;
@@ -263,21 +261,21 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				if (validClaim) {
 					text = [
 						{
-							text: 'President '
+							text: 'President ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: 'claims to have peeked at '
+							text: 'claims to have peeked at ',
 						},
 						{
-							claim: data.claimState
+							claim: data.claimState,
 						},
 						{
-							text: '.'
-						}
+							text: '.',
+						},
 					];
 					return text;
 				}
@@ -287,45 +285,45 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 				if (invIndex && invIndex != -1 && invIndex < seatedPlayers.length) {
 					text = [
 						{
-							text: 'President '
+							text: 'President ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: 'sees the party membership of '
+							text: 'sees the party membership of ',
 						},
 						{
 							text: blindMode
 								? `${replacementNames[invIndex]} {${invIndex + 1}} `
 								: `${seatedPlayers[invIndex] && seatedPlayers[invIndex].userName} {${invIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: 'and claims to see a member of the '
-						}
+							text: 'and claims to see a member of the ',
+						},
 					];
 				} else {
 					text = [
 						{
-							text: 'President '
+							text: 'President ',
 						},
 						{
 							text: blindMode ? `${replacementNames[playerIndex]} {${playerIndex + 1}} ` : `${passport.user} {${playerIndex + 1}} `,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: ' claims to see a member of the '
-						}
+							text: ' claims to see a member of the ',
+						},
 					];
 				}
 
 				game.private.summary = game.private.summary.updateLog(
 					{
-						investigationClaim: data.claimState
+						investigationClaim: data.claimState,
 					},
-					{ investigatorId: playerIndex }
+					{ investigatorId: playerIndex },
 				);
 
 				switch (data.claimState) {
@@ -333,11 +331,11 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 						text.push(
 							{
 								text: 'fascist ',
-								type: 'fascist'
+								type: 'fascist',
 							},
 							{
-								text: 'team.'
-							}
+								text: 'team.',
+							},
 						);
 
 						return text;
@@ -345,22 +343,18 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 						text.push(
 							{
 								text: 'liberal ',
-								type: 'liberal'
+								type: 'liberal',
 							},
 							{
-								text: 'team.'
-							}
+								text: 'team.',
+							},
 						);
 						return text;
 				}
 		}
 	})();
 
-	if (
-		Number.isInteger(playerIndex) &&
-		seatedPlayers[playerIndex] &&
-		seatedPlayers[playerIndex].playersState[playerIndex].claim !== ''
-	) {
+	if (Number.isInteger(playerIndex) && seatedPlayers[playerIndex] && seatedPlayers[playerIndex].playersState[playerIndex].claim !== '') {
 		const claimChat = {
 			chat: chat,
 			isClaim: true,
@@ -368,11 +362,11 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 			uid: game.general.uid,
 			userName: passport.user,
 			claim: data.claim,
-			claimState: data.claimState
+			claimState: data.claimState,
 		};
 		if (claimChat && claimChat.chat) {
 			if (seatedPlayers[playerIndex]) seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
-			
+
 			if (!game.chats) {
 				game.chats = [];
 			}

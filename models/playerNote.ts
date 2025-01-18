@@ -11,7 +11,7 @@ export interface IPlayerNote {
 const playerNote = new Schema<IPlayerNote>({
 	userName: String,
 	notedUser: String,
-	note: String
+	note: String,
 });
 
 export default mongoose.model<IPlayerNote>('PlayerNote', playerNote);

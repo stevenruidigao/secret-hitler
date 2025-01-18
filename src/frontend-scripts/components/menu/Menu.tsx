@@ -8,14 +8,14 @@ import socket from '../../socket.ts';
 
 const mapStateToProps = ({ version }) => ({ version });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	readPatchNotes: () => {
 		dispatch(viewPatchNotes());
 		fetch('/viewPatchNotes', {
-			credentials: 'same-origin'
+			credentials: 'same-origin',
 		});
 		window.location.hash = '#/changelog';
-	}
+	},
 });
 
 class Menu extends React.Component {
@@ -232,26 +232,25 @@ class Menu extends React.Component {
 											Swal.fire({
 												allowOutsideClick: false,
 												title: 'Feedback',
-												html:
-													'Please enter your feedback here. Reporting players and other time-sensitive moderation issues should go to #mod-support on our Discord.',
+												html: 'Please enter your feedback here. Reporting players and other time-sensitive moderation issues should go to #mod-support on our Discord.',
 												input: 'textarea',
 												inputAttributes: {
-													maxlength: 1900
+													maxlength: 1900,
 												},
 												confirmButtonText: 'Submit',
 												showCancelButton: true,
-												cancelButtonText: 'Cancel'
-											}).then(result => {
+												cancelButtonText: 'Cancel',
+											}).then((result) => {
 												if (result.value) {
 													socket.emit('feedbackForm', {
-														feedback: result.value
+														feedback: result.value,
 													});
 												}
 											});
 										} else {
 											Swal.fire({
 												icon: 'error',
-												title: 'You must log in to submit feedback!'
+												title: 'You must log in to submit feedback!',
 											});
 										}
 									}}
@@ -454,7 +453,7 @@ Menu.propTypes = {
 	gameInfo: PropTypes.object,
 	midSection: PropTypes.string,
 	version: PropTypes.object,
-	readPatchNotes: PropTypes.func
+	readPatchNotes: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Menu);

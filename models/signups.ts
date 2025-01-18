@@ -19,7 +19,7 @@ const Signups = new Schema<ISignups>({
 	type: String,
 	email: String,
 	unobfuscatedIP: String,
-	oauthID: String
+	oauthID: String,
 });
 
 export default mongoose.model<ISignups>('Signups', Signups);

@@ -35,11 +35,11 @@ export class Main extends React.Component {
 				rainbow: false,
 				standard: false,
 				custom: false,
-				casual: false
+				casual: false,
 			},
 			showNewPlayerModal: Boolean(window.hasNotDismissedSignupModal),
 			newPlayerModalPageIndex: 0,
-			stickyEnabled: true
+			stickyEnabled: true,
 		};
 	}
 
@@ -47,14 +47,14 @@ export class Main extends React.Component {
 		const { Notification } = window;
 
 		if ('Notification' in window && Notification.permission === 'default') {
-			Notification.requestPermission(permission => {
+			Notification.requestPermission((permission) => {
 				if (permission === 'granted') {
 					new Notification('Players may now "ping" you.');
 				}
 			});
 		}
 
-		socket.on('newGameAdded', game => {
+		socket.on('newGameAdded', (game) => {
 			if (this.props.userInfo.gameSettings.notifyForNewLobby && game.creator !== this.props.userInfo.userName) {
 				for (const prop of Object.keys(game)) {
 					if (prop === 'creator') continue;
@@ -80,7 +80,7 @@ export class Main extends React.Component {
 				'Elo View': this.props?.userInfo?.gameSettings?.disableSeasonal ? 'Overall' : 'Seasonal',
 				'Keyboard Shortcuts': this.props?.userInfo?.gameSettings?.keyboardShortcuts || 'disable',
 				'Claim Characters': this.props?.userInfo?.gameSettings?.claimCharacters || 'short',
-				'Staff Status': this.props?.userInfo?.staffRole ? 'Staff' : 'Non-Staff'
+				'Staff Status': this.props?.userInfo?.staffRole ? 'Staff' : 'Non-Staff',
 			};
 
 			plausible('Main Load', { props: plausibleProps });
@@ -91,21 +91,21 @@ export class Main extends React.Component {
 		return props.userInfo.gameSettings ? { gameFilter: props.userInfo.gameSettings.gameFilters } : null;
 	}
 
-	setStickyEnabled = enabled => {
+	setStickyEnabled = (enabled) => {
 		this.setState({ stickyEnabled: enabled });
 	};
 
 	handleDismissSignupModal = () => {
 		this.setState({
-			showNewPlayerModal: false
+			showNewPlayerModal: false,
 		});
 
 		this.props.socket.emit('hasSeenNewPlayerModal');
 	};
 
-	handleChangeModalPageIndex = newPlayerModalPageIndex => {
+	handleChangeModalPageIndex = (newPlayerModalPageIndex) => {
 		this.setState({
-			newPlayerModalPageIndex
+			newPlayerModalPageIndex,
 		});
 	};
 
@@ -257,12 +257,12 @@ export class Main extends React.Component {
 		let classes = 'section-main';
 
 		const { midSection, userList, userInfo, socket, gameInfo } = this.props;
-		const changeGameFilter = gameFilter => {
+		const changeGameFilter = (gameFilter) => {
 			this.setState(gameFilter);
 
 			if (userInfo.gameSettings) {
 				socket.emit('updateGameSettings', {
-					gameFilters: gameFilter
+					gameFilters: gameFilter,
 				});
 			}
 		};
@@ -334,7 +334,7 @@ export class Main extends React.Component {
 				{midSection === 'game' || midSection === 'replay' ? (
 					RenderMidSection()
 				) : (
-					<Scrollbars className="scrollbar-container-main" renderThumbVertical={props => <div {...props} className="thumb-vertical" />}>
+					<Scrollbars className="scrollbar-container-main" renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
 						<div className="section-main-content-container">{RenderMidSection()}</div>
 					</Scrollbars>
 				)}
@@ -353,7 +353,7 @@ Main.propTypes = {
 	allEmotes: PropTypes.object,
 	onClickedTakeSeat: PropTypes.func,
 	onSeatingUser: PropTypes.func,
-	onLeaveGame: PropTypes.func
+	onLeaveGame: PropTypes.func,
 };
 
 export default Main;

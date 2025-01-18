@@ -9,7 +9,7 @@ interface IEightEightCounter {
 
 const EightEightCounter = new Schema<IEightEightCounter>({
 	username: String,
-	date: Date
+	date: Date,
 });
 
 export default mongoose.model<IEightEightCounter>('EightEightCounter', EightEightCounter);

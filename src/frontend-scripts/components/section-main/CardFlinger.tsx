@@ -7,29 +7,29 @@ const positions = ['middle-far-left', 'middle-left', 'middle-center', 'middle-ri
 const keyboardShortcuts = {
 	voting: {
 		J: 1,
-		N: 3
+		N: 3,
 	},
 	presidentSelectingPolicy: {
 		'1': 0,
 		'2': 2,
-		'3': 4
+		'3': 4,
 	},
 	chancellorSelectingPolicy: {
 		'1': 1,
-		'2': 3
+		'2': 3,
 	},
 	chancellorVoteOnVeto: {
 		J: 1,
-		N: 3
+		N: 3,
 	},
 	presidentVoteOnVeto: {
 		J: 1,
-		N: 3
+		N: 3,
 	},
 	presidentVoteOnBurn: {
 		J: 1,
-		N: 3
-	}
+		N: 3,
+	},
 };
 
 class CardFlinger extends React.Component {
@@ -37,13 +37,13 @@ class CardFlinger extends React.Component {
 		isHovered: false,
 		hoveredClass: null,
 		expandingIndex: null, // index of expanding card in [0, 1, 2, 3, 4]
-		expansionTimer: 0 // number returned by setTimeout
+		expansionTimer: 0, // number returned by setTimeout
 	};
 
-	handleHover = classes => {
+	handleHover = (classes) => {
 		this.setState({
 			isHovered: !this.state.isHovered,
-			hoveredClass: classes
+			hoveredClass: classes,
 		});
 	};
 
@@ -54,7 +54,7 @@ class CardFlinger extends React.Component {
 		clearTimeout(this.state.expansionTimer);
 		this.setState({
 			expandingIndex: null,
-			expansionTimer: 0
+			expansionTimer: 0,
 		});
 	}
 
@@ -76,7 +76,7 @@ class CardFlinger extends React.Component {
 			// instantly vote
 			this.handleCardClick(keyIndex);
 		} else {
-			const stateObj = cardFlingerState.find(flinger => flinger.position === positions[keyIndex]);
+			const stateObj = cardFlingerState.find((flinger) => flinger.position === positions[keyIndex]);
 			// set a 2s timer to process the vote as if it were a click
 			if (this.state.expandingIndex !== keyIndex && !(stateObj && stateObj.notificationStatus && stateObj.notificationStatus === 'selected')) {
 				clearTimeout(this.state.expansionTimer);
@@ -84,7 +84,7 @@ class CardFlinger extends React.Component {
 					expandingIndex: keyIndex,
 					expansionTimer: setTimeout(() => {
 						this.handleCardClick(keyIndex);
-					}, 2000)
+					}, 2000),
 				});
 			}
 		}
@@ -100,7 +100,7 @@ class CardFlinger extends React.Component {
 		document.removeEventListener('keyup', this.onKeyUp.bind(this));
 	}
 
-	handleCardClick = index => {
+	handleCardClick = (index) => {
 		const { gameInfo, socket } = this.props;
 		const { gameState } = gameInfo;
 		const { phase } = gameState;
@@ -108,42 +108,42 @@ class CardFlinger extends React.Component {
 		if (phase === 'voting' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedVoting', {
 				vote: index === 1,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		}
 
 		if (phase === 'presidentSelectingPolicy' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedPresidentPolicy', {
 				uid: gameInfo.general.uid,
-				selection: index ? (index === 2 ? 1 : 2) : 0
+				selection: index ? (index === 2 ? 1 : 2) : 0,
 			});
 		}
 
 		if (phase === 'chancellorSelectingPolicy' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedChancellorPolicy', {
 				uid: gameInfo.general.uid,
-				selection: index
+				selection: index,
 			});
 		}
 
 		if (phase === 'chancellorVoteOnVeto' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedChancellorVoteOnVeto', {
 				vote: index === 1,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		}
 
 		if (phase === 'presidentVoteOnVeto' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedPresidentVoteOnVeto', {
 				vote: index === 1,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		}
 
 		if (phase === 'presidentVoteOnBurn' && gameInfo.cardFlingerState[0].action === 'active') {
 			socket.emit('selectedPresidentVoteOnBurn', {
 				vote: index === 1,
-				uid: gameInfo.general.uid
+				uid: gameInfo.general.uid,
 			});
 		}
 	};
@@ -156,7 +156,7 @@ class CardFlinger extends React.Component {
 			const { phase } = gameState;
 			const { status } = general;
 			const { userName } = userInfo;
-			const currentPlayer = publicPlayersState.find(player => player.userName === userName);
+			const currentPlayer = publicPlayersState.find((player) => player.userName === userName);
 			const currentPlayerStatus = currentPlayer ? currentPlayer.governmentStatus : null;
 
 			if (userInfo.gameSettings && userInfo.gameSettings.disableHelpMessages) {
@@ -225,7 +225,7 @@ class CardFlinger extends React.Component {
 			<section className="cardflinger-container">
 				{renderHelpMessage()}
 				{positions.map((position, i) => {
-					const stateObj = cardFlingerState.find(flinger => flinger.position === position);
+					const stateObj = cardFlingerState.find((flinger) => flinger.position === position);
 
 					let frontClasses = 'cardflinger-card front';
 					let backClasses = 'cardflinger-card back';
@@ -294,7 +294,7 @@ class CardFlinger extends React.Component {
 CardFlinger.propTypes = {
 	userInfo: PropTypes.object,
 	gameInfo: PropTypes.object,
-	socket: PropTypes.object
+	socket: PropTypes.object,
 };
 
 export default CardFlinger;

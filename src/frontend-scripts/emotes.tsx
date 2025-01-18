@@ -23,7 +23,7 @@ export function processEmotes(input, isMod, mapping) {
 
 	const message = input.split(' ');
 	const formatedMsg = [];
-	const size = message.every(a => mapping[a] || !a) ? 36 : 28;
+	const size = message.every((a) => mapping[a] || !a) ? 36 : 28;
 
 	message.forEach((word, index) => {
 		const validSiteURL = /^http[s]?:\/\/(secrethitler\.io|localhost:8080|github\.com\/cozuya\/secret-hitler)\/([a-zA-Z0-9#?=&\/\._-]*)$/i;
@@ -31,7 +31,7 @@ export function processEmotes(input, isMod, mapping) {
 			formatedMsg.push(
 				<span key={index} data-tooltip={word} data-inverted>
 					<img src={mapping[word]} style={{ height: size, marginRight: 2 }}></img>
-				</span>
+				</span>,
 			);
 		} else if (validSiteURL.test(word)) {
 			const data = validSiteURL.exec(word);
@@ -46,7 +46,7 @@ export function processEmotes(input, isMod, mapping) {
 					title={isGithub ? "link to sh.io's github page" : 'link to something inside of sh.io'}
 				>
 					{isGithub ? `SH.IO github: ${data[2]}` : data[2]}
-				</a>
+				</a>,
 			);
 		} else if (word.substr(0, 2) === '**' && word.substr(word.length - 2, word.length) === '**') {
 			formatedMsg.push(<b key={index}>{word.slice(2).slice(0, word.length - 4) + ' '}</b>);
@@ -54,19 +54,19 @@ export function processEmotes(input, isMod, mapping) {
 			formatedMsg.push(
 				<span key={index} style={{ textDecoration: 'line-through' }}>
 					{word.slice(2).slice(0, word.length - 4) + ' '}
-				</span>
+				</span>,
 			);
 		} else if (word.substr(0, 1) === '*' && word.substr(word.length - 1, word.length) === '*') {
 			formatedMsg.push(
 				<span key={index} style={{ fontStyle: 'italic' }}>
 					{word.slice(1).slice(0, word.length - 2) + ' '}
-				</span>
+				</span>,
 			);
 		} else if (word.substr(0, 2) === '__' && word.substr(word.length - 2, word.length) === '__') {
 			formatedMsg.push(
 				<span key={index} style={{ textDecoration: 'underline' }}>
 					{word.slice(2).slice(0, word.length - 4) + ' '}
-				</span>
+				</span>,
 			);
 		} else {
 			formatedMsg.push(word, ' ');

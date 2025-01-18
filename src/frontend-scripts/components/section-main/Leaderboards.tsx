@@ -10,27 +10,27 @@ class Leaderboard extends React.Component {
 			seasonalLeaderboardXP: [],
 			dailyLeaderboardElo: [],
 			dailyLeaderboardXP: [],
-			rainbowLeaderboard: []
+			rainbowLeaderboard: [],
 		};
 	}
 
 	componentDidMount() {
 		fetch('../leaderboardData.json', { cache: 'no-store' })
-			.then(res => res.json())
-			.then(data => {
+			.then((res) => res.json())
+			.then((data) => {
 				this.setState({
 					seasonalLeaderboardElo: data.seasonalLeaderboardElo || [],
 					seasonalLeaderboardXP: data.seasonalLeaderboardXP || [],
 					dailyLeaderboardElo: data.dailyLeaderboardElo || [],
 					dailyLeaderboardXP: data.dailyLeaderboardXP || [],
 					rainbowLeaderboard: data.rainbowLeaderboard || [],
-					errored: false
+					errored: false,
 				});
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.log('Error in Getting Current Leaderboard', e);
 				this.setState({
-					errored: true
+					errored: true,
 				});
 			});
 	}
@@ -49,7 +49,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Seasonal Elo leaders</h2>
 										<ul>
-											{this.state.seasonalLeaderboardElo.map(user => (
+											{this.state.seasonalLeaderboardElo.map((user) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>
@@ -67,7 +67,7 @@ class Leaderboard extends React.Component {
 										<h2 className="ui header">Daily Elo leaders</h2>
 										<ul>
 											{this.state.dailyLeaderboardElo.map(
-												user =>
+												(user) =>
 													user.dailyEloDifference.toFixed(0) >= 0 && (
 														<li key={user.userName}>
 															<p>
@@ -75,7 +75,7 @@ class Leaderboard extends React.Component {
 															</p>
 															<p>+{user.dailyEloDifference.toFixed(0)}</p>
 														</li>
-													)
+													),
 											)}
 										</ul>
 									</>
@@ -88,7 +88,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Seasonal XP leaders</h2>
 										<ul>
-											{this.state.seasonalLeaderboardXP.map(user => (
+											{this.state.seasonalLeaderboardXP.map((user) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>
@@ -106,7 +106,7 @@ class Leaderboard extends React.Component {
 										<h2 className="ui header">Daily XP leaders</h2>
 										<ul>
 											{this.state.dailyLeaderboardXP.map(
-												user =>
+												(user) =>
 													user.dailyXPDifference.toFixed(0) >= 0 && (
 														<li key={user.userName}>
 															<p>
@@ -114,7 +114,7 @@ class Leaderboard extends React.Component {
 															</p>
 															<p>+{user.dailyXPDifference.toFixed(0)}</p>
 														</li>
-													)
+													),
 											)}
 										</ul>
 									</>
@@ -127,7 +127,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Most recent rainbow players</h2>
 										<ul>
-											{this.state.rainbowLeaderboard.map(user => (
+											{this.state.rainbowLeaderboard.map((user) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>

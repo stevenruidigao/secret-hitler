@@ -220,5 +220,5 @@ export default [
 	'Worm',
 	'Wren',
 	'Yak',
-	'Zebra'
+	'Zebra',
 ];

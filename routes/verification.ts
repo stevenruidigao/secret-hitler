@@ -12,14 +12,14 @@ import ResetPassword from '../models/resetPassword.ts';
 
 const verifyTemplate = _.template(
 	fs.readFileSync('./routes/account-verification-email.template', {
-		encoding: 'utf-8'
-	})
+		encoding: 'utf-8',
+	}),
 );
 
 const resetTemplate = _.template(
 	fs.readFileSync('./routes/reset-password-email.template', {
-		encoding: 'utf-8'
-	})
+		encoding: 'utf-8',
+	}),
 );
 
 const ensureAuthenticated = (req: Request, res: Response, next: Function) => {
@@ -67,7 +67,7 @@ export const verifyRoutes = () => {
 				if (!reset) {
 					return next();
 				}
-				
+
 				res.render('page-resetpassword', {});
 			})
 			.catch((err: Error) => {
@@ -121,44 +121,35 @@ export const verifyRoutes = () => {
 			});
 	});
 
-	VerifyAccount.deleteMany({ expirationDate: { $lt: now } }, err => {
+	VerifyAccount.deleteMany({ expirationDate: { $lt: now } }, (err) => {
 		if (err) {
 			console.log(err, 'err deleting verify accounts');
 		}
 	});
 
-	ResetPassword.deleteMany({ expirationDate: { $lt: now } }, err => {
+	ResetPassword.deleteMany({ expirationDate: { $lt: now } }, (err) => {
 		if (err) {
 			console.log(err, 'err deleting reset password');
 		}
 	});
 };
 
-export const setVerify = ({ username, email, res, isResetPassword }: {
-	username: string;
-	email: string;
-	res?: Response;
-	isResetPassword?: boolean;
-}) => {
-	const token = `${Math.random()
-		.toString(36)
-		.substring(2)}${Math.random()
-		.toString(36)
-		.substring(2)}`;
+export const setVerify = ({ username, email, res, isResetPassword }: { username: string; email: string; res?: Response; isResetPassword?: boolean }) => {
+	const token = `${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}`;
 
 	const modelData = {
 		username,
 		token,
-		expirationDate: new Date(new Date().setDate(new Date().getDate() + 1))
+		expirationDate: new Date(new Date().setDate(new Date().getDate() + 1)),
 	};
 	const verify = isResetPassword ? new ResetPassword(modelData) : new VerifyAccount(modelData);
 	const nmMailgun = nodemailer.createTransport(
 		mg({
 			auth: {
 				api_key: process.env.MGKEY || '',
-				domain: process.env.MGDOMAIN
-			}
-		})
+				domain: process.env.MGDOMAIN,
+			},
+		}),
 	);
 
 	verify.save(() => {
@@ -171,7 +162,7 @@ export const setVerify = ({ username, email, res, isResetPassword }: {
 				? `Hello ${username}, a request has been made to change your password - go to the address below to change your password. https://secrethitler.io/reset-password/${username}/${token}.`
 				: `Hello ${username}, a request has been made to verify your account - go to the address below to verify it. https://secrethitler.io/verify-account/${username}/${token}`,
 			to: email,
-			subject: isResetPassword ? 'SH.io - reset your password' : 'SH.io - verify your account'
+			subject: isResetPassword ? 'SH.io - reset your password' : 'SH.io - verify your account',
 		});
 
 		// nmMailgun.sendMail({

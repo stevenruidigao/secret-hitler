@@ -11,11 +11,11 @@ describe('App', () => {
 			notesValue: '',
 			alertMsg: {
 				data: null,
-				type: null
+				type: null,
 			},
 			allEmotes: {},
 			forceMountRightSidebar: false,
-			warnings: null
+			warnings: null,
 		};
 		const component = shallow(<App userInfo={{ gameSettings: {} }} />);
 

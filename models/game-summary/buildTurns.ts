@@ -13,8 +13,8 @@ export default (
 		rebalance9p: false,
 		rerebalance9p: false,
 		avalonSH: null,
-		noTopdecking: 0
-	}
+		noTopdecking: 0,
+	},
 ) => buildTurns(List(), logs, players, gameSetting);
 
 const buildTurns = (turns: List<any>, logs: List<any>, players: any, gameSetting: any) => {
@@ -38,17 +38,17 @@ const initialTrack = (gameSetting: any) => {
 	if (gameSetting.rebalance6p) {
 		return {
 			reds: 1,
-			blues: 0
+			blues: 0,
 		};
 	} else if (gameSetting.rebalance9p) {
 		return {
 			reds: 0,
-			blues: 1
+			blues: 1,
 		};
 	}
 	return {
 		reds: 0,
-		blues: 0
+		blues: 0,
 	};
 };
 
@@ -62,7 +62,7 @@ const buildTurn = (prevTurnOpt: any, log: any, players: any, gameSetting: any) =
 		afterTrack: initialTrack(gameSetting),
 		afterElectionTracker: 0,
 		consecutiveTopdecks: 0,
-		enactedPolicy: none
+		enactedPolicy: none,
 	});
 
 	// List[Int]
@@ -77,13 +77,13 @@ const buildTurn = (prevTurnOpt: any, log: any, players: any, gameSetting: any) =
 
 		return {
 			beforePlayers: p(beforeDeadPlayers),
-			afterPlayers: p(afterDeadPlayers)
+			afterPlayers: p(afterDeadPlayers),
 		};
 	})();
 
 	// List[Int]
 	const alivePlayers = Range(0, players.size)
-		.filterNot(i => beforeDeadPlayers.includes(i))
+		.filterNot((i) => beforeDeadPlayers.includes(i))
 		.toList();
 
 	// List[Option[Boolean]]
@@ -159,7 +159,7 @@ const buildTurn = (prevTurnOpt: any, log: any, players: any, gameSetting: any) =
 		const beforeTrack = prevTurn.afterTrack;
 		const afterTrack = {
 			reds: f(beforeTrack.reds, log.enactedPolicy, 'fascist'),
-			blues: f(beforeTrack.blues, log.enactedPolicy, 'liberal')
+			blues: f(beforeTrack.blues, log.enactedPolicy, 'liberal'),
 		};
 
 		return { beforeTrack, afterTrack };
@@ -268,6 +268,6 @@ const buildTurn = (prevTurnOpt: any, log: any, players: any, gameSetting: any) =
 		isVetoSuccessful,
 		presidentVeto,
 		chancellorVeto,
-		deckState
+		deckState,
 	});
 };

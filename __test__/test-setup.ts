@@ -5,7 +5,7 @@ import { globalSettingsClient } from '../routes/socket/models.ts';
 Enzyme.configure({ adapter: new Adapter() });
 
 Object.defineProperty(window.document, 'getElementById', {
-	value: () => ({ classList: {} })
+	value: () => ({ classList: {} }),
 });
 
 afterAll(() => {

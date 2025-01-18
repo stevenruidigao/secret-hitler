@@ -23,7 +23,7 @@ const ModThread = new Schema<IModThread>({
 	aemMember: String, // aem member speaking to the player
 	startDate: Date, // start date of the convo
 	endDate: Date, // end date of the convo
-	messages: Array // { content: String, type: String, author: String, staffRole: String, date: Date }
+	messages: Array, // { content: String, type: String, author: String, staffRole: String, date: Date }
 });
 
 export default mongoose.model<IModThread>('ModThread', ModThread);

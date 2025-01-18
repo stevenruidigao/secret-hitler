@@ -18,9 +18,7 @@ class Settings extends React.Component {
 	state = {
 		namechangeValue: '',
 		sliderValues: [8, 24],
-		imageUid: Math.random()
-			.toString(36)
-			.substring(6),
+		imageUid: Math.random().toString(36).substring(6),
 		preview: '',
 		cardbackUploadStatus: '',
 		playerPronouns: '',
@@ -48,7 +46,7 @@ class Settings extends React.Component {
 			disableVisibleElo: '',
 			disableVisibleXP: '',
 			disableStaffColor: '',
-			incognito: ''
+			incognito: '',
 		},
 		fullheight: false,
 		truncatedSize: 250,
@@ -69,7 +67,7 @@ class Settings extends React.Component {
 		cropper: null,
 		cropperImage: null,
 		cropperImageType: null,
-		cropperSwal: {}
+		cropperSwal: {},
 	};
 
 	componentDidMount() {
@@ -99,89 +97,74 @@ class Settings extends React.Component {
 				disableVisibleXP: false,
 				disableStaffColor: false,
 				incognito: false,
-				...(gameSettings.staff || {})
+				...(gameSettings.staff || {}),
 			},
 			truncatedSize: gameSettings.truncatedSize || 250,
 			safeForWork: gameSettings.safeForWork || false,
 			keyboardShortcuts: gameSettings.keyboardShortcuts || 'disable',
 			claimCharacters: gameSettings.claimCharacters || 'short',
 			claimButtons: gameSettings.claimButtons || 'text',
-			primaryColor: window
-				.getComputedStyle(document.documentElement)
-				.getPropertyValue('--theme-primary')
-				.trim(),
-			secondaryColor: window
-				.getComputedStyle(document.documentElement)
-				.getPropertyValue('--theme-secondary')
-				.trim(),
-			tertiaryColor: window
-				.getComputedStyle(document.documentElement)
-				.getPropertyValue('--theme-tertiary')
-				.trim(),
-			backgroundColor: window
-				.getComputedStyle(document.documentElement)
-				.getPropertyValue('--theme-background-1')
-				.trim(),
-			textColor: window
-				.getComputedStyle(document.documentElement)
-				.getPropertyValue('--theme-text-1')
-				.trim()
+			primaryColor: window.getComputedStyle(document.documentElement).getPropertyValue('--theme-primary').trim(),
+			secondaryColor: window.getComputedStyle(document.documentElement).getPropertyValue('--theme-secondary').trim(),
+			tertiaryColor: window.getComputedStyle(document.documentElement).getPropertyValue('--theme-tertiary').trim(),
+			backgroundColor: window.getComputedStyle(document.documentElement).getPropertyValue('--theme-background-1').trim(),
+			textColor: window.getComputedStyle(document.documentElement).getPropertyValue('--theme-text-1').trim(),
 		});
 	}
 
-	handleSoundChange = e => {
+	handleSoundChange = (e) => {
 		this.setState(
 			{
-				soundSelected: e.target.value
+				soundSelected: e.target.value,
 			},
 			() => {
 				this.props.socket.emit('updateGameSettings', {
-					soundStatus: this.state.soundSelected
+					soundStatus: this.state.soundSelected,
 				});
-			}
+			},
 		);
 	};
 
-	handleClaimCharactersChange = e => {
+	handleClaimCharactersChange = (e) => {
 		this.setState(
 			{
-				claimCharacters: e.target.value
+				claimCharacters: e.target.value,
 			},
 			() => {
 				this.props.socket.emit('updateGameSettings', {
-					claimCharacters: this.state.claimCharacters
+					claimCharacters: this.state.claimCharacters,
 				});
-			}
+			},
 		);
 	};
 
-	handleClaimButtonsChange = e => {
+	handleClaimButtonsChange = (e) => {
 		this.setState(
 			{
-				claimButtons: e.target.value
+				claimButtons: e.target.value,
 			},
 			() => {
 				this.props.socket.emit('updateGameSettings', {
-					claimButtons: this.state.claimButtons
+					claimButtons: this.state.claimButtons,
 				});
-			}
+			},
 		);
 	};
 
-	handleKeyboardShortcutsChange = e => {
+	handleKeyboardShortcutsChange = (e) => {
 		this.setState(
 			{
-				keyboardShortcuts: e.target.value
+				keyboardShortcuts: e.target.value,
 			},
 			() => {
 				this.props.socket.emit('updateGameSettings', {
-					keyboardShortcuts: this.state.keyboardShortcuts
+					keyboardShortcuts: this.state.keyboardShortcuts,
 				});
-			}
+			},
 		);
 	};
 
-	toggleGameSettings = value => {
+	toggleGameSettings = (value) => {
 		const obj = {};
 
 		obj[value] = !this.state[value];
@@ -189,24 +172,24 @@ class Settings extends React.Component {
 		this.setState(obj);
 	};
 
-	sliderChange = event => {
+	sliderChange = (event) => {
 		this.setState({ fontSize: event[0] });
 	};
 
-	sliderDrop = event => {
+	sliderDrop = (event) => {
 		this.props.socket.emit('updateGameSettings', {
-			fontSize: this.state.fontSize
+			fontSize: this.state.fontSize,
 		});
 	};
 
 	renderFonts() {
-		const changeFontSubmit = fontName => {
+		const changeFontSubmit = (fontName) => {
 			this.setState({
-				fontChecked: fontName
+				fontChecked: fontName,
 			});
 
 			this.props.socket.emit('updateGameSettings', {
-				fontFamily: fontName
+				fontFamily: fontName,
 			});
 		};
 
@@ -226,7 +209,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="comfortaa"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (comfortaa, default)
@@ -246,7 +229,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="lato"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (lato)
@@ -266,7 +249,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="germaniaone"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (germania one)
@@ -286,7 +269,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="robotoslab"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (roboto slab)
@@ -306,7 +289,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="merriweather"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (merriweather)
@@ -326,7 +309,7 @@ class Settings extends React.Component {
 						<label
 							htmlFor="inter"
 							style={{
-								fontSize: this.state.fontSize
+								fontSize: this.state.fontSize,
 							}}
 						>
 							The quick brown fascist jumped over the lazy liberal. (inter)
@@ -338,13 +321,13 @@ class Settings extends React.Component {
 	}
 
 	renderPronouns() {
-		const changePronounSubmit = pronouns => {
+		const changePronounSubmit = (pronouns) => {
 			this.setState({
-				playerPronouns: pronouns
+				playerPronouns: pronouns,
 			});
 
 			this.props.socket.emit('updateGameSettings', {
-				playerPronouns: pronouns
+				playerPronouns: pronouns,
 			});
 		};
 
@@ -365,7 +348,7 @@ class Settings extends React.Component {
 							<label
 								htmlFor="none"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								N/A (No pronouns will display)
@@ -385,7 +368,7 @@ class Settings extends React.Component {
 							<label
 								htmlFor="male"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								he/him/his
@@ -405,7 +388,7 @@ class Settings extends React.Component {
 							<label
 								htmlFor="female"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								she/her/hers
@@ -425,7 +408,7 @@ class Settings extends React.Component {
 							<label
 								htmlFor="they"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								they/them/theirs
@@ -445,7 +428,7 @@ class Settings extends React.Component {
 							<label
 								htmlFor="any"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								Any Pronouns
@@ -471,12 +454,12 @@ class Settings extends React.Component {
 			secondaryPickerVisible,
 			tertiaryPickerVisible,
 			backgroundPickerVisible,
-			textPickerVisible
+			textPickerVisible,
 		} = this.state;
 		const { socket } = this.props;
 		const docStyle = document.documentElement.style;
-		const getHSLstring = color => `hsl(${Math.round(color.h)}, ${Math.round(color.s * 100)}%, ${Math.round(color.l * 100)}%)`;
-		const renderPicker = name => (
+		const getHSLstring = (color) => `hsl(${Math.round(color.h)}, ${Math.round(color.s * 100)}%, ${Math.round(color.l * 100)}%)`;
+		const renderPicker = (name) => (
 			<div className="picker-container">
 				<div
 					className="picker-close-button"
@@ -489,13 +472,13 @@ class Settings extends React.Component {
 				<SketchPicker
 					disableAlpha
 					color={this.state[`${name}Color`]}
-					onChangeComplete={color => {
+					onChangeComplete={(color) => {
 						const { hsl } = color;
 						const newColor = getHSLstring(hsl);
 
 						this.setState(
 							{
-								[`${name}Color`]: newColor
+								[`${name}Color`]: newColor,
 							},
 							() => {
 								const isBackgroundOrText = name === 'background' || name === 'text';
@@ -504,12 +487,12 @@ class Settings extends React.Component {
 									const newColorHSL2 = {
 										h: hsl.h,
 										s: hsl.s,
-										l: hsl.l < 0.5 ? (hsl.l <= 0.93 ? hsl.l + 0.07 : 100) : hsl.l >= 0.07 ? hsl.l - 0.07 : 0
+										l: hsl.l < 0.5 ? (hsl.l <= 0.93 ? hsl.l + 0.07 : 100) : hsl.l >= 0.07 ? hsl.l - 0.07 : 0,
 									};
 									const newColorHSL3 = {
 										h: hsl.h,
 										s: hsl.s,
-										l: hsl.l < 0.5 ? (hsl.l <= 0.86 ? hsl.l + 0.14 : 100) : hsl.l >= 0.14 ? hsl.l - 0.14 : 0
+										l: hsl.l < 0.5 ? (hsl.l <= 0.86 ? hsl.l + 0.14 : 100) : hsl.l >= 0.14 ? hsl.l - 0.14 : 0,
 									};
 
 									docStyle.setProperty(`--theme-${name}-1`, newColor);
@@ -520,9 +503,9 @@ class Settings extends React.Component {
 								}
 
 								socket.emit('handleUpdatedTheme', {
-									[`${name}Color`]: newColor
+									[`${name}Color`]: newColor,
 								});
-							}
+							},
 						);
 					}}
 				/>
@@ -531,27 +514,15 @@ class Settings extends React.Component {
 
 		const getAltThemeColors = () => {
 			const hue = parseInt(primaryColor.split(',')[0].split('hsl(')[1], 10);
-			const saturation = parseInt(
-				primaryColor
-					.split(',')[1]
-					.trim()
-					.split('%')[0],
-				10
-			);
-			const lightness = parseInt(
-				primaryColor
-					.split(',')[2]
-					.trim()
-					.split('%)')[0],
-				10
-			);
+			const saturation = parseInt(primaryColor.split(',')[1].trim().split('%')[0], 10);
+			const lightness = parseInt(primaryColor.split(',')[2].trim().split('%)')[0], 10);
 
 			const secondarySaturation = saturation >= 25 ? saturation - 25 : 0;
 			const tertiaryHue = hue > 320 ? hue - 320 : hue + 40;
 
 			return {
 				secondaryColor: `hsl(${hue}, ${secondarySaturation}%, ${lightness}%)`,
-				tertiaryColor: `hsl(${tertiaryHue}, ${saturation}%, ${lightness}%)`
+				tertiaryColor: `hsl(${tertiaryHue}, ${saturation}%, ${lightness}%)`,
 			};
 		};
 
@@ -559,16 +530,16 @@ class Settings extends React.Component {
 			this.setState(
 				{
 					secondaryColor: getAltThemeColors().secondaryColor,
-					tertiaryColor: getAltThemeColors().tertiaryColor
+					tertiaryColor: getAltThemeColors().tertiaryColor,
 				},
 				() => {
 					socket.emit('handleUpdatedTheme', {
 						secondaryColor: getAltThemeColors().secondaryColor,
-						tertiaryColor: getAltThemeColors().tertiaryColor
+						tertiaryColor: getAltThemeColors().tertiaryColor,
 					});
 					docStyle.setProperty('--theme-secondary', getAltThemeColors().secondaryColor);
 					docStyle.setProperty('--theme-tertiary', getAltThemeColors().tertiaryColor);
-				}
+				},
 			);
 		};
 
@@ -579,7 +550,7 @@ class Settings extends React.Component {
 					secondaryColor: 'hsl(225, 48%, 57%)',
 					tertiaryColor: 'hsl(265, 73%, 57%)',
 					backgroundColor: 'hsl(0, 0%, 0%)',
-					textColor: 'hsl(0, 0%, 100%)'
+					textColor: 'hsl(0, 0%, 100%)',
 				},
 				() => {
 					socket.emit('handleUpdatedTheme', {
@@ -587,7 +558,7 @@ class Settings extends React.Component {
 						secondaryColor: 'hsl(225, 48%, 57%)',
 						tertiaryColor: 'hsl(265, 73%, 57%)',
 						backgroundColor: 'hsl(0, 0%, 0%)',
-						textColor: 'hsl(0, 0%, 100%)'
+						textColor: 'hsl(0, 0%, 100%)',
 					});
 					docStyle.setProperty('--theme-primary', 'hsl(225, 73%, 57%)');
 					docStyle.setProperty('--theme-secondary', 'hsl(225, 48%, 57%)');
@@ -598,7 +569,7 @@ class Settings extends React.Component {
 					docStyle.setProperty('--theme-text-1', 'hsl(0, 0%, 100%)');
 					docStyle.setProperty('--theme-text-2', 'hsl(0, 0%, 93%)');
 					docStyle.setProperty('--theme-text-3', 'hsl(0, 0%, 86%)');
-				}
+				},
 			);
 		};
 
@@ -615,7 +586,7 @@ class Settings extends React.Component {
 							onClick={() => {
 								if (!primaryPickerVisible) {
 									this.setState({
-										primaryPickerVisible: true
+										primaryPickerVisible: true,
 									});
 								}
 							}}
@@ -630,7 +601,7 @@ class Settings extends React.Component {
 							onClick={() => {
 								if (!secondaryPickerVisible) {
 									this.setState({
-										secondaryPickerVisible: true
+										secondaryPickerVisible: true,
 									});
 								}
 							}}
@@ -645,7 +616,7 @@ class Settings extends React.Component {
 							onClick={() => {
 								if (!tertiaryPickerVisible) {
 									this.setState({
-										tertiaryPickerVisible: true
+										tertiaryPickerVisible: true,
 									});
 								}
 							}}
@@ -681,7 +652,7 @@ class Settings extends React.Component {
 							onClick={() => {
 								if (!backgroundPickerVisible) {
 									this.setState({
-										backgroundPickerVisible: true
+										backgroundPickerVisible: true,
 									});
 								}
 							}}
@@ -696,7 +667,7 @@ class Settings extends React.Component {
 							onClick={() => {
 								if (!textPickerVisible) {
 									this.setState({
-										textPickerVisible: true
+										textPickerVisible: true,
 									});
 								}
 							}}
@@ -713,13 +684,13 @@ class Settings extends React.Component {
 		const onDrop = (files, rejectedFile) => {
 			if (rejectedFile.length) {
 				this.setState({
-					cardbackUploadStatus: 'The file you selected is not an image.'
+					cardbackUploadStatus: 'The file you selected is not an image.',
 				});
 				return;
 			}
 
 			this.setState({
-				cardbackUploadStatus: 'Cropping...'
+				cardbackUploadStatus: 'Cropping...',
 			});
 
 			try {
@@ -729,14 +700,14 @@ class Settings extends React.Component {
 						cropperImageType: files[0].type,
 						cropperImage: img.src,
 						cropperSwal: {
-							show: true
-						}
+							show: true,
+						},
 					});
 				};
 				img.src = URL.createObjectURL(files[0]);
 			} catch (err) {
 				this.setState({
-					cardbackUploadStatus: 'The file you selected is not an image.'
+					cardbackUploadStatus: 'The file you selected is not an image.',
 				});
 			}
 		};
@@ -744,13 +715,13 @@ class Settings extends React.Component {
 		const closeCropperSwal = () => {
 			this.setState({
 				cropperSwal: {},
-				cardbackUploadStatus: ''
+				cardbackUploadStatus: '',
 			});
 		};
 
-		const onCropperReady = cropper => {
+		const onCropperReady = (cropper) => {
 			this.setState({
-				cropper: cropper
+				cropper: cropper,
 			});
 		};
 
@@ -758,20 +729,18 @@ class Settings extends React.Component {
 			const data = this.state.cropper.getCroppedCanvas({ height: 95, width: 70 }).toDataURL(this.state.cropperImageType);
 			if (data.length > 100 * 1024) {
 				this.setState({
-					cardbackUploadStatus: 'The file you selected is too big.  A maximum of 100kb is allowed.'
+					cardbackUploadStatus: 'The file you selected is too big.  A maximum of 100kb is allowed.',
 				});
 				return;
 			}
 			this.setState({
 				preview: data,
-				cardbackUploadStatus: ''
+				cardbackUploadStatus: '',
 			});
 		};
 
 		const displayCardbackInfoModal = () => {
-			$('.cardbackinfo')
-				.modal('setting', 'transition', 'scale')
-				.modal('show');
+			$('.cardbackinfo').modal('setting', 'transition', 'scale').modal('show');
 		};
 
 		const previewSaveClick = () => {
@@ -779,42 +748,42 @@ class Settings extends React.Component {
 				url: '/upload-cardback',
 				method: 'POST',
 				data: {
-					image: this.state.preview
-				}
+					image: this.state.preview,
+				},
 			})
-				.then(data => {
+				.then((data) => {
 					this.setState({
 						cardbackUploadStatus: data.message ? data.message.toString() : '',
 						isUploaded: data.message === 'Image uploaded successfully.' ? this.state.preview : '',
-						preview: ''
+						preview: '',
 					});
 				})
-				.catch(err => {
+				.catch((err) => {
 					if (err.status == 413) {
 						this.setState({
 							cardbackUploadStatus: 'Image too large.',
 							isUploaded: '',
-							preview: ''
+							preview: '',
 						});
 					} else {
 						this.setState({
 							cardbackUploadStatus: 'An unknown error occurred, refer to the console and show a dev.',
 							isUploaded: '',
-							preview: ''
+							preview: '',
 						});
 						console.log('Unknown cardback error', err);
 					}
 				});
 		};
 
-		const previewClearClick = event => {
+		const previewClearClick = (event) => {
 			event.preventDefault();
 			this.setState({ preview: '', cardbackUploadStatus: null });
 		};
 
 		const gameSettings = this.props.gameSettings || window.gameSettings;
 
-		const ownProfileSubmit = event => {
+		const ownProfileSubmit = (event) => {
 			event.preventDefault();
 
 			window.location.hash = `#/profile/${this.props.userInfo.userName}`;
@@ -1035,7 +1004,7 @@ class Settings extends React.Component {
 											type="text"
 											name="truncatedSize"
 											value={this.state.truncatedSize}
-											onChange={e => {
+											onChange={(e) => {
 												if (/^\d{1,}$/.test(e.target.value) || e.target.value === '') {
 													if (e.target.value === '') {
 														this.setState({ truncatedSize: e.target.value });
@@ -1092,7 +1061,7 @@ class Settings extends React.Component {
 													checked={Boolean(this.state.staff.disableStaffColor)}
 													onChange={() => {
 														const obj = {
-															staff: this.state.staff
+															staff: this.state.staff,
 														};
 														obj.staff.disableStaffColor = !obj.staff.disableStaffColor;
 														this.props.socket.emit('updateGameSettings', obj);
@@ -1115,7 +1084,7 @@ class Settings extends React.Component {
 													checked={Boolean(this.state.staff.disableVisibleElo)}
 													onChange={() => {
 														const obj = {
-															staff: this.state.staff
+															staff: this.state.staff,
 														};
 														obj.staff.disableVisibleElo = !obj.staff.disableVisibleElo;
 														this.props.socket.emit('updateGameSettings', obj);
@@ -1138,7 +1107,7 @@ class Settings extends React.Component {
 													checked={Boolean(this.state.staff.disableVisibleXP)}
 													onChange={() => {
 														const obj = {
-															staff: this.state.staff
+															staff: this.state.staff,
 														};
 														obj.staff.disableVisibleXP = !obj.staff.disableVisibleXP;
 														this.props.socket.emit('updateGameSettings', obj);
@@ -1162,7 +1131,7 @@ class Settings extends React.Component {
 														checked={Boolean(this.state.staff.incognito)}
 														onChange={() => {
 															const obj = {
-																staff: this.state.staff
+																staff: this.state.staff,
 															};
 															obj.staff.incognito = !obj.staff.incognito;
 															this.props.socket.emit('updateGameSettings', obj);
@@ -1187,7 +1156,7 @@ class Settings extends React.Component {
 							<h4
 								className="ui header"
 								style={{
-									fontSize: this.state.fontSize
+									fontSize: this.state.fontSize,
 								}}
 							>
 								Gamechat font size
@@ -1225,7 +1194,7 @@ class Settings extends React.Component {
 												<div
 													className="current-cardback"
 													style={{
-														background: `url(../images/custom-cardbacks/${this.props.userInfo.userName}.${gameSettings.customCardback.fileExtension}?${gameSettings.customCardback.uid}) no-repeat`
+														background: `url(../images/custom-cardbacks/${this.props.userInfo.userName}.${gameSettings.customCardback.fileExtension}?${gameSettings.customCardback.uid}) no-repeat`,
 													}}
 												/>
 											);
@@ -1293,13 +1262,13 @@ class Settings extends React.Component {
 
 Settings.defaultProps = {
 	gameInfo: {},
-	userInfo: {}
+	userInfo: {},
 };
 
 Settings.propTypes = {
 	userInfo: PropTypes.object,
 	socket: PropTypes.object,
-	gameSettings: PropTypes.object
+	gameSettings: PropTypes.object,
 };
 
 export default Settings;

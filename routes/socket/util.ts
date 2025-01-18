@@ -1,7 +1,7 @@
 import mongodb from 'mongodb';
 import tempy from 'tempy';
 import util from 'util';
-// @ts-expect-error: no types for 'discord-webhook-node' 
+// @ts-expect-error: no types for 'discord-webhook-node'
 import { Webhook } from 'discord-webhook-node';
 
 import { CURRENT_SEASON_NUMBER } from '../../src/frontend-scripts/constants.ts';
@@ -22,12 +22,12 @@ export const getRoomSockets = (game: ActiveGame) => {
 
 	if (!room) return [];
 
-	return Array.from(room.values()).map(socketId => io.sockets.sockets.get(socketId));
+	return Array.from(room.values()).map((socketId) => io.sockets.sockets.get(socketId));
 };
 
 /**
  * Debugging function to send a game to Discord after it's been identified to be cyclic
- * 
+ *
  * @param {ActiveGame} game: the game to be sent/debugged
  * @param {string} message: the message to be sent
  */
@@ -41,13 +41,12 @@ export const debugSendGame = (game: ActiveGame, message = '') => {
 
 		tempy.write.task(
 			gameStr,
-			filename => {
+			(filename) => {
 				if (message) webhook.send(message);
 				webhook.sendFile(filename);
 			},
-			{ extension: '.txt' }
+			{ extension: '.txt' },
 		);
-
 	} catch {
 		console.error(message, gameStr);
 	}
@@ -91,7 +90,8 @@ const combineInProgressChats = (game: ActiveGame, userName?: string) =>
 		? game.private?.seatedPlayers?.find((player: any) => player.userName === userName).gameChats.concat(game.chats)
 		: game.private?.unSeatedGameChats?.concat(game.chats);
 
-export const combineCommandChats = (game: ActiveGame, user: any, commandChats: any) => game.chats ? (commandChats[user] ? game.chats.concat(commandChats[user]) : game.chats) : commandChats[user];
+export const combineCommandChats = (game: ActiveGame, user: any, commandChats: any) =>
+	game.chats ? (commandChats[user] ? game.chats.concat(commandChats[user]) : game.chats) : commandChats[user];
 
 /**
  * @param {object} game - game to act on.
@@ -108,25 +108,23 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 	const seatedPlayerNames = game.publicPlayersState.map((player) => player.userName);
 
 	const roomSockets = getRoomSockets(game);
-	const playerSockets = roomSockets.filter(socket => {
+	const playerSockets = roomSockets.filter((socket) => {
 		if (!socket) return false;
 
 		const handshake = socket.handshake as any;
 
-		return handshake?.session?.passport &&
-			Object.keys(handshake?.session?.passport).length &&
-			seatedPlayerNames.includes(handshake?.session?.passport?.user);
+		return handshake?.session?.passport && Object.keys(handshake?.session?.passport).length && seatedPlayerNames.includes(handshake?.session?.passport?.user);
 	});
 
-	const observerSockets = roomSockets.filter(socket => {
+	const observerSockets = roomSockets.filter((socket) => {
 		if (!socket) return false;
 
 		const handshake = socket.handshake as any;
 
-		return (socket && !handshake?.session?.passport) || (socket && !seatedPlayerNames.includes(handshake?.session?.passport?.user))
+		return (socket && !handshake?.session?.passport) || (socket && !seatedPlayerNames.includes(handshake?.session?.passport?.user));
 	});
 
-	playerSockets.forEach(sock => {
+	playerSockets.forEach((sock) => {
 		if (!sock) return;
 
 		const handshake = sock.handshake as any;
@@ -163,7 +161,7 @@ export const sendInProgressGameUpdate = (game: ActiveGame, noChats = false) => {
 	}
 
 	if (observerSockets.length) {
-		observerSockets.forEach(sock => {
+		observerSockets.forEach((sock) => {
 			if (!sock) return;
 
 			const handshake = sock.handshake as any;
@@ -198,11 +196,11 @@ export const sendInProgressModChatUpdate = (game: ActiveGame, chat: any, specifi
 	const roomSockets = getRoomSockets(game);
 
 	if (roomSockets.length) {
-		roomSockets.forEach(sock => {
+		roomSockets.forEach((sock) => {
 			if (!sock) return;
 
 			const handshake = sock.handshake as any;
-			
+
 			if (handshake && handshake.passport && handshake.passport.user) {
 				const { user } = handshake.session.passport;
 
@@ -228,7 +226,7 @@ export const sendPlayerChatUpdate = (game: ActiveGame, chat: any) => {
 
 	const roomSockets = getRoomSockets(game);
 
-	roomSockets.forEach(sock => {
+	roomSockets.forEach((sock) => {
 		if (sock) {
 			sock.emit('playerChatUpdate', chat);
 		}
@@ -242,7 +240,7 @@ export const sendCommandChatsUpdate = (game: ActiveGame) => {
 
 	const roomSockets = getRoomSockets(game);
 
-	roomSockets.forEach(sock => {
+	roomSockets.forEach((sock) => {
 		if (!sock) return;
 
 		const handshake = sock.handshake as any;
@@ -284,17 +282,15 @@ export const sendInProgressModDMUpdate = (dm: any, modUserNames: string[], edito
 	for (const user of dm.subscribedPlayers) {
 		try {
 			const socket = io.sockets.sockets.get(
-				Array.from(io.sockets.sockets.keys()).find(
-					socketId => {
-						const socket = io.sockets.sockets.get(socketId);
+				Array.from(io.sockets.sockets.keys()).find((socketId) => {
+					const socket = io.sockets.sockets.get(socketId);
 
-						if (!socket) return false;
+					if (!socket) return false;
 
-						const handshake = socket.handshake as any;
+					const handshake = socket.handshake as any;
 
-						return handshake.session.passport && handshake.session.passport.user === user;
-					}
-				) || ''
+					return handshake.session.passport && handshake.session.passport.user === user;
+				}) || '',
 			);
 
 			if (socket) {
@@ -352,9 +348,9 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 	// Choose the right factor
 	const k = size * (game.general.rainbowgame ? rk : nk); // non-rainbow games are capped at k/r
 	// Sort the players into winners and losers
-	const winningAccounts = accounts.filter(account => winningPlayerNames.includes(account.username));
+	const winningAccounts = accounts.filter((account) => winningPlayerNames.includes(account.username));
 	const winningSize = winningPlayerNames.length;
-	const losingAccounts = accounts.filter(account => !winningPlayerNames.includes(account.username));
+	const losingAccounts = accounts.filter((account) => !winningPlayerNames.includes(account.username));
 	const losingSize = size - winningSize;
 	// Construct some basic statistics for each team
 	const averageRatingWinners = avg(winningAccounts, (a: any) => a.overall.elo || defaultELO);
@@ -373,7 +369,7 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 	const ratingUpdates: any = {};
 	const date = new Date(); // ensure we use the same date for each player
 
-	accounts.forEach(account => {
+	accounts.forEach((account) => {
 		if (!account.overall) {
 			account.overall = {
 				xp: 0,
@@ -381,7 +377,7 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 				wins: 0,
 				losses: 0,
 				rainbowWins: 0,
-				rainbowLosses: 0
+				rainbowLosses: 0,
 			};
 		}
 
@@ -393,8 +389,8 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 
 		if (account.seasons.get(CURRENT_SEASON_NUMBER.toString())) {
 			currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER.toString());
-		} 
-		
+		}
+
 		if (!currentSeason) {
 			currentSeason = {
 				xp: 0,
@@ -402,7 +398,7 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 				wins: 0,
 				losses: 0,
 				rainbowWins: 0,
-				rainbowLosses: 0
+				rainbowLosses: 0,
 			};
 		}
 
@@ -425,7 +421,7 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 
 		account.pastElo.push({
 			date,
-			value: account.overall.elo
+			value: account.overall.elo,
 		});
 
 		account.overall.xp = (account.overall.xp || 0) + xpChange;
@@ -455,7 +451,8 @@ export const destroySession = (username: string) => {
 	if (process.env.NODE_ENV !== 'production') {
 		let mongoClient: any;
 
-		mongodb.MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err: Error, client: any) => { // TODO: check: used to be `Mongoclient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err, client) => {`
+		mongodb.MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err: Error, client: any) => {
+			// TODO: check: used to be `Mongoclient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err, client) => {`
 			mongoClient = client;
 		});
 
@@ -491,10 +488,12 @@ export class LineGuess {
 	/**
 	 * @param {{regs: number[], hit: (number|null)}} o
 	 */
-	constructor(o: {
-		regs: number[];
-		hit: number | null;
-	} = { regs: [], hit: null }) {
+	constructor(
+		o: {
+			regs: number[];
+			hit: number | null;
+		} = { regs: [], hit: null },
+	) {
 		this.regs = o.regs;
 		this.hit = o.hit;
 	}
@@ -504,7 +503,7 @@ export class LineGuess {
 	 */
 	toString() {
 		return this.regs
-			.map(reg => {
+			.map((reg) => {
 				const newReg = reg === 10 ? 0 : reg;
 				return reg === this.hit ? `${newReg}h` : `${newReg}`;
 			})

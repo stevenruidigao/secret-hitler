@@ -6,21 +6,21 @@ import PropTypes from 'prop-types';
 
 const mapStateToProps = ({ version, userInfo }) => ({ version, userInfo });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	readPatchNotes: () => {
 		dispatch(viewPatchNotes());
 		fetch('/viewPatchNotes', {
-			credentials: 'same-origin'
+			credentials: 'same-origin',
 		});
 		window.location.hash = '#/changelog';
-	}
+	},
 });
 
 const PatchAlert = ({ isActive, onClick }) => (isActive ? <div className="patch-alert" onClick={onClick} /> : null);
 
 PatchAlert.propTypes = {
 	isActive: PropTypes.bool,
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
 };
 
 const DefaultMid = ({ version, readPatchNotes, quickDefault, userInfo }) => (
@@ -122,7 +122,7 @@ DefaultMid.propTypes = {
 	quickDefault: PropTypes.func,
 	version: PropTypes.object,
 	readPatchNotes: PropTypes.func,
-	userInfo: PropTypes.object
+	userInfo: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DefaultMid);

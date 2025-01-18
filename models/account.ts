@@ -185,7 +185,7 @@ const Stats = new Schema<IStats>({
 	wins: { type: Number, default: 0 },
 	losses: { type: Number, default: 0 },
 	rainbowWins: { type: Number, default: 0 },
-	rainbowLosses: { type: Number, default: 0 }
+	rainbowLosses: { type: Number, default: 0 },
 });
 
 const Account = new Schema<IAccount>({
@@ -202,7 +202,7 @@ const Account = new Schema<IAccount>({
 			disableVisibleElo: Boolean,
 			disableVisibleXP: Boolean,
 			disableStaffColor: Boolean,
-			incognito: Boolean
+			incognito: Boolean,
 		},
 		isRainbow: Boolean,
 		newReport: Boolean,
@@ -210,7 +210,7 @@ const Account = new Schema<IAccount>({
 		customCardback: {
 			fileExtension: String, // always 'png'
 			saveTime: String,
-			uid: String
+			uid: String,
 		},
 		enableTimestamps: Boolean,
 		enableRightSidebarInGame: Boolean,
@@ -250,22 +250,22 @@ const Account = new Schema<IAccount>({
 			casual: Boolean,
 			timedMode: Boolean,
 			standard: Boolean,
-			rainbow: Boolean
+			rainbow: Boolean,
 		},
 		gameNotes: {
 			top: Number,
 			left: Number,
 			width: Number,
-			height: Number
+			height: Number,
 		},
 		playerNotes: Array,
 		ignoreIPBans: Boolean,
 		truncatedSize: Number,
 		claimCharacters: String,
-		claimButtons: String
+		claimButtons: String,
 	},
 	verification: {
-		email: String
+		email: String,
 	},
 	signupIP: String,
 	lastConnectedIP: String,
@@ -291,11 +291,11 @@ const Account = new Schema<IAccount>({
 		username: String,
 		discriminator: String,
 		mfa: Boolean,
-		uid: String
+		uid: String,
 	},
 	github: {
 		username: String,
-		mfa: Boolean
+		mfa: Boolean,
 	},
 	warnings: Array, // { text: String, moderator: String, time: Date, acknowledged: Boolean },
 	feedbackSubmissions: Array, // { time: Date, text: String }
@@ -304,11 +304,11 @@ const Account = new Schema<IAccount>({
 		secondaryColor: String,
 		tertiaryColor: String,
 		backgroundColor: String,
-		textColor: String
+		textColor: String,
 	},
 	eloPercentile: {
 		seasonal: Number,
-		overall: Number
+		overall: Number,
 	},
 	isRainbowSeason: Boolean,
 	isRainbowOverall: Boolean,
@@ -316,7 +316,7 @@ const Account = new Schema<IAccount>({
 	badges: [{ id: String, text: String, title: String, dateAwarded: Date }],
 	maxElo: { type: Number, default: 1600 },
 	pastElo: [{ date: Date, value: Number }],
-	isTournamentMod: Boolean
+	isTournamentMod: Boolean,
 });
 
 Account.plugin(passportLocalMongoose as any);

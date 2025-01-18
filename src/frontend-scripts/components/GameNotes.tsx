@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { toggleNotes } from '../actions/actions.ts';
 import PropTypes from 'prop-types';
 
-const mapDispatchToProps = dispatch => ({
-		toggleNotes: notesStatus => dispatch(toggleNotes(notesStatus))
+const mapDispatchToProps = (dispatch) => ({
+		toggleNotes: (notesStatus) => dispatch(toggleNotes(notesStatus)),
 	}),
-	dragOverFn = e => {
+	dragOverFn = (e) => {
 		e.preventDefault();
 	};
 
@@ -17,7 +17,7 @@ class GameNotes extends React.Component {
 		width: 400,
 		height: 320,
 		isResizing: false,
-		clearConfirmationShown: false
+		clearConfirmationShown: false,
 	};
 
 	clearNotes = () => {
@@ -32,14 +32,14 @@ class GameNotes extends React.Component {
 
 	resizeDragStart = () => {};
 
-	noteDrop = e => {
+	noteDrop = (e) => {
 		e.preventDefault();
 		if (!this.state.isResizing) {
 			const offset = e.dataTransfer.getData('coordinates/text').split(',');
 
 			this.setState({
 				top: e.clientY + parseInt(offset[1], 10),
-				left: e.clientX + parseInt(offset[0], 10)
+				left: e.clientX + parseInt(offset[0], 10),
 			});
 		}
 	};
@@ -57,17 +57,17 @@ class GameNotes extends React.Component {
 		document.body.removeEventListener('drop', this.noteDrop);
 	}
 
-	noteDragStart = e => {
+	noteDragStart = (e) => {
 		const style = window.getComputedStyle(e.target, null);
 
 		e.dataTransfer.setData(
 			'coordinates/text',
-			parseInt(style.getPropertyValue('left'), 10) - e.clientX + ',' + (parseInt(style.getPropertyValue('top'), 10) - e.clientY)
+			parseInt(style.getPropertyValue('left'), 10) - e.clientX + ',' + (parseInt(style.getPropertyValue('top'), 10) - e.clientY),
 		);
 	};
 
 	render() {
-		const notesChange = e => {
+		const notesChange = (e) => {
 			this.props.changeNotesValue(`${e.target.value}`);
 			localStorage.setItem('GameNotes', e.target.value);
 		};
@@ -81,7 +81,7 @@ class GameNotes extends React.Component {
 					top: `${this.state.top}px`,
 					left: `${this.state.left}px`,
 					height: `${this.state.height}px`,
-					width: `${this.state.width}px`
+					width: `${this.state.width}px`,
 				}}
 			>
 				{this.state.clearConfirmationShown && (
@@ -91,7 +91,7 @@ class GameNotes extends React.Component {
 							top: '85px',
 							left: '20px',
 							height: '150px',
-							width: `${this.state.width - 40}px`
+							width: `${this.state.width - 40}px`,
 						}}
 					>
 						<div className="notes-container_confirm-header">Confirm Clear?</div>
@@ -103,7 +103,7 @@ class GameNotes extends React.Component {
 								onClick={() => {
 									this.clearNotes();
 									this.setState({
-										clearConfirmationShown: false
+										clearConfirmationShown: false,
 									});
 								}}
 							>
@@ -113,7 +113,7 @@ class GameNotes extends React.Component {
 								className="notes-container_confirm-button"
 								onClick={() => {
 									this.setState({
-										clearConfirmationShown: false
+										clearConfirmationShown: false,
 									});
 								}}
 							>
@@ -133,7 +133,7 @@ class GameNotes extends React.Component {
 							onClick={() => {
 								if (this.props.value !== '') {
 									this.setState({
-										clearConfirmationShown: true
+										clearConfirmationShown: true,
 									});
 								}
 							}}
@@ -151,7 +151,7 @@ class GameNotes extends React.Component {
 GameNotes.propTypes = {
 	toggleNotes: PropTypes.func,
 	value: PropTypes.string,
-	changeNotesValue: PropTypes.func
+	changeNotesValue: PropTypes.func,
 };
 
 export default connect(null, mapDispatchToProps)(GameNotes);

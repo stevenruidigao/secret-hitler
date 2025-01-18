@@ -50,7 +50,7 @@ const ipToBinaryArray = (ip: string) => {
 			.map((block: string) =>
 				parseInt(block, 16) // ipv6
 					.toString(2)
-					.padStart(16, '0')
+					.padStart(16, '0'),
 			)
 			.flat()
 			.join('');
@@ -58,10 +58,10 @@ const ipToBinaryArray = (ip: string) => {
 
 	return ip
 		.split('.')
-		.map(block =>
+		.map((block) =>
 			parseInt(block) // ipv4
 				.toString(2)
-				.padStart(8, '0')
+				.padStart(8, '0'),
 		)
 		.flat()
 		.join('');

@@ -11,7 +11,7 @@ const OldAccountSchema = new Schema(
 		username: {
 			type: String,
 			required: true,
-			unique: true
+			unique: true,
 		},
 		password: String,
 		isLocal: Boolean,
@@ -68,22 +68,22 @@ const OldAccountSchema = new Schema(
 				casualgame: Boolean,
 				timedMode: Boolean,
 				standard: Boolean,
-				rainbow: Boolean
+				rainbow: Boolean,
 			},
 			gameNotes: {
 				top: Number,
 				left: Number,
 				width: Number,
-				height: Number
+				height: Number,
 			},
 			playerNotes: Array,
 			ignoreIPBans: Boolean,
 			truncatedSize: Number,
 			claimCharacters: String,
-			claimButtons: String
+			claimButtons: String,
 		},
 		verification: {
-			email: String
+			email: String,
 		},
 		signupIP: String,
 		lastConnectedIP: String,
@@ -212,7 +212,7 @@ const OldAccountSchema = new Schema(
 		textColor: String,
 		eloPercentile: {
 			seasonal: Number,
-			overall: Number
+			overall: Number,
 		},
 		isRainbowSeason: Boolean,
 		isRainbowOverall: Boolean,
@@ -222,9 +222,9 @@ const OldAccountSchema = new Schema(
 		badges: [{ id: String, text: String, title: String, dateAwarded: Date }],
 		maxElo: { type: Number, default: 1600 },
 		pastElo: [{ date: Date, value: Number }],
-		isTournamentMod: Boolean
+		isTournamentMod: Boolean,
 	},
-	{ collection: 'accounts' }
+	{ collection: 'accounts' },
 ).set('validateBeforeSave', false);
 
 OldAccountSchema.plugin(passportLocalMongoose);
@@ -247,10 +247,10 @@ OldAccount.find()
 
 		newAccount.gameSettings = newAccount.gameSettings ? newAccount.gameSettings : {};
 
-		const removeUnused = obj =>
+		const removeUnused = (obj) =>
 			Object.keys(obj)
-				.map(key => obj[key])
-				.every(val => val === undefined)
+				.map((key) => obj[key])
+				.every((val) => val === undefined)
 				? undefined
 				: obj;
 
@@ -259,14 +259,14 @@ OldAccount.find()
 			disableVisibleXP: newAccount.gameSettings.staffDisableVisibleXP,
 			disableStaffColor: newAccount.gameSettings.staffDisableStaffColor,
 			incognito: newAccount.gameSettings.staffIncognito,
-			...newAccount.gameSettings.staff
+			...newAccount.gameSettings.staff,
 		});
 
 		newAccount.customCardback = removeUnused({
 			fileExtension: newAccount.customCardback,
 			saveTime: newAccount.customCardbackSaveTime,
 			uid: newAccount.customCardbackUid,
-			...newAccount.customCardback
+			...newAccount.customCardback,
 		});
 
 		newAccount.gameSettings.gameFilters = newAccount.gameSettings.gameFilters ? newAccount.gameSettings.gameFilters : {};
@@ -282,7 +282,7 @@ OldAccount.find()
 			timedMode: newAccount.gameSettings.gameFilters.timedMode,
 			standard: newAccount.gameSettings.gameFilters.standard,
 			rainbow: newAccount.gameSettings.gameFilters.rainbow,
-			...newAccount.gameSettings.gameFilters
+			...newAccount.gameSettings.gameFilters,
 		});
 
 		if (!newAccount.gameSettings.gameFilters) {
@@ -296,11 +296,11 @@ OldAccount.find()
 			rainbowLosses: newAccount.rainbowLosses,
 			elo: newAccount.eloOverall,
 			xp: newAccount.xpOverall,
-			...newAccount.overall
+			...newAccount.overall,
 		});
 
 		newAccount.seasons = {
-			...newAccount.seasons
+			...newAccount.seasons,
 		};
 
 		for (let i = 1; i <= 22; i++) {
@@ -311,7 +311,7 @@ OldAccount.find()
 				rainbowLosses: newAccount[`rainbowLossesSeason${i}`],
 				elo: newAccount[`eloSeason${i}`],
 				xp: newAccount[`xpSeason${i}`],
-				...newAccount.seasons[i]
+				...newAccount.seasons[i],
 			});
 
 			if (!newAccount.seasons[i]) {
@@ -324,13 +324,13 @@ OldAccount.find()
 			discriminator: newAccount.discordDiscriminator,
 			mfa: newAccount.discordMFA,
 			uid: newAccount.discordUID,
-			...newAccount.discord
+			...newAccount.discord,
 		});
 
 		newAccount.github = removeUnused({
 			username: newAccount.githubUsername,
 			mfa: newAccount.githubMFA,
-			...newAccount.github
+			...newAccount.github,
 		});
 
 		newAccount.theme = removeUnused({
@@ -339,7 +339,7 @@ OldAccount.find()
 			tertiaryColor: newAccount.tertiaryColor,
 			backgroundColor: newAccount.backgroundColor,
 			textColor: newAccount.textColor,
-			...newAccount.theme
+			...newAccount.theme,
 		});
 
 		newAccount.version = 2;
@@ -348,11 +348,11 @@ OldAccount.find()
 
 		return Account.updateOne(
 			{
-				username: newAccount.username
+				username: newAccount.username,
 			},
 			{
-				$set: newAccount
-			}
+				$set: newAccount,
+			},
 		).then(() => {
 			if (i % 100 === 0 || i < 10) {
 				console.log(`Migrated ${i + 1} accounts.`);
@@ -363,6 +363,6 @@ OldAccount.find()
 		console.log('Done migrating accounts.');
 		mongoose.connection.close();
 	})
-	.catch(err => {
+	.catch((err) => {
 		console.log('Error migrating accounts:', err);
 	});

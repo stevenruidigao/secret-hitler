@@ -22,11 +22,11 @@ const SidebarGame = ({ game, socket }) => {
 		const availableSeatCounts = new Array(game.maxPlayersCount)
 			.fill(true)
 			.map((el, i) => (game.excludedPlayerCount.includes(i + 1) || i + 1 < game.minPlayersCount ? false : i + 1))
-			.filter(el => el);
+			.filter((el) => el);
 
 		let str = '';
 
-		availableSeatCounts.forEach(el => {
+		availableSeatCounts.forEach((el) => {
 			if (availableSeatCounts.includes(el)) {
 				if (el === game.maxPlayersCount) {
 					str = `${str}${el} players`;
@@ -49,7 +49,7 @@ const SidebarGame = ({ game, socket }) => {
 		return str;
 	};
 
-	const hasPlayerCount = count => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
+	const hasPlayerCount = (count) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
 
 	const hasR6 = game.rebalance6p && hasPlayerCount(6);
 	const hasR7 = game.rebalance7p && hasPlayerCount(7);
@@ -149,12 +149,12 @@ const SidebarGame = ({ game, socket }) => {
 						{game.name}
 					</div>
 					<div className="liberal-count">
-						{_.range(1, 6).map(num => (
+						{_.range(1, 6).map((num) => (
 							<div key={num} className={num <= game.enactedLiberalPolicyCount ? 'box liberal-box filled' : 'box liberal-box unfilled'} />
 						))}
 					</div>
 					<div className="fascist-count">
-						{_.range(1, 7).map(num => (
+						{_.range(1, 7).map((num) => (
 							<div key={num} className={num <= game.enactedFascistPolicyCount ? 'box fascist-box filled' : 'box fascist-box unfilled'} />
 						))}
 					</div>
@@ -174,7 +174,7 @@ const SidebarGame = ({ game, socket }) => {
 
 SidebarGame.propTypes = {
 	game: PropTypes.object,
-	socket: PropTypes.object
+	socket: PropTypes.object,
 };
 
 export default SidebarGame;

@@ -137,8 +137,8 @@ export default class Game extends React.Component {
 						!userInfo.gameSettings.disableConfetti &&
 						gameInfo &&
 						gameInfo.publicPlayersState &&
-						gameInfo.publicPlayersState.find(player => player.userName === userInfo.userName) &&
-						gameInfo.publicPlayersState.find(player => player.userName === userInfo.userName).isConfetti
+						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName) &&
+						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName).isConfetti
 					) {
 						return balloons ? <Balloons /> : <Confetti />;
 					}
@@ -163,7 +163,7 @@ export default class Game extends React.Component {
 
 Game.defaultProps = {
 	gameInfo: {},
-	userInfo: {}
+	userInfo: {},
 };
 
 Game.propTypes = {
@@ -179,5 +179,5 @@ Game.propTypes = {
 	dispatch: PropTypes.func,
 	userList: PropTypes.object,
 	allEmotes: PropTypes.object,
-	onClickedTakeSeat: PropTypes.func
+	onClickedTakeSeat: PropTypes.func,
 };

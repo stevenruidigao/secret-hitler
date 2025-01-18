@@ -26,7 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
 	const MongoDBStore = connectMongoDBSession(session);
 	store = new MongoDBStore({
 		uri: 'mongodb://localhost:27017/secret-hitler-app',
-		collection: 'sessions'
+		collection: 'sessions',
 	});
 } else {
 	const client = redis.createClient();
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
 		host: '127.0.0.1',
 		port: 6379,
 		client: client,
-		ttl: 2 * 604800 // 2 weeks
+		ttl: 2 * 604800, // 2 weeks
 	});
 }
 
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 	} catch (e) {
 		console.error(`Malformed URI: ${req.path}`);
 		console.error(
-			`IP data: ${req.headers['cf-connecting-ip']} | ${req.headers['x-real-ip']} | ${req.headers['X-Real-IP']} | ${req.headers['X-Forwarded-For']} | ${req.headers['x-forwarded-for']} | ${req.connection.remoteAddress}`
+			`IP data: ${req.headers['cf-connecting-ip']} | ${req.headers['x-real-ip']} | ${req.headers['X-Real-IP']} | ${req.headers['X-Forwarded-For']} | ${req.headers['x-forwarded-for']} | ${req.connection.remoteAddress}`,
 		);
 		res.status(500).send('An error occurred.');
 	}
@@ -60,7 +60,8 @@ app.use((req: any, res, next) => {
 		req.headers['X-Real-IP'] ||
 		req.headers['X-Forwarded-For'] ||
 		req.headers['x-forwarded-for'] ||
-		req.connection.remoteAddress || '';
+		req.connection.remoteAddress ||
+		'';
 	if (IP.includes(',')) req.expandedIP = expandAndSimplify(IP.split(',')[0].trim());
 	else req.expandedIP = expandAndSimplify(IP.trim());
 	next();
@@ -77,8 +78,8 @@ app.use(cookieParser());
 app.use(express.static(`${import.meta.dirname}/public`, { maxAge: 86400000 * 28 }));
 app.use(
 	helmet.frameguard({
-		action: 'deny'
-	})
+		action: 'deny',
+	}),
 );
 
 // Opts out of Google's FLoC - https://plausible.io/blog/google-floc
@@ -90,16 +91,18 @@ app.use((req, res, next) => {
 const sessionSettings = {
 	secret: process.env.SECRETSESSIONKEY || 'hunter2',
 	cookie: {
-		maxAge: 1000 * 60 * 60 * 24 * 28 // 4 weeks
+		maxAge: 1000 * 60 * 60 * 24 * 28, // 4 weeks
 	},
 	store,
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
 };
 
-io.use(socketSession(session(sessionSettings), {
-	autoSave: true
-})	);
+io.use(
+	socketSession(session(sessionSettings), {
+		autoSave: true,
+	}),
+);
 
 app.use(session(sessionSettings) as any);
 app.use(passport.initialize() as any);
@@ -114,12 +117,12 @@ if (process.env.DISCORDCLIENTID) {
 				clientID: process.env.DISCORDCLIENTID,
 				clientSecret: process.env.DISCORDCLIENTSECRET || '',
 				callbackURL: '/discord/login-callback',
-				scope: ['identify', 'email']
+				scope: ['identify', 'email'],
 			},
 			(accessToken: string, refreshToken: string, profile: any, callback: Function) => {
 				callback(profile);
-			}
-		)
+			},
+		),
 	);
 
 	passport.use(
@@ -127,12 +130,12 @@ if (process.env.DISCORDCLIENTID) {
 			{
 				clientID: process.env.GITHUBCLIENTID || '',
 				clientSecret: process.env.GITHUBCLIENTSECRET || '',
-				callbackURL: '/github/login-callback'
+				callbackURL: '/github/login-callback',
 			},
 			(accessToken: string, refreshToken: string, profile: any, callback: Function) => {
 				callback(profile);
-			}
-		)
+			},
+		),
 	);
 } else {
 	console.error('WARN: No oauth client data in .env');

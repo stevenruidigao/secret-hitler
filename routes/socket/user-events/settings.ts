@@ -48,10 +48,10 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 			}
 
 			const currentPrivate = account.gameSettings.isPrivate;
-			const userIdx = userList.findIndex(user => user.userName === passport.user);
+			const userIdx = userList.findIndex((user) => user.userName === passport.user);
 			const aem = account.staffRole && (account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin');
 			const veteran = account.staffRole && account.staffRole === 'veteran';
-			const user = userList.find(u => u.userName === passport.user);
+			const user = userList.find((u) => u.userName === passport.user);
 
 			for (const setting in data) {
 				if (setting == 'blacklist') {
@@ -62,7 +62,7 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 						blacklist.length <= 30 &&
 						blacklist.every(
 							(entry: any) =>
-								typeof entry === 'object' && typeof entry.userName === 'string' && typeof entry.reason === 'string' && typeof entry.timestamp === 'number'
+								typeof entry === 'object' && typeof entry.userName === 'string' && typeof entry.reason === 'string' && typeof entry.timestamp === 'number',
 						)
 					) {
 						account.gameSettings.blacklist = blacklist;
@@ -96,7 +96,7 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 					'playerNotes',
 					'truncatedSize',
 					'claimCharacters',
-					'claimButtons'
+					'claimButtons',
 				];
 
 				if ((allowedSettings as string[]).includes(setting) || (setting === 'staff' && (aem || veteran))) {
@@ -121,8 +121,8 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 						overall: account.overall,
 						status: {
 							type: 'none',
-							gameId: null
-						}
+							gameId: null,
+						},
 					};
 
 					userListInfo.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {};

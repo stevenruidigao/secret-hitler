@@ -21,22 +21,21 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 		const { user } = passport;
 		const { sockets } = io.sockets;
 
-		const game = games[Object.keys(games).find((gameName: string) => games[gameName].publicPlayersState.find((player: any) => player.userName === user && !player.leftGame)) || ''];
+		const game =
+			games[
+				Object.keys(games).find((gameName: string) => games[gameName].publicPlayersState.find((player: any) => player.userName === user && !player.leftGame)) ||
+					''
+			];
 
-		const oldSocketID = Object.keys(sockets).find(
-			socketID => {
-				const s = sockets.get(socketID);
+		const oldSocketID = Object.keys(sockets).find((socketID) => {
+			const s = sockets.get(socketID);
 
-				if (!s) return false;
+			if (!s) return false;
 
-				const handshake = s.handshake as any;
+			const handshake = s.handshake as any;
 
-				return handshake.session.passport &&
-					Object.keys(handshake.session.passport).length &&
-					handshake.session.passport.user === user &&
-					socketID !== socket.id;
-			}
-		);
+			return handshake.session.passport && Object.keys(handshake.session.passport).length && handshake.session.passport.user === user && socketID !== socket.id;
+		});
 
 		const oldSocket = oldSocketID && sockets.get(oldSocketID);
 
@@ -57,7 +56,7 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 		if (user) {
 			// Double-check the user isn't sneaking past IP bans.
 			const logOutUser = (username: string) => {
-				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
+				const bannedUserlistIndex = userList.findIndex((user) => user.userName === username);
 
 				socket.emit('manualDisconnection');
 				socket.disconnect(true);
@@ -69,7 +68,7 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 				// destroySession(username);
 			};
 
-			Account.findOne({ username: user }, function(err: Error, account: any) {
+			Account.findOne({ username: user }, function (err: Error, account: any) {
 				if (account) {
 					if (account.isBanned || (account.isTimeout && new Date() < account.isTimeout)) {
 						logOutUser(user);

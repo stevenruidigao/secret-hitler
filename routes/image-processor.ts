@@ -12,7 +12,7 @@ const io = global.io;
 export const processImage = (username: string, raw: string, callback: Function) => {
 	sharp(Buffer.from(raw, 'base64'))
 		.resize(70, 95)
-		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), err => {
+		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), (err) => {
 			if (err) {
 				callback(null, err);
 				return;
@@ -28,9 +28,7 @@ export const processImage = (username: string, raw: string, callback: Function) 
 					account.gameSettings = {};
 				}
 
-				const uid = Math.random()
-					.toString(36)
-					.substring(2);
+				const uid = Math.random().toString(36).substring(2);
 
 				account.gameSettings.customCardback = account.gameSettings.customCardback || {};
 				account.gameSettings.customCardback.fileExtension = 'png';
@@ -47,7 +45,7 @@ export const processImage = (username: string, raw: string, callback: Function) 
 						userListEmitter.send = true;
 					}
 
-					Object.keys(games).forEach(uid => {
+					Object.keys(games).forEach((uid) => {
 						const game = games[uid];
 						const foundUser = game.publicPlayersState.find((user) => user.userName === username);
 
@@ -58,7 +56,7 @@ export const processImage = (username: string, raw: string, callback: Function) 
 						}
 					});
 
-					const socketId = Array.from(io.sockets.sockets.keys()).find(socketId => {
+					const socketId = Array.from(io.sockets.sockets.keys()).find((socketId) => {
 						const socket = io.sockets.sockets.get(socketId);
 						const handshake = socket?.handshake as any;
 

@@ -16,7 +16,7 @@ export default {
 	],
 	output: {
 		filename: 'bundle.js',
-		path: path.resolve(import.meta.dirname, '../public/scripts')
+		path: path.resolve(import.meta.dirname, '../public/scripts'),
 	},
 	devtool: 'inline-source-map',
 	module: {
@@ -26,49 +26,49 @@ export default {
 				use: {
 					loader: 'html-loader',
 					options: {
-						attrs: [':data-src']
-					}
-				}
+						attrs: [':data-src'],
+					},
+				},
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
 				use: {
 					loader: 'file-loader',
 					options: {
-						useRelativePath: true
-					}
-				}
+						useRelativePath: true,
+					},
+				},
 			},
 			{
 				test: /\.m?(j|t)sx?$/,
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: ['@babel/preset-react', '@babel/preset-typescript']
-					}
+						presets: ['@babel/preset-react', '@babel/preset-typescript'],
+					},
 				},
-				exclude: /node_modules/
+				exclude: /node_modules/,
 			},
 			{
 				test: /\.s?css$/,
 				use: [
 					{
-						loader: 'style-loader'
+						loader: 'style-loader',
 					},
 					{
 						loader: 'css-loader',
 						options: {
-							sourceMap: true
-						}
+							sourceMap: true,
+						},
 					},
 					{
 						loader: 'sass-loader',
 						options: {
-							sourceMap: true
-						}
-					}
-				]
-			}
-		]
-	}
+							sourceMap: true,
+						},
+					},
+				],
+			},
+		],
+	},
 };

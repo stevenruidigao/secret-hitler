@@ -14,24 +14,24 @@ Game.find({
 	// 	$lte: new Date()
 	// },
 	season: 17,
-	casualGame: false
+	casualGame: false,
 })
 	.cursor()
-	.eachAsync(game => {
-		game.winningPlayers.forEach(username => {
+	.eachAsync((game) => {
+		game.winningPlayers.forEach((username) => {
 			Account.findOne({ username: username.userName })
 				.cursor()
-				.eachAsync(user => {
+				.eachAsync((user) => {
 					user[`winsSeason${season}`] = user[`winsSeason${season}`] ? user[`winsSeason${season}`] + 1 : 1;
 					if (game.isRainbow) user[`rainbowWinsSeason${season}`] = user[`rainbowWinsSeason${season}`] ? user[`rainbowWinsSeason${season}`] + 1 : 1;
 					user.save();
 				});
 		});
 
-		game.losingPlayers.forEach(username => {
+		game.losingPlayers.forEach((username) => {
 			Account.findOne({ username: username.userName })
 				.cursor()
-				.eachAsync(user => {
+				.eachAsync((user) => {
 					user[`lossesSeason${season}`] = user[`lossesSeason${season}`] ? user[`lossesSeason${season}`] + 1 : 1;
 					if (game.isRainbow) user[`rainbowLossesSeason${season}`] = user[`rainbowLossesSeason${season}`] ? user[`rainbowLossesSeason${season}`] + 1 : 1;
 					user.save();

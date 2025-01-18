@@ -63,12 +63,12 @@ export interface IProfile {
 
 const matchData = {
 	events: { type: Number, default: 0 },
-	successes: { type: Number, default: 0 }
+	successes: { type: Number, default: 0 },
 };
 
 const roleMatchData = {
 	liberal: matchData,
-	fascist: matchData
+	fascist: matchData,
 };
 
 const profileSchema = new Schema<IProfile>({
@@ -91,7 +91,7 @@ const profileSchema = new Schema<IProfile>({
 				7: roleMatchData,
 				8: roleMatchData,
 				9: roleMatchData,
-				10: roleMatchData
+				10: roleMatchData,
 			},
 			rainbowMatches: {
 				// ranked rainbow games
@@ -102,20 +102,20 @@ const profileSchema = new Schema<IProfile>({
 				7: roleMatchData,
 				8: roleMatchData,
 				9: roleMatchData,
-				10: roleMatchData
+				10: roleMatchData,
 			},
 			practiceMatches: roleMatchData, // practice games
 			silentMatches: roleMatchData, // silent games
 			emoteMatches: roleMatchData, // emote-only games
 			casualMatches: roleMatchData, // casual games
-			customMatches: roleMatchData // custom (any settings) games
+			customMatches: roleMatchData, // custom (any settings) games
 		},
 		actions: {
 			voteAccuracy: matchData,
 			shotAccuracy: matchData,
 			legacyVoteAccuracy: matchData,
-			legacyShotAccuracy: matchData
-		}
+			legacyShotAccuracy: matchData,
+		},
 	},
 	recentGames: {
 		type: [
@@ -125,11 +125,11 @@ const profileSchema = new Schema<IProfile>({
 				playerSize: Number,
 				isWinner: Boolean,
 				isRebalanced: Boolean,
-				date: Date
-			}
+				date: Date,
+			},
 		],
-		default: []
-	}
+		default: [],
+	},
 });
 
 export default mongoose.model<IProfile>('Profile', profileSchema);

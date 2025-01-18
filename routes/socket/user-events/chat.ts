@@ -17,8 +17,15 @@ const generalChatReplTime = Array(chatReplacements.length + 1).fill(0);
  * @param {array} editorUserNames - list of editors
  * @param {array} adminUserNames - list of admins
  */
-export const handleNewGeneralChat = async (socket: Socket, passport: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
-	const user = userList.find(u => u.userName === passport.user);
+export const handleNewGeneralChat = async (
+	socket: Socket,
+	passport: any,
+	data: any,
+	modUserNames: string[],
+	editorUserNames: string[],
+	adminUserNames: string[],
+) => {
+	const user = userList.find((u) => u.userName === passport.user);
 	if (!user || user.isPrivate) return;
 
 	if (!data.chat) return;
@@ -39,10 +46,10 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 					{
 						player: passport.user,
 						situation: `"${pingMods[2]}".`,
-						homepage: true
+						homepage: true,
 					},
 					undefined,
-					'ping'
+					'ping',
 				);
 				await setLastGenchatModPingAsync(Date.now());
 			} else {
@@ -73,7 +80,7 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 				} else {
 					socket.emit(
 						'sendAlert',
-						`You can do this command again in ${((generalChatReplTime[repl.id] + repl.aemCooldown * 1000 - Date.now()) / 1000).toFixed(2)} seconds.`
+						`You can do this command again in ${((generalChatReplTime[repl.id] + repl.aemCooldown * 1000 - Date.now()) / 1000).toFixed(2)} seconds.`,
 					);
 					return;
 				}
@@ -89,8 +96,8 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 						'sendAlert',
 						`You can't do this right now, try again in ${Math.max(
 							(generalChatReplTime[0] + 30000 - Date.now()) / 1000,
-							(generalChatReplTime[repl.id] + repl.normalCooldown * 1000 - Date.now()) / 1000
-						).toFixed(2)} seconds.`
+							(generalChatReplTime[repl.id] + repl.normalCooldown * 1000 - Date.now()) / 1000,
+						).toFixed(2)} seconds.`,
 					);
 					return;
 				}
@@ -114,7 +121,7 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
 			time: curTime,
 			chat: data.chat,
 			userName: passport.user,
-			staffRole: getStaffRole()
+			staffRole: getStaffRole(),
 		};
 
 		user.lastMessage = newChat;
@@ -148,7 +155,17 @@ export const handleNewGeneralChat = async (socket: Socket, passport: any, data: 
  * @param {function} addNewClaim - links to handleAddNewClaim
  * @param {boolean} isTourneyMod - self explain
  */
-export const handleAddNewGameChat = async (socket: Socket, passport: any, data: any, game: ActiveGame, modUserNames: string[], editorUserNames: string[], adminUserNames: string[], addNewClaim: Function, isTourneyMod: boolean) => {
+export const handleAddNewGameChat = async (
+	socket: Socket,
+	passport: any,
+	data: any,
+	game: ActiveGame,
+	modUserNames: string[],
+	editorUserNames: string[],
+	adminUserNames: string[],
+	addNewClaim: Function,
+	isTourneyMod: boolean,
+) => {
 	// Authentication Assured in routes.ts
 	if (!game || !game.general || !data.chat) return;
 	const chat = data.chat.trim();
@@ -160,7 +177,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 	const { publicPlayersState } = game;
 	const player = publicPlayersState.find((player) => player.userName === passport.user);
 
-	const user = userList.find(u => passport.user === u.userName);
+	const user = userList.find((u) => passport.user === u.userName);
 
 	if (!user || !user.userName) return;
 
@@ -178,41 +195,51 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 		game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim
 	) {
 		if (/^[RB]{2,3}$/i.exec(chat)) {
-			const formattedChat = chat
-				.toLowerCase()
-				.split('')
-				.sort()
-				.reverse()
-				.join('');
+			const formattedChat = chat.toLowerCase().split('').sort().reverse().join('');
 
 			// console.log(chat, ' - ', formattedChat, ' - ', game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim);
 
-			if (chat.length === 3 && 0 <= playerIndex && playerIndex <= 9 && game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'wasPresident') {
+			if (
+				chat.length === 3 &&
+				0 <= playerIndex &&
+				playerIndex <= 9 &&
+				game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'wasPresident'
+			) {
 				const claimData = {
 					userName: user.userName,
 					claimState: formattedChat,
 					claim: game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim,
-					uid: data.uid
+					uid: data.uid,
 				};
 				if (addNewClaim(socket, passport, game, claimData)) return;
 			}
 
-			if (chat.length === 2 && 0 <= playerIndex && playerIndex <= 9 && game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'wasChancellor') {
+			if (
+				chat.length === 2 &&
+				0 <= playerIndex &&
+				playerIndex <= 9 &&
+				game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'wasChancellor'
+			) {
 				const claimData = {
 					userName: user.userName,
 					claimState: formattedChat,
 					claim: game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim,
-					uid: data.uid
+					uid: data.uid,
 				};
 				if (addNewClaim(socket, passport, game, claimData)) return;
 			}
 
-			if (chat.length === 3 && 0 <= playerIndex && playerIndex <= 9 && game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didPolicyPeek') {
+			if (
+				chat.length === 3 &&
+				0 <= playerIndex &&
+				playerIndex <= 9 &&
+				game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didPolicyPeek'
+			) {
 				const claimData = {
 					userName: user.userName,
 					claimState: chat,
 					claim: game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim,
-					uid: data.uid
+					uid: data.uid,
 				};
 				if (addNewClaim(socket, passport, game, claimData)) return;
 			}
@@ -221,7 +248,8 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 		if (/^(b|blue|l|lib|liberal)$/i.exec(chat)) {
 			// console.log(chat, ' - ', 'liberal', ' - ', game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim);
 			if (
-				0 <= playerIndex && playerIndex <= 9 &&
+				0 <= playerIndex &&
+				playerIndex <= 9 &&
 				(game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didSinglePolicyPeek' ||
 					game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didInvestigateLoyalty')
 			) {
@@ -229,7 +257,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 					userName: user.userName,
 					claimState: 'liberal',
 					claim: game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim,
-					uid: data.uid
+					uid: data.uid,
 				};
 				if (addNewClaim(socket, passport, game, claimData)) return;
 			}
@@ -238,7 +266,8 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 		if (/^(r|red|fas|f|fasc|fascist)$/i.exec(chat)) {
 			// console.log(chat, ' - ', 'fascist', ' - ', game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim);
 			if (
-				0 <= playerIndex && playerIndex <= 9 &&
+				0 <= playerIndex &&
+				playerIndex <= 9 &&
 				(game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didSinglePolicyPeek' ||
 					game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim === 'didInvestigateLoyalty')
 			) {
@@ -246,7 +275,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 					userName: user.userName,
 					claimState: 'fascist',
 					claim: game.private.seatedPlayers[playerIndex].playersState[playerIndex].claim,
-					uid: data.uid
+					uid: data.uid,
 				};
 				if (addNewClaim(socket, passport, game, claimData)) return;
 			}
@@ -266,13 +295,10 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 
 	const { gameState } = game;
 
-	if (
-		player &&
-		(gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy')) {
+	if (player && (gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy')) {
 		const p = publicPlayersState.find((play) => play.userName === player.userName);
 
-		if (!p || p.governmentStatus === 'isPresident' ||
-			p.governmentStatus === 'isChancellor') {
+		if (!p || p.governmentStatus === 'isPresident' || p.governmentStatus === 'isChancellor') {
 			return;
 		}
 	}
@@ -309,7 +335,7 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 				} else {
 					socket.emit(
 						'sendAlert',
-						`You can do this command again in ${((game.general.chatReplTime[repl.id] + repl.aemCooldown * 1000 - Date.now()) / 1000).toFixed(2)} seconds.`
+						`You can do this command again in ${((game.general.chatReplTime[repl.id] + repl.aemCooldown * 1000 - Date.now()) / 1000).toFixed(2)} seconds.`,
 					);
 					return;
 				}
@@ -325,8 +351,8 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 						'sendAlert',
 						`You can't do this right now, try again in ${Math.max(
 							(game.general.chatReplTime[0] + 30000 - Date.now()) / 1000,
-							(game.general.chatReplTime[repl.id] + repl.normalCooldown * 1000 - Date.now()) / 1000
-						).toFixed(2)} seconds.`
+							(game.general.chatReplTime[repl.id] + repl.normalCooldown * 1000 - Date.now()) / 1000,
+						).toFixed(2)} seconds.`,
 					);
 					return;
 				}
@@ -360,9 +386,9 @@ export const handleAddNewGameChat = async (socket: Socket, passport: any, data: 
 			timestamp: Date.now(),
 			chat: [
 				{
-					text: msg
-				}
-			]
+					text: msg,
+				},
+			],
 		});
 
 		sendInProgressGameUpdate(game);

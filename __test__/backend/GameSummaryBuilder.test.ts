@@ -10,9 +10,9 @@ describe('GameSummaryBuilder', () => {
 			rebalance6p: false,
 			rebalance7p: false,
 			rebalance9p: false,
-			rerebalance9p: false
+			rerebalance9p: false,
 		},
-		['liberal', 'fascist', 'liberal', 'fascist', 'liberal']
+		['liberal', 'fascist', 'liberal', 'fascist', 'liberal'],
 	);
 
 	it('should initialize correctly', () => {
@@ -36,10 +36,7 @@ describe('GameSummaryBuilder', () => {
 	it('should snap to log', () => {
 		const presidentClaim = ['fascist', 'liberal', 'fascist'];
 
-		gsb = gsb
-			.nextTurn()
-			.updateLog({ presidentId: 1 })
-			.updateLog({ presidentClaim }, { presidentId: 0 });
+		gsb = gsb.nextTurn().updateLog({ presidentId: 1 }).updateLog({ presidentClaim }, { presidentId: 0 });
 
 		expect(gsb.logs.get(1).presidentClaim).toBeUndefined();
 		expect(gsb.logs.get(0).presidentClaim).toEqual(presidentClaim);

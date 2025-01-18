@@ -15,7 +15,7 @@ import { doesIPMatchCIDR } from './ip-obf.ts';
 const io = global.io;
 const emotes: Record<string, string> = {};
 
-fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach(file => {
+fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach((file) => {
 	if (file.name.endsWith('.png')) {
 		const emoteName = file.name.substring(0, file.name.length - 4);
 		emotes[`:${emoteName}:`] = `/images/emotes/${file.name}?v=${version.number}`;
@@ -23,7 +23,7 @@ fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach(file => 
 });
 
 export const globalSettingsClient = redis.createClient({
-	db: 1
+	db: 1,
 });
 
 const getGlobalSetting = promisify(globalSettingsClient.get).bind(globalSettingsClient);
@@ -31,17 +31,17 @@ const setGlobalSetting = promisify(globalSettingsClient.set).bind(globalSettings
 
 const globalSettingsCache: Record<string, any> = {}; // READ ONLY variables that are cloned from redis (they will be reset every game GC when the settings are cloned from redis)
 const settingsToReplicate = [
-	'private-chat-truncate' // type: integer
+	'private-chat-truncate', // type: integer
 ];
 
 export const cloneSettingsFromRedis = async () => {
 	for (const setting of settingsToReplicate) {
-		globalSettingsCache[setting] = JSON.parse(await getGlobalSetting(setting) || '{}');
+		globalSettingsCache[setting] = JSON.parse((await getGlobalSetting(setting)) || '{}');
 	}
 };
 
 export const getLastGenchatModPingAsync = async () => {
-	return JSON.parse(await getGlobalSetting('genchat-mod-ping') || '{}');
+	return JSON.parse((await getGlobalSetting('genchat-mod-ping')) || '{}');
 };
 
 export const setLastGenchatModPingAsync = async (date: number) => {
@@ -84,16 +84,16 @@ export type User = {
 	previousSeasonAward?: string;
 	specialTournamentStatus?: string;
 	tournyWins: any;
-}
+};
 
 export const userList: User[] = [];
 
 export const generalChats: {
-	sticky: string,
-	list: any[]
+	sticky: string;
+	list: any[];
 } = {
 	sticky: '',
-	list: []
+	list: [],
 };
 
 export const modDMs: Record<string, any> = {
@@ -111,7 +111,7 @@ export const newStaff: Record<string, string[]> = {
 	editorUserNames: [],
 	altmodUserNames: [],
 	trialmodUserNames: [],
-	contributorUserNames: []
+	contributorUserNames: [],
 };
 
 export const staffList: Record<string, string> = {};
@@ -163,9 +163,9 @@ export const getPowerFromUser = (user: any) => {
 export const profiles = (() => {
 	const profiles: any[] = [];
 	const MAX_SIZE = 100;
-	const get = (username: string) => profiles.find(p => p._id === username);
+	const get = (username: string) => profiles.find((p) => p._id === username);
 	const remove = (username: string) => {
-		const i = profiles.findIndex(p => p._id === username);
+		const i = profiles.findIndex((p) => p._id === username);
 		if (i > -1) return profiles.splice(i, 1)[0];
 	};
 	const push = (profile: any) => {
@@ -207,10 +207,10 @@ export const formattedUserList = (isAEM: boolean) => {
 			timeLastGameCreated: user.timeLastGameCreated,
 			staffRole: prune(user.staffRole),
 			staff: user.staff,
-			isContributor: prune(user.isContributor)
+			isContributor: prune(user.isContributor),
 			// oldData: user
 		}))
-		.filter(user => isAEM || !(user.staff && user.staff.incognito));
+		.filter((user) => isAEM || !(user.staff && user.staff.incognito));
 };
 
 export const userListEmitter = {
@@ -225,39 +225,39 @@ export const userListEmitter = {
 		if (userListEmitter.state > 0) userListEmitter.state--;
 		else {
 			const staffUserList = Object.keys(staffList).filter(
-				name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
+				(name) => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin',
 			);
-			const staffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id => {
+			const staffSocketIds = Array.from(io.sockets.sockets.keys()).filter((id) => {
 				const socket = io.sockets.sockets.get(id);
 				const handshake = socket?.handshake as any;
 
-				return staffUserList.includes(handshake.session?.passport?.user)
+				return staffUserList.includes(handshake.session?.passport?.user);
 			});
-			const nonStaffSocketIds = Array.from(io.sockets.sockets.keys()).filter(id => !staffSocketIds.includes(id));
+			const nonStaffSocketIds = Array.from(io.sockets.sockets.keys()).filter((id) => !staffSocketIds.includes(id));
 
 			userListEmitter.send = false;
 
 			// Send to staff
-			staffSocketIds.forEach(id => {
+			staffSocketIds.forEach((id) => {
 				const socket = io.sockets.sockets.get(id);
 				if (typeof socket === 'undefined') return;
-				
+
 				socket.emit('userList', { list: formattedUserList(true) });
 			});
 
 			// Send to non-staff
-			nonStaffSocketIds.forEach(id => {
+			nonStaffSocketIds.forEach((id) => {
 				const socket = io.sockets.sockets.get(id);
 				if (typeof socket === 'undefined') return;
 
 				socket.emit('userList', { list: formattedUserList(false) });
 			});
 		}
-	}, 100)
+	}, 100),
 };
 
 export const formattedGameList = () => {
-	return Object.keys(games).map(gameName => ({
+	return Object.keys(games).map((gameName) => ({
 		name: games[gameName].general.name,
 		flag: games[gameName].general.flag,
 		userNames: games[gameName].publicPlayersState.map((val) => val.userName),
@@ -265,8 +265,8 @@ export const formattedGameList = () => {
 		gameStatus: games[gameName].gameState.isCompleted
 			? games[gameName].gameState.isCompleted
 			: games[gameName].gameState.isTracksFlipped
-			? 'isStarted'
-			: 'notStarted',
+				? 'isStarted'
+				: 'notStarted',
 		seatedCount: games[gameName].publicPlayersState.length,
 		gameCreatorName: games[gameName].private?.gameCreatorName,
 		minPlayersCount: games[gameName].general.minPlayersCount,
@@ -285,7 +285,7 @@ export const formattedGameList = () => {
 			if (games[gameName].general.isTourny) {
 				if (games[gameName].general.tournyInfo.queuedPlayers && games[gameName].general.tournyInfo.queuedPlayers.length) {
 					return {
-						queuedPlayers: games[gameName].general.tournyInfo.queuedPlayers.length
+						queuedPlayers: games[gameName].general.tournyInfo.queuedPlayers.length,
 					};
 				}
 			}
@@ -308,7 +308,7 @@ export const formattedGameList = () => {
 		isCustomGame: games[gameName].customGameSettings.enabled,
 		isUnlisted: games[gameName].general.unlistedGame || undefined,
 		avalonSH: games[gameName].general.avalonSH || undefined,
-		noTopdecking: games[gameName].general.noTopdecking || undefined
+		noTopdecking: games[gameName].general.noTopdecking || undefined,
 	}));
 };
 
@@ -324,7 +324,7 @@ export const gameListEmitter = {
 			io.sockets.emit('gameList', formattedGameList());
 			gameListEmitter.state = 30;
 		}
-	}, 100)
+	}, 100),
 };
 
 export const AEM = Account.find({ staffRole: { $exists: true, $ne: 'veteran' } });
@@ -345,7 +345,7 @@ export const consumeBypass = (key: string, user: any, ip: string) => {
 			userActedOn: user,
 			modNotes: `Bypass key used: ${key}`,
 			ip: ip,
-			actionTaken: 'bypassKeyUsed'
+			actionTaken: 'bypassKeyUsed',
 		}).save();
 	}
 };
@@ -353,11 +353,7 @@ export const consumeBypass = (key: string, user: any, ip: string) => {
 export const createNewBypass = () => {
 	let key;
 	do {
-		key = `${Math.random()
-			.toString(36)
-			.substring(2)}${Math.random()
-			.toString(36)
-			.substring(2)}`.trim();
+		key = `${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}`.trim();
 	} while (bypassKeys.indexOf(key) >= 0);
 	bypassKeys.push(key);
 	return key;
@@ -374,7 +370,7 @@ const banLength: Record<string, number> = {
 	small: 18 * 60 * 60 * 1000, // 18 hours
 	new: 18 * 60 * 60 * 1000, // 18 hours
 	tiny: 1 * 60 * 60 * 1000, // 1 hour
-	big: 7 * 24 * 60 * 60 * 1000 // 7 days
+	big: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 export const testIP = (IP: any, callback: any) => {

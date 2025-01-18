@@ -25,7 +25,7 @@ const displayWaitingForPlayers = (game: ActiveGame) => {
 		return count === 1 ? `Waiting for ${count} more player..` : `Waiting for ${count} more players..`;
 	}
 	const includedPlayerCounts = _.range(game.general.minPlayersCount, game.general.maxPlayersCount + 1).filter(
-		value => !game.general.excludedPlayerCount.includes(value)
+		(value) => !game.general.excludedPlayerCount.includes(value),
 	);
 
 	for (const value of includedPlayerCounts) {
@@ -64,31 +64,25 @@ const startCountdown = (game: ActiveGame) => {
 				const BPlayers = players.filter((player: any) => !APlayers.includes(player));
 				const APlayerNames = APlayers.map((player: any) => player.userName);
 				const BPlayerNames = BPlayers.map((player: any) => player.userName);
-				const ASocketIds = Array.from(io.sockets.sockets.keys()).filter(
-					socketId => {
-						const socket = io.sockets.sockets.get(socketId);
+				const ASocketIds = Array.from(io.sockets.sockets.keys()).filter((socketId) => {
+					const socket = io.sockets.sockets.get(socketId);
 
-						if (!socket) return false;
+					if (!socket) return false;
 
-						const handshake = socket.handshake as any;
+					const handshake = socket.handshake as any;
 
-						return handshake?.session?.passport &&
-							APlayerNames.includes(handshake.session.passport.user);
-					}
-				);
+					return handshake?.session?.passport && APlayerNames.includes(handshake.session.passport.user);
+				});
 
-				const BSocketIds = Array.from(io.sockets.sockets.keys()).filter(
-					socketId => {
-						const socket = io.sockets.sockets.get(socketId);
+				const BSocketIds = Array.from(io.sockets.sockets.keys()).filter((socketId) => {
+					const socket = io.sockets.sockets.get(socketId);
 
-						if (!socket) return false;
+					if (!socket) return false;
 
-						const handshake = socket.handshake as any;
+					const handshake = socket.handshake as any;
 
-						return handshake?.session?.passport &&
-							BPlayerNames.includes(handshake.session.passport.user);
-					}
-				);
+					return handshake?.session?.passport && BPlayerNames.includes(handshake.session.passport.user);
+				});
 
 				gameA.general.uid = `${game.general.uid}TableA`;
 				gameA.general.minPlayersCount = gameA.general.maxPlayersCount = game.general.maxPlayersCount / 2;
@@ -98,24 +92,24 @@ const startCountdown = (game: ActiveGame) => {
 				gameB.general.uid = `${game.general.uid}TableB`;
 				gameB.publicPlayersState = BPlayers;
 
-				ASocketIds.forEach(id => {
+				ASocketIds.forEach((id) => {
 					const socket = io.sockets.sockets.get(id);
 
 					if (!socket) return;
 
-					Array.from(socket.rooms.keys()).forEach(roomUid => {
+					Array.from(socket.rooms.keys()).forEach((roomUid) => {
 						socket.leave(roomUid);
 					});
 					socket.join(gameA.general.uid);
 					socket.emit('joinGameRedirect', gameA.general.uid);
 				});
 
-				BSocketIds.forEach(id => {
+				BSocketIds.forEach((id) => {
 					const socket = io.sockets.sockets.get(id);
 
 					if (!socket) return;
 
-					Array.from(socket.rooms.keys()).forEach(roomUid => {
+					Array.from(socket.rooms.keys()).forEach((roomUid) => {
 						socket.leave(roomUid);
 					});
 					socket.join(gameB.general.uid);
@@ -212,9 +206,9 @@ export const handleSocketDisconnect = (socket: Socket) => {
 
 	let listUpdate = false;
 	if (passport && Object.keys(passport).length) {
-		const userIndex = userList.findIndex(user => user.userName === passport.user);
-		const gameNamesPlayerSeatedIn = Object.keys(games).filter(gameName =>
-			games[gameName].publicPlayersState.find((player) => player.userName === passport.user && !player.leftGame)
+		const userIndex = userList.findIndex((user) => user.userName === passport.user);
+		const gameNamesPlayerSeatedIn = Object.keys(games).filter((gameName) =>
+			games[gameName].publicPlayersState.find((player) => player.userName === passport.user && !player.leftGame),
 		);
 
 		if (userIndex !== -1) {
@@ -223,14 +217,15 @@ export const handleSocketDisconnect = (socket: Socket) => {
 		}
 
 		if (gameNamesPlayerSeatedIn.length) {
-			gameNamesPlayerSeatedIn.forEach(gameName => {
+			gameNamesPlayerSeatedIn.forEach((gameName) => {
 				const game = games[gameName];
 				const { gameState, publicPlayersState } = game;
 				const playerIndex = publicPlayersState.findIndex((player) => player.userName === passport.user);
 
 				if (
 					(!gameState.isStarted && publicPlayersState.length === 1) ||
-					(gameState.isCompleted && publicPlayersState.filter((player) => !player.connected || player.leftGame).length === game.general.playerCount as number - 1) // TODO: fix this
+					(gameState.isCompleted &&
+						publicPlayersState.filter((player) => !player.connected || player.leftGame).length === (game.general.playerCount as number) - 1) // TODO: fix this
 				) {
 					saveAndDeleteGame(gameName);
 				} else if (!gameState.isTracksFlipped && playerIndex > -1) {
@@ -242,7 +237,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 					publicPlayersState[playerIndex].leftGame = true;
 					const playerRemakeData = game.remakeData && game.remakeData.find((player: any) => player.userName === passport.user);
 					if (playerRemakeData && playerRemakeData.isRemaking) {
-						const minimumRemakeVoteCount = game.general.playerCount as number - game.customGameSettings.fascistCount; // TODO: fix this
+						const minimumRemakeVoteCount = (game.general.playerCount as number) - game.customGameSettings.fascistCount; // TODO: fix this
 						const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
 
 						if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
@@ -255,13 +250,14 @@ export const handleSocketDisconnect = (socket: Socket) => {
 							gameChat: true,
 							chat: [
 								{
-									text: 'A player'
-								}
-							]
+									text: 'A player',
+								},
+							],
 						};
 						chat.chat.push({
-							text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${remakePlayerCount -
-								1}/${minimumRemakeVoteCount})`
+							text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${
+								remakePlayerCount - 1
+							}/${minimumRemakeVoteCount})`,
 						});
 
 						if (!game.chats) {
@@ -312,7 +308,7 @@ const playerLeavePretourny = (game: ActiveGame, playerName: string) => {
 
 	queuedPlayers.splice(
 		queuedPlayers.findIndex((player: any) => player.userName === playerName),
-		1
+		1,
 	);
 
 	if (!game.chats) {
@@ -325,12 +321,12 @@ const playerLeavePretourny = (game: ActiveGame, playerName: string) => {
 		chat: [
 			{
 				text: playerName,
-				type: 'player'
+				type: 'player',
 			},
 			{
-				text: ` (${queuedPlayers.length}/${game.general.maxPlayersCount}) has left the tournament queue.`
-			}
-		]
+				text: ` (${queuedPlayers.length}/${game.general.maxPlayersCount}) has left the tournament queue.`,
+			},
+		],
 	});
 	game.general.status = displayWaitingForPlayers(game);
 	sendInProgressGameUpdate(game);
@@ -353,8 +349,8 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 		if (playerRemakeData && playerRemakeData.isRemaking) {
 			// Count leaving the game as rescinded remake vote.
 			const minimumRemakeVoteCount =
-				(game.customGameSettings.fascistCount && game.general.playerCount as number - game.customGameSettings.fascistCount) || // TODO: fix this
-				Math.floor(game.general.playerCount as number / 2) + 2; // TODO: fix this
+				(game.customGameSettings.fascistCount && (game.general.playerCount as number) - game.customGameSettings.fascistCount) || // TODO: fix this
+				Math.floor((game.general.playerCount as number) / 2) + 2; // TODO: fix this
 			const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
 
 			if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
@@ -367,13 +363,14 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 				gameChat: true,
 				chat: [
 					{
-						text: 'A player'
-					}
-				]
+						text: 'A player',
+					},
+				],
 			};
 			chat.chat.push({
-				text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${remakePlayerCount -
-					1}/${minimumRemakeVoteCount})`
+				text: ` has left and rescinded their vote to ${game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'} (${
+					remakePlayerCount - 1
+				}/${minimumRemakeVoteCount})`,
 			});
 
 			if (!game.chats) {
@@ -392,7 +389,7 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 		if (!game.gameState.isTracksFlipped) {
 			game.publicPlayersState.splice(
 				game.publicPlayersState.findIndex((player) => player.userName === passport.user),
-				1
+				1,
 			);
 			checkStartConditions(game);
 			sendCommandChatsUpdate(game);

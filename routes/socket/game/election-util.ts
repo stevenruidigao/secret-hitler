@@ -13,8 +13,12 @@ import { selectVoting } from './election.ts';
  * @param {bool} force - whether or not this action was forced.
  */
 export const selectChancellor = (passport: any, game: ActiveGame, data: any, socket?: Socket, force = false) => {
-	if ((game.general.isTourny && game.general.tournyInfo.isCancelled) 
-		|| data.chancellorIndex >= (game.general.playerCount as number) || data.chancellorIndex < 0) { // TODO: avoid defining the type like this
+	if (
+		(game.general.isTourny && game.general.tournyInfo.isCancelled) ||
+		data.chancellorIndex >= (game.general.playerCount as number) ||
+		data.chancellorIndex < 0
+	) {
+		// TODO: avoid defining the type like this
 		return;
 	}
 
@@ -33,10 +37,10 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 	const { presidentIndex } = game.gameState;
 	const { experiencedMode } = game.general;
 	const seatedPlayers = game.private.seatedPlayers?.filter((player: any) => !player.isDead);
-	const presidentPlayer =  game.private.seatedPlayers && game.private.seatedPlayers[presidentIndex];
+	const presidentPlayer = game.private.seatedPlayers && game.private.seatedPlayers[presidentIndex];
 	const chancellorPlayer = game.private.seatedPlayers && game.private.seatedPlayers[chancellorIndex];
 
-	game.general.livingPlayerCount = game.general.livingPlayerCount || game.general.playerCount as number; // TODO: don't cast
+	game.general.livingPlayerCount = game.general.livingPlayerCount || (game.general.playerCount as number); // TODO: don't cast
 
 	// Make sure the pick is valid
 	if (
@@ -63,7 +67,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 		game.publicPlayersState[presidentIndex].isLoader = false;
 
 		game.private.summary = game.private.summary.updateLog({
-			chancellorId: chancellorIndex
+			chancellorId: chancellorIndex,
 		});
 
 		presidentPlayer.playersState.forEach((player: any) => {
@@ -82,12 +86,12 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					cardDisplayed: true,
 					isFlipped: false,
 					cardFront: 'ballot',
-					cardBack: {}
+					cardBack: {},
 				};
 			});
 
 		sendInProgressGameUpdate(game, true);
-		
+
 		seatedPlayers?.forEach((player: any) => {
 			if (!game.general.disableGamechat) {
 				player.gameChats.push({
@@ -95,23 +99,23 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					timestamp: new Date(),
 					chat: [
 						{
-							text: 'You must vote for the election of president '
+							text: 'You must vote for the election of president ',
 						},
 						{
 							text: game.general.blindMode ? `{${presidentIndex + 1}}` : `${presidentPlayer.userName} {${presidentIndex + 1}}`,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: ' and chancellor '
+							text: ' and chancellor ',
 						},
 						{
 							text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer.userName} {${chancellorIndex + 1}}`,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: '.'
-						}
-					]
+							text: '.',
+						},
+					],
 				});
 			}
 
@@ -123,8 +127,8 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					cardStatus: {
 						isFlipped: false,
 						cardFront: 'ballot',
-						cardBack: 'ja'
-					}
+						cardBack: 'ja',
+					},
 				},
 				{
 					position: 'middle-right',
@@ -133,9 +137,9 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					cardStatus: {
 						isFlipped: false,
 						cardFront: 'ballot',
-						cardBack: 'nein'
-					}
-				}
+						cardBack: 'nein',
+					},
+				},
 			];
 		});
 
@@ -144,23 +148,23 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			timestamp: new Date(),
 			chat: [
 				{
-					text: 'President '
+					text: 'President ',
 				},
 				{
 					text: game.general.blindMode ? `{${presidentIndex + 1}}` : `${presidentPlayer.userName} {${presidentIndex + 1}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' nominates '
+					text: ' nominates ',
 				},
 				{
 					text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer.userName} {${chancellorIndex + 1}}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ' as chancellor.'
-				}
-			]
+					text: ' as chancellor.',
+				},
+			],
 		};
 
 		game.private.unSeatedGameChats?.push(unseatedChat);
@@ -169,7 +173,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			() => {
 				sendInProgressGameUpdate(game);
 			},
-			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 500 : 1000
+			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 500 : 1000,
 		);
 
 		game.gameState.phase = 'voting';
@@ -185,7 +189,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 						player.cardFlingerState[0].cardStatus.isFlipped = player.cardFlingerState[1].cardStatus.isFlipped = true;
 						player.cardFlingerState[0].notificationStatus = player.cardFlingerState[1].notificationStatus = 'notification';
 						player.voteStatus = {
-							hasVoted: false
+							hasVoted: false,
 						};
 					}
 				});
@@ -227,9 +231,9 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 											timestamp: new Date(),
 											chat: [
 												{
-													text: 'Not enough players are present, votes will not be auto-picked.'
-												}
-											]
+													text: 'Not enough players are present, votes will not be auto-picked.',
+												},
+											],
 										});
 									});
 									sendInProgressGameUpdate(game);
@@ -238,9 +242,8 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 							}
 
 							if (game.gameState.timedModeEnabled) {
-								const unvotedPlayerNames = game.private?.seatedPlayers?.filter(
-										(player: any) => !player.voteStatus.hasVoted && !player.isDead
-									)
+								const unvotedPlayerNames = game.private?.seatedPlayers
+									?.filter((player: any) => !player.voteStatus.hasVoted && !player.isDead)
 									.map((player: any) => player.userName);
 
 								game.gameState.timedModeEnabled = false;
@@ -252,22 +255,22 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 										chat: [
 											{
 												text: userName,
-												type: 'player'
+												type: 'player',
 											},
 											{
-												text: ' was forced by the timer to select a random vote.'
-											}
-										]
+												text: ' was forced by the timer to select a random vote.',
+											},
+										],
 									});
 								});
 							}
 						},
-						typeof process.env.DEVTIMEDDELAY === 'number' ? process.env.DEVTIMEDDELAY : game.general.timedMode * 1000
+						typeof process.env.DEVTIMEDDELAY === 'number' ? process.env.DEVTIMEDDELAY : game.general.timedMode * 1000,
 					)[Symbol.toPrimitive]();
 				}
 				sendInProgressGameUpdate(game);
 			},
-			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 500 : 1500
+			process.env.NODE_ENV === 'development' ? 100 : experiencedMode ? 500 : 1500,
 		);
 	}
 };

@@ -20,12 +20,9 @@ export function profileDelta(username: string, game: any) {
 	const isFascist = !isLiberal;
 	const votes = game.hitlerZone
 		.map((hz: any) =>
-			flattenListOpts(
-				game
-					.votesOf(username)
-					.value()
-					.slice(hz)
-			).filter((v: any) => game.loyaltyOf(v.presidentId).value() === 'fascist' || game.roleOf(v.chancellorId).value() === 'hitler')
+			flattenListOpts(game.votesOf(username).value().slice(hz)).filter(
+				(v: any) => game.loyaltyOf(v.presidentId).value() === 'fascist' || game.roleOf(v.chancellorId).value() === 'hitler',
+			),
 		)
 		.valueOrElse(List());
 	const accurateVotes = votes.filterNot((v: any) => {
@@ -44,27 +41,27 @@ export function profileDelta(username: string, game: any) {
 				matches: {
 					allMatches: {
 						events: 1,
-						successes: isWinner ? 1 : 0
+						successes: isWinner ? 1 : 0,
 					},
 					liberal: {
 						events: isLiberal ? 1 : 0,
-						successes: isLiberal && isWinner ? 1 : 0
+						successes: isLiberal && isWinner ? 1 : 0,
 					},
 					fascist: {
 						events: isFascist ? 1 : 0,
-						successes: isFascist && isWinner ? 1 : 0
-					}
+						successes: isFascist && isWinner ? 1 : 0,
+					},
 				},
 				actions: {
 					voteAccuracy: {
 						events: 0,
-						successes: 0
+						successes: 0,
 					},
 					shotAccuracy: {
 						events: 0,
-						successes: 0
-					}
-				}
+						successes: 0,
+					},
+				},
 			},
 			recentGames: {
 				_id: id,
@@ -72,8 +69,8 @@ export function profileDelta(username: string, game: any) {
 				playerSize,
 				isWinner,
 				isRebalanced,
-				date
-			}
+				date,
+			},
 		};
 	}
 
@@ -82,27 +79,27 @@ export function profileDelta(username: string, game: any) {
 			matches: {
 				allMatches: {
 					events: 1,
-					successes: isWinner ? 1 : 0
+					successes: isWinner ? 1 : 0,
 				},
 				liberal: {
 					events: isLiberal ? 1 : 0,
-					successes: isLiberal && isWinner ? 1 : 0
+					successes: isLiberal && isWinner ? 1 : 0,
 				},
 				fascist: {
 					events: isFascist ? 1 : 0,
-					successes: isFascist && isWinner ? 1 : 0
-				}
+					successes: isFascist && isWinner ? 1 : 0,
+				},
 			},
 			actions: {
 				voteAccuracy: {
 					events: isLiberal ? votes.size : 0,
-					successes: isLiberal ? accurateVotes.size : 0
+					successes: isLiberal ? accurateVotes.size : 0,
 				},
 				shotAccuracy: {
 					events: isLiberal ? shots.size : 0,
-					successes: isLiberal ? accurateShots.size : 0
-				}
-			}
+					successes: isLiberal ? accurateShots.size : 0,
+				},
+			},
 		},
 		recentGames: {
 			_id: id,
@@ -110,8 +107,8 @@ export function profileDelta(username: string, game: any) {
 			playerSize,
 			isWinner,
 			isRebalanced,
-			date
-		}
+			date,
+		},
 	};
 }
 
@@ -120,18 +117,18 @@ function profileDeltaWithMatchType(username: string, game: any, gameSummary: any
 		game.general.playerChats === 'emotes'
 			? 'emoteMatches'
 			: game.customGameSettings && game.customGameSettings.enabled
-			? 'customMatches'
-			: game.general.casualGame
-			? 'casualMatches'
-			: game.general.playerChats === 'disabled'
-			? 'silentMatches'
-			: game.general.practiceGame
-			? 'practiceMatches'
-			: game.general.private || game.general.unlistedGame
-			? ''
-			: game.general.rainbowgame
-			? 'rainbowMatches'
-			: 'greyMatches';
+				? 'customMatches'
+				: game.general.casualGame
+					? 'casualMatches'
+					: game.general.playerChats === 'disabled'
+						? 'silentMatches'
+						: game.general.practiceGame
+							? 'practiceMatches'
+							: game.general.private || game.general.unlistedGame
+								? ''
+								: game.general.rainbowgame
+									? 'rainbowMatches'
+									: 'greyMatches';
 	let playerCountToLog = 0;
 
 	if (matchType === 'greyMatches' || matchType === 'rainbowMatches') {
@@ -141,7 +138,7 @@ function profileDeltaWithMatchType(username: string, game: any, gameSummary: any
 	return {
 		delta: profileDelta(username, gameSummary),
 		matchType,
-		playerCountToLog
+		playerCountToLog,
 	};
 }
 
@@ -169,7 +166,7 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 			'stats.actions.voteAccuracy.successes': delta.stats.actions.voteAccuracy.successes,
 
 			'stats.actions.shotAccuracy.events': delta.stats.actions.shotAccuracy.events,
-			'stats.actions.shotAccuracy.successes': delta.stats.actions.shotAccuracy.successes
+			'stats.actions.shotAccuracy.successes': delta.stats.actions.shotAccuracy.successes,
 		};
 
 		if (playerCountToLog !== 0) {
@@ -189,14 +186,14 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 					recentGames: {
 						$each: [delta.recentGames],
 						$position: 0,
-						$slice: 10
-					}
-				}
+						$slice: 10,
+					},
+				},
 			},
 			{
 				new: true,
-				upsert: true
-			}
+				upsert: true,
+			},
 		)
 			.exec()
 			// drop the document when recalculating profiles
@@ -253,7 +250,7 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 						profile.stats.matches.customMatches.liberal.events + profile.stats.matches.customMatches.fascist.events,
 						profile.stats.matches.silentMatches.liberal.events + profile.stats.matches.silentMatches.fascist.events,
 						profile.stats.matches.emoteMatches.liberal.events + profile.stats.matches.emoteMatches.fascist.events,
-						gameSummary.id
+						gameSummary.id,
 					);
 					account.save();
 				});

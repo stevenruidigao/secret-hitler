@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			<Provider store={store}>
 				<AppComponent />
 			</Provider>,
-			container
+			container,
 		);
 	}
 

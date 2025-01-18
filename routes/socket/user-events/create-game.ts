@@ -26,10 +26,10 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		return;
 	}
 
-	const user = userList.find(obj => obj.userName === passport.user);
+	const user = userList.find((obj) => obj.userName === passport.user);
 	const currentTime = new Date();
 
-	if (!user || user.timeLastGameCreated && currentTime.valueOf() - user.timeLastGameCreated < 8000 || user.status.type !== 'none') {
+	if (!user || (user.timeLastGameCreated && currentTime.valueOf() - user.timeLastGameCreated < 8000) || user.status.type !== 'none') {
 		// Check if !user here in case of bug where user doesn't appear on userList
 		return;
 	}
@@ -126,7 +126,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		playerCounts = [playerCounts[0]]; // Lock the game to a specific player count. Eventually there should be one set of settings per size.
 	} else {
 		data.customGameSettings = {
-			enabled: false
+			enabled: false,
 		};
 	}
 
@@ -157,7 +157,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			previousElectedGovernment: [],
 			undrawnPolicyCount: 17,
 			discardedPolicyCount: 0,
-			presidentIndex: -1
+			presidentIndex: -1,
 		},
 		chats: [],
 		general: {
@@ -174,8 +174,8 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 				data.playerChats === 'emotes' && ['casual', 'practice'].includes(data.gameType)
 					? 'emotes'
 					: data.playerChats === 'emotes'
-					? 'enabled'
-					: data.playerChats,
+						? 'enabled'
+						: data.playerChats,
 			isVerifiedOnly: data.isVerifiedOnly,
 			disableObserverLobby: data.disableObserverLobby,
 			disableObserver: data.disableObserverLobby || (data.disableObserver && !data.isTourny),
@@ -202,7 +202,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			eloMinimum: data.eloSliderValue,
 			xpMinimum: data.xpSliderValue,
 			avalonSH: data.avalonSH ? { withPercival: Boolean(data.withPercival) } : null,
-			noTopdecking: data.noTopdecking
+			noTopdecking: data.noTopdecking,
 		},
 		private: {},
 		customGameSettings: data.customGameSettings,
@@ -212,14 +212,14 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 		trackState: {
 			policyCount: {
 				liberal: 0,
-				fascist: 0
+				fascist: 0,
 			},
 			electionTrackerCount: 0,
 			enactedPolicies: [],
-			consecutiveTopdecks: 0
+			consecutiveTopdecks: 0,
 		},
 		guesses: {},
-		merlinGuesses: {}
+		merlinGuesses: {},
 	};
 
 	// oops its a hack
@@ -233,23 +233,23 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			gameChat: true,
 			chat: [
 				{
-					text: 'There will be '
+					text: 'There will be ',
 				},
 				{
 					text: `${newGame.customGameSettings.deckState.lib - newGame.customGameSettings.trackState.lib} liberal`,
-					type: 'liberal'
+					type: 'liberal',
 				},
 				{
-					text: ' and '
+					text: ' and ',
 				},
 				{
 					text: `${newGame.customGameSettings.deckState.fas - newGame.customGameSettings.trackState.fas} fascist`,
-					type: 'fascist'
+					type: 'fascist',
 				},
 				{
-					text: ' policies in the deck.'
-				}
-			]
+					text: ' policies in the deck.',
+				},
+			],
 		};
 		const t = chat.timestamp.getMilliseconds();
 		newGame.chats?.push(chat);
@@ -258,23 +258,23 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			gameChat: true,
 			chat: [
 				{
-					text: 'The game will start with '
+					text: 'The game will start with ',
 				},
 				{
 					text: `${newGame.customGameSettings.trackState.lib} liberal`,
-					type: 'liberal'
+					type: 'liberal',
 				},
 				{
-					text: ' and '
+					text: ' and ',
 				},
 				{
 					text: `${newGame.customGameSettings.trackState.fas} fascist`,
-					type: 'fascist'
+					type: 'fascist',
 				},
 				{
-					text: ' policies.'
-				}
-			]
+					text: ' policies.',
+				},
+			],
 		};
 		chat.timestamp.setMilliseconds(t + 1);
 		newGame.chats?.push(chat);
@@ -293,10 +293,10 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 						cardDisplayed: false,
 						isFlipped: false,
 						cardFront: 'secretrole',
-						cardBack: {}
-					}
-				}
-			]
+						cardBack: {},
+					},
+				},
+			],
 		};
 	} else {
 		newGame.publicPlayersState = [
@@ -312,9 +312,9 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 					cardDisplayed: false,
 					isFlipped: false,
 					cardFront: 'secretrole',
-					cardBack: {}
-				}
-			}
+					cardBack: {},
+				},
+			},
 		];
 	}
 
@@ -329,12 +329,12 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			chat: [
 				{
 					text: `${user.userName}`,
-					type: 'player'
+					type: 'player',
 				},
 				{
-					text: ` (${data.general.tournyInfo.queuedPlayers.length}/${data.general.maxPlayersCount}) has entered the tournament queue.`
-				}
-			]
+					text: ` (${data.general.tournyInfo.queuedPlayers.length}/${data.general.maxPlayersCount}) has entered the tournament queue.`,
+				},
+			],
 		});
 	}
 
@@ -353,7 +353,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			hiddenInfoSubscriptions: [],
 			hiddenInfoShouldNotify: true,
 			gameCreatorName: user.userName,
-			gameCreatorBlacklist: user.blacklist
+			gameCreatorBlacklist: user.blacklist,
 		};
 
 		if (newGame.general.private) {
@@ -374,7 +374,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 				standard: !newGame.general.rainbowgame,
 				customgame: newGame.customGameSettings.enabled,
 				casualgame: newGame.general.casualGame,
-				creator: account?.username
+				creator: account?.username,
 			});
 		}
 		socket.join(newGame.general.uid);

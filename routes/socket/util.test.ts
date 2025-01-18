@@ -1,6 +1,6 @@
 import { LineGuess } from './util.ts';
 
-test('parseLineGuess', done => {
+test('parseLineGuess', (done) => {
 	const data = [
 		['123', new LineGuess({ hit: null, regs: [1, 2, 3] })],
 		['56h7', new LineGuess({ hit: 6, regs: [5, 6, 7] })],
@@ -11,7 +11,7 @@ test('parseLineGuess', done => {
 		['aaaaaaaaaa', null],
 		['1h2h3h4h5h6h', null],
 		['h', null],
-		['1/2/3/10', null]
+		['1/2/3/10', null],
 	];
 
 	for (const [input, expected] of data) {

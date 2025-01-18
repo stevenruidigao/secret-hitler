@@ -42,7 +42,7 @@ export const assassinateMerlin = (game: ActiveGame) => {
 				hitler.gameChats.push({
 					gameChat: true,
 					timestamp: new Date(),
-					chat: [{ text: 'You must choose someone to assassinate.' }]
+					chat: [{ text: 'You must choose someone to assassinate.' }],
 				});
 
 				const chat = {
@@ -50,9 +50,9 @@ export const assassinateMerlin = (game: ActiveGame) => {
 					gameChat: true,
 					chat: [
 						{
-							text: 'Hitler must now choose a player to assassinate.'
-						}
-					]
+							text: 'Hitler must now choose a player to assassinate.',
+						},
+					],
 				};
 
 				seatedPlayers?.forEach((player: any, i: number) => {
@@ -84,7 +84,10 @@ export const assassinateMerlin = (game: ActiveGame) => {
 
 			game.gameState.clickActionInfo = [
 				hitler.userName,
-				seatedPlayers && seatedPlayers.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal').map((player: any) => seatedPlayers && seatedPlayers.indexOf(player))
+				seatedPlayers &&
+					seatedPlayers
+						.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
+						.map((player: any) => seatedPlayers && seatedPlayers.indexOf(player)),
 			];
 
 			game.gameState.phase = 'assassination';
@@ -134,7 +137,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}
 
 	game.private.summary = game.private.summary.updateLog({
-		assassination: data.playerIndex
+		assassination: data.playerIndex,
 	});
 
 	console.log(game.private.summary.logs); // TODO: remove?
@@ -148,7 +151,6 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}
 
 	game.gameState.clickActionInfo[1] = [];
-
 
 	if (hitlerIndex) {
 		seatedPlayers[hitlerIndex].playersState.forEach((player: any) => {
@@ -175,44 +177,44 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 					? [
 							{
 								text: 'Hitler',
-								type: 'hitler'
+								type: 'hitler',
 							},
 							{ text: ' selects to assassinate ' },
 							{
 								text: `${target.userName} {${data.playerIndex + 1}}`,
-								type: 'player'
+								type: 'player',
 							},
 							{ text: ', and they were ' },
 							{
 								text: 'merlin',
-								type: 'merlin'
+								type: 'merlin',
 							},
-							{ text: '.' }
-					  ]
+							{ text: '.' },
+						]
 					: [
 							{
 								text: 'Hitler',
-								type: 'hitler'
+								type: 'hitler',
 							},
 							{ text: ' selects to assassinate ' },
 							{
 								text: `${target.userName} {${data.playerIndex + 1}}`,
-								type: 'player'
+								type: 'player',
 							},
 							{ text: ', but ' },
 							{
-								text: `${merlin.userName} {${merlinIndex as number + 1}}`,
-								type: 'player'
+								text: `${merlin.userName} {${(merlinIndex as number) + 1}}`,
+								type: 'player',
 							},
 							{ text: ' was ' },
 							{
 								text: 'merlin',
-								type: 'merlin'
+								type: 'merlin',
 							},
-							{ text: '.' }
-					  ]
+							{ text: '.' },
+						],
 		};
-		
+
 		if (seatedPlayers) {
 			seatedPlayers.forEach((player: any) => {
 				player.gameChats.push(winningChat);
@@ -224,7 +226,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		}
 
 		if (!game.private.unSeatedGameChats) {
-			game.private.unSeatedGameChats = []
+			game.private.unSeatedGameChats = [];
 		}
 
 		game.private.unSeatedGameChats.push(winningChat);
@@ -236,7 +238,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		game.publicPlayersState.forEach((player, i: number) => {
 			if (i !== data.playerIndex && i !== hitlerIndex) {
 				player.cardStatus.cardFront = 'secretrole';
-				player.cardStatus.cardBack = game.private?.seatedPlayers && game.private.seatedPlayers[i].role || '';
+				player.cardStatus.cardBack = (game.private?.seatedPlayers && game.private.seatedPlayers[i].role) || '';
 				player.cardStatus.cardDisplayed = true;
 				player.cardStatus.isFlipped = false;
 			}

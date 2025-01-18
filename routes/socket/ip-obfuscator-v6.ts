@@ -30,12 +30,5 @@ export const obfBlock = (number: any) => {
 }; // For testing purposes, should not be used in production.
 
 export const obfIP = (ip: string) => {
-	return (
-		ip
-			.split('/')[0]
-			.split(':')
-			.slice(0, 8)
-			.map(obfBlock)
-			.join(':') + (ip.split('/').length > 1 ? '/' + ip.split('/')[1] : '')
-	);
+	return ip.split('/')[0].split(':').slice(0, 8).map(obfBlock).join(':') + (ip.split('/').length > 1 ? '/' + ip.split('/')[1] : '');
 };

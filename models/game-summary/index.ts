@@ -69,7 +69,7 @@ export interface IGameSummary {
 		assassination: number;
 
 		// other metadata
-		deckState: ('fascist' | 'liberal')[]
+		deckState: ('fascist' | 'liberal')[];
 	}[];
 	customGameSettings: {
 		enabled: boolean;
@@ -89,7 +89,6 @@ export interface IGameSummary {
 	};
 }
 
-
 const gameSummary = new Schema<IGameSummary>({
 	_id: String,
 	date: Date,
@@ -103,27 +102,27 @@ const gameSummary = new Schema<IGameSummary>({
 		unlistedGame: Boolean,
 		avalonSH: {
 			type: {
-				withPercival: Boolean
+				withPercival: Boolean,
 			},
-			default: null
+			default: null,
 		},
-		noTopdecking: Number
+		noTopdecking: Number,
 	},
 	players: [
 		{
 			username: String,
 			role: String,
 			icon: Number,
-			hashUid: String
-		}
+			hashUid: String,
+		},
 	],
 	libElo: {
 		overall: Number,
-		season: Number
+		season: Number,
 	},
 	fasElo: {
 		overall: Number,
-		season: Number
+		season: Number,
 	},
 	logs: [
 		{
@@ -154,8 +153,8 @@ const gameSummary = new Schema<IGameSummary>({
 			assassination: Number,
 
 			// other metadata
-			deckState: Array // [String], eg. [ "fascist", "liberal", "fascist", "fascist", "liberal" ]
-		}
+			deckState: Array, // [String], eg. [ "fascist", "liberal", "fascist", "fascist", "liberal" ]
+		},
 	],
 	customGameSettings: {
 		enabled: Boolean,
@@ -166,13 +165,13 @@ const gameSummary = new Schema<IGameSummary>({
 		hitKnowsFas: Boolean,
 		deckState: {
 			lib: Number,
-			fas: Number
+			fas: Number,
 		},
 		trackState: {
 			lib: Number,
-			fas: Number
-		}
-	}
+			fas: Number,
+		},
+	},
 });
 
 export default mongoose.model<IGameSummary>('GameSummary', gameSummary);

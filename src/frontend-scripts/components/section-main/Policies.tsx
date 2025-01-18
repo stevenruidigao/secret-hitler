@@ -6,7 +6,10 @@ class Policies extends React.Component {
 	clickedDraw() {
 		const { gameInfo, userInfo } = this.props;
 
-		if (userInfo.userName && gameInfo.playersState[gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName)].policyNotification) {
+		if (
+			userInfo.userName &&
+			gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].policyNotification
+		) {
 			this.props.socket.emit('selectedPolicies', { uid: gameInfo.general.uid });
 		}
 	}
@@ -21,10 +24,10 @@ class Policies extends React.Component {
 			let playerIndex;
 
 			if (userInfo.userName && playersState) {
-				playerIndex = playersState.find(player => player.userName === userInfo.userName);
+				playerIndex = playersState.find((player) => player.userName === userInfo.userName);
 			}
 
-			return _.range(1, 18).map(num => {
+			return _.range(1, 18).map((num) => {
 				let classes = `policy-card policy-draw policy-card-${num}`;
 
 				if (num > count || !gameInfo.gameState.isStarted) {
@@ -45,7 +48,7 @@ class Policies extends React.Component {
 					: 17) -
 				(gameInfo.gameState.undrawnPolicyCount + gameInfo.trackState.liberalPolicyCount + gameInfo.trackState.fascistPolicyCount);
 
-			return _.range(1, 10).map(num => {
+			return _.range(1, 10).map((num) => {
 				let classes = `policy-card policy-discard policy-card-${num}`;
 
 				if (num > count) {
@@ -66,7 +69,7 @@ class Policies extends React.Component {
 			// so we add 18 * deck size in order to properly inform React that when the deck size changes (we are on a new deck), we should render a new animation
 			return deckShown ? (
 				<div style={{ position: 'absolute', zIndex: '2' }}>
-					{_.range(1, deckInfo.size + 1).map(num => (
+					{_.range(1, deckInfo.size + 1).map((num) => (
 						<div key={num + 18 * deckInfo.size} id={`splay${num}`} className={`${deckInfo.get(num - 1)}p cardflinger-card`} />
 					))}
 				</div>
@@ -84,8 +87,8 @@ class Policies extends React.Component {
 							userInfo.isSeated &&
 							gameInfo.gameState.isStarted &&
 							gameInfo.playersState &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName)] &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex(player => player.userName === userInfo.userName)].policyNotification
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)] &&
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].policyNotification
 						) {
 							classes += ' notifier';
 						}
@@ -116,7 +119,7 @@ Policies.defaultProps = {
 	gameInfo: {},
 	userInfo: {},
 	deckInfo: {},
-	isReplay: false
+	isReplay: false,
 };
 
 Policies.propTypes = {
@@ -124,7 +127,7 @@ Policies.propTypes = {
 	userInfo: PropTypes.object,
 	deckInfo: PropTypes.object,
 	socket: PropTypes.object,
-	isReplay: PropTypes.bool
+	isReplay: PropTypes.bool,
 };
 
 export default Policies;

@@ -13,7 +13,7 @@ const BannedIP = new Schema<IBannedIP>({
 	bannedDate: Date,
 	type: String,
 	ip: String,
-	permanent: Boolean
+	permanent: Boolean,
 });
 
 export default mongoose.model<IBannedIP>('BannedIP', BannedIP);

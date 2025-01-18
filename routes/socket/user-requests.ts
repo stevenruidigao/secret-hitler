@@ -27,7 +27,7 @@ import {
 	gameListEmitter,
 	formattedGameList,
 	staffList,
-	User
+	User,
 } from './models.ts';
 import { sendInProgressGameUpdate } from './util.ts';
 
@@ -38,7 +38,7 @@ export const sendUserList = (socket?: Socket) => {
 	// eslint-disable-line one-var
 	if (socket) {
 		const staffUserList = Object.keys(staffList).filter(
-			name => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin'
+			(name) => staffList[name] === 'trialmod' || staffList[name] === 'moderator' || staffList[name] === 'editor' || staffList[name] === 'admin',
 		);
 
 		const handshake: any = socket.handshake;
@@ -59,7 +59,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 		.sort({ $natural: -1 })
 		.limit(500 * count)
 		.then((actions) => {
-			const list = users.map(user => {
+			const list = users.map((user) => {
 				const usr = userList.find((userListUser) => user.username === userListUser.userName);
 
 				return usr
@@ -68,12 +68,12 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 							isRainbow: user.isRainbowOverall,
 							userName: user.username,
 							ip: user.lastConnectedIP || user.signupIP,
-							email: `${user.verified ? '+' : '-'}${maskEmail(user.verification.email)}`
-					  }
+							email: `${user.verified ? '+' : '-'}${maskEmail(user.verification.email)}`,
+						}
 					: {};
 			});
 
-			list.forEach(user => {
+			list.forEach((user) => {
 				if (user.ip && user.ip != '') {
 					try {
 						user.ip = '-' + obfIP(user.ip);
@@ -84,7 +84,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 				}
 			});
 
-			actions.forEach(action => {
+			actions.forEach((action) => {
 				if (action.ip && action.ip != '') {
 					if (action.ip.startsWith('-')) {
 						action.ip = 'ERROR'; // There are some bugged IPs in the list right now, need to suppress it.
@@ -102,7 +102,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 			const gList: any[] = [];
 
 			if (games) {
-				Object.values(games).forEach(game => {
+				Object.values(games).forEach((game) => {
 					gList.push({
 						name: game.general.name,
 						uid: game.general.uid,
@@ -110,7 +110,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 						casual: game.general.casualGame,
 						private: game.general.private,
 						custom: game.customGameSettings.enabled,
-						unlisted: game.general.unlistedGame
+						unlisted: game.general.unlistedGame,
 					});
 				});
 			}
@@ -124,7 +124,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 				bypassVPNCheck,
 				userList: list,
 				gameList: gList,
-				showActions: !isTrial && isAEM
+				showActions: !isTrial && isAEM,
 			});
 		})
 		.catch((err: Error) => {
@@ -211,8 +211,8 @@ export const sendUserGameSettings = (socket: Socket) => {
 					season: account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {},
 					status: {
 						type: 'none',
-						gameId: null
-					}
+						gameId: null,
+					},
 				};
 
 				userList.push(userListInfo);
@@ -223,7 +223,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 
 			socket.emit('version', {
 				current: version,
-				lastSeen: account?.lastVersionSeen || 'none'
+				lastSeen: account?.lastVersionSeen || 'none',
 			});
 		})
 		.catch((err: Error) => {
@@ -274,7 +274,7 @@ export const sendGameList = (socket?: Socket, isAEM?: boolean) => {
 	// eslint-disable-line one-var
 	if (socket) {
 		let gameList = formattedGameList();
-		gameList = gameList.filter(game => isAEM || (game && !game.isUnlisted));
+		gameList = gameList.filter((game) => isAEM || (game && !game.isUnlisted));
 		socket.emit('gameList', gameList);
 	} else {
 		gameListEmitter.send = true;
@@ -314,15 +314,15 @@ export const updateUserStatus = (passport: any, game?: ActiveGame, override?: st
 				override && game && !game.general.unlistedGame
 					? override
 					: game
-					? game.general.private
-						? 'private'
-						: !game.general.unlistedGame && game.general.rainbowgame
-						? 'rainbow'
-						: !game.general.unlistedGame
-						? 'playing'
-						: 'none'
-					: 'none',
-			gameId: game ? game.general.uid : false
+						? game.general.private
+							? 'private'
+							: !game.general.unlistedGame && game.general.rainbowgame
+								? 'rainbow'
+								: !game.general.unlistedGame
+									? 'playing'
+									: 'none'
+						: 'none',
+			gameId: game ? game.general.uid : false,
 		};
 
 		sendUserList();

@@ -13,7 +13,7 @@ export default class CreateGame extends React.Component {
 		let isRainbow = false;
 		let user;
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find(user => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 		}
 		if (user) {
 			isRainbow = user.isRainbowOverall;
@@ -60,8 +60,8 @@ export default class CreateGame extends React.Component {
 				hitKnowsFas: false,
 				deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
 				trackState: { lib: 0, fas: 0 },
-				fasCanShootHit: false
-			}
+				fasCanShootHit: false,
+			},
 		};
 	}
 
@@ -310,7 +310,7 @@ export default class CreateGame extends React.Component {
 			{ value: 'eh', label: 'Western Sahara' },
 			{ value: 'ye', label: 'Yemen' },
 			{ value: 'zm', label: 'Zambia' },
-			{ value: 'zw', label: 'Zimbabwe' }
+			{ value: 'zw', label: 'Zimbabwe' },
 		];
 
 		const style = {
@@ -319,11 +319,11 @@ export default class CreateGame extends React.Component {
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
 				padding: '5px',
-				fontWeight: state.isSelected ? 'bold' : null
-			})
+				fontWeight: state.isSelected ? 'bold' : null,
+			}),
 		};
 
-		const findValue = val => {
+		const findValue = (val) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -353,7 +353,7 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="A normal ranked game, counts for winrate and Elo">Ranked</span>
 					</>
-				)
+				),
 			},
 			{
 				value: 'casual',
@@ -361,7 +361,7 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="A casual game, gameplay rules are not enforced, does not count for winrate or Elo">Casual</span>
 					</>
-				)
+				),
 			},
 			{
 				value: 'practice',
@@ -369,7 +369,7 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="A practice game, gameplay rules ARE enforced, does not count for winrate or Elo">Practice</span>
 					</>
-				)
+				),
 			},
 			{
 				value: 'custom',
@@ -377,8 +377,8 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="A game with custom gameplay settings, gameplay rules are not enforced, does not count for winrate or Elo">Custom</span>
 					</>
-				)
-			}
+				),
+			},
 		];
 
 		const style = {
@@ -387,11 +387,11 @@ export default class CreateGame extends React.Component {
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
 				padding: '5px',
-				fontWeight: state.isSelected ? 'bold' : null
-			})
+				fontWeight: state.isSelected ? 'bold' : null,
+			}),
 		};
 
-		const findValue = val => {
+		const findValue = (val) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -405,7 +405,7 @@ export default class CreateGame extends React.Component {
 						<>
 							<span title="A private game with a password, gameplay rules are not enforced, does not count for winrate or Elo">Private</span>
 						</>
-					)
+					),
 				};
 			}
 		};
@@ -422,10 +422,10 @@ export default class CreateGame extends React.Component {
 										<>
 											<span title="A private game with a password, gameplay rules are not enforced, does not count for winrate or Elo">Private</span>
 										</>
-									)
+									),
 								},
-								options[3]
-						  ]
+								options[3],
+							]
 						: options
 				}
 				styles={style}
@@ -439,7 +439,7 @@ export default class CreateGame extends React.Component {
 					this.setState({
 						gameType: inputValue.value,
 						customGameSettings: { ...this.state.customGameSettings, enabled: inputValue.value === 'custom' },
-						playerChats: resetPlayerChats ? 'enabled' : this.state.playerChats
+						playerChats: resetPlayerChats ? 'enabled' : this.state.playerChats,
 					});
 				}}
 				menuPlacement={'auto'}
@@ -457,7 +457,7 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="Player chats are enabled">Enabled</span>
 					</>
-				)
+				),
 			},
 			{
 				value: 'disabled',
@@ -465,8 +465,8 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="Player chats are disabled (e.g. for voice chat games)">Disabled</span>
 					</>
-				)
-			}
+				),
+			},
 		];
 
 		if (!['ranked', 'practice'].includes(this.state.gameType)) {
@@ -476,7 +476,7 @@ export default class CreateGame extends React.Component {
 					<>
 						<span title="Only emotes and numbers are allowed in game.">Emotes Only</span>
 					</>
-				)
+				),
 			});
 		}
 
@@ -486,11 +486,11 @@ export default class CreateGame extends React.Component {
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
 				padding: '5px',
-				fontWeight: state.isSelected ? 'bold' : null
-			})
+				fontWeight: state.isSelected ? 'bold' : null,
+			}),
 		};
 
-		const findValue = val => {
+		const findValue = (val) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -507,7 +507,7 @@ export default class CreateGame extends React.Component {
 				onChange={(inputValue, _action) => {
 					this.setState({
 						playerChats: inputValue.value,
-						gameType: inputValue.value === 'disabled' && this.state.gameType === 'ranked' ? 'practice' : this.state.gameType
+						gameType: inputValue.value === 'disabled' && this.state.gameType === 'ranked' ? 'practice' : this.state.gameType,
 					});
 				}}
 				menuPlacement={'auto'}
@@ -524,7 +524,7 @@ export default class CreateGame extends React.Component {
 			{ value: 'election', label: 'Special Election' },
 			{ value: 'bullet', label: 'Bullet' },
 			{ value: 'reverseinv', label: 'Show Loyalty' },
-			{ value: 'peekdrop', label: 'Peek & Drop' }
+			{ value: 'peekdrop', label: 'Peek & Drop' },
 		];
 
 		const style = {
@@ -533,11 +533,11 @@ export default class CreateGame extends React.Component {
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
 				padding: '5px',
-				fontWeight: state.isSelected ? 'bold' : null
-			})
+				fontWeight: state.isSelected ? 'bold' : null,
+			}),
 		};
 
-		const findValue = val => {
+		const findValue = (val) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -566,7 +566,7 @@ export default class CreateGame extends React.Component {
 		let isRainbow = false;
 		let user;
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find(user => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 		}
 		if (user) {
 			isRainbow = user.isRainbowOverall;
@@ -610,8 +610,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'High ELO':
@@ -651,8 +651,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Gun Game':
@@ -692,8 +692,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 13 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case '2R1H':
@@ -734,8 +734,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Silent Game':
@@ -776,8 +776,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Tourney Game':
@@ -818,8 +818,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Inv Game':
@@ -860,8 +860,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 15 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Trivia Mode':
@@ -902,8 +902,8 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: true,
 						fasCanShootHit: true,
 						deckState: { lib: 6, fas: 19 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 				break;
 			case 'Reset':
@@ -944,13 +944,13 @@ export default class CreateGame extends React.Component {
 						hitKnowsFas: false,
 						fasCanShootHit: false,
 						deckState: { lib: 6, fas: 11 }, // includes tracks cards; 6 deck + 1 track = 5 in deck
-						trackState: { lib: 0, fas: 0 }
-					}
+						trackState: { lib: 0, fas: 0 },
+					},
 				});
 		}
 	}
 
-	sliderNumFas = val => {
+	sliderNumFas = (val) => {
 		const { customGameSettings } = this.state;
 
 		customGameSettings.fascistCount = val[0];
@@ -958,49 +958,49 @@ export default class CreateGame extends React.Component {
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderHitlerZone = val => {
+	sliderHitlerZone = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.hitlerZone = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderVetoZone = val => {
+	sliderVetoZone = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.vetoZone = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderDeckLib = val => {
+	sliderDeckLib = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.deckState.lib = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderDeckFas = val => {
+	sliderDeckFas = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.deckState.fas = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderTrackLib = val => {
+	sliderTrackLib = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.trackState.lib = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderTrackFas = val => {
+	sliderTrackFas = (val) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.trackState.fas = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderChange = sliderValues => {
+	sliderChange = (sliderValues) => {
 		const { checkedSliderValues } = this.state;
 
 		this.setState({
@@ -1011,15 +1011,15 @@ export default class CreateGame extends React.Component {
 					(el, index) =>
 						(index + 5 >= sliderValues[0] && index + 5 <= sliderValues[1] && checkedSliderValues[index]) ||
 						index + 5 === sliderValues[0] ||
-						index + 5 === sliderValues[1]
-				)
+						index + 5 === sliderValues[1],
+				),
 		});
 	};
 
-	customGameSliderChange = sliderValues => {
+	customGameSliderChange = (sliderValues) => {
 		this.sliderChange(sliderValues);
 		this.setState({
-			customGameSliderValue: sliderValues
+			customGameSliderValue: sliderValues,
 		});
 	};
 
@@ -1036,7 +1036,7 @@ export default class CreateGame extends React.Component {
 		} else if (userInfo.gameSettings && userInfo.gameSettings.unbanTime && new Date(userInfo.gameSettings.unbanTime) > new Date()) {
 			Swal.fire('Sorry, this service is currently unavailable.');
 		} else {
-			const excludedPlayerCount = this.state.checkedSliderValues.map((el, index) => (el ? null : index + 5)).filter(el => el);
+			const excludedPlayerCount = this.state.checkedSliderValues.map((el, index) => (el ? null : index + 5)).filter((el) => el);
 			const data = {
 				gameName: this.state.gameName || 'New Game',
 				gameType: this.state.gameType,
@@ -1067,7 +1067,7 @@ export default class CreateGame extends React.Component {
 				customGameSettings: this.state.customGameSettings.enabled ? this.state.customGameSettings : undefined,
 				avalonSH: this.state.avalonSH,
 				withPercival: this.state.avalonSH && this.state.withPercival,
-				noTopdecking: this.state.noTopdecking ? this.state.noTopdecking[0] : 0
+				noTopdecking: this.state.noTopdecking ? this.state.noTopdecking[0] : 0,
 			};
 
 			if (this.state.isTourny) {
@@ -1083,10 +1083,10 @@ export default class CreateGame extends React.Component {
 								cardDisplayed: false,
 								isFlipped: false,
 								cardFront: 'secretrole',
-								cardBack: {}
-							}
-						}
-					]
+								cardBack: {},
+							},
+						},
+					],
 				};
 			}
 
@@ -1096,15 +1096,15 @@ export default class CreateGame extends React.Component {
 
 	renderPlayerSlider() {
 		const { isTourny, customGameSettings } = this.state;
-		const sliderCheckboxClick = index => {
+		const sliderCheckboxClick = (index) => {
 			const newSliderValues = this.state.checkedSliderValues.map((el, i) => (i === index ? !el : el));
-			const includedPlayerCounts = newSliderValues.map((el, i) => (el ? i + 5 : null)).filter(el => el !== null);
+			const includedPlayerCounts = newSliderValues.map((el, i) => (el ? i + 5 : null)).filter((el) => el !== null);
 			const minPlayers = Math.min(...includedPlayerCounts);
 			const maxPlayers = Math.max(...includedPlayerCounts);
 
 			this.setState({
 				checkedSliderValues: newSliderValues,
-				sliderValues: [minPlayers, maxPlayers]
+				sliderValues: [minPlayers, maxPlayers],
 			});
 		};
 
@@ -1161,7 +1161,7 @@ export default class CreateGame extends React.Component {
 	}
 
 	renderRebalanceCheckboxes() {
-		const rebalancedInputClick = index => {
+		const rebalancedInputClick = (index) => {
 			const { checkedRebalanceValues } = this.state;
 
 			checkedRebalanceValues[index] = !checkedRebalanceValues[index];
@@ -1205,15 +1205,15 @@ export default class CreateGame extends React.Component {
 		);
 	}
 
-	timedSliderChange = timedSliderValue => {
-		this.setState(prevState => ({ timedSliderValue, gameType: timedSliderValue[0] < 30 ? 'casual' : this.state.gameType }));
+	timedSliderChange = (timedSliderValue) => {
+		this.setState((prevState) => ({ timedSliderValue, gameType: timedSliderValue[0] < 30 ? 'casual' : this.state.gameType }));
 	};
 
-	eloSliderChange = eloSliderValue => {
+	eloSliderChange = (eloSliderValue) => {
 		this.setState({ eloSliderValue });
 	};
 
-	xpSliderChange = xpSliderValue => {
+	xpSliderChange = (xpSliderValue) => {
 		this.setState({ xpSliderValue });
 	};
 
@@ -1222,13 +1222,13 @@ export default class CreateGame extends React.Component {
 		const { userInfo, userList } = this.props;
 		if (userInfo.gameSettings && userInfo.gameSettings.disableElo) return null;
 		let player = null;
-		if (userList.list) player = userList.list.find(p => p.userName === userInfo.userName);
+		if (userList.list) player = userList.list.find((p) => p.userName === userInfo.userName);
 		const isSeason = (userInfo.gameSettings && !userInfo.gameSettings.disableSeasonal) || false;
 		const playerElo = (player && player.eloSeason && Math.min(2100, player.eloSeason)) || 1600;
 		const playerEloNonseason = (player && player.eloOverall && Math.min(2100, player.eloOverall)) || 1600;
 		const max = Math.min(playerElo, playerEloNonseason);
 		const marks = Object.keys(origMarks)
-			.filter(k => origMarks[k] <= max)
+			.filter((k) => origMarks[k] <= max)
 			.reduce((obj, key) => {
 				obj[key] = origMarks[key];
 				return obj;
@@ -1244,7 +1244,7 @@ export default class CreateGame extends React.Component {
 
 							<input
 								value={this.state.eloSliderValue[0]}
-								onChange={e => {
+								onChange={(e) => {
 									if (!isNaN(e.target.value)) {
 										this.setState({ eloSliderValue: [e.target.value] });
 									}
@@ -1257,7 +1257,7 @@ export default class CreateGame extends React.Component {
 						<i className="big arrows alternate horizontal icon" />
 						<h4 className="ui header">Elo limited game</h4>
 						<Switch
-							onChange={checked => {
+							onChange={(checked) => {
 								this.setState({ isEloLimited: checked });
 							}}
 							className="create-game-switch"
@@ -1281,10 +1281,10 @@ export default class CreateGame extends React.Component {
 		const { userInfo, userList } = this.props;
 		if (userInfo.gameSettings && userInfo.gameSettings.disableElo) return null;
 		let player = null;
-		if (userList.list) player = userList.list.find(p => p.userName === userInfo.userName);
+		if (userList.list) player = userList.list.find((p) => p.userName === userInfo.userName);
 		const playerXP = (player && player.xpOverall && Math.min(2000, player.xpOverall)) || 0;
 		const marks = Object.keys(origMarks)
-			.filter(k => origMarks[k] <= playerXP)
+			.filter((k) => origMarks[k] <= playerXP)
 			.reduce((obj, key) => {
 				obj[key] = origMarks[key];
 				return obj;
@@ -1300,7 +1300,7 @@ export default class CreateGame extends React.Component {
 
 							<input
 								value={this.state.xpSliderValue[0]}
-								onChange={e => {
+								onChange={(e) => {
 									if (!isNaN(e.target.value)) {
 										this.setState({ xpSliderValue: [e.target.value] });
 									}
@@ -1313,7 +1313,7 @@ export default class CreateGame extends React.Component {
 						<i className="big arrows alternate horizontal icon" />
 						<h4 className="ui header">XP limited game</h4>
 						<Switch
-							onChange={checked => {
+							onChange={(checked) => {
 								this.setState({ isXPLimited: checked });
 							}}
 							className="create-game-switch"
@@ -1344,7 +1344,7 @@ export default class CreateGame extends React.Component {
 			.concat(
 				_.range(0, numFas).map((val, i) => {
 					return <div key={`F${i}`} className="deckcard" style={{ backgroundImage: "url('../images/cards/fascistp-l.png')" }} />; // eslint-disable-line
-				})
+				}),
 			);
 		const thirds = [];
 		data.forEach((elem, idx) => {
@@ -1369,7 +1369,7 @@ export default class CreateGame extends React.Component {
 		const { customGameSettings } = this.state;
 		const offX = 94;
 		const offY = 6;
-		const powers = customGameSettings.powers.map(p => {
+		const powers = customGameSettings.powers.map((p) => {
 			if (p == null || p == '' || p == 'null') return 'None';
 			if (p == 'investigate') return 'Inv';
 			if (p == 'deckpeek') return 'Peek';
@@ -1383,7 +1383,7 @@ export default class CreateGame extends React.Component {
 		const hzStart = customGameSettings.hitlerZone;
 		const vzPoint = customGameSettings.vetoZone;
 		const hitKnowsFas = customGameSettings.hitKnowsFas;
-		const getHZ = pos => {
+		const getHZ = (pos) => {
 			if (pos < hzStart) return 'Off';
 			if (pos > hzStart) return 'On';
 			return 'Start';
@@ -1398,7 +1398,7 @@ export default class CreateGame extends React.Component {
 					height: '220px',
 					width: '650px',
 					margin: 'auto',
-					backgroundImage: "url('../images/customtracks/fasTrack.png')" // eslint-disable-line
+					backgroundImage: "url('../images/customtracks/fasTrack.png')", // eslint-disable-line
 				}}
 			>
 				<span
@@ -1408,7 +1408,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 137}px`,
 						top: `${offY + 58}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(1)}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(1)}.png)`,
 					}}
 				/>
 				<span
@@ -1418,7 +1418,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 229}px`,
 						top: `${offY + 58}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(2)}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(2)}.png)`,
 					}}
 				/>
 				<span
@@ -1428,7 +1428,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 321}px`,
 						top: `${offY + 58}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(3)}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(3)}.png)`,
 					}}
 				/>
 				<span
@@ -1438,7 +1438,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 413}px`,
 						top: `${offY + 58}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(4)}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(4)}.png)`,
 					}}
 				/>
 				<span
@@ -1448,7 +1448,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 505}px`,
 						top: `${offY + 58}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(5)}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrackHZ${getHZ(5)}.png)`,
 					}}
 				/>
 
@@ -1457,7 +1457,7 @@ export default class CreateGame extends React.Component {
 					style={{
 						left: `${offX + 58}px`,
 						top: `${offY + 58}px`,
-						backgroundImage: `url(../images/customtracks/fasPower${powers[0]}${hzStart <= 0 ? 'Light' : ''}.png)`
+						backgroundImage: `url(../images/customtracks/fasPower${powers[0]}${hzStart <= 0 ? 'Light' : ''}.png)`,
 					}}
 				>
 					{vzPoint == 1 && <span className={'custom-fastrack-powerslot ' + (hzStart <= 0 ? 'custom-fastrack-vetozone-light' : 'custom-fastrack-vetozone')} />}
@@ -1467,7 +1467,7 @@ export default class CreateGame extends React.Component {
 					style={{
 						left: `${offX + 150}px`,
 						top: `${offY + 58}px`,
-						backgroundImage: `url(../images/customtracks/fasPower${powers[1]}${hzStart <= 1 ? 'Light' : ''}.png)`
+						backgroundImage: `url(../images/customtracks/fasPower${powers[1]}${hzStart <= 1 ? 'Light' : ''}.png)`,
 					}}
 				>
 					{vzPoint == 2 && <span className={'custom-fastrack-powerslot ' + (hzStart <= 1 ? 'custom-fastrack-vetozone-light' : 'custom-fastrack-vetozone')} />}
@@ -1477,7 +1477,7 @@ export default class CreateGame extends React.Component {
 					style={{
 						left: `${offX + 242}px`,
 						top: `${offY + 58}px`,
-						backgroundImage: `url(../images/customtracks/fasPower${powers[2]}${hzStart <= 2 ? 'Light' : ''}.png)`
+						backgroundImage: `url(../images/customtracks/fasPower${powers[2]}${hzStart <= 2 ? 'Light' : ''}.png)`,
 					}}
 				>
 					{vzPoint == 3 && <span className={'custom-fastrack-powerslot ' + (hzStart <= 2 ? 'custom-fastrack-vetozone-light' : 'custom-fastrack-vetozone')} />}
@@ -1487,7 +1487,7 @@ export default class CreateGame extends React.Component {
 					style={{
 						left: `${offX + 334}px`,
 						top: `${offY + 58}px`,
-						backgroundImage: `url(../images/customtracks/fasPower${powers[3]}${hzStart <= 3 ? 'Light' : ''}.png)`
+						backgroundImage: `url(../images/customtracks/fasPower${powers[3]}${hzStart <= 3 ? 'Light' : ''}.png)`,
 					}}
 				>
 					{vzPoint == 4 && <span className={'custom-fastrack-powerslot ' + (hzStart <= 3 ? 'custom-fastrack-vetozone-light' : 'custom-fastrack-vetozone')} />}
@@ -1497,7 +1497,7 @@ export default class CreateGame extends React.Component {
 					style={{
 						left: `${offX + 426}px`,
 						top: `${offY + 58}px`,
-						backgroundImage: `url(../images/customtracks/fasPower${powers[4]}${hzStart <= 4 ? 'Light' : ''}.png)`
+						backgroundImage: `url(../images/customtracks/fasPower${powers[4]}${hzStart <= 4 ? 'Light' : ''}.png)`,
 					}}
 				>
 					{vzPoint == 5 && <span className={'custom-fastrack-powerslot ' + (hzStart <= 4 ? 'custom-fastrack-vetozone-light' : 'custom-fastrack-vetozone')} />}
@@ -1513,7 +1513,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 336}px`,
 						top: `${offY + 60}px`,
 						position: 'absolute',
-						backgroundImage: 'url(../images/customtracks/fasTrackHZText.png)'
+						backgroundImage: 'url(../images/customtracks/fasTrackHZText.png)',
 					}}
 				/>
 				<span
@@ -1523,7 +1523,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 220}px`,
 						top: `${offY + 186}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrack${numFas}fas.png)`
+						backgroundImage: `url(../images/customtracks/fasTrack${numFas}fas.png)`,
 					}}
 				/>
 				<span
@@ -1533,7 +1533,7 @@ export default class CreateGame extends React.Component {
 						left: `${offX + 220}px`,
 						top: `${offY + 196}px`,
 						position: 'absolute',
-						backgroundImage: `url(../images/customtracks/fasTrack${numFas > 1 ? 'Multi' : 'Single'}${hitKnowsFas ? 'Known' : 'Unknown'}.png)`
+						backgroundImage: `url(../images/customtracks/fasTrack${numFas > 1 ? 'Multi' : 'Single'}${hitKnowsFas ? 'Known' : 'Unknown'}.png)`,
 					}}
 				/>
 			</div>
@@ -1631,7 +1631,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Hitler sees fascists</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ customGameSettings: { ...this.state.customGameSettings, hitKnowsFas: checked } });
 								}}
 								checked={this.state.customGameSettings.hitKnowsFas}
@@ -1648,7 +1648,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Fascists can shoot hitler</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ customGameSettings: { ...this.state.customGameSettings, fasCanShootHit: checked } });
 								}}
 								checked={this.state.customGameSettings.fasCanShootHit}
@@ -1770,7 +1770,7 @@ export default class CreateGame extends React.Component {
 		const { userInfo, userList } = this.props;
 		if (userList && userList.list) {
 			// Can happen when refreshing.
-			const player = userList.list.find(p => p.userName === userInfo.userName);
+			const player = userList.list.find((p) => p.userName === userInfo.userName);
 			if (!player) errs.push('Not logged in, please refresh.');
 			if (player && player.staff && player.staff.incognito) errs.push(`You're incognito`);
 			else if (this.state.isEloLimited) {
@@ -1851,21 +1851,21 @@ export default class CreateGame extends React.Component {
 								<input
 									maxLength="20"
 									placeholder="New Game"
-									onKeyPress={e => {
+									onKeyPress={(e) => {
 										const { LEGALCHARACTERS } = require('../../constants.ts');
 										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}
-									onChange={e => {
+									onChange={(e) => {
 										let badWord = false;
-										blacklistedWords.forEach(word => {
+										blacklistedWords.forEach((word) => {
 											if (new RegExp(word, 'i').test(e.target.value)) {
 												badWord = true;
 											}
 										});
 										this.setState({
 											gameName: `${e.target.value}`,
-											containsBadWord: badWord
+											containsBadWord: badWord,
 										});
 									}}
 								/>
@@ -1880,10 +1880,10 @@ export default class CreateGame extends React.Component {
 								<i className="big yellow lock icon" />
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({
 											privateShowing: checked,
-											gameType: checked ? 'private' : this.state.customGameSettings.enabled ? 'custom' : 'ranked'
+											gameType: checked ? 'private' : this.state.customGameSettings.enabled ? 'custom' : 'ranked',
 										});
 									}}
 									checked={this.state.privateShowing}
@@ -1907,7 +1907,7 @@ export default class CreateGame extends React.Component {
 									type="text"
 									autoFocus
 									value={this.state.password}
-									onChange={e => this.setState({ password: e.target.value })}
+									onChange={(e) => this.setState({ password: e.target.value })}
 								/>
 							</div>
 						)}
@@ -1919,10 +1919,10 @@ export default class CreateGame extends React.Component {
 								<i className="big green lock icon" />
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({
 											unlistedGame: checked,
-											gameType: checked ? 'casual' : 'ranked'
+											gameType: checked ? 'casual' : 'ranked',
 										});
 									}}
 									checked={this.state.unlistedGame}
@@ -1966,7 +1966,7 @@ export default class CreateGame extends React.Component {
 							</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ flappyMode: checked });
 								}}
 								checked={this.state.flappyMode}
@@ -1990,7 +1990,7 @@ export default class CreateGame extends React.Component {
 								</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({ flappyOnlyMode: checked });
 									}}
 									checked={this.state.flappyOnlyMode}
@@ -2037,7 +2037,7 @@ export default class CreateGame extends React.Component {
 							</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ timedMode: checked });
 								}}
 								checked={this.state.timedMode}
@@ -2060,7 +2060,7 @@ export default class CreateGame extends React.Component {
 								</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({ isVerifiedOnly: checked });
 									}}
 									checked={this.state.isVerifiedOnly}
@@ -2109,7 +2109,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Speed mode - most animations and pauses greatly reduced and fewer gamechats</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ experiencedmode: checked });
 								}}
 								checked={this.state.experiencedmode}
@@ -2126,7 +2126,7 @@ export default class CreateGame extends React.Component {
 							let isRainbow = false;
 							let user;
 							if (this.props.userList.list) {
-								user = this.props.userList.list.find(user => user.userName === this.props.userInfo.userName);
+								user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 							}
 							if (user) {
 								isRainbow = user.isRainbowOverall;
@@ -2138,10 +2138,10 @@ export default class CreateGame extends React.Component {
 										<h4 className="ui header">Rainbow game - only fellow 50+ game veterans can be seated in this game</h4>
 										<Switch
 											className="create-game-switch"
-											onChange={checked => {
+											onChange={(checked) => {
 												this.setState({
 													rainbowgame: checked,
-													isVerifiedOnly: !checked
+													isVerifiedOnly: !checked,
 												});
 											}}
 											checked={this.state.rainbowgame}
@@ -2164,7 +2164,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Blind mode - player's names are replaced with random animal names, anonymizing them.</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({ blindMode: checked });
 								}}
 								checked={this.state.blindMode}
@@ -2183,7 +2183,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Disable observer chat</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({ disableobserverlobby: checked, disableobserver: checked });
 									}}
 									checked={this.state.disableobserverlobby}
@@ -2198,7 +2198,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Disable observer chat during game{this.state.disableobserverlobby ? '' : ' only'}</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({ disableobserver: checked });
 									}}
 									checked={this.state.disableobserver}
@@ -2223,11 +2223,11 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Private only game - only other anonymous players can be seated.</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({
 											privateonlyGame: checked,
 											isVerifiedOnly: false,
-											gameType: checked ? 'private' : this.state.customGameSettings.enabled ? 'custom' : 'ranked'
+											gameType: checked ? 'private' : this.state.customGameSettings.enabled ? 'custom' : 'ranked',
 										});
 									}}
 									checked={this.state.privateonlyGame}
@@ -2246,9 +2246,9 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Make Votes to Remake Anonymous.</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({
-											privateAnonymousRemakes: checked
+											privateAnonymousRemakes: checked,
 										});
 									}}
 									checked={this.state.privateAnonymousRemakes}
@@ -2269,10 +2269,10 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Avalon SH - Adds roles from The Resistance: Avalon to the game, causal only</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({
 										avalonSH: checked,
-										gameType: checked ? 'casual' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked'
+										gameType: checked ? 'casual' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked',
 									});
 								}}
 								checked={this.state.avalonSH}
@@ -2288,9 +2288,9 @@ export default class CreateGame extends React.Component {
 							{this.state.avalonSH && (
 								<Switch
 									className="create-game-switch"
-									onChange={checked => {
+									onChange={(checked) => {
 										this.setState({
-											withPercival: checked
+											withPercival: checked,
 										});
 									}}
 									checked={this.state.avalonSH && this.state.withPercival}
@@ -2311,10 +2311,10 @@ export default class CreateGame extends React.Component {
 								min={0}
 								max={2}
 								defaultValue={[0]}
-								onChange={x => {
+								onChange={(x) => {
 									this.setState({
 										noTopdecking: x,
-										gameType: x ? 'casual' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked'
+										gameType: x ? 'casual' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked',
 									});
 								}}
 								value={[this.state.noTopdecking]}
@@ -2328,10 +2328,10 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Custom Game - Use a custom fascist track.</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={checked => {
+								onChange={(checked) => {
 									this.setState({
 										customGameSettings: Object.assign(this.state.customGameSettings, { enabled: checked }),
-										gameType: checked ? 'custom' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked'
+										gameType: checked ? 'custom' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked',
 									});
 								}}
 								checked={this.state.customGameSettings.enabled}
@@ -2361,5 +2361,5 @@ export default class CreateGame extends React.Component {
 CreateGame.propTypes = {
 	socket: PropTypes.object,
 	userInfo: PropTypes.object,
-	userList: PropTypes.object
+	userList: PropTypes.object,
 };

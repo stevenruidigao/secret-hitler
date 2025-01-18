@@ -11,7 +11,7 @@ interface IVerifyAccount {
 const VerifyAccount = new Schema<IVerifyAccount>({
 	username: String,
 	token: String,
-	expirationDate: Date
+	expirationDate: Date,
 });
 
 export default mongoose.model<IVerifyAccount>('VerifyAccount', VerifyAccount);

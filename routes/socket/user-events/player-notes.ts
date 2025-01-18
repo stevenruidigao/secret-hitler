@@ -8,11 +8,11 @@ import { sendPlayerNotes } from '../user-requests.ts';
  * @param {object} socket - user socket reference.
  * @param {object} data - from socket emit.
  */
-export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: string, userName: string, note: string }) => {
+export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: string; userName: string; note: string }) => {
 	PlayerNote.findOne({ userName: data.userName, notedUser: data.notedUser }).then((note) => {
 		if (note) {
 			note.note = data.note;
-			
+
 			note.save(() => {
 				sendPlayerNotes(socket, { userName: data.userName, seatedPlayers: [data.notedUser] });
 			});
@@ -20,7 +20,7 @@ export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: strin
 			const playerNote = new PlayerNote({
 				userName: data.userName,
 				notedUser: data.notedUser,
-				note: data.note
+				note: data.note,
 			});
 
 			playerNote.save(() => {

@@ -71,19 +71,19 @@ const Game = new Schema<IGame>({
 	hiddenInfoChat: Array,
 	guesses: {
 		type: Map,
-		of: String
+		of: String,
 	},
 	merlinGuesses: {
 		type: Map,
-		of: Number
+		of: Number,
 	},
 	timedMode: Number, // timer length
 	blindMode: Boolean,
 	avalonSH: {
-		withPercival: Boolean
+		withPercival: Boolean,
 	},
 	noTopdecking: Number,
-	completed: Boolean
+	completed: Boolean,
 });
 
 export default mongoose.model<IGame>('Game', Game);

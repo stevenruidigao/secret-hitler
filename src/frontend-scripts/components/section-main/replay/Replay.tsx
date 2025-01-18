@@ -20,12 +20,12 @@ import * as Swal from 'sweetalert2';
 const mapStateToProps = ({ replay, userInfo }) => ({
 	replay,
 	isSmall: userInfo.gameSettings && userInfo.gameSettings.enableRightSidebarInGame,
-	userInfo: userInfo
+	userInfo: userInfo,
 });
 
-const mapDispatchToProps = dispatch => ({
-	to: position => dispatch({ type: 'REPLAY_TO', position }),
-	exit: () => dispatch({ type: 'CLOSE_REPLAY' })
+const mapDispatchToProps = (dispatch) => ({
+	to: (position) => dispatch({ type: 'REPLAY_TO', position }),
+	exit: () => dispatch({ type: 'CLOSE_REPLAY' }),
 });
 
 const buildPlayback = (replay, to) => {
@@ -41,12 +41,12 @@ const buildPlayback = (replay, to) => {
 	const findTickPos = (turnNum, _phases) => {
 		const phases = List.isList(_phases) ? _phases : List([_phases]);
 
-		const i = ticks.findLastIndex(t => t.turnNum === turnNum && phases.includes(t.phase));
+		const i = ticks.findLastIndex((t) => t.turnNum === turnNum && phases.includes(t.phase));
 
 		return i > -1 ? some(i) : none;
 	};
 
-	const bindTo = position => to.bind(null, position);
+	const bindTo = (position) => to.bind(null, position);
 
 	/***********
 	 * EXPORTS *
@@ -72,16 +72,16 @@ const buildPlayback = (replay, to) => {
 				investigation: List(['policyEnaction', 'election']),
 				policyPeek: List(['policyEnaction', 'election']),
 				specialElection: List(['policyEnaction', 'election']),
-				execution: List(['policyEnaction', 'election'])
+				execution: List(['policyEnaction', 'election']),
 			});
 
-			const ideal = findTickPos(targetTurn, phase).map(pos => bindTo(pos));
+			const ideal = findTickPos(targetTurn, phase).map((pos) => bindTo(pos));
 
 			const fallback = () =>
 				bindTo(
 					fromNullable(fallbacks.get(phase))
-						.flatMap(fallbackPhases => findTickPos(targetTurn, fallbackPhases))
-						.valueOrElse(end)
+						.flatMap((fallbackPhases) => findTickPos(targetTurn, fallbackPhases))
+						.valueOrElse(end),
 				);
 
 			return ideal.valueOrElse(fallback);
@@ -89,7 +89,7 @@ const buildPlayback = (replay, to) => {
 
 		return {
 			nextPhase: toTurnWithPhaseElseFallback(turnNum + 1, ticks.size - 1),
-			prevPhase: toTurnWithPhaseElseFallback(turnNum - 1, 0)
+			prevPhase: toTurnWithPhaseElseFallback(turnNum - 1, 0),
 		};
 	})();
 
@@ -102,9 +102,9 @@ const buildPlayback = (replay, to) => {
 			Map({
 				candidacy: 'nomination',
 				nomination: 'election',
-				election: 'candidacy'
+				election: 'candidacy',
 			}),
-			'candidacy'
+			'candidacy',
 		);
 
 		const legislationPos = rotate(
@@ -113,9 +113,9 @@ const buildPlayback = (replay, to) => {
 				chancellorLegislation: List(['veto', 'policyEnaction']),
 				topDeck: List(['policyEnaction']),
 				veto: List(['policyEnaction', 'topDeck', 'presidentLegislation']),
-				policyEnaction: List(['presidentLegislation', 'topDeck'])
+				policyEnaction: List(['presidentLegislation', 'topDeck']),
 			}),
-			List(['presidentLegislation', 'topDeck'])
+			List(['presidentLegislation', 'topDeck']),
 		);
 
 		const actionPos = findTickPos(turnNum, List(['investigation', 'policyPeek', 'specialElection', 'execution']));
@@ -125,11 +125,11 @@ const buildPlayback = (replay, to) => {
 			hasAction: actionPos.isSome(),
 			toElection: bindTo(electionPos.valueOrElse(position)),
 			toLegislation: bindTo(legislationPos.valueOrElse(position)),
-			toAction: bindTo(actionPos.valueOrElse(position))
+			toAction: bindTo(actionPos.valueOrElse(position)),
 		};
 	})();
 
-	const toTurn = targetTurn => to(findTickPos(targetTurn, 'candidacy').valueOrElse(position));
+	const toTurn = (targetTurn) => to(findTickPos(targetTurn, 'candidacy').valueOrElse(position));
 
 	return {
 		hasNext,
@@ -145,7 +145,7 @@ const buildPlayback = (replay, to) => {
 		toElection,
 		toLegislation,
 		toAction,
-		toTurn
+		toTurn,
 	};
 };
 
@@ -218,14 +218,14 @@ class ReplayWrapper extends React.Component {
 			requestedData: false,
 			deckShown: false,
 			legacyReplay: true,
-			gameData: {}
+			gameData: {},
 		};
 	}
 
 	componentDidMount() {
-		socket.on('replayGameData', gameData => {
+		socket.on('replayGameData', (gameData) => {
 			this.setState({
-				gameData
+				gameData,
 			});
 		});
 	}
@@ -249,7 +249,7 @@ class ReplayWrapper extends React.Component {
 							this.props.replay.ticks.get(0) &&
 							this.props.replay.ticks.get(0).deckState &&
 							this.props.replay.ticks.get(0).deckState.size > 0
-						)
+						),
 					});
 					this.setState({ requestedData: true });
 				}
@@ -264,13 +264,13 @@ class ReplayWrapper extends React.Component {
 		};
 		const toggleChats = () => {
 			this.setState({
-				chatsShown: !this.state.chatsShown
+				chatsShown: !this.state.chatsShown,
 			});
 		};
 
 		const toggleHiddenInfo = () => {
 			this.setState({
-				hiddenInfoShown: !this.state.hiddenInfoShown
+				hiddenInfoShown: !this.state.hiddenInfoShown,
 			});
 		};
 
@@ -280,7 +280,7 @@ class ReplayWrapper extends React.Component {
 			}
 
 			this.setState({
-				deckShown: !this.state.deckShown && !this.state.legacyReplay
+				deckShown: !this.state.deckShown && !this.state.legacyReplay,
 			});
 		};
 
@@ -346,5 +346,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(ReplayWrapper);
 Replay.propTypes = {
 	allEmotes: PropTypes.object,
 	userInfo: PropTypes.object,
-	userList: PropTypes.object
+	userList: PropTypes.object,
 };

@@ -11,23 +11,31 @@ import { handleAEMMessages, getStaffRole, sendInProgressModDMUpdate } from '../u
 
 const io = global.io;
 
-export const handleOpenChat = (socket: Socket, data: { aemMember: string, userName: string }, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
+export const handleOpenChat = (
+	socket: Socket,
+	data: { aemMember: string; userName: string },
+	modUserNames: string[],
+	editorUserNames: string[],
+	adminUserNames: string[],
+) => {
 	const handshake = socket?.handshake as any;
 
 	if (!handshake?.session) return;
-	
+
 	const passport = handshake.session.passport;
 	if (!passport || data.aemMember !== passport.user) return;
 
-	const aemMember = userList.find(x => x.userName === data.aemMember);
+	const aemMember = userList.find((x) => x.userName === data.aemMember);
 	if (aemMember && aemMember.staff && aemMember.staff.incognito) {
 		socket.emit('sendAlert', 'You cannot start or join a chat while Incognito.');
 		return;
 	}
 
-	const dmReceiver = userList.find(x => x.userName === data.userName);
-	const modInDM = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(data.aemMember) !== -1);
-	const modInGame = Object.keys(games).find(x => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y: any) => y.userName === data.aemMember));
+	const dmReceiver = userList.find((x) => x.userName === data.userName);
+	const modInDM = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(data.aemMember) !== -1);
+	const modInGame = Object.keys(games).find(
+		(x) => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y: any) => y.userName === data.aemMember),
+	);
 
 	if (modInGame) {
 		socket.emit('sendAlert', 'You cannot start or join a chat while in-game.');
@@ -54,7 +62,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 			chat: 'has joined.',
 			userName: data.aemMember,
 			staffRole: getStaffRole(passport.user, modUserNames, editorUserNames, adminUserNames),
-			type: 'join'
+			type: 'join',
 		});
 
 		socket.emit('preOpenModDMs');
@@ -62,17 +70,15 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 		return sendInProgressModDMUpdate(dm, modUserNames, editorUserNames, adminUserNames);
 	}
 
-	const dmReceiverSocketID = Array.from(io.sockets.sockets.keys()).find(
-		socketId => {
-			const socket = io.sockets.sockets.get(socketId);
+	const dmReceiverSocketID = Array.from(io.sockets.sockets.keys()).find((socketId) => {
+		const socket = io.sockets.sockets.get(socketId);
 
-			if (!socket) return false;
+		if (!socket) return false;
 
-			const handshake = socket.handshake as any;
+		const handshake = socket.handshake as any;
 
-			return handshake?.session?.passport && handshake.session.passport.user === data.userName;
-		}
-	);
+		return handshake?.session?.passport && handshake.session.passport.user === data.userName;
+	});
 	const dmReceiverSocket = dmReceiverSocketID && io.sockets.sockets.get(dmReceiverSocketID);
 
 	if (!dmReceiver || !Object.keys(dmReceiver).length || dmReceiverSocketID == null || !dmReceiverSocket) {
@@ -81,12 +87,11 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 
 	const initMessage = {
 		date: new Date(),
-		chat:
-			"Every moderator can access this chat if they choose to. Please do not out confidential game information if you're currently playing with a moderator. If you prefer talking to a specific moderator one on one, feel free to DM one on Discord. ToU applies to this chat.",
+		chat: "Every moderator can access this chat if they choose to. Please do not out confidential game information if you're currently playing with a moderator. If you prefer talking to a specific moderator one on one, feel free to DM one on Discord. ToU applies to this chat.",
 		userName: '',
 		staffRole: 'moderator',
 		isBroadcast: true,
-		type: 'broadcast'
+		type: 'broadcast',
 	};
 
 	const dmInitializeData = {
@@ -97,7 +102,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 		startDate: new Date(),
 		subscribedPlayers: [data.userName, data.aemMember],
 		messages: [initMessage],
-		aemOnlyMessages: [initMessage]
+		aemOnlyMessages: [initMessage],
 	};
 
 	dmReceiverSocket.emit('preOpenModDMs');
@@ -109,7 +114,7 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 
 	const discordThreadNotifyBody = JSON.stringify({
 		// and post it to discord
-		content: `__**Mod DM Opened**__\n__Staff Member__: ${data.aemMember}\n__User__: ${dmReceiver.userName}`
+		content: `__**Mod DM Opened**__\n__Staff Member__: ${data.aemMember}\n__User__: ${dmReceiver.userName}`,
 	});
 	const discordThreadNotifOptions = {
 		hostname: 'discordapp.com',
@@ -117,8 +122,8 @@ export const handleOpenChat = (socket: Socket, data: { aemMember: string, userNa
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Content-Length': Buffer.byteLength(discordThreadNotifyBody)
-		}
+			'Content-Length': Buffer.byteLength(discordThreadNotifyBody),
+		},
 	};
 	try {
 		const threadReq = https.request(discordThreadNotifOptions);
@@ -132,7 +137,7 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: string[], 
 	// save, notify, etc
 	const passport = socket.handshake.session.passport;
 
-	const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
+	const dmID = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
 	if (dmID) {
 		const dm = modDMs[dmID];
 
@@ -143,23 +148,17 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: string[], 
 		) {
 			for (const user of dm.subscribedPlayers) {
 				try {
-					const sock =
-						io.sockets.sockets.get(
-							Array.from(io.sockets.sockets.keys()).find(
-								socketId => {
-									const s = io.sockets.sockets.get(socketId);
+					const sock = io.sockets.sockets.get(
+						Array.from(io.sockets.sockets.keys()).find((socketId) => {
+							const s = io.sockets.sockets.get(socketId);
 
-									if (!s) return false;
+							if (!s) return false;
 
-									const handshake = s.handshake as any;
+							const handshake = s.handshake as any;
 
-									return (
-										handshake?.session?.passport &&
-											handshake.session.passport.user === user
-									);
-								}
-							) || ''
-						);
+							return handshake?.session?.passport && handshake.session.passport.user === user;
+						}) || '',
+					);
 
 					if (!sock) continue;
 
@@ -179,7 +178,7 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: string[], 
 			const dmCloseMessage = `__**Mod DM Closed**__\n__Staff Member__: ${dm.aemMember}\n__User__: ${dm.username}\n__Start Date__: ${dm.startDate}\n__End Date__: ${dm.endDate}\n__Chat Log__: https://secrethitler.io/modThread?id=${dm._id}`;
 			const discordThreadNotifyBody = JSON.stringify({
 				// save and send to discord
-				content: dmCloseMessage
+				content: dmCloseMessage,
 			});
 			const discordThreadNotifOptions = {
 				hostname: 'discordapp.com',
@@ -187,8 +186,8 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: string[], 
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'Content-Length': Buffer.byteLength(discordThreadNotifyBody)
-				}
+					'Content-Length': Buffer.byteLength(discordThreadNotifyBody),
+				},
 			};
 			try {
 				const threadReq = https.request(discordThreadNotifOptions);
@@ -207,8 +206,8 @@ export const handleCloseChat = (socket: any, data: any, modUserNames: string[], 
 export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
 	const passport = socket.handshake.session.passport;
 
-	const dmID = Object.keys(modDMs).find(x => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
-	const dm = dmID !== undefined ? modDMs[dmID]: undefined;
+	const dmID = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(passport.user) !== -1);
+	const dm = dmID !== undefined ? modDMs[dmID] : undefined;
 
 	if (dm) {
 		dm.aemOnlyMessages.push({
@@ -217,7 +216,7 @@ export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: stri
 			chat: 'has left.',
 			userName: passport.user,
 			staffRole: getStaffRole(passport.user, modUserNames, editorUserNames, adminUserNames),
-			type: 'leave'
+			type: 'leave',
 		});
 
 		const idx = dm.subscribedPlayers.indexOf(passport.user);
@@ -231,8 +230,17 @@ export const handleUnsubscribeChat = (socket: any, data: any, modUserNames: stri
 	}
 };
 
-export const handleAddNewModDMChat = (socket: any, passport: any, data: { chat: any }, modUserNames: string[], editorUserNames: string[], adminUserNames: string[]) => {
-	const receivingPlayer = Object.keys(modDMs).find(x => modDMs[x].username === passport.user || modDMs[x].aemMember === socket.handshake.session.passport.user);
+export const handleAddNewModDMChat = (
+	socket: any,
+	passport: any,
+	data: { chat: any },
+	modUserNames: string[],
+	editorUserNames: string[],
+	adminUserNames: string[],
+) => {
+	const receivingPlayer = Object.keys(modDMs).find(
+		(x) => modDMs[x].username === passport.user || modDMs[x].aemMember === socket.handshake.session.passport.user,
+	);
 	if (receivingPlayer) {
 		// add a new chat and push it to AEM chat and player chat
 		const dm = modDMs[receivingPlayer];
@@ -242,7 +250,7 @@ export const handleAddNewModDMChat = (socket: any, passport: any, data: { chat: 
 			chat: data.chat,
 			userName: passport.user,
 			staffRole: getStaffRole(passport.user, modUserNames, editorUserNames, adminUserNames),
-			type: 'message'
+			type: 'message',
 		};
 
 		dm.messages.push(newMessage);

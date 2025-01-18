@@ -9,7 +9,7 @@ describe('Tracks', () => {
 			minutes: 0,
 			seconds: 0,
 			timedMode: false,
-			showTimer: false
+			showTimer: false,
 		};
 
 		const component = shallow(<Tracks gameInfo={{ general: {}, publicPlayersState: [], cardFlingerState: [], trackState: {}, gameState: {} }} />);

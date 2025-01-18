@@ -27,25 +27,25 @@ export default function buildEnhancedGameSummary(_summary: any) {
 			'investigationClaim',
 			'specialElection',
 			'execution',
-			'assassination'
+			'assassination',
 		];
 
 		return key === 'logs'
 			? value
 					.map((log: any) => {
 						const logOptions = Map(
-							options.map(o => {
+							options.map((o) => {
 								const optValue = log[o] !== undefined && log[o].size !== 0 && log[o].length !== 0 ? some(log[o]) : none;
 								// filter out 0-length arrays/lists in addition to undefined values
 								return [o, optValue];
-							})
+							}),
 						).toObject();
 						return Object.assign({}, log, logOptions);
 					})
 					.toList()
 			: isIndexed(value)
-			? value.toList()
-			: value.toObject();
+				? value.toList()
+				: value.toObject();
 	});
 
 	// String
@@ -62,14 +62,14 @@ export default function buildEnhancedGameSummary(_summary: any) {
 			merlin: 'liberal',
 			morgana: 'fascist',
 			fascist: 'fascist',
-			hitler: 'fascist'
+			hitler: 'fascist',
 		});
 
 		return summary.players.map((p: any, i: number) => {
 			return Object.assign({}, p, {
 				id: i,
 				loyalty: roleToLoyalty.get(p.role),
-				icon: p.icon
+				icon: p.icon,
 			});
 		});
 	})();
@@ -115,7 +115,7 @@ export default function buildEnhancedGameSummary(_summary: any) {
 
 	// Option[Int]
 	const hitlerZone = (() => {
-		const i = turns.findIndex(t => t.beforeTrack.reds === 3);
+		const i = turns.findIndex((t) => t.beforeTrack.reds === 3);
 		return i > -1 ? some(i) : none;
 	})();
 
@@ -153,20 +153,20 @@ export default function buildEnhancedGameSummary(_summary: any) {
 	const votesOf = (username: any) => {
 		return indexOf(username).map((i: any) =>
 			turns
-				.filter(t => t.votes.get(i))
-				.map(t => {
+				.filter((t) => t.votes.get(i))
+				.map((t) => {
 					return t.votes.get(i).map((v: any) => ({
 						ja: v,
 						presidentId: t.presidentId,
-						chancellorId: t.chancellorId
+						chancellorId: t.chancellorId,
 					}));
-				})
+				}),
 		);
 	};
 
 	// Option[List[Int]]
 	const shotsOf = (username: any) => {
-		return indexOf(username).map((i: any) => turns.filter(t => t.presidentId === i && t.execution.isSome()).map(t => t.execution.value()));
+		return indexOf(username).map((i: any) => turns.filter((t) => t.presidentId === i && t.execution.isSome()).map((t) => t.execution.value()));
 	};
 
 	// Option[Boolean]
@@ -194,6 +194,6 @@ export default function buildEnhancedGameSummary(_summary: any) {
 		roleOf,
 		votesOf,
 		shotsOf,
-		isWinner
+		isWinner,
 	};
 }

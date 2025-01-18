@@ -16,7 +16,7 @@ import { checkStartConditions } from './leave-game.ts'; // this used to be a sep
  * @param {object} passport - socket authentication.
  * @param {object} data - from socket emit.
  */
-export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: string, password?: string }) => {
+export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: string; password?: string }) => {
 	// Authentication Assured in routes.ts
 	// In-game Assured in routes.ts
 	const game: ActiveGame = games[data.uid];
@@ -30,7 +30,7 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 
 	if (!isBlacklistSafe) {
 		socket.emit('gameJoinStatusUpdate', {
-			status: 'blacklisted'
+			status: 'blacklisted',
 		});
 		return;
 	}
@@ -42,7 +42,10 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 		const isPrivateSafe =
 			!game.general.private ||
 			(game.general.private && (data.password === game.private?.privatePassword || game.general.whitelistedPlayers.includes(passport.user)));
-		const isMeetingEloMinimum = !game.general.eloMinimum || (account?.seasons && game.general.eloMinimum <= (account.seasons.get(CURRENT_SEASON_NUMBER.toString())?.elo || 1600)) || game.general.eloMinimum <= (account?.overall?.elo || 1600);
+		const isMeetingEloMinimum =
+			!game.general.eloMinimum ||
+			(account?.seasons && game.general.eloMinimum <= (account.seasons.get(CURRENT_SEASON_NUMBER.toString())?.elo || 1600)) ||
+			game.general.eloMinimum <= (account?.overall?.elo || 1600);
 		const isMeetingXPMinimum = !game.general.xpMinimum || game.general.xpMinimum <= (account?.overall?.xp || 0);
 
 		if ((account?.overall?.wins || 0) + (account?.overall?.losses || 0) < 3 && limitNewPlayers.status && !game.general.private) {
@@ -65,8 +68,8 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 					cardDisplayed: false,
 					isFlipped: false,
 					cardFront: 'secretrole',
-					cardBack: {}
-				}
+					cardBack: {},
+				},
 			};
 
 			if (game.general.isTourny) {
@@ -82,19 +85,19 @@ export const updateSeatedUser = (socket: Socket, passport: any, data: { uid: str
 				if (!game.chats) {
 					game.chats = [];
 				}
-	
+
 				game.chats.push({
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
 						{
 							text: `${passport.user}`,
-							type: 'player'
+							type: 'player',
 						},
 						{
-							text: ` (${game.general.tournyInfo.queuedPlayers.length}/${game.general.maxPlayersCount}) has entered the tournament queue.`
-						}
-					]
+							text: ` (${game.general.tournyInfo.queuedPlayers.length}/${game.general.maxPlayersCount}) has entered the tournament queue.`,
+						},
+					],
 				});
 			} else {
 				publicPlayersState.unshift(player);

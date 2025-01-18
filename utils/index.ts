@@ -48,7 +48,7 @@ export const handDiff = (handX: any, handY: any) => {
 		if (handY.hasOwnProperty('reds') && handY.hasOwnProperty('blues')) {
 			return {
 				reds: handX.reds - handY.reds,
-				blues: handX.blues - handY.blues
+				blues: handX.blues - handY.blues,
 			};
 		}
 
@@ -79,7 +79,7 @@ export const handDiff = (handX: any, handY: any) => {
 
 // expects hand to contain only a single card
 // (hand: Hand) => Policy
-export const handToPolicy = (hand: any) =>  {
+export const handToPolicy = (hand: any) => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		if (hand.reds > 0 && hand.blues > 0) {
 			throw new Error('Expected hand to contain only a single card');
@@ -92,11 +92,11 @@ export const handToPolicy = (hand: any) =>  {
 
 // consistently ordered 'fascist' first, followed by 'liberal'
 // (hand: Hand) => List[Policy]
-export const handToPolicies = (hand: any) =>  {
+export const handToPolicies = (hand: any) => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		const toPolicies = (count: number, type: any) => {
 			return Range(0, count)
-				.map(i => type)
+				.map((i) => type)
 				.toList();
 		};
 
@@ -142,7 +142,7 @@ export const policyToString = (policy: any, userInfo: any) => {
 export const text = (type: any, text: any, space?: any, comma?: any) => ({ type, text, space, comma });
 
 // (hand: Hand) => String ('R*B*')
-export const handToText = (hand:any, userInfo: any) => {
+export const handToText = (hand: any, userInfo: any) => {
 	if (handToPolicies(hand).size === 0) {
 		return [];
 	}

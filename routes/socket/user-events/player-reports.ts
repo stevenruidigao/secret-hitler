@@ -11,9 +11,13 @@ import { userList, games } from '../models.ts';
  * @param {object} callback - response function.
  */
 export const handlePlayerReport = (passport: any, data: any, callback: Function) => {
-	const user = userList.find(u => u.userName === passport.user);
+	const user = userList.find((u) => u.userName === passport.user);
 
-	if (data.userName !== 'from replay' && (!user || (user.overall.wins + user.overall.losses < 2 && !user.isRainbowOverall)) && process.env.NODE_ENV === 'production') {
+	if (
+		data.userName !== 'from replay' &&
+		(!user || (user.overall.wins + user.overall.losses < 2 && !user.isRainbowOverall)) &&
+		process.env.NODE_ENV === 'production'
+	) {
 		return;
 	}
 
@@ -62,7 +66,7 @@ export const handlePlayerReport = (passport: any, data: any, callback: Function)
 		reason: reason,
 		gameType,
 		comment: data.comment,
-		isActive: true
+		isActive: true,
 	});
 
 	const blindModeAnonymizedPlayer =
@@ -72,7 +76,7 @@ export const handlePlayerReport = (passport: any, data: any, callback: Function)
 		content: `${
 			data.uid ? `Game UID: <https://secrethitler.io/game/#/table/${data.uid}> (${playerReport.gameType})` : 'Report from homepage'
 		}\nReported player: ${blindModeAnonymizedPlayer}\nReason: ${playerReport.reason}\nComment: ${httpEscapedComment}`,
-		allowed_mentions: { parse: [] }
+		allowed_mentions: { parse: [] },
 	});
 
 	const options = {
@@ -81,8 +85,8 @@ export const handlePlayerReport = (passport: any, data: any, callback: Function)
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Content-Length': Buffer.byteLength(body)
-		}
+			'Content-Length': Buffer.byteLength(body),
+		},
 	};
 
 	if (game) {

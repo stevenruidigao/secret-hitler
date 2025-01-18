@@ -17,7 +17,7 @@ const ModAction = new Schema<IModAction>({
 	ip: String,
 	userActedOn: String,
 	modNotes: String,
-	actionTaken: String
+	actionTaken: String,
 });
 
 export default mongoose.model<IModAction>('ModAction', ModAction);

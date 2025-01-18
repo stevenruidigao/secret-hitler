@@ -62,13 +62,13 @@ export default () => {
 	};
 
 	fetch('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=1.1.1.1')
-		.then(res => res.text())
-		.then(text => {
+		.then((res) => res.text())
+		.then((text) => {
 			const gatheredTorIps = text.split('\n').slice(3);
 
 			accounts(gatheredTorIps);
 		})
-		.catch(e => {
+		.catch((e) => {
 			console.log('error in getting tor ips', e);
 			accounts(savedTorIps);
 			console.log('Using Cached TOR IPs');
@@ -126,20 +126,8 @@ export default () => {
 
 	const getHSLcolors = (hsl: string) => [
 		parseInt(hsl.split(',')[0].split('hsl(')[1], 10),
-		parseInt(
-			hsl
-				.split(',')[1]
-				.trim()
-				.split('%')[0],
-			10
-		),
-		parseInt(
-			hsl
-				.split(',')[2]
-				.trim()
-				.split('%)')[0],
-			10
-		)
+		parseInt(hsl.split(',')[1].trim().split('%')[0], 10),
+		parseInt(hsl.split(',')[2].trim().split('%)')[0], 10),
 	];
 
 	app.get('/game/', ensureAuthenticated, (req: any, res) => {
@@ -216,7 +204,7 @@ export default () => {
 					}%)`,
 					textColor,
 					secondaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 7 : textLightness + 7}%)`,
-					tertiaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 14 : textLightness + 14}%)`
+					tertiaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 14 : textLightness + 14}%)`,
 				};
 
 				if (process.env.NODE_ENV === 'production') {
@@ -232,7 +220,7 @@ export default () => {
 				) {
 					account.ipHistory.push({
 						date: new Date(),
-						ip: ip
+						ip: ip,
 					});
 				}
 
@@ -285,7 +273,7 @@ export default () => {
 			tertiaryBackgroundColor,
 			textColor,
 			secondaryTextColor,
-			tertiaryTextColor
+			tertiaryTextColor,
 		};
 
 		if (process.env.NODE_ENV === 'production') {
@@ -317,12 +305,12 @@ export default () => {
 				} else {
 					const noData = {
 						events: 0,
-						successes: 0
+						successes: 0,
 					};
 
 					const noTeamData = {
 						fascist: noData,
-						liberal: noData
+						liberal: noData,
 					};
 
 					const noPlayerNumberData = {
@@ -333,7 +321,7 @@ export default () => {
 						9: noTeamData,
 						10: noTeamData,
 						fascist: noData,
-						liberal: noData
+						liberal: noData,
 					};
 
 					_profile = {
@@ -344,7 +332,7 @@ export default () => {
 								legacyShotAccuracy: noData,
 								legacyVoteAccuracy: noData,
 								shotAccuracy: noData,
-								voteAccuracy: noData
+								voteAccuracy: noData,
 							},
 							matches: {
 								allMatches: noData,
@@ -356,9 +344,9 @@ export default () => {
 								liberal: noData,
 								practiceMatches: noTeamData,
 								rainbowMatches: noPlayerNumberData,
-								silentMatches: noTeamData
-							}
-						}
+								silentMatches: noTeamData,
+							},
+						},
 					};
 				}
 
@@ -372,8 +360,8 @@ export default () => {
 				_profile.pastElo = account?.gameSettings?.staff?.disableVisibleElo
 					? undefined
 					: (account.pastElo as any).toObject().length
-					? (account.pastElo as any).toObject()
-					: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
+						? (account.pastElo as any).toObject()
+						: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
 
 				_profile.overall = account.overall;
 
@@ -383,7 +371,7 @@ export default () => {
 					rainbowWins: 0,
 					rainbowLosses: 0,
 					elo: 1600,
-					xp: 0
+					xp: 0,
 				};
 
 				_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) || defaultSeason : defaultSeason;
@@ -408,7 +396,7 @@ export default () => {
 				_profile.staff.disableVisibleElo = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo;
 				_profile.playerPronouns = account?.gameSettings?.playerPronouns || '';
 
-				Account.findOne({ username: authedUser }).then(acc => {
+				Account.findOne({ username: authedUser }).then((acc) => {
 					if (acc && account.username === acc.username) {
 						if (!acc.gameSettings) {
 							acc.gameSettings = {};
@@ -485,15 +473,9 @@ export default () => {
 
 		const username = req.session.passport.user;
 
-		const mangle = (chat: string) =>
-			chat
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;')
-				.replace(/'/g, '&#39;');
+		const mangle = (chat: string) => chat.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-		Account.findOne({ username }).then(account => {
+		Account.findOne({ username }).then((account) => {
 			if (
 				account &&
 				(account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')
@@ -509,7 +491,7 @@ export default () => {
 
 							for (const message of dm.messages) {
 								chatLog.push(
-									`${message.userName}${message.userName ? (message.type === 'leave' || message.type === 'join' ? ' ' : ': ') : ''}${mangle(message.chat)}`
+									`${message.userName}${message.userName ? (message.type === 'leave' || message.type === 'join' ? ' ' : ': ') : ''}${mangle(message.chat)}`,
 								);
 							}
 
@@ -532,7 +514,7 @@ export default () => {
 
 		const username = req.session.passport.user;
 
-		Account.findOne({ username }).then(account => {
+		Account.findOne({ username }).then((account) => {
 			if (
 				account &&
 				(account.staffRole === 'moderator' || account.staffRole === 'editor' || account.staffRole === 'admin' || account.staffRole === 'trialmod')
@@ -540,7 +522,7 @@ export default () => {
 				Game.findOne({ uid: id })
 					.lean()
 					.exec()
-					.then(game => {
+					.then((game) => {
 						if (!game) {
 							res.status(404).send('Game not found');
 						} else {
@@ -557,7 +539,7 @@ export default () => {
 
 	app.get('/online-playercount', (req, res) => {
 		res.json({
-			count: userList.length
+			count: userList.length,
 		});
 	});
 
@@ -578,10 +560,10 @@ export default () => {
 			const username = req.session.passport.user;
 
 			Account.findOne({ username })
-				.then(account => {
+				.then((account) => {
 					if (!account || !account.isRainbowOverall) {
 						res.json({
-							message: 'You need to be rainbow to upload a cardback.'
+							message: 'You need to be rainbow to upload a cardback.',
 						});
 
 						return;
@@ -599,7 +581,7 @@ export default () => {
 						Date.now() - new Date(account.gameSettings.customCardback.saveTime).getTime() < 30000
 					) {
 						res.json({
-							message: 'You can only change your cardback once every 30 seconds.'
+							message: 'You can only change your cardback once every 30 seconds.',
 						});
 					} else {
 						processImage(username, raw, (resp: any, err: Error) => {
@@ -607,7 +589,7 @@ export default () => {
 						});
 					}
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.log(err, 'account err in cardbacks');
 				});
 		} catch (err) {

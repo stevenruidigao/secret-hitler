@@ -15,9 +15,9 @@ import { getBlacklistIndex, userInBlacklist } from '../../../../utils/index.ts';
 import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	// updateActiveStats: activeStat => dispatch(updateActiveStats(activeStat)),
-	fetchReplay: gameId => dispatch(fetchReplay(gameId))
+	fetchReplay: (gameId) => dispatch(fetchReplay(gameId)),
 });
 
 class ProfileWrapper extends React.Component {
@@ -29,7 +29,7 @@ class ProfileWrapper extends React.Component {
 			blacklistClicked: false,
 			openTime: Date.now(),
 			badgeSort: 'badge',
-			profileSearchValue: ''
+			profileSearchValue: '',
 		};
 	}
 
@@ -67,7 +67,7 @@ class ProfileWrapper extends React.Component {
 		return [
 			[name, libGames + fasGames, this.successRate(libGames + fasGames, libWins + fasWins)],
 			[name + ' (Liberal)', libGames, this.successRate(libGames, libWins)],
-			[name + ' (Fascist)', fasGames, this.successRate(fasGames, fasWins)]
+			[name + ' (Fascist)', fasGames, this.successRate(fasGames, fasWins)],
 		];
 	}
 
@@ -79,13 +79,13 @@ class ProfileWrapper extends React.Component {
 					[
 						'Elo',
 						this.props.profile.staff && this.props.profile.staff.disableVisibleElo ? '---' : this.props.profile.season.elo || 1600,
-						this.props.profile.staff && this.props.profile.staff.disableVisibleElo ? '---' : this.props.profile.overall.elo || 1600
+						this.props.profile.staff && this.props.profile.staff.disableVisibleElo ? '---' : this.props.profile.overall.elo || 1600,
 					],
 					[
 						'XP',
 						this.props.profile.staff && this.props.profile.staff.disableVisibleXP ? '---' : this.props.profile.season.xp || 0,
-						this.props.profile.staff && this.props.profile.staff.disableVisibleXP ? '---' : this.props.profile.overall.xp || 0
-					]
+						this.props.profile.staff && this.props.profile.staff.disableVisibleXP ? '---' : this.props.profile.overall.xp || 0,
+					],
 				]}
 			/>
 		);
@@ -117,7 +117,7 @@ class ProfileWrapper extends React.Component {
 							matches.rainbowMatches.fascist.successes +
 								matches.greyMatches.fascist.successes +
 								matches.practiceMatches.fascist.successes +
-								matches.silentMatches.fascist.successes
+								matches.silentMatches.fascist.successes,
 						)}
 					/>
 				</CollapsibleSegment>
@@ -131,28 +131,28 @@ class ProfileWrapper extends React.Component {
 								matches.rainbowMatches.liberal.events + matches.greyMatches.liberal.events,
 								matches.rainbowMatches.liberal.successes + matches.greyMatches.liberal.successes,
 								matches.rainbowMatches.fascist.events + matches.greyMatches.fascist.events,
-								matches.rainbowMatches.fascist.successes + matches.greyMatches.fascist.successes
+								matches.rainbowMatches.fascist.successes + matches.greyMatches.fascist.successes,
 							),
 							this.successRowMatches(
 								'Rainbow Matches',
 								matches.rainbowMatches.liberal.events,
 								matches.rainbowMatches.liberal.successes,
 								matches.rainbowMatches.fascist.events,
-								matches.rainbowMatches.fascist.successes
+								matches.rainbowMatches.fascist.successes,
 							),
 							this.successRowMatches(
 								'Non-Rainbow Matches',
 								matches.greyMatches.liberal.events,
 								matches.greyMatches.liberal.successes,
 								matches.greyMatches.fascist.events,
-								matches.greyMatches.fascist.successes
-							)
+								matches.greyMatches.fascist.successes,
+							),
 						]}
 					/>
 				</CollapsibleSegment>
 				{Object.entries({
 					practiceMatches: 'Practice Matches',
-					silentMatches: 'Silent Matches'
+					silentMatches: 'Silent Matches',
 					// casualMatches: 'Casual Matches',
 					// customMatches: 'Custom Matches',
 					// emoteMatches: 'Emote Matches'
@@ -162,12 +162,12 @@ class ProfileWrapper extends React.Component {
 							uiTable="top attached four column"
 							headers={['Match Type', 'Matches', 'Liberal Winrate', 'Fascist Winrate']}
 							rows={[
-								this.successRowMatches(v, matches[k].liberal.events, matches[k].liberal.successes, matches[k].fascist.events, matches[k].fascist.successes)
+								this.successRowMatches(v, matches[k].liberal.events, matches[k].liberal.successes, matches[k].fascist.events, matches[k].fascist.successes),
 							]}
 						/>
 					</CollapsibleSegment>
 				))}
-				{['5', '6', '7', '8', '9', '10'].map(n => (
+				{['5', '6', '7', '8', '9', '10'].map((n) => (
 					<CollapsibleSegment title={`${n} Player Matches`} key={n}>
 						<Table
 							uiTable="top attached four column"
@@ -178,22 +178,22 @@ class ProfileWrapper extends React.Component {
 									matches.greyMatches[n].liberal.events + matches.rainbowMatches[n].liberal.events,
 									matches.greyMatches[n].liberal.successes + matches.rainbowMatches[n].liberal.successes,
 									matches.greyMatches[n].fascist.events + matches.rainbowMatches[n].fascist.events,
-									matches.greyMatches[n].fascist.successes + matches.rainbowMatches[n].fascist.successes
+									matches.greyMatches[n].fascist.successes + matches.rainbowMatches[n].fascist.successes,
 								),
 								this.successRowMatches(
 									`Rainbow ${n}p`,
 									matches.rainbowMatches[n].liberal.events,
 									matches.rainbowMatches[n].liberal.successes,
 									matches.rainbowMatches[n].fascist.events,
-									matches.rainbowMatches[n].fascist.successes
+									matches.rainbowMatches[n].fascist.successes,
 								),
 								this.successRowMatches(
 									`Non-Rainbow ${n}p`,
 									matches.greyMatches[n].liberal.events,
 									matches.greyMatches[n].liberal.successes,
 									matches.greyMatches[n].fascist.events,
-									matches.greyMatches[n].fascist.successes
-								)
+									matches.greyMatches[n].fascist.successes,
+								),
 							]}
 						/>
 					</CollapsibleSegment>
@@ -210,7 +210,7 @@ class ProfileWrapper extends React.Component {
 				headers={['Action', 'Instances', 'Success Rate']}
 				rows={[
 					this.successRow('Vote Accuracy', actions.voteAccuracy.events, actions.voteAccuracy.successes),
-					this.successRow('Shot Accuracy', actions.shotAccuracy.events, actions.shotAccuracy.successes)
+					this.successRow('Shot Accuracy', actions.shotAccuracy.events, actions.shotAccuracy.successes),
 				]}
 			/>
 		);
@@ -218,7 +218,7 @@ class ProfileWrapper extends React.Component {
 
 	Badges() {
 		const { badges } = this.props.profile;
-		const changeSort = sort => this.setState({ badgeSort: sort });
+		const changeSort = (sort) => this.setState({ badgeSort: sort });
 		const compare = (a, b) => (a === b ? 0 : a > b ? 1 : -1);
 		const compareID = (a, b) => {
 			const aNum = parseInt(a.match(/\d+$/));
@@ -232,7 +232,7 @@ class ProfileWrapper extends React.Component {
 
 		let badgesToSort = _.clone(badges);
 		badgesToSort = badgesToSort.sort((a, b) =>
-			this.state.badgeSort === 'badge' ? compareID(a.id, b.id) : compare(new Date(a.dateAwarded), new Date(b.dateAwarded)) || compareID(a.id, b.id)
+			this.state.badgeSort === 'badge' ? compareID(a.id, b.id) : compare(new Date(a.dateAwarded), new Date(b.dateAwarded)) || compareID(a.id, b.id),
 		);
 
 		return (
@@ -245,13 +245,13 @@ class ProfileWrapper extends React.Component {
 					}}
 					options={[
 						{ key: 0, text: 'Badge', value: 'badge' },
-						{ key: 1, text: 'Date earned', value: 'date' }
+						{ key: 1, text: 'Date earned', value: 'date' },
 					]}
 					style={{ right: '0', left: 'auto', position: 'absolute' }}
 				/>
 				<br />
 				<br />
-				{badgesToSort.map(x => (
+				{badgesToSort.map((x) => (
 					<React.Fragment key={x.id}>
 						<img
 							style={{ padding: '2px', display: 'inline', cursor: 'pointer' }}
@@ -263,7 +263,7 @@ class ProfileWrapper extends React.Component {
 									title: x.title,
 									text: `${x.text || ''} Earned: ${dayjs(x.dateAwarded).format('MM/DD/YYYY HH:mm')}.`,
 									imageUrl: `../images/badges/${x.id.startsWith('eloReset') ? 'eloReset' : x.id}.png`,
-									imageWidth: 100
+									imageWidth: 100,
 								})
 							}
 						/>
@@ -313,16 +313,16 @@ class ProfileWrapper extends React.Component {
 
 	RecentGames() {
 		const { recentGames } = this.props.profile;
-		const rows = recentGames.map(game => ({
-			onClick: e => {
+		const rows = recentGames.map((game) => ({
+			onClick: (e) => {
 				window.location.hash = `/replay/${game._id}`;
 			},
 			cells: [
 				game.loyalty === 'liberal' ? 'Liberal' : 'Fascist',
 				game.isRebalanced ? game.playerSize + 'R' : game.playerSize,
 				game.isWinner ? 'Win' : 'Loss',
-				this.formatDateString(game.date)
-			]
+				this.formatDateString(game.date),
+			],
 		}));
 
 		return (
@@ -345,13 +345,13 @@ class ProfileWrapper extends React.Component {
 		const { userInfo, profile } = this.props;
 		const editClick = () => {
 			this.setState({
-				bioStatus: this.state.bioStatus === 'editing' ? 'displayed' : 'editing'
+				bioStatus: this.state.bioStatus === 'editing' ? 'displayed' : 'editing',
 			});
 		};
-		const bioChange = e => {
+		const bioChange = (e) => {
 			this.setState({ bioValue: `${e.target.value}` });
 		};
-		const bioKeyDown = e => {
+		const bioKeyDown = (e) => {
 			if (e.keyCode === 13) {
 				this.props.socket.emit('updateBio', this.state.bioValue);
 				this.setState({ bioStatus: 'displayed' });
@@ -380,21 +380,21 @@ class ProfileWrapper extends React.Component {
 							title={replayURL ? 'Link to a SH.io replay' : 'Link to something inside of SH.io'}
 						>
 							{replayURL ? data[2].substring(7) : data[2]}
-						</a>
+						</a>,
 					);
 				} else if (/^https:\/\//i.test(word)) {
 					formattedBio.push(
 						<a key={index} href={word} title="External link" target="_blank" rel="nofollow noreferrer noopener">
 							{word.split('https://')[1]}
 						</a>,
-						' '
+						' ',
 					);
 				} else if (/^http:\/\//i.test(word)) {
 					formattedBio.push(
 						<a key={index} href={word} title="External link" target="_blank" rel="nofollow noreferrer noopener">
 							{word.split('http://')[1]}
 						</a>,
-						' '
+						' ',
 					);
 				} else {
 					formattedBio.push(word, ' ');
@@ -446,7 +446,7 @@ class ProfileWrapper extends React.Component {
 		$(this.blacklistModal).modal('show');
 	};
 
-	profileSearchSubmit = e => {
+	profileSearchSubmit = (e) => {
 		e.preventDefault();
 
 		window.location.hash = `#/profile/${this.state.profileSearchValue}`;
@@ -454,7 +454,7 @@ class ProfileWrapper extends React.Component {
 
 	Profile() {
 		const { gameSettings, profile, userInfo, userList } = this.props;
-		const user = userList.list ? userList.list.find(u => u.userName == profile._id) : null;
+		const user = userList.list ? userList.list.find((u) => u.userName == profile._id) : null;
 		// const w =
 		// 	gameSettings && gameSettings.disableSeasonal
 		// 		? this.state.userListFilter === 'all'
@@ -479,8 +479,8 @@ class ProfileWrapper extends React.Component {
 							PLAYER_COLORS(user, !(gameSettings && gameSettings.disableSeasonal), 'profile-picture', gameSettings && gameSettings.disableElo),
 							{ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) },
 							{ unclickable: !this.props.isUserClickable },
-							{ clickable: this.props.isUserClickable }
-					  )
+							{ clickable: this.props.isUserClickable },
+						)
 					: cn({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'profile-picture');
 		}
 
@@ -496,11 +496,11 @@ class ProfileWrapper extends React.Component {
 			prefix = staffRolePrefixes[userAdminRole];
 		}
 
-		const routeToGame = gameId => {
+		const routeToGame = (gameId) => {
 			window.location = `#/table/${gameId}`;
 		};
 
-		const fetchReplay = gameId => {
+		const fetchReplay = (gameId) => {
 			window.location = `#/replay/${gameId}`;
 		};
 
@@ -518,28 +518,28 @@ class ProfileWrapper extends React.Component {
 					{ rainbow: status.type === 'rainbow' },
 					{ record: status.type === 'replay' },
 					{ private: status.type === 'private' },
-					'icon'
+					'icon',
 				);
 				const title = {
 					playing: 'This player is playing in a standard game.',
 					observing: 'This player is observing a game.',
 					rainbow: 'This player is playing in a experienced-player-only game.',
 					replay: 'This player is watching a replay.',
-					private: 'This player is playing in a private game.'
+					private: 'This player is playing in a private game.',
 				};
 				const onClick = {
 					playing: routeToGame,
 					observing: routeToGame,
 					rainbow: routeToGame,
 					replay: fetchReplay,
-					private: routeToGame
+					private: routeToGame,
 				};
 
 				return <i title={title[status.type]} className={iconClasses} onClick={onClick[status.type].bind(this, status.gameId)} />;
 			}
 		};
 
-		const handleSearchProfileChange = e => {
+		const handleSearchProfileChange = (e) => {
 			this.setState({ profileSearchValue: e.currentTarget.value });
 		};
 
@@ -550,7 +550,7 @@ class ProfileWrapper extends React.Component {
 					<div
 						className={userClasses}
 						style={{
-							backgroundImage: `url(../images/custom-cardbacks/${profile._id}.${profile.customCardback.fileExtension}?${this.state.openTime})`
+							backgroundImage: `url(../images/custom-cardbacks/${profile._id}.${profile.customCardback.fileExtension}?${this.state.openTime})`,
 						}}
 					/>
 				)}
@@ -638,24 +638,24 @@ class ProfileWrapper extends React.Component {
 
 		const blacklist = profile._id !== this.props?.userInfo?.userName ? this.props?.profile?.blacklist : this.props?.userInfo?.gameSettings?.blacklist;
 
-		const getTimestamp = ts => {
+		const getTimestamp = (ts) => {
 			const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s);
 			const d = new Date(ts);
 			return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 		};
 
-		const getBlackListInfo = element => {
+		const getBlackListInfo = (element) => {
 			if (typeof element === 'string') {
 				return {
 					username: element,
 					timestamp: null,
-					reason: null
+					reason: null,
 				};
 			} else {
 				return {
 					username: element.userName,
 					timestamp: getTimestamp(element.timestamp),
-					reason: element.reason
+					reason: element.reason,
 				};
 			}
 		};
@@ -680,7 +680,7 @@ class ProfileWrapper extends React.Component {
 				{children}
 				<div
 					className="ui basic modal blacklistmodal"
-					ref={c => {
+					ref={(c) => {
 						this.blacklistModal = c;
 					}}
 				>
@@ -696,7 +696,7 @@ class ProfileWrapper extends React.Component {
 								</tr>
 							</thead>
 							<tbody>
-								{blacklist.map(playerName => {
+								{blacklist.map((playerName) => {
 									const userName = playerName?.userName || playerName;
 									const blacklistInfo = getBlackListInfo(playerName);
 									return (
@@ -738,7 +738,7 @@ class ProfileWrapper extends React.Component {
 ProfileWrapper.defaultProps = {
 	userInfo: {},
 	userList: { list: [] },
-	socket: {}
+	socket: {},
 };
 
 ProfileWrapper.propTypes = {
@@ -748,7 +748,7 @@ ProfileWrapper.propTypes = {
 	profile: PropTypes.object,
 	updateActiveStats: PropTypes.func,
 	gameSettings: PropTypes.object,
-	isUserClickable: PropTypes.bool
+	isUserClickable: PropTypes.bool,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileWrapper);

@@ -8,8 +8,8 @@ let count = 0;
 
 Account.find({ 'gameSettings.blacklist.0': { $exists: true } })
 	.cursor()
-	.eachAsync(account => {
-		account.gameSettings.blacklist = account.gameSettings.blacklist.map(userName => ({ userName }));
+	.eachAsync((account) => {
+		account.gameSettings.blacklist = account.gameSettings.blacklist.map((userName) => ({ userName }));
 		account.save();
 
 		count++;

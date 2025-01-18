@@ -5,7 +5,7 @@ export default {
 		rebalance6p: false,
 		rebalance7p: false,
 		rebalance9p: false,
-		rerebalance9p: false
+		rerebalance9p: false,
 	},
 	logs: [
 		// turn 0
@@ -15,13 +15,13 @@ export default {
 			enactedPolicy: 'fascist',
 			chancellorHand: {
 				reds: 1,
-				blues: 1
+				blues: 1,
 			},
 			presidentHand: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 1
 		{
@@ -30,13 +30,13 @@ export default {
 			enactedPolicy: 'fascist',
 			chancellorHand: {
 				reds: 1,
-				blues: 1
+				blues: 1,
 			},
 			presidentHand: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 2
 		{
@@ -45,17 +45,17 @@ export default {
 			enactedPolicy: 'fascist',
 			policyPeek: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
 			chancellorHand: {
 				reds: 2,
-				blues: 0
+				blues: 0,
 			},
 			presidentHand: {
 				reds: 3,
-				blues: 0
+				blues: 0,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 3
 		{
@@ -65,13 +65,13 @@ export default {
 			execution: 4,
 			chancellorHand: {
 				reds: 2,
-				blues: 0
+				blues: 0,
 			},
 			presidentHand: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 4
 		{
@@ -81,13 +81,13 @@ export default {
 			execution: 1,
 			chancellorHand: {
 				reds: 2,
-				blues: 0
+				blues: 0,
 			},
 			presidentHand: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 5
 		{
@@ -98,13 +98,13 @@ export default {
 			enactedPolicy: 'liberal',
 			chancellorHand: {
 				reds: 1,
-				blues: 1
+				blues: 1,
 			},
 			presidentHand: {
 				reds: 1,
-				blues: 2
+				blues: 2,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 6
 		{
@@ -114,25 +114,25 @@ export default {
 			enactedPolicy: 'liberal',
 			chancellorHand: {
 				reds: 1,
-				blues: 1
+				blues: 1,
 			},
 			presidentHand: {
 				reds: 1,
-				blues: 2
+				blues: 2,
 			},
-			votes: [true, true, true, true, true]
+			votes: [true, true, true, true, true],
 		},
 		// turn 7
 		{
 			presidentId: 0,
 			chancellorId: 3,
-			votes: [false, true, false, false, true]
+			votes: [false, true, false, false, true],
 		},
 		// turn 8
 		{
 			presidentId: 2,
 			chancellorId: 3,
-			votes: [false, true, false, false, true]
+			votes: [false, true, false, false, true],
 		},
 		// turn 9
 		{
@@ -143,36 +143,36 @@ export default {
 			enactedPolicy: 'fascist',
 			chancellorHand: {
 				reds: 1,
-				blues: 1
+				blues: 1,
 			},
 			presidentHand: {
 				reds: 2,
-				blues: 1
+				blues: 1,
 			},
-			votes: [true, true, true, true, true]
-		}
+			votes: [true, true, true, true, true],
+		},
 	],
 	players: [
 		{
 			username: 'Malfurian',
-			role: 'liberal'
+			role: 'liberal',
 		},
 		{
 			username: 'Jaina',
-			role: 'liberal'
+			role: 'liberal',
 		},
 		{
 			username: 'Uther',
-			role: 'fascist'
+			role: 'fascist',
 		},
 		{
 			username: 'Rexxar',
-			role: 'hitler'
+			role: 'hitler',
 		},
 		{
 			username: 'Thrall',
-			role: 'liberal'
-		}
+			role: 'liberal',
+		},
 	],
-	__v: 0
+	__v: 0,
 };

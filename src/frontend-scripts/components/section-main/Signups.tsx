@@ -15,7 +15,7 @@ const Signups = ({ socket }) => {
 			socket.emit(signupType);
 		}, 10000);
 
-		socket.on('signupsInfo', info => {
+		socket.on('signupsInfo', (info) => {
 			updateSignuplog(info);
 		});
 
@@ -26,10 +26,10 @@ const Signups = ({ socket }) => {
 	}, []);
 
 	const renderSignupsLog = () => {
-		const clickSort = type => {
+		const clickSort = (type) => {
 			updateLogSort({
 				type,
-				direction: logSort.direction === 'descending' && type === logSort.type ? 'ascending' : 'descending'
+				direction: logSort.direction === 'descending' && type === logSort.type ? 'ascending' : 'descending',
 			});
 		};
 
@@ -140,7 +140,7 @@ const Signups = ({ socket }) => {
 					style={{
 						position: 'absolute',
 						top: '10px',
-						right: '10px'
+						right: '10px',
 					}}
 				/>
 			</a>
@@ -158,7 +158,7 @@ const Signups = ({ socket }) => {
 					textDecoration: 'underline',
 					left: '0',
 					top: '10px',
-					cursor: 'pointer'
+					cursor: 'pointer',
 				}}
 			>
 				Toggle Signup Type
@@ -169,7 +169,7 @@ const Signups = ({ socket }) => {
 };
 
 Signups.propTypes = {
-	socket: PropTypes.object
+	socket: PropTypes.object,
 };
 
 export default Signups;

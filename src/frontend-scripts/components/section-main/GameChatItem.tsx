@@ -5,7 +5,7 @@ import { processEmotes } from '../../emotes';
 const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, allEmotes, gameInfo }) => {
 	const timestamp = (
 		<span className="chat-timestamp">{`${`0${new Date(chat.timestamp).getHours()}`.slice(-2)}:${`0${new Date(chat.timestamp).getMinutes()}`.slice(
-			-2
+			-2,
 		)}:${`0${new Date(chat.timestamp).getSeconds()}`.slice(-2)} `}</span>
 	);
 	const isMod = playerListPlayer?.staffRole && (playerListPlayer.staffRole === 'admin' || playerListPlayer.staffRole === 'moderator');
@@ -18,7 +18,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 
 	const chatIndex = JSON.stringify(chat);
 
-	const renderPreviousSeasonAward = type => {
+	const renderPreviousSeasonAward = (type) => {
 		switch (type) {
 			case 'bronze':
 				return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
@@ -39,7 +39,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 		}
 	};
 
-	const getClassesFromType = type => {
+	const getClassesFromType = (type) => {
 		if (type === 'player') {
 			return 'chat-player';
 		} else {
@@ -47,7 +47,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 		}
 	};
 
-	const parseClaim = claim => {
+	const parseClaim = (claim) => {
 		const mode = gameSettings?.claimCharacters || 'legacy';
 		let liberalChar = 'L';
 		let fascistChar = 'F';
@@ -160,10 +160,10 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 						chat.staffRole === 'moderator' && chat.userName === 'Incognito'
 							? 'chat-user moderatorcolor'
 							: !playerListPlayer || gameSettings?.disablePlayerColorsInChat || isBlind
-							? isMod && (!isBlind || !isSeated)
-								? playerColorsClasses
-								: 'chat-user'
-							: playerColorsClasses
+								? isMod && (!isBlind || !isSeated)
+									? playerColorsClasses
+									: 'chat-user'
+								: playerColorsClasses
 					}
 				>
 					{isSeated ? (
@@ -201,19 +201,19 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 						? isSeated
 							? isBlind
 								? `${
-										gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName)]
-								  } {${gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName) + 1}}`
-								: `${chat.userName} {${gameInfo.publicPlayersState.findIndex(publicPlayer => publicPlayer.userName === chat.userName) + 1}}`
+										gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName)]
+									} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
+								: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
 							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
-							? chat.hiddenUsername
-							: isBlind && !isMod
-							? '?'
-							: chat.userName
+								? chat.hiddenUsername
+								: isBlind && !isMod
+									? '?'
+									: chat.userName
 						: isBlind && (!isMod || (isMod && isSeated))
-						? '?'
-						: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
-						? chat.hiddenUsername
-						: chat.userName}
+							? '?'
+							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
+								? chat.hiddenUsername
+								: chat.userName}
 					{': '}
 				</span>
 				<span className={isGreenText ? 'greentext' : ''}>{chatContents}</span>{' '}

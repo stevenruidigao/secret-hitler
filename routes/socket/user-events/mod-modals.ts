@@ -30,10 +30,10 @@ export const handleSubscribeModChat = (socket: Socket, passport: any, game: Acti
 				election: game.general.electionCount,
 				title: game.general.name,
 				uid: game.general.uid,
-				gameType: game.general.casualGame ? 'Casual' : game.general.practiceGame ? 'Practice' : 'Ranked'
+				gameType: game.general.casualGame ? 'Casual' : game.general.practiceGame ? 'Practice' : 'Ranked',
 			},
 			game,
-			'modchat'
+			'modchat',
 		);
 		game.private.hiddenInfoShouldNotify = false;
 	}
@@ -41,13 +41,13 @@ export const handleSubscribeModChat = (socket: Socket, passport: any, game: Acti
 	const modOnlyChat: any = {
 		timestamp: new Date(),
 		gameChat: true,
-		chat: [{ text: `${passport.user} has subscribed to mod chat. Current deck: ` }]
+		chat: [{ text: `${passport.user} has subscribed to mod chat. Current deck: ` }],
 	};
 
 	game.private.policies?.forEach((policy) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
-			type: policy
+			type: policy,
 		});
 	});
 
@@ -80,7 +80,7 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 			modUserName: passport.user,
 			userActedOn: game.general.uid,
 			modNotes: '',
-			actionTaken: 'Game Freeze'
+			actionTaken: 'Game Freeze',
 		});
 		modaction.save();
 		game.private.gameFrozen = true;
@@ -109,7 +109,7 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 
 	const now = new Date();
 	if (game.gameState.isGameFrozen) {
-		if (now.valueOf() - game.gameState.isGameFrozen as number >= 4000) {
+		if (((now.valueOf() - game.gameState.isGameFrozen) as number) >= 4000) {
 			(game.gameState.isGameFrozen as any) = false; // TODO: uhhhh fix this please
 		} else {
 			// Figured this would get annoying - can add it back if mods want.
@@ -125,7 +125,7 @@ export const handleGameFreeze = (socket: Socket, passport: any, game: ActiveGame
 			userName: `(Staff) ${modUserName}`,
 			chat: `has ${game.gameState.isGameFrozen ? 'frozen' : 'unfrozen'} the game. ${game.gameState.isGameFrozen ? 'All actions are prevented.' : ''}`,
 			isBroadcast: true,
-			timestamp: new Date()
+			timestamp: new Date(),
 		});
 	}
 
@@ -157,7 +157,7 @@ export const handleModPeekVotes = (socket: Socket, passport: any, game: ActiveGa
 			modUserName: passport.user,
 			userActedOn: game.general.uid,
 			modNotes: '',
-			actionTaken: 'Peek Votes'
+			actionTaken: 'Peek Votes',
 		});
 		modaction.save();
 		game.private.votesPeeked = true;
@@ -237,7 +237,7 @@ export const handleModPeekRemakes = (socket: Socket, passport: any, game: Active
 			modUserName: passport.user,
 			userActedOn: game.general.uid,
 			modNotes: '',
-			actionTaken: 'Get Remakes'
+			actionTaken: 'Get Remakes',
 		});
 		modaction.save();
 		game.private.remakeVotesPeeked = true;
@@ -280,7 +280,10 @@ export const handleModPeekRemakes = (socket: Socket, passport: any, game: Active
 			}
 
 			const playerRemakeData = game.remakeData.find((d: any) => d.userName === player.userName);
-			output += '<td>' + (playerRemakeData.remakeTime ? dayjs.duration(new Date().valueOf() - new Date(playerRemakeData.remakeTime).valueOf()).humanize() : '-') + '</td>';
+			output +=
+				'<td>' +
+				(playerRemakeData.remakeTime ? dayjs.duration(new Date().valueOf() - new Date(playerRemakeData.remakeTime).valueOf()).humanize() : '-') +
+				'</td>';
 			output += '<td>' + (playerRemakeData.isRemaking ? 'Yes' : 'No') + '</td>';
 			output += '<td>' + playerRemakeData.timesVoted + '</td>';
 			output += '</tr>';

@@ -1128,5 +1128,5 @@ export default [
 	'zealous',
 	'zesty',
 	'zippy',
-	'zonked'
+	'zonked',
 ];

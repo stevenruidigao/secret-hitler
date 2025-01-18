@@ -25,7 +25,7 @@ import {
 	bypassVPNCheck,
 	ipbansNotEnforced,
 	gameCreationDisabled,
-	limitNewPlayers
+	limitNewPlayers,
 } from '../models.ts';
 import { sendUserReports, sendGameList, sendUserList } from '../user-requests.ts';
 import { handleDefaultIPv6Range, sendCommandChatsUpdate } from '../util.ts';
@@ -98,18 +98,15 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 	const isSuperMod = superModUserNames.includes(passport.user) || newStaff.editorUserNames.includes(passport.user);
 
-	const affectedSocketId = Array.from(io.sockets.sockets.keys()).find(
-		socketId => {
-			const s = io.sockets.sockets.get(socketId);
+	const affectedSocketId = Array.from(io.sockets.sockets.keys()).find((socketId) => {
+		const s = io.sockets.sockets.get(socketId);
 
-			if (!s) return false;
+		if (!s) return false;
 
-			const handshake = s.handshake as any;
+		const handshake = s.handshake as any;
 
-			return handshake?.session?.passport &&
-				handshake.session.passport.user === data.userName;
-		}
-	);
+		return handshake?.session?.passport && handshake.session.passport.user === data.userName;
+	});
 
 	if (
 		modUserNames.includes(passport.user) ||
@@ -160,14 +157,14 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				userActedOn: data.userName,
 				modNotes: data.comment,
 				ip: data.ip,
-				actionTaken: typeof data.action === 'string' ? data.action : data.action.type
+				actionTaken: typeof data.action === 'string' ? data.action : data.action.type,
 			});
 
 			/**
 			 * @param {string} username - name of user.
 			 */
 			const logOutUser = (username: string) => {
-				const bannedUserlistIndex = userList.findIndex(user => user.userName === username);
+				const bannedUserlistIndex = userList.findIndex((user) => user.userName === username);
 				const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
 				if (affectedSocket) {
@@ -193,9 +190,9 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							// account.salt = crypto.randomBytes(20).toString('hex');
 							account.isBanned = true;
 							account.save(() => {
-								const bannedAccountGeneralChats = generalChats.list.filter(chat => chat.userName === username);
+								const bannedAccountGeneralChats = generalChats.list.filter((chat) => chat.userName === username);
 
-								bannedAccountGeneralChats.reverse().forEach(chat => {
+								bannedAccountGeneralChats.reverse().forEach((chat) => {
 									generalChats.list.splice(generalChats.list.indexOf(chat), 1);
 								});
 								logOutUser(username);
@@ -237,7 +234,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						time: new Date(),
 						text: data.comment,
 						moderator: passport.user,
-						acknowledged: false
+						acknowledged: false,
 					};
 
 					Account.findOne({ username: data.userName }).then((user) => {
@@ -330,7 +327,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							userName: data.modName,
 							chat: 'This game has been ended by a moderator, game deletes in 5 seconds.',
 							isBroadcast: true,
-							timestamp: new Date()
+							timestamp: new Date(),
 						});
 
 						completeGame(gameToEnd, data.winningTeamName);
@@ -394,7 +391,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					if (isSuperMod) {
 						// let account, profile;
 						Account.findOne({ username: data.userName }).then((acc) => {
-							// account = acc; // TODO: check if this does anything 
+							// account = acc; // TODO: check if this does anything
 							(acc as any).delete();
 							Profile.findOne({ _id: data.userName }).then((prof) => {
 								if (!prof) return;
@@ -484,7 +481,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 							account.gameSettings.playerPronouns = data.comment;
 							account.save();
-							const userListUser = userList.find(user => user.userName === data.userName);
+							const userListUser = userList.find((user) => user.userName === data.userName);
 							if (userListUser) userListUser.playerPronouns = data.comment;
 							sendUserList();
 						} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
@@ -499,7 +496,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'broadcast':
 					const discordBroadcastBody = JSON.stringify({
-						content: `Text: ${data.comment}\nMod: ${passport.user}`
+						content: `Text: ${data.comment}\nMod: ${passport.user}`,
 					});
 					const discordBroadcastOptions = {
 						hostname: 'discordapp.com',
@@ -507,8 +504,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
-							'Content-Length': Buffer.byteLength(discordBroadcastBody)
-						}
+							'Content-Length': Buffer.byteLength(discordBroadcastBody),
+						},
 					};
 					try {
 						const broadcastReq = https.request(discordBroadcastOptions);
@@ -517,7 +514,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						console.log(e, 'err in broadcast');
 					}
 
-					Object.keys(games).forEach(gameName => {
+					Object.keys(games).forEach((gameName) => {
 						if (!games[gameName].chats) {
 							games[gameName].chats = [];
 						}
@@ -526,7 +523,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							userName: `[BROADCAST] ${data.modName}`,
 							chat: data.comment,
 							isBroadcast: true,
-							timestamp: new Date()
+							timestamp: new Date(),
 						});
 					});
 
@@ -534,7 +531,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						userName: `[BROADCAST] ${data.modName}`,
 						time: new Date(),
 						chat: data.comment,
-						isBroadcast: true
+						isBroadcast: true,
 					});
 
 					if (data.isSticky) {
@@ -549,11 +546,11 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							bannedDate: new Date(),
 							type: 'small',
 							ip: handleDefaultIPv6Range(data.ip),
-							permanent: false
+							permanent: false,
 						});
 
 						ipban.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: IAccount[]) {
+							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
 										banAccount(user.username);
@@ -572,7 +569,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							bannedDate: new Date(Date.now() + 64800000),
 							type: 'fragbanSmall',
 							ip: data.userName,
-							permanent: false
+							permanent: false,
 						});
 						modaction.ip = modaction.userActedOn;
 						modaction.userActedOn = 'RAW IP FRAGMENT';
@@ -588,7 +585,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							bannedDate: new Date(Date.now() + 604800000),
 							type: 'fragbanLarge',
 							ip: data.userName,
-							permanent: false
+							permanent: false,
 						});
 						modaction.ip = modaction.userActedOn;
 						modaction.userActedOn = 'RAW IP FRAGMENT';
@@ -603,7 +600,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						bannedDate: new Date(),
 						type: 'small',
 						ip: handleDefaultIPv6Range(data.ip),
-						permanent: false
+						permanent: false,
 					});
 					timeout.save(() => {
 						Account.findOne({ username: data.userName })
@@ -642,7 +639,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					const timeout3 = new BannedIP({
 						bannedDate: new Date(),
 						type: 'tiny',
-						ip: handleDefaultIPv6Range(data.ip)
+						ip: handleDefaultIPv6Range(data.ip),
 					});
 					timeout3.save(() => {
 						Account.findOne({ username: data.userName })
@@ -725,7 +722,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					break;
 				case 'clearGenchat':
 					if (data.userName && data.userName.length > 0) {
-						generalChats.list = generalChats.list.filter(chat => chat.userName !== data.userName);
+						generalChats.list = generalChats.list.filter((chat) => chat.userName !== data.userName);
 
 						// clearedGeneralChats.reverse().forEach(chat => {
 						// 	generalChats.list.splice(generalChats.list.indexOf(chat), 1);
@@ -757,12 +754,12 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						bannedDate: new Date(),
 						type: 'big',
 						ip: handleDefaultIPv6Range(data.ip),
-						permanent: false
+						permanent: false,
 					});
 
 					if (isSuperMod) {
 						ipbanl.save(() => {
-							Account.find({ lastConnectedIP: data.ip }, function(err: Error, users: IAccount[]) {
+							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
 										banAccount(user.username);
@@ -784,12 +781,12 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								}
 
 								account.gameSettings.customCardback = {};
-								const user = userList.find(u => u.userName === data.userName);
+								const user = userList.find((u) => u.userName === data.userName);
 								if (user) {
 									user.customCardback = {};
 									userListEmitter.send = true;
 								}
-								Object.keys(games).forEach(uid => {
+								Object.keys(games).forEach((uid) => {
 									const game = games[uid];
 									const foundUser = game.publicPlayersState.find((user) => user.userName === data.userName);
 									if (foundUser) {
@@ -1039,7 +1036,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					if (isSuperMod) {
 						console.log('server crashing manually via mod action');
 						const crashReport = JSON.stringify({
-							content: `${process.env.DISCORDADMINPING} the site was just reset manually by an admin.`
+							content: `${process.env.DISCORDADMINPING} the site was just reset manually by an admin.`,
 						});
 
 						const crashOptions = {
@@ -1048,8 +1045,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
-								'Content-Length': Buffer.byteLength(crashReport)
-							}
+								'Content-Length': Buffer.byteLength(crashReport),
+							},
 						};
 
 						if (process.env.NODE_ENV === 'production') {
@@ -1090,18 +1087,18 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						const setType = /setRWins/.test(data.action.type)
 							? 'rainbowWins'
 							: /setRLosses/.test(data.action.type)
-							? 'rainbowLosses'
-							: /setWins/.test(data.action.type)
-							? 'wins'
-							: 'losses';
+								? 'rainbowLosses'
+								: /setWins/.test(data.action.type)
+									? 'wins'
+									: 'losses';
 						const number =
 							setType === 'wins'
 								? data.action.type.substr(7)
 								: setType === 'losses'
-								? data.action.type.substr(9)
-								: setType === 'rainbowWins'
-								? data.action.type.substr(8)
-								: data.action.type.substr(10);
+									? data.action.type.substr(9)
+									: setType === 'rainbowWins'
+										? data.action.type.substr(8)
+										: data.action.type.substr(10);
 						const isPlusOrMinus = number.charAt(0) === '+' || number.charAt(0) === '-';
 
 						if (!isNaN(parseInt(number, 10)) || isPlusOrMinus) {
@@ -1115,7 +1112,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 												rainbowWins: 0,
 												rainbowLosses: 0,
 												elo: 1600,
-												xp: 0
+												xp: 0,
 											};
 										}
 
@@ -1139,7 +1136,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 													rainbowWins: 0,
 													rainbowLosses: 0,
 													elo: 1600,
-													xp: 0
+													xp: 0,
 												};
 											}
 
@@ -1216,14 +1213,15 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				makeBypass: 'Create Bypass Key',
 				bypassKeyUsed: 'Consume Bypass Key',
 				resetServer: 'Server Restart',
-				regatherAEMList: 'Refresh Staff List'
+				regatherAEMList: 'Refresh Staff List',
 			};
 
 			modaction.actionTaken = modaction.actionTaken || '';
 
 			const modAction = JSON.stringify({
-				content: `Date: *${new Date()}*\nStaff member: **${modaction.modUserName}**\nAction: **${niceAction[modaction.actionTaken] ||
-					modaction.actionTaken}**\nUser: **${modaction.userActedOn} **\nComment: **${modaction.modNotes}**.`
+				content: `Date: *${new Date()}*\nStaff member: **${modaction.modUserName}**\nAction: **${
+					niceAction[modaction.actionTaken] || modaction.actionTaken
+				}**\nUser: **${modaction.userActedOn} **\nComment: **${modaction.modNotes}**.`,
 			});
 
 			const modOptions = {
@@ -1232,8 +1230,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'Content-Length': Buffer.byteLength(modAction)
-				}
+					'Content-Length': Buffer.byteLength(modAction),
+				},
 			};
 
 			if (process.env.NODE_ENV === 'production') {

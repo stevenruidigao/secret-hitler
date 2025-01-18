@@ -11,7 +11,7 @@ export interface IResetPassword {
 const ResetPassword = new Schema<IResetPassword>({
 	username: String,
 	token: String,
-	expirationDate: Date
+	expirationDate: Date,
 });
 
 export default mongoose.model<IResetPassword>('ResetPassword', ResetPassword);

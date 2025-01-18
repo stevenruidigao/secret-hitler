@@ -11,7 +11,7 @@ export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 	}
 	const roomSockets = getRoomSockets(game);
 	const updateFlappyRoom = (newData: any) => {
-		roomSockets.forEach(sock => {
+		roomSockets.forEach((sock) => {
 			if (sock) {
 				sock.emit('flappyUpdate', newData);
 			}
@@ -26,12 +26,12 @@ export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 			controllingFascistUser: '',
 			score: {
 				liberal: 0,
-				fascist: 0
+				fascist: 0,
 			},
 			pylonDensity: 1.3,
 			flapDistance: 1,
 			pylonOffset: 1.3,
-			passedPylonCount: 0
+			passedPylonCount: 0,
 		};
 
 		game.general.status = 'FLAPPY HITLER: 0 - 0';
@@ -44,12 +44,12 @@ export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 					controllingFascistUser: '',
 					score: {
 						liberal: 0,
-						fascist: 0
+						fascist: 0,
 					},
 					pylonDensity: 1.3,
 					flapDistance: 1,
 					pylonOffset: 1.3,
-					passedPylonCount: 0
+					passedPylonCount: 0,
 				};
 			}
 
@@ -57,7 +57,7 @@ export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 			const newData = {
 				type: 'newPylon',
 				pylonType: 'normal',
-				offset
+				offset,
 			};
 
 			updateFlappyRoom(newData);
@@ -70,12 +70,12 @@ export const handleFlappyEvent = (data: any, game: ActiveGame) => {
 			controllingFascistUser: '',
 			score: {
 				liberal: 0,
-				fascist: 0
+				fascist: 0,
 			},
 			pylonDensity: 1.3,
 			flapDistance: 1,
 			pylonOffset: 1.3,
-			passedPylonCount: 0
+			passedPylonCount: 0,
 		};
 	}
 

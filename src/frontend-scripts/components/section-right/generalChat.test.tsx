@@ -15,7 +15,7 @@ describe('GeneralChat', () => {
 			emoteColonIndex: -1,
 			excludedColonIndices: [],
 			genchat: true,
-			modDMs: null
+			modDMs: null,
 		};
 
 		const component = shallow(<GeneralChat />);

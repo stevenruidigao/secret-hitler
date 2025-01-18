@@ -41,7 +41,7 @@ export default function buildReplay(game: any) {
 			policyPeek,
 			policyPeekClaim,
 			specialElection,
-			deckState
+			deckState,
 		} = game.turns.get(turnNum);
 
 		const afterDeckState = deckState && deckState.slice(deckState.size - afterDeckSize);
@@ -53,7 +53,7 @@ export default function buildReplay(game: any) {
 			track: beforeTrack,
 			deckSize: beforeDeckSize,
 			players: beforePlayers,
-			electionTracker: beforeElectionTracker
+			electionTracker: beforeElectionTracker,
 		};
 
 		const add = (middleware: any) => (obj: any) => Object.assign({}, base, middleware, obj);
@@ -63,7 +63,7 @@ export default function buildReplay(game: any) {
 			track: beforeTrack,
 			electionTracker: beforeElectionTracker,
 			deckSize: beforeDeckSize,
-			deckState
+			deckState,
 		});
 
 		const midEnactionAdd = add({
@@ -73,7 +73,7 @@ export default function buildReplay(game: any) {
 			track: beforeTrack,
 			electionTracker: afterElectionTracker,
 			deckSize: afterDeckSize,
-			deckState: afterDeckState
+			deckState: afterDeckState,
 		});
 
 		const postEnactionAdd = add({
@@ -83,7 +83,7 @@ export default function buildReplay(game: any) {
 			track: afterTrack,
 			electionTracker: afterElectionTracker,
 			deckSize: afterDeckSize,
-			deckState: afterDeckState
+			deckState: afterDeckState,
 		});
 
 		switch (phase) {
@@ -96,7 +96,7 @@ export default function buildReplay(game: any) {
 					presidentId,
 					chancellorId,
 					votes,
-					electionTracker: afterElectionTracker
+					electionTracker: afterElectionTracker,
 				});
 			case 'topDeck':
 				return midEnactionAdd({});
@@ -104,47 +104,47 @@ export default function buildReplay(game: any) {
 				return midEnactionAdd({
 					presidentClaim,
 					presidentHand: presidentHand.value(),
-					presidentDiscard: presidentDiscard.value()
+					presidentDiscard: presidentDiscard.value(),
 				});
 			case 'chancellorLegislation':
 				return midEnactionAdd({
 					chancellorClaim,
 					chancellorDiscard,
-					chancellorHand: chancellorHand.value()
+					chancellorHand: chancellorHand.value(),
 				});
 			case 'veto':
 				return midEnactionAdd({
 					isVetoSuccessful,
 					presidentVeto,
-					chancellorVeto: chancellorVeto.value()
+					chancellorVeto: chancellorVeto.value(),
 				});
 			case 'policyEnaction':
 				return postEnactionAdd({
 					players: beforePlayers,
-					enactedPolicy: enactedPolicy.value()
+					enactedPolicy: enactedPolicy.value(),
 				});
 			case 'investigation':
 				return postEnactionAdd({
 					investigatorId: investigatorId._value === undefined ? undefined : investigatorId.value(),
 					investigationId: investigationId.value(),
-					investigationClaim: investigationClaim
+					investigationClaim: investigationClaim,
 				});
 			case 'policyPeek':
 				return postEnactionAdd({
 					policyPeek: policyPeek.value(),
-					policyPeekClaim: policyPeekClaim
+					policyPeekClaim: policyPeekClaim,
 				});
 			case 'specialElection':
 				return postEnactionAdd({
-					specialElection: specialElection.value()
+					specialElection: specialElection.value(),
 				});
 			case 'execution':
 				return postEnactionAdd({
-					execution: execution.value()
+					execution: execution.value(),
 				});
 			case 'assassination':
 				return postEnactionAdd({
-					assassination: assassination.value()
+					assassination: assassination.value(),
 				});
 		}
 	}
@@ -167,7 +167,7 @@ export default function buildReplay(game: any) {
 			isHitlerKilled,
 			isVeto,
 			isVetoSuccessful,
-			isAssassination
+			isAssassination,
 		} = game.turns.get(turnNum);
 
 		const next = (nextPhase: any) => ({ turnNum, phase: nextPhase, gameOver: false });
@@ -175,7 +175,7 @@ export default function buildReplay(game: any) {
 		const jump = () => ({
 			turnNum: turnNum + 1,
 			phase: 'candidacy',
-			gameOver: false
+			gameOver: false,
 		});
 
 		const gameOver = () => {

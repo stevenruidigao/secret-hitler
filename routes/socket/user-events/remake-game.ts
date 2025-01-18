@@ -39,22 +39,21 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 
 	game.general.playerCount = game.general.playerCount || 5;
 
-	const minimumRemakeVoteCount = (game.customGameSettings.fascistCount 
-			&& game.general.playerCount - game.customGameSettings.fascistCount) 
-		|| Math.floor(game.general.playerCount / 2) + 2;
+	const minimumRemakeVoteCount =
+		(game.customGameSettings.fascistCount && game.general.playerCount - game.customGameSettings.fascistCount) || Math.floor(game.general.playerCount / 2) + 2;
 	if (game && game.general && game.general.private && !game.general.privateAnonymousRemakes) {
 		chat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
 				{
-					text: 'Player '
+					text: 'Player ',
 				},
 				{
 					text: `${passport.user} {${realPlayerIndex + 1}} `,
-					type: 'player'
-				}
-			]
+					type: 'player',
+				},
+			],
 		};
 	} else {
 		chat = {
@@ -62,9 +61,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			gameChat: true,
 			chat: [
 				{
-					text: 'A player'
-				}
-			]
+					text: 'A player',
+				},
+			],
 		};
 	}
 
@@ -80,9 +79,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 				chat: [
 					{
 						text: 'Game remake aborted, game creation is currently disabled.',
-						type: 'hitler'
-					}
-				]
+						type: 'hitler',
+					},
+				],
 			});
 			sendInProgressGameUpdate(game);
 			return;
@@ -92,14 +91,12 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		_game.private = {}; // TODO: is this right? used to be `delete _game.private;`
 		const newGame = _.cloneDeep(_game);
 		const remakePlayerNames = remakeData.filter((player: any) => player.isRemaking).map((player: any) => player.userName);
-		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter(
-			socketId => {
-				const socket = io.sockets.sockets.get(socketId);
-				const handshake = socket?.handshake as any;
+		const remakePlayerSocketIDs = Array.from(io.sockets.sockets.keys()).filter((socketId) => {
+			const socket = io.sockets.sockets.get(socketId);
+			const handshake = socket?.handshake as any;
 
-				return handshake?.session?.passport && remakePlayerNames.includes(handshake?.session?.passport?.user)
-			}
-		);
+			return handshake?.session?.passport && remakePlayerNames.includes(handshake?.session?.passport?.user);
+		});
 		sendInProgressGameUpdate(game);
 
 		newGame.gameState = {
@@ -109,7 +106,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			presidentIndex: -1,
 			isCompleted: undefined, // TODO: check; used to be `false`
 			isStarted: false, // TODO: check
-			timeCompleted: undefined
+			timeCompleted: undefined,
 		};
 
 		newGame.chats = [];
@@ -119,23 +116,23 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 				gameChat: true,
 				chat: [
 					{
-						text: 'There will be '
+						text: 'There will be ',
 					},
 					{
 						text: `${newGame.customGameSettings.deckState.lib - newGame.customGameSettings.trackState.lib} liberal`,
-						type: 'liberal'
+						type: 'liberal',
 					},
 					{
-						text: ' and '
+						text: ' and ',
 					},
 					{
 						text: `${newGame.customGameSettings.deckState.fas - newGame.customGameSettings.trackState.fas} fascist`,
-						type: 'fascist'
+						type: 'fascist',
 					},
 					{
-						text: ' policies in the deck.'
-					}
-				]
+						text: ' policies in the deck.',
+					},
+				],
 			};
 			const t = chat.timestamp.getMilliseconds();
 			newGame.chats.push(chat);
@@ -144,23 +141,23 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 				gameChat: true,
 				chat: [
 					{
-						text: 'The game will start with '
+						text: 'The game will start with ',
 					},
 					{
 						text: `${newGame.customGameSettings.trackState.lib} liberal`,
-						type: 'liberal'
+						type: 'liberal',
 					},
 					{
-						text: ' and '
+						text: ' and ',
 					},
 					{
 						text: `${newGame.customGameSettings.trackState.fas} fascist`,
-						type: 'fascist'
+						type: 'fascist',
 					},
 					{
-						text: ' policies.'
-					}
-				]
+						text: ' policies.',
+					},
+				],
 			};
 			chat.timestamp.setMilliseconds(t + 1);
 			newGame.chats.push(chat);
@@ -184,7 +181,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 				game.remakeData
 					.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
 					.map((rmkPlayer: any) => rmkPlayer.userName)
-					.some((rmkPlayer: any) => rmkPlayer === player.userName)
+					.some((rmkPlayer: any) => rmkPlayer === player.userName),
 			)
 			.map((player) => ({
 				userName: player.userName,
@@ -197,8 +194,8 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					cardDisplayed: false,
 					isFlipped: false,
 					cardFront: 'secretrole',
-					cardBack: {}
-				}
+					cardBack: {},
+				},
 			}));
 
 		newGame.remakeData = [];
@@ -210,10 +207,10 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		newGame.trackState = {
 			policyCount: {
 				liberal: 0,
-				fascist: 0
+				fascist: 0,
 			},
 			electionTrackerCount: 0,
-			enactedPolicies: []
+			enactedPolicies: [],
 		};
 
 		newGame.private = {
@@ -232,7 +229,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			gameCreatorBlacklist: game.private?.gameCreatorBlacklist,
 			// TODO: CHECK (NEW)
 			seatedPlayers: [],
-			policies: []
+			policies: [],
 		};
 
 		game.publicPlayersState.forEach((player, i: number) => {
@@ -281,18 +278,14 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					socket.leave(game.general.uid);
 					sendGameInfo(socket, newGame.general.uid);
 
-					if (
-						handshake &&
-						handshake.session &&
-						handshake.session.passport
-					) {
+					if (handshake && handshake.session && handshake.session.passport) {
 						updateSeatedUser(socket, handshake.session.passport, { uid: newGame.general.uid });
 						if (handshake.session.passport.user === newGame.private?.gameCreatorName) creatorRemade = true;
 					}
 				}
 			});
 			if (creatorRemade && newGame.private?.gameCreatorBlacklist != null) {
-				const creator = userList.find(user => user.userName === newGame.private?.gameCreatorName);
+				const creator = userList.find((user) => user.userName === newGame.private?.gameCreatorName);
 				if (creator) newGame.private.gameCreatorBlacklist = creator.blacklist as any[];
 			} else {
 				if (!newGame.private) {
@@ -328,9 +321,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 				chat: [
 					{
 						text: 'Due to the other tournament table voting for cancellation, this tournament has been cancelled.',
-						type: 'hitler'
-					}
-				]
+						type: 'hitler',
+					},
+				],
 			});
 			secondTable.general.status = 'Tournament has been cancelled.';
 			sendInProgressGameUpdate(secondTable);
@@ -348,7 +341,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 
 		const remakePlayerCount = remakeData.filter((player: any) => player.isRemaking).length;
 		chat.chat.push({
-			text: ` has voted to ${remakeText} this ${game.general.isTourny ? 'tournament.' : 'game.'} (${remakePlayerCount}/${minimumRemakeVoteCount})`
+			text: ` has voted to ${remakeText} this ${game.general.isTourny ? 'tournament.' : 'game.'} (${remakePlayerCount}/${minimumRemakeVoteCount})`,
 		});
 
 		if (!game.general.isRemaking && publicPlayersState.length > 3 && remakePlayerCount >= minimumRemakeVoteCount) {
@@ -379,15 +372,15 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 						timestamp: new Date(),
 						chat: [
 							{
-								text: 'The remaining policies are '
+								text: 'The remaining policies are ',
 							},
 							{
-								policies: game.private?.policies && game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
+								policies: game.private?.policies && game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
 							},
 							{
-								text: '.'
-							}
-						]
+								text: '.',
+							},
+						],
 					};
 
 					game.private?.unSeatedGameChats?.push(remainingPoliciesChat);
@@ -422,7 +415,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		chat.chat.push({
 			text: ` has rescinded their vote to ${
 				game.general.isTourny ? 'cancel this tournament.' : 'remake this game.'
-			} (${remakePlayerCount}/${minimumRemakeVoteCount})`
+			} (${remakePlayerCount}/${minimumRemakeVoteCount})`,
 		});
 	} else {
 		return;

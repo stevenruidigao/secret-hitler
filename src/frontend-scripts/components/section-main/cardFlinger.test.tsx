@@ -8,10 +8,13 @@ describe('CardFlinger', () => {
 			isHovered: false,
 			hoveredClass: null,
 			expandingIndex: null,
-			expansionTimer: 0
+			expansionTimer: 0,
 		};
 		const component = shallow(
-			<CardFlinger userInfo={{ userName: '' }} gameInfo={{ cardFlingerState: [], publicPlayersState: [], general: { status: '' }, gameState: { phase: '' } }} />
+			<CardFlinger
+				userInfo={{ userName: '' }}
+				gameInfo={{ cardFlingerState: [], publicPlayersState: [], general: { status: '' }, gameState: { phase: '' } }}
+			/>,
 		);
 
 		expect(component.state()).toEqual(initialState);

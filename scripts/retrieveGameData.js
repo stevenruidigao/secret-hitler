@@ -12,13 +12,13 @@ const allPlayerGameData = {
 	fascistWinCount: 0,
 	totalGameCount: 0,
 	fascistWinCountSeason: 0,
-	totalGameCountSeason: 0
+	totalGameCountSeason: 0,
 };
 const fivePlayerGameData = {
 	fascistWinCount: 0,
 	totalGameCount: 0,
 	fascistWinCountSeason: 0,
-	totalGameCountSeason: 0
+	totalGameCountSeason: 0,
 };
 const sixPlayerGameData = {
 	fascistWinCount: 0,
@@ -28,7 +28,7 @@ const sixPlayerGameData = {
 	fascistWinCountSeason: 0,
 	totalGameCountSeason: 0,
 	rebalancedFascistWinCountSeason: 0,
-	rebalancedTotalGameCountSeason: 0
+	rebalancedTotalGameCountSeason: 0,
 };
 const sevenPlayerGameData = {
 	fascistWinCount: 0,
@@ -38,13 +38,13 @@ const sevenPlayerGameData = {
 	fascistWinCountSeason: 0,
 	totalGameCountSeason: 0,
 	rebalancedFascistWinCountSeason: 0,
-	rebalancedTotalGameCountSeason: 0
+	rebalancedTotalGameCountSeason: 0,
 };
 const eightPlayerGameData = {
 	fascistWinCount: 0,
 	totalGameCount: 0,
 	fascistWinCountSeason: 0,
-	totalGameCountSeason: 0
+	totalGameCountSeason: 0,
 };
 const ninePlayerGameData = {
 	fascistWinCount: 0,
@@ -54,13 +54,13 @@ const ninePlayerGameData = {
 	fascistWinCountSeason: 0,
 	totalGameCountSeason: 0,
 	rebalanced2fFascistWinCountSeason: 0,
-	rebalanced2fTotalGameCountSeason: 0
+	rebalanced2fTotalGameCountSeason: 0,
 };
 const tenPlayerGameData = {
 	fascistWinCount: 0,
 	totalGameCount: 0,
 	fascistWinCountSeason: 0,
-	totalGameCountSeason: 0
+	totalGameCountSeason: 0,
 };
 
 mongoose.Promise = global.Promise;
@@ -68,7 +68,7 @@ mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`);
 
 Game.find({})
 	.cursor()
-	.eachAsync(game => {
+	.eachAsync((game) => {
 		const playerCount = game.losingPlayers.length + game.winningPlayers.length;
 		const fascistsWon = game.winningTeam === 'fascist';
 		const gameDate = dayjs(new Date(game.date)).format('l');

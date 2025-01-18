@@ -31,13 +31,13 @@ GameSummary.find(JSON.parse(process.argv[4]) || {})
 	.limit(parseInt(process.argv[2], 10) || 25000)
 	.lean()
 	.cursor()
-	.eachAsync(summary => {
+	.eachAsync((summary) => {
 		count++;
 		Game.find({ uid: summary._id })
 			.lean()
 			.limit(1)
 			.cursor()
-			.eachAsync(game => {
+			.eachAsync((game) => {
 				delete game._id;
 				delete game.__v;
 				const usernameToSeat = {};

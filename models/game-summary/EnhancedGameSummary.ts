@@ -26,7 +26,7 @@ export default class EnhancedGameSummary {
 		// derived
 		this.playerSize = this.players.length;
 
-		this.hitlerIndex = this.players.findIndex(p => p.role === 'hitler');
+		this.hitlerIndex = this.players.findIndex((p) => p.role === 'hitler');
 
 		this.numberOfTurns = this.logs.length;
 
@@ -66,7 +66,7 @@ export default class EnhancedGameSummary {
 		if (this._isId(identifier)) {
 			return this.players[identifier];
 		} else {
-			return this.players.find(p => p.username === identifier);
+			return this.players.find((p) => p.username === identifier);
 		}
 	}
 
@@ -74,7 +74,7 @@ export default class EnhancedGameSummary {
 		if (this._isId(identifier)) {
 			return identifier;
 		} else {
-			return this.players.findIndex(p => p.username === identifier);
+			return this.players.findIndex((p) => p.username === identifier);
 		}
 	}
 
@@ -108,13 +108,13 @@ export default class EnhancedGameSummary {
 	votesOf(identifier: any) {
 		const playerIndex = this.indexOf(identifier);
 
-		return this.logs.map(log => {
+		return this.logs.map((log) => {
 			const { presidentId, chancellorId, votes } = log;
 
 			return {
 				presidentId,
 				chancellorId,
-				vote: votes[playerIndex]
+				vote: votes[playerIndex],
 			};
 		});
 	}
@@ -122,6 +122,6 @@ export default class EnhancedGameSummary {
 	shotsOf(identifier: any) {
 		const playerIndex = this.indexOf(identifier);
 
-		return this.logs.filter(log => log.presidentId === playerIndex && Number.isInteger(log.execution)).map(log => log.execution);
+		return this.logs.filter((log) => log.presidentId === playerIndex && Number.isInteger(log.execution)).map((log) => log.execution);
 	}
 }

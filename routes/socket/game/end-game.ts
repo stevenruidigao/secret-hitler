@@ -46,14 +46,14 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 				?.map((player: any) => ({
 					userName: player?.userName,
 					team: player?.role?.team,
-					role: player?.role?.cardName
+					role: player?.role?.cardName,
 				})),
 			losingPlayers: game?.private?.seatedPlayers
 				?.filter((player: any) => !player?.wonGame)
 				?.map((player: any) => ({
 					userName: player?.userName,
 					team: player?.role?.team,
-					role: player?.role?.cardName
+					role: player?.role?.cardName,
 				})),
 			winningTeam: game?.gameState?.isCompleted,
 			playerCount: game?.general?.playerCount,
@@ -73,7 +73,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 			xpMinimum: game?.general?.xpMinimum,
 			avalonSH: game?.general?.avalonSH,
 			noTopdecking: game?.general?.noTopdecking,
-			completed: true
+			completed: true,
 		};
 	}
 
@@ -94,7 +94,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 		losingPlayers: game?.publicPlayersState?.map((player: any) => ({
 			userName: player?.userName,
 			team: player?.role && player?.role?.team,
-			role: player?.role && player?.role?.cardName
+			role: player?.role && player?.role?.cardName,
 		})),
 		playerCount: game?.general?.playerCount,
 		rebalance6p: game?.general?.rebalance6p,
@@ -113,7 +113,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 		xpMinimum: game?.general?.xpMinimum,
 		avalonSH: game?.general?.avalonSH,
 		noTopdecking: game.general?.noTopdecking,
-		completed: false
+		completed: false,
 	};
 };
 
@@ -157,7 +157,8 @@ export const saveOrUpdateGame = (gameID: string, callback: Function) => {
 		if (game) {
 			const newObject = generateGameObject(gameInMemory); // in theory this should only be chats (as the only time a game is saved and *not* deleted is on game end) but for forwards compatibility all keys are checked
 
-			for (const key of Object.keys(newObject) as (keyof IGame)[]) { // TODO: check this
+			for (const key of Object.keys(newObject) as (keyof IGame)[]) {
+				// TODO: check this
 				if (newObject.hasOwnProperty(key) && game[key] !== newObject[key]) {
 					// check in order to prevent unnecessarily marking fields as modified in mongoose
 					(game[key] as IGame[keyof IGame]) = newObject[key] as IGame[keyof IGame]; // TODO: check this
@@ -194,25 +195,22 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	}
 
 	for (let affectedPlayerNumber = 0; affectedPlayerNumber < game.publicPlayersState.length; affectedPlayerNumber++) {
-		const affectedSocketId = Object.keys(io.sockets.sockets).find(
-			socketId => {
-				const socket = io.sockets.sockets.get(socketId);
+		const affectedSocketId = Object.keys(io.sockets.sockets).find((socketId) => {
+			const socket = io.sockets.sockets.get(socketId);
 
-				if (!socket) return false;
+			if (!socket) return false;
 
-				const handshake = socket.handshake as any;
+			const handshake = socket.handshake as any;
 
-				return handshake?.session?.passport &&
-					handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
-			}
-		);
+			return handshake?.session?.passport && handshake.session.passport.user === game.publicPlayersState[affectedPlayerNumber].userName;
+		});
 
 		const affectedSocket = affectedSocketId && io.sockets.sockets.get(affectedSocketId);
 
 		if (!affectedSocket) {
 			continue;
 		}
-		
+
 		affectedSocket.emit('removeClaim');
 	}
 
@@ -239,25 +237,25 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		chat: [
 			{
 				text: winningTeamName === 'fascist' ? 'Fascists' : 'Liberals',
-				type: winningTeamName === 'fascist' ? 'fascist' : 'liberal'
+				type: winningTeamName === 'fascist' ? 'fascist' : 'liberal',
 			},
-			{ text: ' win the game.' }
-		]
+			{ text: ' win the game.' },
+		],
 	};
 	const remainingPoliciesChat = {
 		isRemainingPolicies: true,
 		timestamp: new Date(),
 		chat: [
 			{
-				text: 'The remaining policies are '
+				text: 'The remaining policies are ',
 			},
 			{
-				policies: game.private.policies?.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r'))
+				policies: game.private.policies?.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
 			},
 			{
-				text: '.'
-			}
-		]
+				text: '.',
+			},
+		],
 	};
 
 	if (!(game.general.isTourny && game.general.tournyInfo.round === 1)) {
@@ -310,14 +308,14 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	// Don't compute Elo for private, casual, custom, silent, private, or unlisted games
 	if (
 		!game.general.private &&
-		game.general.playerChats as string !== 'disabled' && // TODO: this sucks
+		(game.general.playerChats as string) !== 'disabled' && // TODO: this sucks
 		!game.general.casualGame &&
 		!(game.customGameSettings && game.customGameSettings.enabled) &&
 		!game.general.practiceGame &&
 		!game.general.unlistedGame
 	) {
 		Account.find({
-			username: { $in: seatedPlayers?.map((player: any) => player.userName) }
+			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
 		})
 			.then((results) => {
 				const isRainbow = game.general.rainbowgame;
@@ -342,7 +340,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					...seatedPlayers.filter((e: any) => e.role.cardName === 'fascist').sort(byUsername),
 					...seatedPlayers.filter((e: any) => e.role.cardName === 'merlin'),
 					...seatedPlayers.filter((e: any) => e.role.cardName === 'percival'),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'liberal').sort(byUsername)
+					...seatedPlayers.filter((e: any) => e.role.cardName === 'liberal').sort(byUsername),
 				];
 
 				seatedPlayers.forEach((eachPlayer: any, i: number) => {
@@ -356,19 +354,19 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						chat: [
 							{
 								text: eachPlayer.userName,
-								type: eachPlayer.role.cardName
+								type: eachPlayer.role.cardName,
 							},
 							{
-								text: `'s Elo: `
+								text: `'s Elo: `,
 							},
 							{
-								text: ` ${activeChange > 0 ? '+' : '-'}`
+								text: ` ${activeChange > 0 ? '+' : '-'}`,
 							},
 							{
 								text: Math.abs(activeChange).toFixed(1),
-								type: 'player'
-							}
-						]
+								type: 'player',
+							},
+						],
 					});
 
 					game.private.replayGameChats?.push({
@@ -377,24 +375,24 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						chat: [
 							{
 								text: eachPlayer.userName,
-								type: eachPlayer.role.cardName
+								type: eachPlayer.role.cardName,
 							},
 							{
-								text: `'s XP: `
+								text: `'s XP: `,
 							},
 							{
-								text: ` ${activeChangeXP > 0 ? '+' : '-'}`
+								text: ` ${activeChangeXP > 0 ? '+' : '-'}`,
 							},
 							{
 								text: Math.abs(activeChangeXP).toFixed(1),
-								type: 'player'
-							}
-						]
+								type: 'player',
+							},
+						],
 					});
 				});
 
 				results.forEach((player: any) => {
-					const listUser = userList.find(user => user.userName === player.username);
+					const listUser = userList.find((user) => user.userName === player.username);
 
 					if (listUser) {
 						listUser.overall = player.overall;
@@ -417,19 +415,19 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 								chat: [
 									{
 										text: eachPlayer.userName,
-										type: eachPlayer.role.cardName
+										type: eachPlayer.role.cardName,
 									},
 									{
-										text: `'s Elo: `
+										text: `'s Elo: `,
 									},
 									{
-										text: ` ${activeChange > 0 ? '+' : '-'}`
+										text: ` ${activeChange > 0 ? '+' : '-'}`,
 									},
 									{
 										text: Math.abs(activeChange).toFixed(1),
-										type: 'player'
-									}
-								]
+										type: 'player',
+									},
+								],
 							});
 
 							seatedPlayer.gameChats.push({
@@ -438,19 +436,19 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 								chat: [
 									{
 										text: eachPlayer.userName,
-										type: eachPlayer.role.cardName
+										type: eachPlayer.role.cardName,
 									},
 									{
-										text: `'s XP: `
+										text: `'s XP: `,
 									},
 									{
-										text: ` ${activeChangeXP > 0 ? '+' : '-'}`
+										text: ` ${activeChangeXP > 0 ? '+' : '-'}`,
 									},
 									{
 										text: Math.abs(activeChangeXP).toFixed(1),
-										type: 'player'
-									}
-								]
+										type: 'player',
+									},
+								],
 							});
 						}
 					});
@@ -476,7 +474,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 							wins: 0,
 							losses: 0,
 							rainbowWins: 0,
-							rainbowLosses: 0
+							rainbowLosses: 0,
 						};
 					}
 
@@ -496,20 +494,15 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						if (isTournamentFinalGame && !game.general.casualGame) {
 							player.gameSettings.tournyWins.push(Date.now());
 
-							const playerSocketId = Object.keys(io.sockets.sockets).find(
-								socketId => {
-									const s = io.sockets.sockets.get(socketId);
+							const playerSocketId = Object.keys(io.sockets.sockets).find((socketId) => {
+								const s = io.sockets.sockets.get(socketId);
 
-									if (!s) return false;
+								if (!s) return false;
 
-									const handshake = s.handshake as any;
+								const handshake = s.handshake as any;
 
-									return (
-										handshake?.session?.passport &&
-										handshake.session.passport.user === player.username
-									);
-								}
-							);
+								return handshake?.session?.passport && handshake.session.passport.user === player.username;
+							});
 
 							const playerSocket = playerSocketId && io.sockets.sockets.get(playerSocketId);
 
@@ -535,7 +528,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					checkBadgesXP(player, game.general.uid);
 
 					player.save(() => {
-						const userEntry = userList.find(user => user.userName === player.username);
+						const userEntry = userList.find((user) => user.userName === player.username);
 
 						if (userEntry) {
 							if (!userEntry.overall) {
@@ -598,7 +591,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	} else if (game.general.playerChats === 'disabled' || game.general.practiceGame) {
 		// 2 XP for win, 1 for loss
 		Account.find({
-			username: { $in: seatedPlayers?.map((player: any) => player.userName) }
+			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
 		}).then((results) => {
 			for (const player of results) {
 				if (!player.overall) {
@@ -608,7 +601,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						wins: 0,
 						losses: 0,
 						rainbowWins: 0,
-						rainbowLosses: 0
+						rainbowLosses: 0,
 					};
 				}
 
@@ -625,7 +618,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						wins: 0,
 						losses: 0,
 						rainbowWins: 0,
-						rainbowLosses: 0
+						rainbowLosses: 0,
 					};
 				}
 
@@ -674,16 +667,16 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					undrawnPolicyCount: 17,
 					discardedPolicyCount: 0,
 					presidentIndex: -1,
-					isStarted: true
+					isStarted: true,
 				};
 
 				finalGame.trackState = {
 					policyCount: {
 						liberal: 0,
-						fascist: 0
+						fascist: 0,
 					},
 					electionTrackerCount: 0,
-					enactedPolicies: []
+					enactedPolicies: [],
 				};
 
 				const countDown = setInterval(() => {
@@ -709,45 +702,38 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 						game.general.tournyInfo.isRound1TableThatFinished2nd = true;
 						sendInProgressGameUpdate(game);
 
-						const winningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
-							socketId => {
-								const socket = io.sockets.sockets.get(socketId);
+						const winningPlayerSocketIds = Object.keys(io.sockets.sockets).filter((socketId) => {
+							const socket = io.sockets.sockets.get(socketId);
 
-								if (!socket) return false;
+							if (!socket) return false;
 
-								const handshake = socket.handshake as any;
+							const handshake = socket.handshake as any;
 
-								return handshake?.session?.passport &&
-									winningPrivatePlayers?.map((player: any) => player.userName).includes(handshake.session.passport.user);
-							}
-						);
+							return handshake?.session?.passport && winningPrivatePlayers?.map((player: any) => player.userName).includes(handshake.session.passport.user);
+						});
 
 						// crash here line 302 map of undefined.  Not sure how this didn't exist at this time.  Race condition in settimeout/interval?  Both games completed at almost the same time?  Dunno.
-						const otherGameWinningPlayerSocketIds = Object.keys(io.sockets.sockets).filter(
-							socketId => {
-								const socket = io.sockets.sockets.get(socketId);
+						const otherGameWinningPlayerSocketIds = Object.keys(io.sockets.sockets).filter((socketId) => {
+							const socket = io.sockets.sockets.get(socketId);
 
-								if (!socket) return false;
+							if (!socket) return false;
 
-								const handshake = socket.handshake as any;
+							const handshake = socket.handshake as any;
 
-								return (
-									handshake?.session?.passport &&
-										game.general.tournyInfo.winningPlayersFirstCompletedGame
-											.map((player: any) => player.userName)
-											.includes(handshake.session.passport.user)
-								);
-							}
-						);
+							return (
+								handshake?.session?.passport &&
+								game.general.tournyInfo.winningPlayersFirstCompletedGame.map((player: any) => player.userName).includes(handshake.session.passport.user)
+							);
+						});
 
 						const socketIds = winningPlayerSocketIds.concat(otherGameWinningPlayerSocketIds);
 
-						socketIds.forEach(id => {
+						socketIds.forEach((id) => {
 							const socket = io.sockets.sockets.get(id);
 
 							if (!socket) return;
 
-							Array.from(socket.rooms.keys()).forEach(roomUid => {
+							Array.from(socket.rooms.keys()).forEach((roomUid) => {
 								socket.leave(roomUid);
 							});
 
@@ -765,7 +751,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 									cardDisplayed: false,
 									isFlipped: false,
 									cardFront: 'secretrole',
-									cardBack: {}
+									cardBack: {},
 								};
 
 								player.isDead = false;
@@ -801,13 +787,13 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					timestamp: new Date(),
 					chat: [
 						{
-							text: 'This tournament game has finished first.  Winning players will be pulled into the final round when it starts.'
-						}
-					]
+							text: 'This tournament game has finished first.  Winning players will be pulled into the final round when it starts.',
+						},
+					],
 				});
 
 				otherGame.general.tournyInfo.winningPlayersFirstCompletedGame = _.cloneDeep(game.private.seatedPlayers)?.filter(
-					(player: any) => player.role.team === winningTeamName
+					(player: any) => player.role.team === winningTeamName,
 				);
 
 				sendInProgressGameUpdate(game);
@@ -824,15 +810,15 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			if (!game.chats) {
 				game.chats = [];
 			}
-			
+
 			game.chats.push({
 				gameChat: true,
 				timestamp: new Date(),
 				chat: [
 					{
-						text: 'The tournament has ended.'
-					}
-				]
+						text: 'The tournament has ended.',
+					},
+				],
 			});
 			game.general.status = 'The tournament has ended.';
 			sendInProgressGameUpdate(game);
@@ -854,15 +840,16 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			chat: [
 				{
 					text: 'Line Guesses',
-					type: 'player'
-				}
-			]
+					type: 'player',
+				},
+			],
 		});
 	}
 
 	if (!_.isEmpty(guesses)) {
-		const hittySeat = (game.private.seatedPlayers?.findIndex(p => p.role.cardName === 'hitler') || -1) + 1;
-		const fasSeats = game.private.seatedPlayers?.map((p, i: number) => [p, i])
+		const hittySeat = (game.private.seatedPlayers?.findIndex((p) => p.role.cardName === 'hitler') || -1) + 1;
+		const fasSeats = game.private.seatedPlayers
+			?.map((p, i: number) => [p, i])
 			.filter(([p, _]: any[]) => p.role.team === 'fascist') // TODO: better types?
 			.map(([_, i]: any[]) => i + 1);
 
@@ -891,9 +878,9 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			timestamp: now + guessOrder++,
 			chat: [
 				{
-					text: prefix + guesses.map(([user, guess]) => `${user} (${guess.toString()})`).join(', ')
-				}
-			]
+					text: prefix + guesses.map(([user, guess]) => `${user} (${guess.toString()})`).join(', '),
+				},
+			],
 		});
 
 		if (!game.chats) {
@@ -909,12 +896,12 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				i === numFas
 					? 'All fascists correct - '
 					: i === 3
-					? 'Three fascists correct - '
-					: i === 2
-					? 'Two fascists correct - '
-					: i === 1
-					? 'One fascist correct - '
-					: 'No fascists correct :( -';
+						? 'Three fascists correct - '
+						: i === 2
+							? 'Two fascists correct - '
+							: i === 1
+								? 'One fascist correct - '
+								: 'No fascists correct :( -';
 
 			if (groupedGuesses[i].length) {
 				game.chats.push(guessesToChat(prefix, groupedGuesses[i]));
@@ -940,13 +927,13 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				timestamp: now + guessOrder++,
 				chat: [
 					{
-						text: 'Merlin correct - ' + groupedGuesses[merlinSeat].map(([user, _]) => user).join(', ')
-					}
-				]
+						text: 'Merlin correct - ' + groupedGuesses[merlinSeat].map(([user, _]) => user).join(', '),
+					},
+				],
 			});
 		}
 
-		const wrongGuesses = _.range(1, 11).filter(g => g !== merlinSeat && Boolean(groupedGuesses[g]));
+		const wrongGuesses = _.range(1, 11).filter((g) => g !== merlinSeat && Boolean(groupedGuesses[g]));
 
 		if (wrongGuesses.length) {
 			game.chats.push({
@@ -954,9 +941,9 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				timestamp: now + guessOrder++,
 				chat: [
 					{
-						text: 'Merlin incorrect - ' + wrongGuesses.map(g => groupedGuesses[g].map(([user, _]) => user).join(', ') + ` (${g})`).join(', ')
-					}
-				]
+						text: 'Merlin incorrect - ' + wrongGuesses.map((g) => groupedGuesses[g].map(([user, _]) => user).join(', ') + ` (${g})`).join(', '),
+					},
+				],
 			});
 		}
 	}

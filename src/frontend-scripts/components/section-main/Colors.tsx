@@ -8,38 +8,17 @@ const additionalRoles = [
 	['admin', 'admin'],
 	['moira', 'moira'],
 	['godhemzelve', 'godhemzelve'],
-	['vig', 'vig']
+	['vig', 'vig'],
 ];
 
 const Colors = (props: any) => {
 	const refs = useRef([]);
 
 	useEffect(() => {
-		refs.current.forEach(ref => {
-			const r = parseInt(
-				window
-					.getComputedStyle(ref)
-					.color.slice(4, -1)
-					.split(', ')[0]
-			)
-				.toString(16)
-				.padStart(2, '0');
-			const g = parseInt(
-				window
-					.getComputedStyle(ref)
-					.color.slice(4, -1)
-					.split(', ')[1]
-			)
-				.toString(16)
-				.padStart(2, '0');
-			const b = parseInt(
-				window
-					.getComputedStyle(ref)
-					.color.slice(4, -1)
-					.split(', ')[2]
-			)
-				.toString(16)
-				.padStart(2, '0');
+		refs.current.forEach((ref) => {
+			const r = parseInt(window.getComputedStyle(ref).color.slice(4, -1).split(', ')[0]).toString(16).padStart(2, '0');
+			const g = parseInt(window.getComputedStyle(ref).color.slice(4, -1).split(', ')[1]).toString(16).padStart(2, '0');
+			const b = parseInt(window.getComputedStyle(ref).color.slice(4, -1).split(', ')[2]).toString(16).padStart(2, '0');
 			ref.innerText = '#' + (r + g + b).toUpperCase();
 		});
 	}, []);
@@ -51,18 +30,18 @@ const Colors = (props: any) => {
 			</a>
 			<h2 className="ui header">Site Colors Reference</h2>
 			<ul>
-				{[...Array(121).keys()].map(id => (
+				{[...Array(121).keys()].map((id) => (
 					<li key={id}>
 						<p className={'elo' + id}>
-							{1500 + id * 5} - <span ref={r => (refs.current[refs.current.length] = r)}></span>
+							{1500 + id * 5} - <span ref={(r) => (refs.current[refs.current.length] = r)}></span>
 						</p>
 					</li>
 				))}
 
-				{additionalRoles.map(data => (
+				{additionalRoles.map((data) => (
 					<li key={data[0]}>
 						<p className={data[1]}>
-							{data[0]} - <span ref={r => (refs.current[refs.current.length] = r)}></span>
+							{data[0]} - <span ref={(r) => (refs.current[refs.current.length] = r)}></span>
 						</p>
 					</li>
 				))}

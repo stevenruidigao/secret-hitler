@@ -28,5 +28,5 @@ export default [
 	'negro',
 	'KKK',
 	'rape',
-	'niger'
+	'niger',
 ];

@@ -30,11 +30,11 @@ export default Object.assign(
 	playerReports,
 	remakeGame,
 	settings,
-	util
+	util,
 );
 
 const crashReport = JSON.stringify({
-	content: `${process.env.DISCORDADMINPING} the site just crashed or reset.`
+	content: `${process.env.DISCORDADMINPING} the site just crashed or reset.`,
 });
 
 const crashOptions = {
@@ -43,8 +43,8 @@ const crashOptions = {
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/json',
-		'Content-Length': Buffer.byteLength(crashReport)
-	}
+		'Content-Length': Buffer.byteLength(crashReport),
+	},
 };
 
 if (process.env.NODE_ENV === 'production') {

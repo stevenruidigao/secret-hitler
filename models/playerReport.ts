@@ -21,7 +21,7 @@ const playerReport = new Schema<IPlayerReport>({
 	reportingPlayer: String,
 	gameType: String,
 	comment: String,
-	isActive: Boolean
+	isActive: Boolean,
 });
 
 export default mongoose.model<IPlayerReport>('PlayerReport', playerReport);

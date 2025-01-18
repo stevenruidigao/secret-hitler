@@ -19,21 +19,21 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 		game.trackState.enactedPolicies = [];
 		if (game.customGameSettings.trackState && game.customGameSettings.trackState.lib > 0) {
 			game.trackState.policyCount.liberal = game.customGameSettings.trackState.lib;
-			_.range(0, game.customGameSettings.trackState.lib).forEach(num => {
+			_.range(0, game.customGameSettings.trackState.lib).forEach((num) => {
 				game.trackState.enactedPolicies.push({
 					cardBack: 'liberal',
 					isFlipped: true,
-					position: `liberal${num + 1}`
+					position: `liberal${num + 1}`,
 				});
 			});
 		}
 		if (game.customGameSettings.trackState && game.customGameSettings.trackState.fas > 0) {
 			game.trackState.policyCount.fascist = game.customGameSettings.trackState.fas;
-			_.range(0, game.customGameSettings.trackState.fas).forEach(num => {
+			_.range(0, game.customGameSettings.trackState.fas).forEach((num) => {
 				game.trackState.enactedPolicies.push({
 					cardBack: 'fascist',
 					isFlipped: true,
-					position: `fascist${num + 1}`
+					position: `fascist${num + 1}`,
 				});
 			});
 		}
@@ -48,8 +48,8 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 
 	game.private.policies = _.shuffle(
 		_.range(0, libCount)
-			.map(num => 'liberal')
-			.concat(_.range(0, fasCount).map(num => 'fascist'))
+			.map((num) => 'liberal')
+			.concat(_.range(0, fasCount).map((num) => 'fascist')),
 	);
 
 	game.gameState.undrawnPolicyCount = game.private?.policies.length || 0;
@@ -60,23 +60,23 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 			gameChat: true,
 			chat: [
 				{
-					text: 'Deck shuffled: '
+					text: 'Deck shuffled: ',
 				},
 				{
 					text: `${libCount} liberal`,
-					type: 'liberal'
+					type: 'liberal',
 				},
 				{
-					text: ' and '
+					text: ' and ',
 				},
 				{
 					text: `${fasCount} fascist`,
-					type: 'fascist'
+					type: 'fascist',
 				},
 				{
-					text: ' policies.'
-				}
-			]
+					text: ' policies.',
+				},
+			],
 		};
 
 		if (!game.private.seatedPlayers) {
@@ -97,13 +97,13 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 	const modOnlyChat: any = {
 		timestamp: new Date(),
 		gameChat: true,
-		chat: [{ text: 'The deck has been shuffled: ' }]
+		chat: [{ text: 'The deck has been shuffled: ' }],
 	};
 
 	game.private.policies.forEach((policy: string) => {
 		modOnlyChat.chat.push({
 			text: policy === 'liberal' ? 'B' : 'R',
-			type: policy
+			type: policy,
 		});
 	});
 
@@ -174,9 +174,9 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 			timestamp: new Date(),
 			chat: [
 				{
-					text: 'You are president and must select a chancellor.'
-				}
-			]
+					text: 'You are president and must select a chancellor.',
+				},
+			],
 		});
 	}
 
@@ -186,7 +186,7 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 				seatedPlayers[index] &&
 				!seatedPlayers[index].isDead &&
 				index !== presidentIndex &&
-				(game.general.livingPlayerCount > 5 ? !previousElectedGovernment.includes(index) : previousElectedGovernment[1] !== index)
+				(game.general.livingPlayerCount > 5 ? !previousElectedGovernment.includes(index) : previousElectedGovernment[1] !== index),
 		)
 		.forEach((player: any) => {
 			player.notificationStatus = 'notification';
@@ -219,16 +219,16 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 						chat: [
 							{
 								text: pendingPresidentPlayer.userName,
-								type: 'player'
+								type: 'player',
 							},
 							{
-								text: ' was forced by the timer to select a random chancellor.'
-							}
-						]
+								text: ' was forced by the timer to select a random chancellor.',
+							},
+						],
 					});
 				}
 			},
-			typeof process.env.DEVTIMEDDELAY === 'number' ? process.env.DEVTIMEDDELAY : game.general.timedMode * 1000
+			typeof process.env.DEVTIMEDDELAY === 'number' ? process.env.DEVTIMEDDELAY : game.general.timedMode * 1000,
 		)[Symbol.toPrimitive]();
 	}
 
@@ -238,14 +238,14 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 					pendingPresidentPlayer.userName,
 					seatedPlayers
 						.filter((player: any, index: number) => !player.isDead && index !== presidentIndex && !previousElectedGovernment.includes(index))
-						.map((el: any) => seatedPlayers.indexOf(el))
-			  ]
+						.map((el: any) => seatedPlayers.indexOf(el)),
+				]
 			: [
 					pendingPresidentPlayer.userName,
 					seatedPlayers
 						.filter((player: any, index: number) => !player.isDead && index !== presidentIndex && previousElectedGovernment[1] !== index)
-						.map((el: any) => seatedPlayers.indexOf(el))
-			  ];
+						.map((el: any) => seatedPlayers.indexOf(el)),
+				];
 
 	sendInProgressGameUpdate(game);
 };

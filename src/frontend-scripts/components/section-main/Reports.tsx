@@ -10,16 +10,16 @@ export default class Reports extends React.Component {
 		this.state = {
 			reports: [],
 			sortType: 'date',
-			sortDirection: 'descending'
+			sortDirection: 'descending',
 		};
 	}
 
 	componentDidMount() {
 		this.props.socket.emit('getUserReports');
 
-		this.props.socket.on('reportInfo', reports => {
+		this.props.socket.on('reportInfo', (reports) => {
 			this.setState({
-				reports
+				reports,
 			});
 		});
 	}
@@ -34,16 +34,16 @@ export default class Reports extends React.Component {
 		/**
 		 * @param {string} type - description of how to sort the reports log
 		 */
-		const sortClick = type => {
+		const sortClick = (type) => {
 			this.setState({
 				sortType: type,
-				sortDirection: sortDirection === 'descending' ? 'ascending' : 'descending'
+				sortDirection: sortDirection === 'descending' ? 'ascending' : 'descending',
 			});
 		};
-		const activeClick = report => {
+		const activeClick = (report) => {
 			this.props.socket.emit('updateModAction', {
 				isReportResolveChange: true,
-				_id: report._id
+				_id: report._id,
 			});
 		};
 
@@ -169,5 +169,5 @@ export default class Reports extends React.Component {
 
 Reports.propTypes = {
 	userInfo: PropTypes.object,
-	socket: PropTypes.object
+	socket: PropTypes.object,
 };

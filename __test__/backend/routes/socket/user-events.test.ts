@@ -16,7 +16,7 @@ const {
 	handlePlayerReportDismiss,
 	checkUserStatus,
 	handleUserLeaveGame,
-	handleSocketDisconnect
+	handleSocketDisconnect,
 } = userEvents;
 
 describe('user events', () => {

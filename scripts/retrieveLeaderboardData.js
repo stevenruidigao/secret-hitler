@@ -6,7 +6,7 @@ const data = {
 	seasonalLeaderboardXP: [],
 	dailyLeaderboardElo: [],
 	dailyLeaderboardXP: [],
-	rainbowLeaderboard: []
+	rainbowLeaderboard: [],
 };
 
 mongoose.Promise = global.Promise;
@@ -14,36 +14,36 @@ mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`);
 
 Account.find({ lastCompletedGame: { $gte: new Date(Date.now() - 86400000) } })
 	.cursor()
-	.eachAsync(account => {
+	.eachAsync((account) => {
 		data.dailyLeaderboardElo.push({
 			userName: account.username,
-			dailyEloDifference: account.eloSeason - (account.previousDayElo || 1600)
+			dailyEloDifference: account.eloSeason - (account.previousDayElo || 1600),
 		});
 		data.dailyLeaderboardXP.push({
 			userName: account.username,
-			dailyXPDifference: account.xpSeason - (account.previousDayXP || 1600)
+			dailyXPDifference: account.xpSeason - (account.previousDayXP || 1600),
 		});
 	})
 	.then(() => {
 		Account.find({ 'games.2': { $exists: true } })
 			.cursor()
-			.eachAsync(account => {
+			.eachAsync((account) => {
 				if (account.eloSeason > 1620 && !account.isBanned) {
 					data.seasonalLeaderboardElo.push({
 						userName: account.username,
-						elo: account.eloSeason
+						elo: account.eloSeason,
 					});
 				}
 				if (account.xpSeason > 10 && !account.isBanned) {
 					data.seasonalLeaderboardXP.push({
 						userName: account.username,
-						xp: account.xpSeason
+						xp: account.xpSeason,
 					});
 				}
 				if (account.isRainbowOverall && !account.isBanned) {
 					data.rainbowLeaderboard.push({
 						userName: account.username,
-						date: account.dateRainbowOverall || new Date(0)
+						date: account.dateRainbowOverall || new Date(0),
 					});
 				}
 				account.previousDayElo = account.eloSeason;

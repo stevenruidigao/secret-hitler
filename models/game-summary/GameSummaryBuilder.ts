@@ -43,7 +43,7 @@ export default class GameSummaryBuilder {
 		const { logs } = this;
 		const targetAttrs = fromNullable(_targetAttrs);
 
-		const targetIndex = targetAttrs.map((attrs: any) => logs.findLastIndex(log => objectContains(log, attrs))).valueOrElse(logs.size - 1);
+		const targetIndex = targetAttrs.map((attrs: any) => logs.findLastIndex((log) => objectContains(log, attrs))).valueOrElse(logs.size - 1);
 
 		const nextTarget = Object.assign({}, logs.get(targetIndex), update);
 

@@ -14,16 +14,16 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 	}
 
 	const { seatedPlayers } = game.private;
-	
+
 	Account.find({ staffRole: { $exists: true } }).then((accounts) => {
 		const staffUserNames = accounts
 			.filter(
-				account =>
+				(account) =>
 					account.staffRole === 'altmod' ||
 					account.staffRole === 'moderator' ||
 					account.staffRole === 'editor' ||
 					account.staffRole === 'admin' ||
-					account.staffRole === 'trialmod'
+					account.staffRole === 'trialmod',
 			)
 			.map((account) => account.username);
 		const players = seatedPlayers.map((player: any) => player.userName);
@@ -33,7 +33,7 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 				newStaff.altmodUserNames.includes(n) ||
 				newStaff.modUserNames.includes(n) ||
 				newStaff.editorUserNames.includes(n) ||
-				newStaff.trialmodUserNames.includes(n)
+				newStaff.trialmodUserNames.includes(n),
 		);
 
 		if (type !== 'reportdelayed' && type !== 'modchatdelayed') {
@@ -54,8 +54,8 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Content-Length': Buffer.byteLength(report)
-					}
+						'Content-Length': Buffer.byteLength(report),
+					},
 				});
 				req.end(report);
 			} catch (e) {
@@ -102,7 +102,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			}`,
 			username: '@Mod Ping',
 			allowed_mentions: { roles: [process.env.DISCORDMODID] },
-			avatar_url: 'https://cdn.discordapp.com/emojis/612042360318328842.png?v=1'
+			avatar_url: 'https://cdn.discordapp.com/emojis/612042360318328842.png?v=1',
 		});
 
 		if (process.env.NODE_ENV === 'production') {
@@ -113,8 +113,8 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Content-Length': Buffer.byteLength(report)
-					}
+						'Content-Length': Buffer.byteLength(report),
+					},
 				});
 				req.end(report);
 			} catch (e) {
@@ -136,7 +136,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			content: `<@&${process.env.DISCORDMODID}>${isDelayed}\n__**Player**__: ${player} {${seat}}\n__**Role**__: ${upperRole}\n__**Situation**__: ${situation}\n__**Election #**__: ${election}\n__**Game Type**__: ${gameType}`,
 			username: 'Auto Report',
 			allowed_mentions: { roles: [process.env.DISCORDMODID] },
-			avatar_url: 'https://cdn.discordapp.com/emojis/230161421336313857.png?v=1'
+			avatar_url: 'https://cdn.discordapp.com/emojis/230161421336313857.png?v=1',
 		};
 
 		game.publicPlayersState.map((state) => {
@@ -163,27 +163,15 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 						} else if (
 							ip.includes('.') && // Ensure both IPs are IPv4
 							throwerIP.includes('.') &&
-							ip
-								.split('.')
-								.splice(0, 3)
-								.join('.') === // Splice off last block
-								throwerIP
-									.split('.')
-									.splice(0, 3)
-									.join('.') // to determine if the IPs are a 3-block match
+							ip.split('.').splice(0, 3).join('.') === // Splice off last block
+								throwerIP.split('.').splice(0, 3).join('.') // to determine if the IPs are a 3-block match
 						) {
 							matches[seat] = `${account.username} {${seat + 1}} (3-block)`;
 						} else if (
 							ip.includes(':') && // Ensure both IPs are IPv6
 							throwerIP.includes(':') &&
-							ip
-								.split(':')
-								.splice(0, 4)
-								.join(':') === // Splice off first four blocks to check if they match
-								throwerIP
-									.split(':')
-									.splice(0, 4)
-									.join(':') // to determine if the IPs are a 4-block match
+							ip.split(':').splice(0, 4).join(':') === // Splice off first four blocks to check if they match
+								throwerIP.split(':').splice(0, 4).join(':') // to determine if the IPs are a 4-block match
 						) {
 							matches[seat] = `${account.username} {${seat + 1}} (4-block IPv6)`;
 						}
@@ -212,7 +200,7 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			content: `<@&${process.env.DISCORDMODID}>${isDelayed}\n__**Member**__: ${player} \n__**Situation**__: ${situation}\n__**Election #**__: ${election}\n__**Game Type**__: ${gameType}\n**<https://secrethitler.io/game/#/table/${uid}>**`,
 			username: 'Mod Chat',
 			allowed_mentions: { roles: [process.env.DISCORDMODID] },
-			avatar_url: 'https://cdn.discordapp.com/emojis/230161421311148043.png?v=1'
+			avatar_url: 'https://cdn.discordapp.com/emojis/230161421311148043.png?v=1',
 		};
 		sendReport(game, report, data, type);
 	}

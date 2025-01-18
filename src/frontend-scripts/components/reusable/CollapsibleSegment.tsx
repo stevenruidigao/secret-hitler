@@ -1,9 +1,9 @@
 import React from 'react';
 import useCollapse from 'react-collapsed';
 
-const CollapsibleSegment = props => {
+const CollapsibleSegment = (props) => {
 	const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({
-		defaultExpanded: props.defaultExpanded || false
+		defaultExpanded: props.defaultExpanded || false,
 	});
 
 	return (
