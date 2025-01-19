@@ -13,6 +13,9 @@ import UserPopup from '../reusable/UserPopup.tsx';
 $.fn.dropdown = Dropdown;
 
 class Players extends React.Component {
+	static propTypes: any;
+	props: any;
+
 	state = {
 		passwordValue: '',
 		reportedPlayer: '',

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const positions = ['middle-far-left', 'middle-left', 'middle-center', 'middle-right', 'middle-far-right'];
 
 // keyboardShortcuts: {phase: {key: index}}
-const keyboardShortcuts = {
+const keyboardShortcuts: Record<string, any> = {
 	voting: {
 		J: 1,
 		N: 3,
@@ -33,6 +33,8 @@ const keyboardShortcuts = {
 };
 
 class CardFlinger extends React.Component {
+	props: any;
+
 	state = {
 		isHovered: false,
 		hoveredClass: null,
@@ -40,14 +42,14 @@ class CardFlinger extends React.Component {
 		expansionTimer: 0, // number returned by setTimeout
 	};
 
-	handleHover = (classes) => {
+	handleHover = (classes: string[]) => {
 		this.setState({
 			isHovered: !this.state.isHovered,
 			hoveredClass: classes,
 		});
 	};
 
-	onKeyUp(event) {
+	onKeyUp(event: any) {
 		// ignore typing in chat/reporting
 		if (this.state.expandingIndex === null || ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
@@ -58,7 +60,7 @@ class CardFlinger extends React.Component {
 		});
 	}
 
-	onKeyDown(event) {
+	onKeyDown(event: any) {
 		const { gameInfo, userInfo } = this.props;
 		const { gameState } = gameInfo;
 		const { phase } = gameState;
@@ -76,7 +78,7 @@ class CardFlinger extends React.Component {
 			// instantly vote
 			this.handleCardClick(keyIndex);
 		} else {
-			const stateObj = cardFlingerState.find((flinger) => flinger.position === positions[keyIndex]);
+			const stateObj = cardFlingerState.find((flinger: any) => flinger.position === positions[keyIndex]);
 			// set a 2s timer to process the vote as if it were a click
 			if (this.state.expandingIndex !== keyIndex && !(stateObj && stateObj.notificationStatus && stateObj.notificationStatus === 'selected')) {
 				clearTimeout(this.state.expansionTimer);
@@ -100,7 +102,7 @@ class CardFlinger extends React.Component {
 		document.removeEventListener('keyup', this.onKeyUp.bind(this));
 	}
 
-	handleCardClick = (index) => {
+	handleCardClick = (index: number) => {
 		const { gameInfo, socket } = this.props;
 		const { gameState } = gameInfo;
 		const { phase } = gameState;

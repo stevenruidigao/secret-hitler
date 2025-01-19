@@ -19,8 +19,16 @@ import Reports from './Reports.tsx';
 import Leaderboards from './Leaderboards.tsx';
 import Colors from './Colors.tsx';
 
+declare global {
+	var plausible: Function;
+}
+
+const plausible = global.plausible;
+
 export class Main extends React.Component {
 	static propTypes: any;
+	props: any;
+	state: any;
 
 	constructor(props: any) {
 		super(props);
@@ -69,7 +77,7 @@ export class Main extends React.Component {
 		});
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps: any) {
 		if (Object.keys(prevProps.userList).length !== Object.keys(this.props.userList).length) {
 			const plausibleProps = {
 				Verified: this.props?.userInfo?.verified ? 'Yes' : 'No',
@@ -90,11 +98,11 @@ export class Main extends React.Component {
 		}
 	}
 
-	static getDerivedStateFromProps(props) {
+	static getDerivedStateFromProps(props: any) {
 		return props.userInfo.gameSettings ? { gameFilter: props.userInfo.gameSettings.gameFilters } : null;
 	}
 
-	setStickyEnabled = (enabled) => {
+	setStickyEnabled = (enabled: boolean) => {
 		this.setState({ stickyEnabled: enabled });
 	};
 
@@ -106,7 +114,7 @@ export class Main extends React.Component {
 		this.props.socket.emit('hasSeenNewPlayerModal');
 	};
 
-	handleChangeModalPageIndex = (newPlayerModalPageIndex) => {
+	handleChangeModalPageIndex = (newPlayerModalPageIndex: number) => {
 		this.setState({
 			newPlayerModalPageIndex,
 		});
@@ -260,7 +268,7 @@ export class Main extends React.Component {
 		let classes = 'section-main';
 
 		const { midSection, userList, userInfo, socket, gameInfo } = this.props;
-		const changeGameFilter = (gameFilter) => {
+		const changeGameFilter = (gameFilter: any) => {
 			this.setState(gameFilter);
 
 			if (userInfo.gameSettings) {

@@ -3,12 +3,16 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 class Policies extends React.Component {
+	static defaultProps: any;
+	static propTypes: any;
+	props: any;
+
 	clickedDraw() {
 		const { gameInfo, userInfo } = this.props;
 
 		if (
 			userInfo.userName &&
-			gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].policyNotification
+			gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)].policyNotification
 		) {
 			this.props.socket.emit('selectedPolicies', { uid: gameInfo.general.uid });
 		}
@@ -21,10 +25,10 @@ class Policies extends React.Component {
 			const { playersState } = gameInfo;
 			const count = gameInfo.gameState.undrawnPolicyCount;
 
-			let playerIndex;
+			let playerIndex: any;
 
 			if (userInfo.userName && playersState) {
-				playerIndex = playersState.find((player) => player.userName === userInfo.userName);
+				playerIndex = playersState.find((player: any) => player.userName === userInfo.userName);
 			}
 
 			return _.range(1, 18).map((num) => {
@@ -87,8 +91,8 @@ class Policies extends React.Component {
 							userInfo.isSeated &&
 							gameInfo.gameState.isStarted &&
 							gameInfo.playersState &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)] &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].policyNotification
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)] &&
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)].policyNotification
 						) {
 							classes += ' notifier';
 						}

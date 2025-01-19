@@ -1,5 +1,5 @@
 import React from 'react'; // eslint-disable-line
-import { App } from './App';
+import { App } from './App.tsx';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 

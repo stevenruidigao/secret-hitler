@@ -11,7 +11,11 @@ import Flappy from './Flappy.tsx';
 import PropTypes from 'prop-types';
 
 export default class Game extends React.Component {
-	componentDidUpdate(prevProps) {
+	static defaultProps: any;
+	static propTypes: any;
+	props: any;
+
+	componentDidUpdate(prevProps: any) {
 		const { userInfo, gameInfo } = this.props;
 
 		if (
@@ -138,8 +142,8 @@ export default class Game extends React.Component {
 						!userInfo.gameSettings.disableConfetti &&
 						gameInfo &&
 						gameInfo.publicPlayersState &&
-						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName) &&
-						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName).isConfetti
+						gameInfo.publicPlayersState.find((player: any) => player.userName === userInfo.userName) &&
+						gameInfo.publicPlayersState.find((player: any) => player.userName === userInfo.userName).isConfetti
 					) {
 						return balloons ? <Balloons /> : <Confetti />;
 					}

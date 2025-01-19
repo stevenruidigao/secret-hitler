@@ -8,8 +8,11 @@ import dayjs from 'dayjs';
 import * as Swal from 'sweetalert2';
 
 class Tracks extends React.Component {
-	constructor() {
-		super();
+	props: any;
+	_ismounted = false;
+
+	constructor(props: any) {
+		super(props);
 		this.state = {
 			remakeStatus: false,
 			minutes: 0,
@@ -25,13 +28,13 @@ class Tracks extends React.Component {
 		this._ismounted = true;
 
 		if (Notification && Notification.permission === 'granted' && this.props.socket) {
-			this.props.socket.on('pingPlayer', (data) => {
+			this.props.socket.on('pingPlayer', (data: any) => {
 				new Notification(data);
 			});
 		}
 
 		if (this.props.socket) {
-			this.props.socket.on('updateRemakeVoting', (status) => {
+			this.props.socket.on('updateRemakeVoting', (status: any) => {
 				this.setState({
 					remakeStatus: status,
 				});

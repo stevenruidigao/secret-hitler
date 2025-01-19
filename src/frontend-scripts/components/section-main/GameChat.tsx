@@ -70,9 +70,12 @@ const ClaimPeek = ({ handleClaimButtonClick }) => {
 };
 
 class GameChat extends React.Component {
+	static propTypes: any;
+	props: any;
+
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
-	state = {
+	state: Record<string, any> = {
 		lock: false,
 		claim: '',
 		playersToWhitelist: [],

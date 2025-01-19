@@ -1,8 +1,6 @@
 import fs from 'fs';
 import { promisify } from 'util';
 
-import redis from 'redis';
-
 import Account from '@/models/account.ts';
 import BannedIP, { IBannedIP } from '@/models/bannedIP.ts';
 import ModAction from '@/models/modAction.ts';
@@ -11,6 +9,7 @@ import version from '@/version.ts';
 
 import type { ActiveGame } from './game.d.ts';
 import { doesIPMatchCIDR } from './ip-obf.ts';
+import { globalSettingsClient } from './redis.ts';
 
 const io = global.io;
 const emotes: Record<string, string> = {};
@@ -20,10 +19,6 @@ fs.readdirSync('public/images/emotes', { withFileTypes: true }).forEach((file) =
 		const emoteName = file.name.substring(0, file.name.length - 4);
 		emotes[`:${emoteName}:`] = `/images/emotes/${file.name}?v=${version.number}`;
 	}
-});
-
-export const globalSettingsClient = redis.createClient({
-	db: 1,
 });
 
 const getGlobalSetting = promisify(globalSettingsClient.get).bind(globalSettingsClient);
@@ -117,7 +112,7 @@ export const newStaff: Record<string, string[]> = {
 export const staffList: Record<string, string> = {};
 
 export const getStaffList = () => {
-	Account.find({ staffRole: { $exists: true } }).then((accounts) => {
+	return Account.find({ staffRole: { $exists: true } }).then((accounts) => {
 		accounts.forEach((user) => (staffList[user.username] = user.staffRole as string));
 	});
 };

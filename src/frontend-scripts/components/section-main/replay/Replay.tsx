@@ -21,18 +21,18 @@ import ReplayOverlay from './ReplayOverlay.tsx';
 import ReplayControls from './ReplayControls.tsx';
 import TrackPieces from './TrackPieces.tsx';
 
-const mapStateToProps = ({ replay, userInfo }) => ({
+const mapStateToProps = ({ replay, userInfo }: any) => ({
 	replay,
 	isSmall: userInfo.gameSettings && userInfo.gameSettings.enableRightSidebarInGame,
 	userInfo: userInfo,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-	to: (position) => dispatch({ type: 'REPLAY_TO', position }),
+const mapDispatchToProps = (dispatch: any) => ({
+	to: (position: any) => dispatch({ type: 'REPLAY_TO', position }),
 	exit: () => dispatch({ type: 'CLOSE_REPLAY' }),
 });
 
-const buildPlayback = (replay, to) => {
+const buildPlayback = (replay: any, to: any) => {
 	const { ticks, position } = replay;
 	const snapshot = ticks.get(position);
 	const { turnNum, phase } = snapshot;
@@ -42,15 +42,15 @@ const buildPlayback = (replay, to) => {
 	 ***********/
 
 	// (turnNum: Int, [phases: List[String] | phase: String]) => Int
-	const findTickPos = (turnNum, _phases) => {
+	const findTickPos = (turnNum: number, _phases: string | string[]) => {
 		const phases = List.isList(_phases) ? _phases : List([_phases]);
 
-		const i = ticks.findLastIndex((t) => t.turnNum === turnNum && phases.includes(t.phase));
+		const i = ticks.findLastIndex((t: any) => t.turnNum === turnNum && phases.includes(t.phase));
 
 		return i > -1 ? some(i) : none;
 	};
 
-	const bindTo = (position) => to.bind(null, position);
+	const bindTo = (position: any) => to.bind(null, position);
 
 	/***********
 	 * EXPORTS *

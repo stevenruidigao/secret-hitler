@@ -1,5 +1,6 @@
 import GameSummaryBuilder from '@/models/game-summary/GameSummaryBuilder.ts';
 import GameSummary from '@/models/game-summary/index.ts';
+
 import '../matchers.ts';
 
 describe('GameSummaryBuilder', () => {

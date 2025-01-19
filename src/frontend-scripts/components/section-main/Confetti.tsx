@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 /* eslint-disable */
 
 export default class Confetti extends React.Component {
+	static propTypes: any;
+
 	componentDidMount() {
 		(function () {
 			// globals

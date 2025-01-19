@@ -1,6 +1,6 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { globalSettingsClient } from '../routes/socket/models.ts';
+import { globalSettingsClient } from '../routes/socket/redis.ts';
 
 Enzyme.configure({ adapter: new Adapter() });
 

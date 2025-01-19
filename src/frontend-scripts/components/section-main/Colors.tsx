@@ -12,7 +12,7 @@ const additionalRoles = [
 ];
 
 const Colors = (props: any) => {
-	const refs = useRef([]);
+	const refs = useRef<any[]>([]);
 
 	useEffect(() => {
 		refs.current.forEach((ref) => {
