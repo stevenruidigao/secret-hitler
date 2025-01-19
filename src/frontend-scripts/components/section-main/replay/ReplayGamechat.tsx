@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
+
 import { loadReplay, updateUser } from '../../../actions/actions.ts';
 import { processEmotes } from '../../../emotes.tsx';
 import { PLAYER_COLORS } from '../../../constants.ts';

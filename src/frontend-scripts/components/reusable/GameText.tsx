@@ -1,6 +1,8 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
+
 // @ts-expect-error: no types for 'option'
 import { fromNullable } from 'option';
+
 /**
  * @param {object} segment - todo
  * @return {jsx}

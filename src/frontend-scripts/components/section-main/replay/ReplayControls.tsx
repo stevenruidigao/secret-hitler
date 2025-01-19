@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react'; // eslint-disable-line no-unused-vars
+
 import { Range, List, OrderedMap, Map } from 'immutable';
 // @ts-expect-error: no types for 'option'
 import { fromNullable } from 'option';
 import classnames from 'classnames';
-import Slider from 'rc-slider';
+import RCSlider from 'rc-slider';
+
 import { capitalize, text, policyToString } from '@/utils/index.ts';
 import GameText from '../../reusable/GameText.tsx';
+
+const Slider = RCSlider as any; // TODO: why?????
 
 const TurnNav = ({ position, size, toTurn }) => {
 	const marks = Map(

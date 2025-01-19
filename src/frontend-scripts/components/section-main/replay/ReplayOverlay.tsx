@@ -1,9 +1,12 @@
 import React from 'react'; // eslint-disable-line
-import { List } from 'immutable';
+
 import classnames from 'classnames';
+import { List } from 'immutable';
+// @ts-expect-error: no types for 'option'
+import { some, none } from 'option';
+
 import CardGroup from '../../reusable/CardGroup.tsx';
 import { handToCards } from './replay-utils.tsx';
-import { some, none } from 'option';
 
 const Legislation = ({ type, handTitle, claimTitle, hand, discard, claim, hideHand }) => (
 	<div className={classnames(type, 'legislation')} style={{ top: '50px' }}>

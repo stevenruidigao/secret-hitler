@@ -1,8 +1,10 @@
 import React from 'react'; // eslint-disable-line
 import 'sweetalert2/src/sweetalert2.scss';
-import PropTypes from 'prop-types';
+import PropTypes, { node } from 'prop-types';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Modal, Header, Button, Icon } from 'semantic-ui-react';
+
+import socket from '../../socket.ts';
 
 import GamesList from './GamesList.tsx';
 import CreateGame from './CreateGame.tsx';
@@ -16,12 +18,11 @@ import Signups from './Signups.tsx';
 import Reports from './Reports.tsx';
 import Leaderboards from './Leaderboards.tsx';
 import Colors from './Colors.tsx';
-import socket from '../../socket.ts';
 
 export class Main extends React.Component {
 	static propTypes: any;
 
-	constructor(props = {}) {
+	constructor(props: any) {
 		super(props);
 
 		this.state = {
@@ -83,7 +84,9 @@ export class Main extends React.Component {
 				'Staff Status': this.props?.userInfo?.staffRole ? 'Staff' : 'Non-Staff',
 			};
 
-			plausible('Main Load', { props: plausibleProps });
+			if (process.env.NODE_ENV === 'production') {
+				plausible('Main Load', { props: plausibleProps });
+			}
 		}
 	}
 

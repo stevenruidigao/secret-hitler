@@ -1,5 +1,6 @@
 /* eslint-disable spaced-comment */
 import React from 'react'; // eslint-disable-line no-unused-vars
+
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Map, List } from 'immutable';

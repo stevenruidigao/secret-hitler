@@ -1,20 +1,21 @@
 import React from 'react';
+
 import Select from 'react-select';
 import Switch from 'react-switch';
 import { Range } from 'rc-slider';
 
-import blacklistedWords from '@/iso/blacklistedWords.ts';
-import flags from '@/utils/flags.ts';
-
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
+
+import blacklistedWords from '@/iso/blacklistedWords.ts';
+import flags from '@/utils/flags.ts';
 
 export default class CreateGame extends React.Component {
 	static propTypes: any;
 	props: any;
 	state: any;
 
-	constructor(props = {}) {
+	constructor(props: any) {
 		super(props);
 
 		let isRainbow = false;

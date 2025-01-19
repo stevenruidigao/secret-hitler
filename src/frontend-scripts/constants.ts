@@ -71,7 +71,7 @@ export const LEGAL_CHARACTERS = (text: string): boolean => {
  * @param {boolean} eloDisabled - true if elo is off
  * @return {string} list of classes for colors.
  */
-export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: string, eloDisabled: boolean) => {
+export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: string, eloDisabled?: boolean) => {
 	if (
 		Boolean(user.staffRole && user.staffRole.length && user.staffRole !== 'trialmod' && user.staffRole !== 'altmod') &&
 		!(user.staff && user.staff.disableStaffColor)

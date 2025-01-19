@@ -1,8 +1,10 @@
 import React from 'react'; // eslint-disable-line
+
 import { connect } from 'react-redux';
-import { viewPatchNotes } from '../../actions/actions.ts';
 import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
+
+import { viewPatchNotes } from '../../actions/actions.ts';
 
 const mapStateToProps = ({ version, userInfo }) => ({ version, userInfo });
 

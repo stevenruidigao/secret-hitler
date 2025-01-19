@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { getNumberWithOrdinal, PLAYERCOLORS } from '../../constants.js';
-import { processEmotes } from '../../emotes';
+import { getNumberWithOrdinal, PLAYER_COLORS as PLAYER_COLORS } from '../../constants.ts';
+import { processEmotes } from '../../emotes.tsx';
 
 const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, allEmotes, gameInfo }) => {
 	const timestamp = (
@@ -14,7 +14,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 	const isSeated = seatedUserNames.includes(chat.userName);
 	const isGreenText = useMemo(() => chatContents && chatContents[0] && /^>/i.test(chatContents[0]), [chatContents]);
 	const isBlind = gameInfo?.general?.blindMode && !gameInfo?.gameState.isCompleted;
-	const playerColorsClasses = useMemo(() => PLAYERCOLORS(playerListPlayer, !gameSettings?.disableSeasonal, 'chat-user'), [playerListPlayer, gameSettings]);
+	const playerColorsClasses = useMemo(() => PLAYER_COLORS(playerListPlayer, !gameSettings?.disableSeasonal, 'chat-user'), [playerListPlayer, gameSettings]);
 
 	const chatIndex = JSON.stringify(chat);
 

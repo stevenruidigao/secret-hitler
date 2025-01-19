@@ -1,7 +1,9 @@
 import React from 'react'; // eslint-disable-line
-import CardGroup from '../../reusable/CardGroup.tsx';
+
 import { Map } from 'immutable';
 import classnames from 'classnames';
+
+import CardGroup from '../../reusable/CardGroup.tsx';
 import { handToCards } from './replay-utils.tsx';
 
 const ElectionTracker = ({ position }: { position: number }) => {

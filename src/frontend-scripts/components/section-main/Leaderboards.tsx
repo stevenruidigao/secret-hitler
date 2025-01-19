@@ -2,8 +2,8 @@ import React from 'react';
 import dayjs from 'dayjs';
 
 class Leaderboard extends React.Component {
-	constructor() {
-		super();
+	constructor(props: any) {
+		super(props);
 
 		this.state = {
 			seasonalLeaderboardElo: [],
