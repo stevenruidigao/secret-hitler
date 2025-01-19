@@ -1,6 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import { Range } from 'rc-slider';
+import Range from 'rc-slider';
 import Modal from 'semantic-ui-modal';
 import Checkbox from 'semantic-ui-checkbox';
 import Dropzone from 'react-dropzone';

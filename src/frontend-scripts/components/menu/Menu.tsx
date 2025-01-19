@@ -6,9 +6,9 @@ import Swal from 'sweetalert2';
 import { viewPatchNotes } from '../../actions/actions.ts';
 import socket from '../../socket.ts';
 
-const mapStateToProps = ({ version }) => ({ version });
+const mapStateToProps = ({ version }: any) => ({ version });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: any) => ({
 	readPatchNotes: () => {
 		dispatch(viewPatchNotes());
 		fetch('/viewPatchNotes', {
@@ -19,10 +19,11 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 class Menu extends React.Component {
+	props: any;
 	static propTypes: any;
 
-	constructor() {
-		super();
+	constructor(props: any) {
+		super(props);
 	}
 
 	componentDidMount() {
@@ -218,7 +219,7 @@ class Menu extends React.Component {
 									className={
 										this.props.midSection !== 'game' && this.props.version.lastSeen && this.props.version.current.number !== this.props.version.lastSeen
 											? 'patch-alert'
-											: null
+											: undefined
 									}
 									onClick={this.props.readPatchNotes}
 								>
@@ -235,7 +236,7 @@ class Menu extends React.Component {
 												html: 'Please enter your feedback here. Reporting players and other time-sensitive moderation issues should go to #mod-support on our Discord.',
 												input: 'textarea',
 												inputAttributes: {
-													maxlength: 1900,
+													maxlength: '1900', // TODO: number?
 												},
 												confirmButtonText: 'Submit',
 												showCancelButton: true,
@@ -346,7 +347,7 @@ class Menu extends React.Component {
 									className={
 										this.props.midSection !== 'game' && this.props.version.lastSeen && this.props.version.current.number !== this.props.version.lastSeen
 											? 'patch-alert'
-											: null
+											: undefined
 									}
 									onClick={this.props.readPatchNotes}
 								>

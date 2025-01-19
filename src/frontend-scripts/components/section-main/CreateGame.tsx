@@ -1,6 +1,6 @@
 import React from 'react';
-import Switch from 'react-switch';
 import Select from 'react-select';
+import Switch from 'react-switch';
 import { Range } from 'rc-slider';
 
 import blacklistedWords from '@/iso/blacklistedWords.ts';
@@ -10,16 +10,17 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
 export default class CreateGame extends React.Component {
-	props: any;
 	static propTypes: any;
+	props: any;
+	state: any;
 
-	constructor(props: any) {
+	constructor(props = {}) {
 		super(props);
 
 		let isRainbow = false;
 		let user;
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
 		}
 		if (user) {
 			isRainbow = user.isRainbowOverall;
@@ -75,7 +76,7 @@ export default class CreateGame extends React.Component {
 		const options = flags;
 
 		const style = {
-			option: (styles, state) => ({
+			option: (styles: any, state: any) => ({
 				...styles,
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
@@ -84,7 +85,7 @@ export default class CreateGame extends React.Component {
 			}),
 		};
 
-		const findValue = (val) => {
+		const findValue = (val: any) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -98,7 +99,7 @@ export default class CreateGame extends React.Component {
 				options={options}
 				styles={style}
 				value={findValue(this.state.flag)}
-				onChange={(inputValue, action) => this.setState({ flag: inputValue.value })}
+				onChange={(inputValue: any, action: any) => this.setState({ flag: inputValue.value })}
 				menuPlacement={'auto'}
 				isSearchable={true}
 				menuShouldScrollIntoView={true}
@@ -143,7 +144,7 @@ export default class CreateGame extends React.Component {
 		];
 
 		const style = {
-			option: (styles, state) => ({
+			option: (styles: any, state: any) => ({
 				...styles,
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
@@ -152,7 +153,7 @@ export default class CreateGame extends React.Component {
 			}),
 		};
 
-		const findValue = (val) => {
+		const findValue = (val: any) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -193,13 +194,13 @@ export default class CreateGame extends React.Component {
 				value={findValue(this.state.gameType)}
 				onChange={(inputValue, action) => {
 					const resetPlayerChats =
-						(['ranked', 'practice'].includes(inputValue.value) && this.state.playerChats === 'emotes') ||
-						(inputValue.value === 'ranked' && this.state.playerChats === 'disabled');
+						(inputValue && ['ranked', 'practice'].includes(inputValue.value) && this.state.playerChats === 'emotes') ||
+						(inputValue?.value === 'ranked' && this.state.playerChats === 'disabled');
 					// emote only can't be ranked or practice and silent can't be ranked
 
 					this.setState({
-						gameType: inputValue.value,
-						customGameSettings: { ...this.state.customGameSettings, enabled: inputValue.value === 'custom' },
+						gameType: inputValue?.value,
+						customGameSettings: { ...this.state.customGameSettings, enabled: inputValue?.value === 'custom' },
 						playerChats: resetPlayerChats ? 'enabled' : this.state.playerChats,
 					});
 				}}
@@ -242,7 +243,7 @@ export default class CreateGame extends React.Component {
 		}
 
 		const style = {
-			option: (styles, state) => ({
+			option: (styles: any, state: any) => ({
 				...styles,
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
@@ -251,7 +252,7 @@ export default class CreateGame extends React.Component {
 			}),
 		};
 
-		const findValue = (val) => {
+		const findValue = (val: any) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -267,8 +268,8 @@ export default class CreateGame extends React.Component {
 				value={findValue(this.state.playerChats)}
 				onChange={(inputValue, _action) => {
 					this.setState({
-						playerChats: inputValue.value,
-						gameType: inputValue.value === 'disabled' && this.state.gameType === 'ranked' ? 'practice' : this.state.gameType,
+						playerChats: inputValue?.value,
+						gameType: inputValue?.value === 'disabled' && this.state.gameType === 'ranked' ? 'practice' : this.state.gameType,
 					});
 				}}
 				menuPlacement={'auto'}
@@ -277,7 +278,7 @@ export default class CreateGame extends React.Component {
 		);
 	}
 
-	powerPicker(slot) {
+	powerPicker(slot: number) {
 		const options = [
 			{ value: 'null', label: 'No Power' },
 			{ value: 'investigate', label: 'Investigate' },
@@ -289,7 +290,7 @@ export default class CreateGame extends React.Component {
 		];
 
 		const style = {
-			option: (styles, state) => ({
+			option: (styles: any, state: any) => ({
 				...styles,
 				backgroundColor: state.isSelected ? 'rgba(127, 65, 225, 0.75)' : state.isFocused ? 'rgba(98, 124, 200, 0.1)' : null,
 				color: 'black',
@@ -298,7 +299,7 @@ export default class CreateGame extends React.Component {
 			}),
 		};
 
-		const findValue = (val) => {
+		const findValue = (val: any) => {
 			for (const value of options) {
 				if (val === value.value) {
 					return value;
@@ -314,7 +315,7 @@ export default class CreateGame extends React.Component {
 				value={findValue(this.state.customGameSettings.powers[slot])}
 				onChange={(inputValue, action) => {
 					const newPowerList = this.state.customGameSettings.powers;
-					newPowerList[slot] = inputValue.value;
+					newPowerList[slot] = inputValue?.value;
 					this.setState({ customGameSettings: Object.assign(this.state.customGameSettings, { powers: newPowerList }) });
 				}}
 				defaultMenuIsOpen={true}
@@ -323,11 +324,11 @@ export default class CreateGame extends React.Component {
 		);
 	}
 
-	presetSelector(preset) {
+	presetSelector(preset: any) {
 		let isRainbow = false;
 		let user;
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
 		}
 		if (user) {
 			isRainbow = user.isRainbowOverall;
@@ -711,7 +712,7 @@ export default class CreateGame extends React.Component {
 		}
 	}
 
-	sliderNumFas = (val) => {
+	sliderNumFas = (val: any[]) => {
 		const { customGameSettings } = this.state;
 
 		customGameSettings.fascistCount = val[0];
@@ -719,50 +720,55 @@ export default class CreateGame extends React.Component {
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderHitlerZone = (val) => {
+	sliderHitlerZone = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.hitlerZone = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderVetoZone = (val) => {
+	sliderVetoZone = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.vetoZone = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderDeckLib = (val) => {
+	sliderDeckLib = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.deckState.lib = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderDeckFas = (val) => {
+	sliderDeckFas = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.deckState.fas = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderTrackLib = (val) => {
+	sliderTrackLib = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.trackState.lib = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderTrackFas = (val) => {
+	sliderTrackFas = (val: any[]) => {
 		const { customGameSettings } = this.state;
 		customGameSettings.trackState.fas = val[0];
 		customGameSettings.enabled = true;
 		this.setState({ gameType: 'custom', customGameSettings });
 	};
 
-	sliderChange = (sliderValues) => {
+	sliderChange = (sliderValues: number | number[]) => {
 		const { checkedSliderValues } = this.state;
+
+		if (typeof sliderValues === 'number') {
+			sliderValues = [sliderValues, sliderValues];
+			console.warn('sliderValues should be an array, setting it to a number');
+		}
 
 		this.setState({
 			sliderValues,
@@ -777,7 +783,7 @@ export default class CreateGame extends React.Component {
 		});
 	};
 
-	customGameSliderChange = (sliderValues) => {
+	customGameSliderChange = (sliderValues: number | number[]) => {
 		this.sliderChange(sliderValues);
 		this.setState({
 			customGameSliderValue: sliderValues,
@@ -797,7 +803,7 @@ export default class CreateGame extends React.Component {
 		} else if (userInfo.gameSettings && userInfo.gameSettings.unbanTime && new Date(userInfo.gameSettings.unbanTime) > new Date()) {
 			Swal.fire('Sorry, this service is currently unavailable.');
 		} else {
-			const excludedPlayerCount = this.state.checkedSliderValues.map((el, index) => (el ? null : index + 5)).filter((el) => el);
+			const excludedPlayerCount = this.state.checkedSliderValues.map((el: any, index: number) => (el ? null : index + 5)).filter((el: any) => el);
 			const data = {
 				gameName: this.state.gameName || 'New Game',
 				gameType: this.state.gameType,
@@ -832,6 +838,8 @@ export default class CreateGame extends React.Component {
 			};
 
 			if (this.state.isTourny) {
+				const game: any = {}; // TODO: uhhh game isn't defined...?
+
 				game.general.tournyInfo = {
 					round: 0,
 					queuedPlayers: [
@@ -857,9 +865,9 @@ export default class CreateGame extends React.Component {
 
 	renderPlayerSlider() {
 		const { isTourny, customGameSettings } = this.state;
-		const sliderCheckboxClick = (index) => {
-			const newSliderValues = this.state.checkedSliderValues.map((el, i) => (i === index ? !el : el));
-			const includedPlayerCounts = newSliderValues.map((el, i) => (el ? i + 5 : null)).filter((el) => el !== null);
+		const sliderCheckboxClick = (index: number) => {
+			const newSliderValues = this.state.checkedSliderValues.map((el: any, i: number) => (i === index ? !el : el));
+			const includedPlayerCounts = newSliderValues.map((el: any, i: number) => (el ? i + 5 : null)).filter((el: any) => el !== null);
 			const minPlayers = Math.min(...includedPlayerCounts);
 			const maxPlayers = Math.max(...includedPlayerCounts);
 
@@ -922,7 +930,7 @@ export default class CreateGame extends React.Component {
 	}
 
 	renderRebalanceCheckboxes() {
-		const rebalancedInputClick = (index) => {
+		const rebalancedInputClick = (index: number) => {
 			const { checkedRebalanceValues } = this.state;
 
 			checkedRebalanceValues[index] = !checkedRebalanceValues[index];
@@ -966,36 +974,53 @@ export default class CreateGame extends React.Component {
 		);
 	}
 
-	timedSliderChange = (timedSliderValue) => {
+	timedSliderChange = (timedSliderValue: any) => {
 		this.setState((prevState) => ({ timedSliderValue, gameType: timedSliderValue[0] < 30 ? 'casual' : this.state.gameType }));
 	};
 
-	eloSliderChange = (eloSliderValue) => {
+	eloSliderChange = (eloSliderValue: any) => {
 		this.setState({ eloSliderValue });
 	};
 
-	xpSliderChange = (xpSliderValue) => {
+	xpSliderChange = (xpSliderValue: any) => {
 		this.setState({ xpSliderValue });
 	};
 
 	renderEloSlider() {
-		const origMarks = { 1600: '1600', 1650: '', 1700: '1700', 1750: '', 1800: '1800', 1850: '', 1900: '1900', 1950: '', 2000: '2000', 2050: '', 2100: '2100' };
+		const origMarks: any = {
+			1600: '1600',
+			1650: '',
+			1700: '1700',
+			1750: '',
+			1800: '1800',
+			1850: '',
+			1900: '1900',
+			1950: '',
+			2000: '2000',
+			2050: '',
+			2100: '2100',
+		};
 		const { userInfo, userList } = this.props;
+
 		if (userInfo.gameSettings && userInfo.gameSettings.disableElo) return null;
+
 		let player = null;
-		if (userList.list) player = userList.list.find((p) => p.userName === userInfo.userName);
+
+		if (userList.list) player = userList.list.find((p: any) => p.userName === userInfo.userName);
+
 		const isSeason = (userInfo.gameSettings && !userInfo.gameSettings.disableSeasonal) || false;
-		const playerElo = (player && player.eloSeason && Math.min(2100, player.eloSeason)) || 1600;
-		const playerEloNonseason = (player && player.eloOverall && Math.min(2100, player.eloOverall)) || 1600;
-		const max = Math.min(playerElo, playerEloNonseason);
+		const playerElo = (player && player.season?.elo && Math.min(2100, player.season?.elo)) || 1600;
+		const playerEloNonSeason = (player && player.overall?.elo && Math.min(2100, player.overall?.elo)) || 1600;
+		const max = Math.min(playerElo, playerEloNonSeason);
+
 		const marks = Object.keys(origMarks)
 			.filter((k) => origMarks[k] <= max)
-			.reduce((obj, key) => {
+			.reduce((obj: any, key) => {
 				obj[key] = origMarks[key];
 				return obj;
 			}, {});
 
-		if ((isSeason && playerElo > 1600) || (playerEloNonseason && playerEloNonseason > 1600)) {
+		if ((isSeason && playerElo > 1600) || (playerEloNonSeason && playerEloNonSeason > 1600)) {
 			return (
 				<div className="sixteen wide column" style={{ marginTop: '-30px' }}>
 					{this.state.isEloLimited && (
@@ -1006,7 +1031,8 @@ export default class CreateGame extends React.Component {
 							<input
 								value={this.state.eloSliderValue[0]}
 								onChange={(e) => {
-									if (!isNaN(e.target.value)) {
+									if (!isNaN(e.target.value as any)) {
+										// TODO: uhhh typescript has the wrong types or....?
 										this.setState({ eloSliderValue: [e.target.value] });
 									}
 								}}
@@ -1531,12 +1557,12 @@ export default class CreateGame extends React.Component {
 		const { userInfo, userList } = this.props;
 		if (userList && userList.list) {
 			// Can happen when refreshing.
-			const player = userList.list.find((p) => p.userName === userInfo.userName);
+			const player = userList.list.find((p: any) => p.userName === userInfo.userName);
 			if (!player) errs.push('Not logged in, please refresh.');
 			if (player && player.staff && player.staff.incognito) errs.push(`You're incognito`);
 			else if (this.state.isEloLimited) {
-				const playerElo = (player && player.eloSeason && Math.min(2100, player.eloSeason)) || 1600;
-				const playerEloNonseason = (player && player.eloOverall && Math.min(2100, player.eloOverall)) || 1600;
+				const playerElo = (player && player.season?.elo && Math.min(2100, player.season?.elo)) || 1600;
+				const playerEloNonseason = (player && player.overall?.elo && Math.min(2100, player.overall?.elo)) || 1600;
 				const max = Math.min(playerElo, playerEloNonseason);
 				if (this.state.eloSliderValue[0] < 1600 || this.state.eloSliderValue[0] > max) {
 					errs.push(`ELO slider value is invalid, your maximum is ${max}.`);

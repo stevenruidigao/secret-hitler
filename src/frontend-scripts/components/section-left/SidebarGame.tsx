@@ -1,8 +1,9 @@
 import React from 'react'; // eslint-disable-line
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 
-const SidebarGame = ({ game, socket }) => {
+const SidebarGame = ({ game, socket }: { game: any; socket?: Socket }) => {
 	const gameClasses = () => {
 		let classes = 'ui vertical segment';
 
@@ -19,14 +20,14 @@ const SidebarGame = ({ game, socket }) => {
 		return classes;
 	};
 	const playersCount = () => {
-		const availableSeatCounts = new Array(game.maxPlayersCount)
+		const availableSeatCounts: number[] = new Array(game.maxPlayersCount)
 			.fill(true)
-			.map((el, i) => (game.excludedPlayerCount.includes(i + 1) || i + 1 < game.minPlayersCount ? false : i + 1))
-			.filter((el) => el);
+			.map((_, i) => i + 1)
+			.filter((el) => !game.excludedPlayerCount.includes(el) && el >= game.minPlayersCount);
 
 		let str = '';
 
-		availableSeatCounts.forEach((el) => {
+		availableSeatCounts.forEach((el: number) => {
 			if (availableSeatCounts.includes(el)) {
 				if (el === game.maxPlayersCount) {
 					str = `${str}${el} players`;
@@ -49,7 +50,7 @@ const SidebarGame = ({ game, socket }) => {
 		return str;
 	};
 
-	const hasPlayerCount = (count) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
+	const hasPlayerCount = (count: number) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
 
 	const hasR6 = game.rebalance6p && hasPlayerCount(6);
 	const hasR7 = game.rebalance7p && hasPlayerCount(7);
@@ -59,6 +60,8 @@ const SidebarGame = ({ game, socket }) => {
 		<div
 			data-uid={game.uid}
 			onClick={() => {
+				if (!socket) return;
+
 				socket.emit('getGameInfo', game.uid);
 			}}
 			className={gameClasses()}

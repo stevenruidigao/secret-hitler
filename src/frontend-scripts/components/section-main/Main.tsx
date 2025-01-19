@@ -21,7 +21,7 @@ import socket from '../../socket.ts';
 export class Main extends React.Component {
 	static propTypes: any;
 
-	constructor(props: any) {
+	constructor(props = {}) {
 		super(props);
 
 		this.state = {

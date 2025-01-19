@@ -4,13 +4,13 @@ import React from 'react'; // eslint-disable-line no-unused-vars
  * @param {object} rows - todo
  * @return {jsx}
  */
-const TBody = ({ rows }) => (
+const TBody = ({ rows }: { rows: any[] }) => (
 	<tbody>
 		{rows.map((row, i) => {
 			const isRich = !Array.isArray(row),
 				noop = () => null,
 				onClick = isRich && row.onClick ? row.onClick : noop,
-				cells = isRich ? row.cells : row;
+				cells: any[] = isRich ? row.cells : row;
 
 			return (
 				<tr onClick={onClick} key={i}>
@@ -29,7 +29,7 @@ const TBody = ({ rows }) => (
  * @param {object} uiTable - todo
  * @return {jsx}
  */
-const Table = ({ headers, rows, uiTable }) => (
+const Table = ({ headers, rows, uiTable }: { headers: any[]; rows: any[]; uiTable: string }) => (
 	<table className={`ui ${uiTable} table`}>
 		<thead>
 			<tr>

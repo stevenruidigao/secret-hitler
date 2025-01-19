@@ -1,7 +1,8 @@
 import React from 'react'; // eslint-disable-line
-import { handToPolicies } from '@/utils/index.ts';
 // @ts-expect-error: no types for 'option'
 import { fromNullable } from 'option';
+
+import { handToPolicies } from '@/utils/index.ts';
 import Card from '../../reusable/Card.tsx';
 
 export const handToCards = (hand: any, _discard: any) => {

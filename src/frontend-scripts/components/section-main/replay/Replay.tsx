@@ -5,17 +5,20 @@ import classnames from 'classnames';
 import { Map, List } from 'immutable';
 // @ts-expect-error: no types for 'option'
 import { some, none, fromNullable } from 'option';
+import PropTypes from 'prop-types';
+import * as Swal from 'sweetalert2';
+
 import toGameInfo from '../../../replay/toGameInfo.ts';
 import toDescription from '../../../replay/toDescription.ts';
+import socket from '../../../socket.ts';
+
 import Tracks from '../Tracks.tsx';
 import Players from '../Players.tsx';
+
 import ReplayGamechat from './ReplayGamechat.tsx';
 import ReplayOverlay from './ReplayOverlay.tsx';
 import ReplayControls from './ReplayControls.tsx';
 import TrackPieces from './TrackPieces.tsx';
-import socket from '../../../socket.ts';
-import PropTypes from 'prop-types';
-import * as Swal from 'sweetalert2';
 
 const mapStateToProps = ({ replay, userInfo }) => ({
 	replay,

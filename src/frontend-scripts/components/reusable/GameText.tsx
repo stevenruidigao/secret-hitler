@@ -1,10 +1,11 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
+// @ts-expect-error: no types for 'option'
 import { fromNullable } from 'option';
 /**
  * @param {object} segment - todo
  * @return {jsx}
  */
-const Segment = ({ segment }) => {
+const Segment = ({ segment }: any) => {
 	const isSpace = fromNullable(segment.space).valueOrElse(true);
 	const isComma = fromNullable(segment.comma).valueOrElse(false);
 
@@ -22,7 +23,7 @@ const Segment = ({ segment }) => {
  * @param {object} text
  * @return {jsx}
  */
-const GameText = ({ text }) => (
+const GameText = ({ text }: { text: any[] }) => (
 	<span className="game-text">
 		{text.map((segment, i) => (
 			<Segment key={i} segment={segment} />

@@ -1,21 +1,35 @@
 import React, { useState } from 'react'; // eslint-disable-line
 import { connect } from 'react-redux';
 import { Popup, List, Grid, Button, Form } from 'semantic-ui-react';
+import { Socket } from 'socket.io-client';
+
 import { getBlacklistIndex, userInBlacklist } from '@/utils/index.ts';
 
-const mapStateToProps = (state) => state;
+const mapStateToProps = (state: any) => state;
 
-const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
+const Report = ({
+	socket,
+	userInfo,
+	gameInfo,
+	reportedPlayer,
+	userList,
+}: {
+	socket: Socket;
+	userInfo: any;
+	gameInfo: any;
+	reportedPlayer: any;
+	userList: any;
+}) => {
 	const defaultOptions = ['Abusive chat', 'Other']; // outside started games.
 	const casualOptions = ['AFK/Leaving Game', 'Abusive chat', 'Other'];
 	const ratedOptions = ['AFK/Leaving Game', 'Abusive chat', 'Cheating', 'Gamethrowing', 'Stalling', 'Other'];
 
-	const inGame = gameInfo?.gameState && gameInfo?.publicPlayersState?.find((p) => p.userName === reportedPlayer);
+	const inGame = gameInfo?.gameState && gameInfo?.publicPlayersState?.find((p: any) => p.userName === reportedPlayer);
 	const inStartedGame = inGame && gameInfo.gameState.isStarted;
 	const casualGame = inGame && gameInfo.general?.casualGame;
 	let uid = '';
 	if (gameInfo?.general?.uid) uid = gameInfo.general.uid;
-	const userInList = userList?.list?.find((u) => u.userName === reportedPlayer);
+	const userInList = userList?.list?.find((u: any) => u.userName === reportedPlayer);
 	if (userInList?.status?.type === 'playing') {
 		uid = userInList.status.gameId;
 	}
@@ -24,10 +38,10 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 
 	const [reason, setReason] = useState('');
 	const [comment, setComment] = useState('');
-	const [submittingReport, setSubmittingReport] = useState(false);
-	const [showWarningMessage, setShowWarningMessage] = useState(true);
-	const [errorMessage, setErrorMessage] = useState(null);
-	const [successMessage, setSuccessMessage] = useState(null);
+	const [submittingReport, setSubmittingReport] = useState<boolean>(false);
+	const [showWarningMessage, setShowWarningMessage] = useState<boolean>(true);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
 	const submitReport = () => {
 		if (!reason || !comment || comment.length > 140) {
@@ -35,7 +49,7 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 		}
 		setSubmittingReport(true);
 
-		const index = inStartedGame ? gameInfo.publicPlayersState.findIndex((player) => player.userName === reportedPlayer) : undefined;
+		const index = inStartedGame ? gameInfo.publicPlayersState.findIndex((player: any) => player.userName === reportedPlayer) : undefined;
 		socket.emit(
 			'playerReport',
 			{
@@ -45,11 +59,11 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 				reason: reason,
 				comment: comment,
 			},
-			(response) => {
+			(response: any) => {
 				if (response.success) {
 					setSuccessMessage('Report submitted successfully.');
 				} else {
-					setErrorMessage(reponse.error);
+					setErrorMessage(response.error);
 				}
 				setSubmittingReport(false);
 			},
@@ -71,9 +85,9 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 						fluid
 						selection
 						options={opt.map((option) => ({ text: option, key: option, value: option.toLowerCase() }))}
-						onChange={(_event, props) => setReason(props.value)}
+						onChange={(_event, props) => setReason(props.value ? props.value.toString() : '')}
 					/>
-					<Form.TextArea placeholder="Comment" onChange={(_event, props) => setComment(props.value)} />
+					<Form.TextArea placeholder="Comment" onChange={(_event, props) => setComment(props.value ? props.value.toString() : '')} />
 					<span className={comment.length > 140 ? 'counter error' : 'counter'}>{140 - comment.length}</span>
 					<Button inverted disabled={submittingReport || !reason || !comment || comment.length > 140} onClick={() => submitReport()}>
 						Submit
@@ -86,13 +100,13 @@ const Report = ({ socket, userInfo, gameInfo, reportedPlayer, userList }) => {
 	);
 };
 
-const Blacklist = ({ toggleBlacklist }) => {
+const Blacklist = ({ toggleBlacklist }: { toggleBlacklist: Function }) => {
 	const [blacklistReason, setBlacklistReason] = useState('');
 	return (
 		<>
 			{
 				<Form inverted>
-					<Form.TextArea placeholder="Reason" onChange={(_event, props) => setBlacklistReason(props.value)} />
+					<Form.TextArea placeholder="Reason" onChange={(_event, props) => setBlacklistReason(props.value ? props.value.toString() : '')} />
 					<span className={blacklistReason.length > 140 ? 'counter error' : 'counter'}>{140 - blacklistReason.length}</span>
 					<Button inverted disabled={blacklistReason.length > 140} onClick={() => toggleBlacklist(blacklistReason)}>
 						Submit
@@ -103,14 +117,35 @@ const Blacklist = ({ toggleBlacklist }) => {
 	);
 };
 
-const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, position, index, renderInProfile }) => {
+const UserPopup = ({
+	socket,
+	userInfo,
+	gameInfo,
+	userList,
+	children,
+	userName,
+	position,
+	index,
+	renderInProfile,
+}: {
+	socket: Socket;
+	userInfo: any;
+	gameInfo: any;
+	userList: any;
+	children: any;
+	userName: string;
+	position: 'top left' | 'top right' | 'bottom right' | 'bottom left' | 'right center' | 'left center' | 'top center' | 'bottom center';
+	index: number;
+	renderInProfile?: boolean;
+}) => {
 	const [reportVisible, setReportVisible] = useState(false);
 	const [popupOpen, setPopupOpen] = useState(false);
 	const defaultBlacklistVisibility = renderInProfile ? true : false;
 	const [blacklistVisible, setBlacklistVisible] = useState(defaultBlacklistVisibility);
-	const user = userList && userList.list && userList.list.find((play) => play.userName === userName);
+	const user = userList && userList.list && userList.list.find((play: any) => play.userName === userName);
 	const { gameSettings } = userInfo;
-	const toggleBlacklist = (reason) => {
+
+	const toggleBlacklist = (reason?: string) => {
 		if (!gameSettings) return;
 		// Consider backwards compatibility here
 		const blackListIndex = getBlacklistIndex(userName, gameSettings?.blacklist);
@@ -135,7 +170,7 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 		}
 	};
 
-	const checkStaffRole = (staffRole) => staffRole === 'admin' || staffRole === 'editor' || staffRole === 'moderator';
+	const checkStaffRole = (staffRole: string) => staffRole === 'admin' || staffRole === 'editor' || staffRole === 'moderator';
 
 	const gameStarted = gameInfo?.gameState?.isStarted;
 	const isTracksFlipped = gameInfo?.gameState?.isTracksFlipped;
@@ -147,7 +182,8 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 	const areTheyAEM = checkStaffRole(user?.staffRole);
 	const notVisible = !isAEM && !userSeated && (privateGame || (user && user.isPrivate));
 	const isPlayerBlacklisted = userInBlacklist(userName, gameSettings?.blacklist);
-	const openChat = (userName) => {
+
+	const openChat = (userName: string) => {
 		socket.emit('aemOpenChat', { userName, aemMember: userInfo?.userName });
 	};
 
@@ -254,7 +290,7 @@ const UserPopup = ({ socket, userInfo, gameInfo, userList, children, userName, p
 									size="small"
 									onClick={() =>
 										socket.emit('addNewGameChat', {
-											chat: `ping${gameInfo.publicPlayersState.findIndex((player) => player.userName === userName) + 1}`,
+											chat: `ping${gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userName) + 1}`,
 											uid: gameInfo.general.uid,
 										})
 									}

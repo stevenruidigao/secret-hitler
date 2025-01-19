@@ -1,8 +1,8 @@
 import React from 'react';
 
 export default class DevHelpers extends React.PureComponent {
-	constructor() {
-		super({});
+	constructor(props = {}) {
+		super(props);
 	}
 
 	// need to fix default game button
