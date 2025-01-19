@@ -5,7 +5,7 @@ import { fromNullable } from 'option';
 import { handToPolicies } from '@/utils/index.ts';
 import Card from '../../reusable/Card.tsx';
 
-export const handToCards = (hand: any, _discard: any) => {
+export const handToCards = (hand: any, _discard?: any) => {
 	const discard = fromNullable(_discard);
 
 	const policies = handToPolicies(hand);

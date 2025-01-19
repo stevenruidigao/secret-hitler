@@ -7,7 +7,7 @@ import classnames from 'classnames';
  * @param {object} className - todo
  * @return {jsx}
  */
-const CardGroup = ({ title, cards, className }: { title: string; cards: JSX.Element; className?: string }) => {
+const CardGroup = ({ title, cards, className }: { title: string; cards: any; className?: string }) => {
 	const renderedTitle = title ? <h1>{title}</h1> : null;
 
 	return (

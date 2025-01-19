@@ -7,7 +7,8 @@ import { Map, List } from 'immutable';
 // @ts-expect-error: no types for 'option'
 import { some, none, fromNullable } from 'option';
 import PropTypes from 'prop-types';
-import * as Swal from 'sweetalert2';
+import Swal from 'sweetalert2'; // TODO: check, used to be `* as Swal`
+import _ from 'lodash';
 
 import toGameInfo from '../../../replay/toGameInfo.ts';
 import toDescription from '../../../replay/toDescription.ts';
@@ -42,7 +43,7 @@ const buildPlayback = (replay: any, to: any) => {
 	 ***********/
 
 	// (turnNum: Int, [phases: List[String] | phase: String]) => Int
-	const findTickPos = (turnNum: number, _phases: string | string[]) => {
+	const findTickPos = (turnNum: number, _phases: string | List<string>) => {
 		const phases = List.isList(_phases) ? _phases : List([_phases]);
 
 		const i = ticks.findLastIndex((t: any) => t.turnNum === turnNum && phases.includes(t.phase));
@@ -66,7 +67,7 @@ const buildPlayback = (replay: any, to: any) => {
 	const prevTick = bindTo(position - 1);
 
 	const { nextPhase, prevPhase } = (() => {
-		const toTurnWithPhaseElseFallback = (targetTurn, end) => {
+		const toTurnWithPhaseElseFallback = (targetTurn: any, end: any) => {
 			const fallbacks = Map({
 				presidentLegislation: List(['topDeck', 'election']),
 				chancellorLegislation: List(['topDeck', 'election']),
@@ -79,12 +80,12 @@ const buildPlayback = (replay: any, to: any) => {
 				execution: List(['policyEnaction', 'election']),
 			});
 
-			const ideal = findTickPos(targetTurn, phase).map((pos) => bindTo(pos));
+			const ideal = findTickPos(targetTurn, phase).map((pos: any) => bindTo(pos));
 
 			const fallback = () =>
 				bindTo(
 					fromNullable(fallbacks.get(phase))
-						.flatMap((fallbackPhases) => findTickPos(targetTurn, fallbackPhases))
+						.flatMap((fallbackPhases: any) => findTickPos(targetTurn, fallbackPhases))
 						.valueOrElse(end),
 				);
 
@@ -98,7 +99,7 @@ const buildPlayback = (replay: any, to: any) => {
 	})();
 
 	const { hasLegislation, hasAction, toElection, toLegislation, toAction } = (() => {
-		const rotate = (cycles, fallback) => {
+		const rotate = (cycles: any, fallback: any) => {
 			return findTickPos(turnNum, fromNullable(cycles.get(phase)).valueOrElse(fallback));
 		};
 
@@ -133,7 +134,7 @@ const buildPlayback = (replay: any, to: any) => {
 		};
 	})();
 
-	const toTurn = (targetTurn) => to(findTickPos(targetTurn, 'candidacy').valueOrElse(position));
+	const toTurn = (targetTurn: any) => to(findTickPos(targetTurn, 'candidacy').valueOrElse(position));
 
 	return {
 		hasNext,
@@ -153,11 +154,33 @@ const buildPlayback = (replay: any, to: any) => {
 	};
 };
 
-const Replay = ({ replay, isSmall, userInfo, userList, to, gameData, chatsShown, allEmotes, hideHand: hideRolesAndHand, deckShown }) => {
+const Replay = ({
+	replay,
+	isSmall,
+	userInfo,
+	userList,
+	to,
+	gameData,
+	chatsShown,
+	allEmotes,
+	hideHand: hideRolesAndHand,
+	deckShown,
+}: {
+	replay: any;
+	isSmall: boolean;
+	userInfo: any;
+	userList: any;
+	to: any;
+	gameData: any;
+	chatsShown: boolean;
+	allEmotes: any;
+	hideHand: boolean;
+	deckShown: boolean;
+}) => {
 	const { ticks, position, game } = replay;
 	const snapshot = ticks.get(position);
 	const playback = buildPlayback(replay, to);
-	const gameInfo = _.merge(toGameInfo(snapshot), { general: gameData }); // this disgusting hack is sponsored by the schema being in a different format than in-memory games and in the name of backwards compatibility
+	const gameInfo: any = _.merge(toGameInfo(snapshot), { general: gameData }); // this disgusting hack is sponsored by the schema being in a different format than in-memory games and in the name of backwards compatibility
 
 	gameInfo.customGameSettings = game.summary.customGameSettings;
 	if (gameInfo.customGameSettings && gameInfo.customGameSettings.enabled) {
@@ -213,8 +236,11 @@ const Replay = ({ replay, isSmall, userInfo, userList, to, gameData, chatsShown,
 };
 
 class ReplayWrapper extends React.Component {
-	constructor() {
-		super();
+	props: any;
+	state: any;
+
+	constructor(props: any) {
+		super(props);
 
 		this.state = {
 			chatsShown: false,
@@ -238,7 +264,7 @@ class ReplayWrapper extends React.Component {
 		socket.off('replayGameData');
 	}
 
-	componentDidUpdate(prevProps, prevState, snapshot) {
+	componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
 		switch (this.props.replay.status) {
 			case 'INITIAL':
 			case 'LOADING':

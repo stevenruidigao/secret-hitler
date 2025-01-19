@@ -34,6 +34,8 @@ export const mapOpt2 = (f: any) => {
  * GAME ENTITIES *
  *****************/
 
+type Policy = 'fascist' | 'liberal';
+
 /*
  * ALIASES:
  *
@@ -92,7 +94,7 @@ export const handToPolicy = (hand: any) => {
 
 // consistently ordered 'fascist' first, followed by 'liberal'
 // (hand: Hand) => List[Policy]
-export const handToPolicies = (hand: any) => {
+export const handToPolicies = (hand: any): List<Policy> => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		const toPolicies = (count: number, type: any) => {
 			return Range(0, count)
@@ -110,7 +112,7 @@ export const handToPolicies = (hand: any) => {
 };
 
 // (policy: Policy) => Hand
-export const policyToHand = (policy: any) => {
+export const policyToHand = (policy: Policy) => {
 	// return policy === 'fascist' ? { reds: 1, blues: 0 } : { reds: 0, blues: 1 };
 	return policy;
 };
@@ -124,7 +126,7 @@ const isComma = (index: number, list: any, userInfo: any) => {
 };
 
 // (policy: Policy) => String ('R' | 'B')
-export const policyToString = (policy: any, userInfo: any) => {
+export const policyToString = (policy: Policy, userInfo: any) => {
 	const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'short';
 	let liberalChar = 'L';
 	let fascistChar = 'F';
@@ -148,7 +150,7 @@ export const handToText = (hand: any, userInfo: any) => {
 	}
 
 	return handToPolicies(hand)
-		.map((policy: any, index: number, list: any) => text(policy, policyToString(policy, userInfo), false, isComma(index, list, userInfo)))
+		.map((policy: Policy, index: number, list: any) => text(policy, policyToString(policy, userInfo), false, isComma(index, list, userInfo)))
 		.concat(text('normal', ''))
 		.toArray();
 };

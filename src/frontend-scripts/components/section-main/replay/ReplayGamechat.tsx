@@ -2,19 +2,26 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Scrollbars } from 'react-custom-scrollbars';
+import ReactCustomScrollbars from 'react-custom-scrollbars';
 
 import { loadReplay, updateUser } from '../../../actions/actions.ts';
 import { processEmotes } from '../../../emotes.tsx';
 import { PLAYER_COLORS } from '../../../constants.ts';
 
-const mapDispatchToProps = (dispatch) => ({
-	loadReplay: (summary) => dispatch(loadReplay(summary)),
-	updateUser: (userInfo) => dispatch(updateUser(userInfo)),
+const { Scrollbars } = ReactCustomScrollbars as any; // TODO: why? I hate this
+
+const mapDispatchToProps = (dispatch: (data: any) => any) => ({
+	loadReplay: (summary: any) => dispatch(loadReplay(summary)),
+	updateUser: (userInfo: any) => dispatch(updateUser(userInfo)),
 });
 
 class ReplayGamechat extends React.Component {
-	state = {
+	static propTypes: any;
+
+	props: any;
+	scrollbar: any;
+
+	state: any = {
 		showFullChat: false,
 		showPlayerChat: true,
 		showGameChat: true,
@@ -43,7 +50,7 @@ class ReplayGamechat extends React.Component {
 		}
 	}
 
-	handleChatFilterClick = (e) => {
+	handleChatFilterClick = (e: any) => {
 		const filter = e.currentTarget.getAttribute('data-filter');
 		switch (filter) {
 			case 'Player':
@@ -63,7 +70,7 @@ class ReplayGamechat extends React.Component {
 		}
 	};
 
-	handleTimestamps(timestamp) {
+	handleTimestamps(timestamp: number | string | Date) {
 		const { userInfo } = this.props;
 
 		if (userInfo && userInfo.userName && userInfo.gameSettings && userInfo.gameSettings.enableTimestamps) {
@@ -75,7 +82,7 @@ class ReplayGamechat extends React.Component {
 		}
 	}
 
-	getClassesFromType = (type) => {
+	getClassesFromType = (type: string) => {
 		if (type === 'player') {
 			return 'chat-player';
 		} else {
@@ -83,7 +90,7 @@ class ReplayGamechat extends React.Component {
 		}
 	};
 
-	parseClaim = (claim) => {
+	parseClaim = (claim: string) => {
 		const { userInfo } = this.props;
 
 		const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'legacy';
@@ -113,11 +120,11 @@ class ReplayGamechat extends React.Component {
 	processChats() {
 		const { gameInfo, userInfo, userList } = this.props;
 		const { gameSettings } = userInfo;
-		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map((player) => player.userName) : [];
+		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map((player: any) => player.userName) : [];
 		const { showFullChat, showPlayerChat, showGameChat, showObserverChat } = this.state;
-		const compareChatStrings = (a, b) => {
-			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map((object) => object.text).join('');
-			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map((object) => object.text).join('');
+		const compareChatStrings = (a: any, b: any) => {
+			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map((object: any) => object.text).join('');
+			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map((object: any) => object.text).join('');
 
 			return stringA > stringB ? 1 : -1;
 		};
@@ -126,13 +133,13 @@ class ReplayGamechat extends React.Component {
 		 * @param {array} tournyWins - array of tournywins in epoch ms numbers (date.getTime())
 		 * @return {jsx}
 		 */
-		const renderCrowns = (tournyWins) => {
+		const renderCrowns = (tournyWins: any[]) => {
 			return tournyWins
 				.filter((winTime) => time - winTime < 10800000)
 				.map((crown) => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
 		};
 
-		const renderPreviousSeasonAward = (type) => {
+		const renderPreviousSeasonAward = (type: string) => {
 			switch (type) {
 				case 'bronze':
 					return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
@@ -155,9 +162,9 @@ class ReplayGamechat extends React.Component {
 
 		if (gameInfo && gameInfo.chats) {
 			let list = gameInfo.chats
-				.sort((a, b) => (a.timestamp === b.timestamp ? compareChatStrings(a, b) : new Date(a.timestamp) - new Date(b.timestamp)))
+				.sort((a: any, b: any) => (a.timestamp === b.timestamp ? compareChatStrings(a, b) : new Date(a.timestamp).valueOf() - new Date(b.timestamp).valueOf()))
 				.filter(
-					(chat) =>
+					(chat: any) =>
 						chat.isBroadcast ||
 						(showPlayerChat && !chat.gameChat && !chat.isClaim && seatedUserNames.includes(chat.userName)) ||
 						(showGameChat && (chat.gameChat || chat.isClaim)) ||
@@ -170,8 +177,8 @@ class ReplayGamechat extends React.Component {
 							chat.staffRole !== 'veteran'),
 				);
 			if (!showFullChat) list = list.slice(-250);
-			return list.reduce((acc, chat, i) => {
-				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player) => player.userName === chat.userName) : undefined;
+			return list.reduce((acc: any, chat: any, i: number) => {
+				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player: any) => player.userName === chat.userName) : undefined;
 				const isMod =
 					playerListPlayer &&
 					playerListPlayer.staffRole &&
@@ -187,7 +194,7 @@ class ReplayGamechat extends React.Component {
 						<div className={chat.chat[1] && chat.chat[1].type ? `item game-chat ${chat.chat[1].type}` : 'item game-chat'} key={i}>
 							{this.handleTimestamps(chat.timestamp)}
 							<span className="game-chat">
-								{chatContents.map((chatSegment, index) => {
+								{chatContents.map((chatSegment: any, index: number) => {
 									if (chatSegment.type) {
 										const classes = this.getClassesFromType(chatSegment.type);
 
@@ -208,7 +215,7 @@ class ReplayGamechat extends React.Component {
 							<span className="game-chat">
 								{chatContents &&
 									chatContents.length &&
-									chatContents.map((chatSegment, index) => {
+									chatContents.map((chatSegment: any, index: number) => {
 										if (chatSegment.type) {
 											return (
 												<span key={index} className={this.getClassesFromType(chatSegment.type)}>
@@ -228,7 +235,7 @@ class ReplayGamechat extends React.Component {
 							<span className="claim-chat">
 								{chatContents &&
 									chatContents.length &&
-									chatContents.map((chatSegment, index) => {
+									chatContents.map((chatSegment: any, index: number) => {
 										if (chatSegment.type) {
 											return (
 												<span key={index} className={this.getClassesFromType(chatSegment.type)}>
@@ -295,7 +302,7 @@ class ReplayGamechat extends React.Component {
 									<span className="observer-chat">(Observer) </span>
 								)}
 								{isSeated
-									? `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
+									? `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
 									: chat.userName}
 								{': '}
 							</span>
@@ -354,9 +361,11 @@ class ReplayGamechat extends React.Component {
 					className={this.state.claim ? 'segment chats blurred' : 'segment chats'}
 				>
 					<Scrollbars
-						ref={(c) => (this.scrollbar = c)}
+						ref={(c: any) => {
+							this.scrollbar = c;
+						}}
 						onScroll={this.handleChatScrolled}
-						renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
+						renderThumbVertical={(props: any) => <div {...props} className="thumb-vertical" />}
 					>
 						<div className="ui list" style={{ color: 'var(--theme-text-1)' }}>
 							{this.processChats()}
@@ -375,6 +384,6 @@ ReplayGamechat.propTypes = {
 	allEmotes: PropTypes.object,
 };
 
-const GamechatContainer = (props) => <ReplayGamechat {...props} />;
+const GamechatContainer = (props: any) => <ReplayGamechat {...props} />;
 
 export default connect(mapDispatchToProps)(GamechatContainer);

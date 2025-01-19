@@ -11,7 +11,7 @@ import GameText from '../../reusable/GameText.tsx';
 
 const Slider = RCSlider as any; // TODO: why?????
 
-const TurnNav = ({ position, size, toTurn }) => {
+const TurnNav = ({ position, size, toTurn }: any) => {
 	const marks = Map(
 		Range(1, size + 1).map((i) => [
 			i,
@@ -25,19 +25,19 @@ const TurnNav = ({ position, size, toTurn }) => {
 	return (
 		<div className="turn-nav">
 			<h1>Turn</h1>
-			<Slider onChange={(value) => toTurn(value - 1)} className="slider" min={1} max={size} value={position + 1} marks={marks} dots />
+			<Slider onChange={(value: any) => toTurn(value - 1)} className="slider" min={1} max={size} value={position + 1} marks={marks} dots />
 		</div>
 	);
 };
 
-const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation, toAction }) => {
+const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation, toAction }: any) => {
 	const nav = OrderedMap({
 		election: List(['candidacy', 'nomination', 'election']),
 		legislation: List(['presidentLegislation', 'chancellorLegislation', 'topDeck', 'veto', 'policyEnaction']),
 		action: List(['investigation', 'policyPeek', 'specialElection', 'execution']),
 	});
 
-	const localize = (s) => {
+	const localize = (s: string) => {
 		const custom = Map({
 			presidentLegislation: 'President',
 			chancellorLegislation: 'Chancellor',
@@ -62,7 +62,7 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 		action: !hasAction,
 	});
 
-	const Step = ({ title, description, isFilled, isDisabled, onClick }) => {
+	const Step = ({ title, description, isFilled, isDisabled, onClick }: any) => {
 		const classes = classnames(
 			{
 				filled: isFilled,
@@ -89,7 +89,7 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 
 	const filled = (() => {
 		const phases = nav.valueSeq().flatten();
-		const i = phases.findIndex((p) => p === phase);
+		const i = (phases as any).findIndex((p: any) => p === phase); // TODO: check, uhhhh...
 
 		const maxIndexes = Map({
 			election: 2,
@@ -126,13 +126,15 @@ const PhaseNav = ({ phase, hasLegislation, hasAction, toElection, toLegislation,
 	);
 };
 
-const Description = ({ description, deck, deckShown, userInfo }) => {
+const Description = ({ description, deck, deckShown, userInfo }: any) => {
 	const long = userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters && userInfo.gameSettings.claimCharacters === 'full';
 	let descr = description;
 
 	if (deckShown) {
 		descr.push(text('player', ' Current deck: '));
-		descr = descr.concat(deck.map((x, i) => text(x, policyToString(x, userInfo), long && i !== deck.size - 1, long && i !== deck.size - 1)).toArray());
+		descr = descr.concat(
+			deck.map((x: any, i: number) => text(x, policyToString(x, userInfo), long && i !== deck.size - 1, long && i !== deck.size - 1)).toArray(),
+		);
 	}
 
 	return (
@@ -145,12 +147,30 @@ const Description = ({ description, deck, deckShown, userInfo }) => {
 	);
 };
 
-const Playback = ({ hasNext, hasPrev, next, prev, forward, backward, beginning, end }) => {
-	const onKeyDown = (event) => {
+const Playback = ({
+	hasNext,
+	hasPrev,
+	next,
+	prev,
+	forward,
+	backward,
+	beginning,
+	end,
+}: {
+	hasNext: boolean;
+	hasPrev: boolean;
+	next: () => void;
+	prev: () => void;
+	forward: () => void;
+	backward: () => void;
+	beginning: () => void;
+	end: () => void;
+}) => {
+	const onKeyDown = (event: any) => {
 		// ignore typing in textboxes
 		const leftKeyCode = 37;
 		const rightKeyCode = 39;
-		if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+		if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')) return; // TODO: check
 		const char = String.fromCharCode(event.keyCode);
 		if ((char === 'H' || (event.shiftKey && event.keyCode == leftKeyCode)) && hasPrev) {
 			return backward();
@@ -197,7 +217,25 @@ const Playback = ({ hasNext, hasPrev, next, prev, forward, backward, beginning, 
 	);
 };
 
-const ReplayControls = ({ turnsSize, turnNum, phase, description, playback, deck, deckShown, userInfo }) => {
+const ReplayControls = ({
+	turnsSize,
+	turnNum,
+	phase,
+	description,
+	playback,
+	deck,
+	deckShown,
+	userInfo,
+}: {
+	turnsSize: number;
+	turnNum: number;
+	phase: string;
+	description: string;
+	playback: any;
+	deck: any;
+	deckShown: boolean;
+	userInfo: any;
+}) => {
 	const {
 		hasNext,
 		hasPrev,
