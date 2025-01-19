@@ -3,7 +3,7 @@ const config = {
 	projects: [
 		{
 			displayName: 'backend',
-			testMatch: ['<rootDir>/__test__/backend/**/*.test.(m|)(t|j)s'],
+			testMatch: ['<rootDir>/(__test__/backend|routes|scripts)/**/*.test.(m|)(t|j)s'],
 			transform: {
 				'^.+\\.m?(t|j)sx?$': 'babel-jest',
 			},

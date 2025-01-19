@@ -14,7 +14,8 @@ describe('GameChat', () => {
 
 		const store = createMockStore(initialProps);
 
-		const component = shallowWithStore(<GameChat />, store);
+		// const component = shallowWithStore(<GameChat />, store);
+		const component = shallowWithStore(<GameChat store={store} />, store); // TODO: is this the right way to do this? see https://github.com/enzymejs/enzyme/issues/2176#issuecomment-532361526
 
 		expect(component).toHaveLength(1);
 	});

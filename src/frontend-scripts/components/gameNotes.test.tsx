@@ -16,7 +16,8 @@ describe('Gamenotes', () => {
 			state,
 		});
 		const ConnectedComponent = connect(mapStateToProps)(GameNotes);
-		const component = shallowWithStore(<ConnectedComponent />, store);
+		// const component = shallowWithStore(<ConnectedComponent />, store);
+		const component = shallowWithStore(<ConnectedComponent store={store} />, store); // TODO: check; see https://github.com/enzymejs/enzyme/issues/2176#issuecomment-532361526
 
 		expect(component).toHaveLength(1);
 	});
