@@ -1644,7 +1644,7 @@ export default class CreateGame extends React.Component {
 									maxLength={20}
 									placeholder="New Game"
 									onKeyPress={(e) => {
-										const { LEGALCHARACTERS } = require('../../constants.ts');
+										const { LEGALCHARACTERS } = require('@/shared/constants.ts');
 										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}
