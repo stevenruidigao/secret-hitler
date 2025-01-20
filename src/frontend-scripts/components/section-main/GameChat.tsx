@@ -6,13 +6,13 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import ReactCustomScrollbars from 'react-custom-scrollbars';
 import Swal from 'sweetalert2';
+import { Socket } from 'socket.io-client';
 
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
-
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 
-const { Scrollbars } = ReactCustomScrollbars as any; // TODO: why????
+const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
 const mapDispatchToProps = (dispatch: (data: any) => any) => ({
 	loadReplay: (summary: any) => dispatch(loadReplay(summary)),
@@ -83,9 +83,21 @@ const ClaimPeek = ({ handleClaimButtonClick }: { handleClaimButtonClick: (event:
 	}
 };
 
+type GameChatProps = {
+	userInfo: any;
+	gameInfo: any;
+	socket: Socket;
+	userList: {
+		list: any[];
+	};
+	allEmotes: any;
+	notesActive?: boolean;
+	toggleNotes: Function;
+};
+
 class GameChat extends React.Component {
 	static propTypes: any;
-	props: any;
+	props: GameChatProps;
 
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
@@ -111,6 +123,14 @@ class GameChat extends React.Component {
 		emoteColonIndex: -1,
 		excludedColonIndices: [],
 	};
+
+	scrollbar: any;
+
+	constructor(props: GameChatProps) {
+		super(props);
+
+		this.props = props;
+	}
 
 	componentDidMount() {
 		this.scrollChats();
@@ -138,7 +158,7 @@ class GameChat extends React.Component {
 		});
 	}
 
-	componentDidUpdate(prevProps: any, nextProps: any) {
+	componentDidUpdate(prevProps: GameChatProps, nextProps: GameChatProps) {
 		const { userInfo, gameInfo } = this.props;
 		this.scrollChats();
 
@@ -148,14 +168,14 @@ class GameChat extends React.Component {
 				userInfo.isSeated &&
 				prevProps.gameInfo.publicPlayersState.filter((player: any) => player.isDead).length !==
 					gameInfo.publicPlayersState.filter((player: any) => player.isDead).length &&
-				gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).isDead) ||
+				gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.isDead) ||
 			(prevProps &&
 				userInfo.userName &&
 				gameInfo.gameState.phase === 'presidentSelectingPolicy' &&
 				((gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
-					gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).governmentStatus === 'isPresident') ||
+					gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.governmentStatus === 'isPresident') ||
 					(gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
-						gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).governmentStatus === 'isChancellor')) &&
+						gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.governmentStatus === 'isChancellor')) &&
 				prevProps.gameInfo.gameState.phase !== 'presidentSelectingPolicy')
 		) {
 			this.setState({ inputValue: '' });
@@ -457,7 +477,7 @@ class GameChat extends React.Component {
 		}
 	};
 
-	handleTimestamps(timestamp) {
+	handleTimestamps(timestamp: any) {
 		const { userInfo } = this.props;
 
 		if (userInfo.userName && userInfo.gameSettings && userInfo.gameSettings.enableTimestamps) {

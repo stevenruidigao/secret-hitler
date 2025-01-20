@@ -1462,7 +1462,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 					setTimeout(
 						() => {
-							game.publicPlayersState.forEach((player: any, i: number) => {
+							game.publicPlayersState.forEach((player, i) => {
 								player.cardStatus.cardFront = 'secretrole';
 								player.cardStatus.cardDisplayed = true;
 								player.cardStatus.cardBack = seatedPlayers[i].role;
@@ -1475,7 +1475,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 					setTimeout(
 						() => {
-							game.publicPlayersState.forEach((player: any) => {
+							game.publicPlayersState.forEach((player) => {
 								player.cardStatus.isFlipped = true;
 							});
 
@@ -1514,7 +1514,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 						setTimeout(
 							() => {
-								game.publicPlayersState.forEach((player: any, i: number) => {
+								game.publicPlayersState.forEach((player, i) => {
 									player.cardStatus.cardFront = 'secretrole';
 									player.cardStatus.cardDisplayed = true;
 									player.cardStatus.cardBack = seatedPlayers[i].role;
@@ -1527,7 +1527,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 						setTimeout(
 							() => {
-								game.publicPlayersState.forEach((player: any) => {
+								game.publicPlayersState.forEach((player) => {
 									player.cardStatus.isFlipped = true;
 								});
 
@@ -1590,7 +1590,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 											},
 										],
 									});
-									game.publicPlayersState.forEach((player: any, i: number) => {
+									game.publicPlayersState.forEach((player, i) => {
 										player.cardStatus.cardFront = 'secretrole';
 										player.cardStatus.cardBack = seatedPlayers[i].role;
 										player.cardStatus.cardDisplayed = true;
@@ -1600,7 +1600,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 									sendInProgressGameUpdate(game, true);
 
 									setTimeout(() => {
-										game.publicPlayersState.forEach((player: any, i: number) => {
+										game.publicPlayersState.forEach((player, i) => {
 											player.cardStatus.isFlipped = true;
 										});
 										game.gameState.audioCue = '';
@@ -1658,7 +1658,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 								if (game.general.avalonSH && game.trackState.policyCount.liberal === 5) {
 									assassinateMerlin(game);
 								} else if (game.trackState.policyCount.liberal === 5 || game.trackState.policyCount.fascist === 6) {
-									game.publicPlayersState.forEach((player: any, i: number) => {
+									game.publicPlayersState.forEach((player, i) => {
 										player.cardStatus.cardFront = 'secretrole';
 										player.cardStatus.cardBack = seatedPlayers[i].role;
 										player.cardStatus.cardDisplayed = true;
@@ -1667,7 +1667,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 									game.gameState.audioCue = game.trackState.policyCount.liberal === 5 ? 'liberalsWin' : 'fascistsWin';
 									setTimeout(
 										() => {
-											game.publicPlayersState.forEach((player: any, i: number) => {
+											game.publicPlayersState.forEach((player, i) => {
 												player.cardStatus.isFlipped = true;
 											});
 											game.gameState.audioCue = '';

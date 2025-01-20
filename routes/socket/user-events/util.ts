@@ -44,7 +44,7 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 			sockets.delete(oldSocketID);
 		}
 
-		const reconnectingUser = game ? game.publicPlayersState.find((player: any) => player.userName === user) : undefined;
+		const reconnectingUser = game ? game.publicPlayersState.find((player) => player.userName === user) : undefined;
 
 		if (game && game.gameState.isStarted && !game.gameState.isCompleted && reconnectingUser) {
 			reconnectingUser.connected = true;

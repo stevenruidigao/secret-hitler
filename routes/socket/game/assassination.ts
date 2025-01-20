@@ -17,7 +17,7 @@ export const assassinateMerlin = (game: ActiveGame) => {
 	if (!game.private.lock.assassinateMerlin && game.general.avalonSH && !(game.general.isTourny && game.general.tournyInfo.isCancelled)) {
 		game.private.lock.assassinateMerlin = true;
 		game.general.status = 'Hitler to choose someone to assassinate.';
-		game.publicPlayersState.forEach((p: any) => {
+		game.publicPlayersState.forEach((p) => {
 			p.cardStatus.cardDisplayed = false;
 			p.cardStatus.cardFront = '';
 		});
@@ -235,7 +235,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}, 1000);
 
 	setTimeout(() => {
-		game.publicPlayersState.forEach((player, i: number) => {
+		game.publicPlayersState.forEach((player, i) => {
 			if (i !== data.playerIndex && i !== hitlerIndex) {
 				player.cardStatus.cardFront = 'secretrole';
 				player.cardStatus.cardBack = (game.private?.seatedPlayers && game.private.seatedPlayers[i].role) || '';
@@ -248,7 +248,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 	}, 2000);
 
 	setTimeout(() => {
-		game.publicPlayersState.forEach((player, i: number) => {
+		game.publicPlayersState.forEach((player, i) => {
 			player.cardStatus.isFlipped = true;
 		});
 

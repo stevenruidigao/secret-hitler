@@ -279,7 +279,7 @@ export const handleModPeekRemakes = (socket: Socket, passport: any, game: Active
 				output += 'Roles not Dealt';
 			}
 
-			const playerRemakeData = game.remakeData.find((d: any) => d.userName === player.userName);
+			const playerRemakeData = game.remakeData?.find((d: any) => d.userName === player.userName);
 			output +=
 				'<td>' +
 				(playerRemakeData.remakeTime ? dayjs.duration(new Date().valueOf() - new Date(playerRemakeData.remakeTime).valueOf()).humanize() : '-') +

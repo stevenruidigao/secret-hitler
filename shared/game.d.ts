@@ -185,7 +185,7 @@ export type ActiveGame = {
 	merlinGuesses: Record<string, any>;
 	lastModPing?: number;
 	electionCount?: number;
-	remakeData?: any;
+	remakeData?: any[];
 	unsentReports?: any[];
 	summary?: any;
 	summarySaved?: boolean;

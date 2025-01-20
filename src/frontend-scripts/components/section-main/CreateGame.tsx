@@ -8,6 +8,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
+import { LEGAL_CHARACTERS } from '@/shared/constants.ts';
 import blacklistedWords from '@/shared/blacklistedWords.ts';
 import flags from '@/utils/flags.ts';
 
@@ -1644,8 +1645,7 @@ export default class CreateGame extends React.Component {
 									maxLength={20}
 									placeholder="New Game"
 									onKeyPress={(e) => {
-										const { LEGALCHARACTERS } = require('@/shared/constants.ts');
-										if (!LEGALCHARACTERS(e.key)) e.preventDefault();
+										if (!LEGAL_CHARACTERS(e.key)) e.preventDefault();
 									}}
 									value={this.state.gameName}
 									onChange={(e) => {

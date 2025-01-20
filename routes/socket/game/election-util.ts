@@ -79,8 +79,8 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 		game.general.status = `Vote on election #${game.general.electionCount} now.`;
 
 		game.publicPlayersState
-			.filter((player: any) => !player.isDead)
-			.forEach((player: any) => {
+			.filter((player) => !player.isDead)
+			.forEach((player) => {
 				player.isLoader = true;
 				player.cardStatus = {
 					cardDisplayed: true,

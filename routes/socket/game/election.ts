@@ -203,9 +203,9 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 					}
 				});
 
-				if (game.trackState.electionTrackerCount <= 2 && game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor') > -1) {
+				if (game.trackState.electionTrackerCount <= 2 && game.publicPlayersState.findIndex((player) => player.governmentStatus === 'isChancellor') > -1) {
 					game.publicPlayersState[game.gameState.presidentIndex].previousGovernmentStatus = 'wasPresident';
-					game.publicPlayersState[game.publicPlayersState.findIndex((player: any) => player.governmentStatus === 'isChancellor')].previousGovernmentStatus =
+					game.publicPlayersState[game.publicPlayersState.findIndex((player) => player.governmentStatus === 'isChancellor')].previousGovernmentStatus =
 						'wasChancellor';
 				}
 			};
@@ -231,7 +231,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 			if (game.general.avalonSH && game.trackState.policyCount.liberal === 5) {
 				assassinateMerlin(game);
 			} else if (game.trackState.policyCount.liberal === 5 || game.trackState.policyCount.fascist === 6) {
-				game.publicPlayersState.forEach((player, i: number) => {
+				game.publicPlayersState.forEach((player, i) => {
 					player.cardStatus.cardFront = 'secretrole';
 					player.cardStatus.cardBack = seatedPlayers[i].role;
 					player.cardStatus.cardDisplayed = true;
@@ -244,7 +244,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 
 				setTimeout(
 					() => {
-						game.publicPlayersState.forEach((player, i: number) => {
+						game.publicPlayersState.forEach((player, i) => {
 							player.cardStatus.isFlipped = true;
 						});
 
@@ -1751,7 +1751,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 						},
 					],
 				});
-				game.publicPlayersState.forEach((player: any, i: number) => {
+				game.publicPlayersState.forEach((player, i) => {
 					player.cardStatus.cardFront = 'secretrole';
 					player.cardStatus.cardBack = seatedPlayers && seatedPlayers[i].role;
 					player.cardStatus.cardDisplayed = true;
@@ -1761,7 +1761,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 				sendInProgressGameUpdate(game, true);
 
 				setTimeout(() => {
-					game.publicPlayersState.forEach((player: any, i: number) => {
+					game.publicPlayersState.forEach((player, i) => {
 						player.cardStatus.isFlipped = true;
 					});
 					game.gameState.audioCue = '';
@@ -1865,9 +1865,9 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 		const isConsensus = game.publicPlayersState
 			.filter((player) => !player.isDead)
-			.every((el: any, i: number) => (seatedPlayers[i] ? seatedPlayers[i].voteStatus.didVoteYes === seatedPlayers[0].voteStatus.didVoteYes : false));
+			.every((el, i) => (seatedPlayers[i] ? seatedPlayers[i].voteStatus.didVoteYes === seatedPlayers[0].voteStatus.didVoteYes : false));
 
-		game.publicPlayersState.forEach((player, i: number) => {
+		game.publicPlayersState.forEach((player, i) => {
 			if (!player.isDead && seatedPlayers[i]) {
 				player.cardStatus.cardBack.cardName = seatedPlayers[i].voteStatus.didVoteYes ? 'ja' : 'nein';
 				player.cardStatus.isFlipped = true;

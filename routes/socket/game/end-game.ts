@@ -91,7 +91,8 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 		chats: game?.chats?.concat(game?.private?.unSeatedGameChats)?.concat(game?.private?.replayGameChats),
 		isVerifiedOnly: game?.general?.isVerifiedOnly,
 		season: CURRENT_SEASON_NUMBER,
-		losingPlayers: game?.publicPlayersState?.map((player: any) => ({
+		losingPlayers: game?.publicPlayersState.map((player: any) => ({
+			// TODO: why is this player different??????
 			userName: player?.userName,
 			team: player?.role && player?.role?.team,
 			role: player?.role && player?.role?.cardName,

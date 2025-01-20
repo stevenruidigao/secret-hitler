@@ -762,7 +762,7 @@ const beginGame = (game: ActiveGame) => {
 
 	setTimeout(
 		() => {
-			game.publicPlayersState.forEach((player: any) => {
+			game.publicPlayersState.forEach((player) => {
 				player.cardStatus.cardDisplayed = false;
 			});
 			sendInProgressGameUpdate(game, true);

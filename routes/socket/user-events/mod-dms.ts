@@ -34,7 +34,7 @@ export const handleOpenChat = (
 	const dmReceiver = userList.find((x) => x.userName === data.userName);
 	const modInDM = Object.keys(modDMs).find((x) => modDMs[x].subscribedPlayers.indexOf(data.aemMember) !== -1);
 	const modInGame = Object.keys(games).find(
-		(x) => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y: any) => y.userName === data.aemMember),
+		(x) => games[x].gameState.isTracksFlipped && games[x].publicPlayersState.find((y) => y.userName === data.aemMember),
 	);
 
 	if (modInGame) {

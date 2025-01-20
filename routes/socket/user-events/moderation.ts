@@ -1056,7 +1056,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						}
 						setTimeout(() => {
 							process.exit(1);
-							// crashServer(); // TODO: I think this works
+							// crashServer(); // TODO: CHECK! I think this works
 						}, 1000);
 					} else {
 						socket.emit('sendAlert', 'Only editors and admins can restart the server.');

@@ -180,7 +180,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		newGame.publicPlayersState = game.publicPlayersState
 			.filter((player) =>
 				game.remakeData
-					.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
+					?.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
 					.map((rmkPlayer: any) => rmkPlayer.userName)
 					.some((rmkPlayer: any) => rmkPlayer === player.userName),
 			)

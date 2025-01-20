@@ -238,7 +238,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 					const playerRemakeData = game.remakeData && game.remakeData.find((player: any) => player.userName === passport.user);
 					if (playerRemakeData && playerRemakeData.isRemaking) {
 						const minimumRemakeVoteCount = (game.general.playerCount as number) - game.customGameSettings.fascistCount; // TODO: fix this
-						const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
+						const remakePlayerCount = game.remakeData?.filter((player: any) => player.isRemaking).length || 0;
 
 						if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
 							game.general.isRemaking = false;
@@ -265,7 +265,10 @@ export const handleSocketDisconnect = (socket: Socket) => {
 						}
 
 						game.chats.push(chat);
-						game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
+
+						if (game.remakeData) {
+							game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
+						}
 					}
 					sendInProgressGameUpdate(game);
 					if (game.publicPlayersState.filter((publicPlayer) => publicPlayer.leftGame).length === game.general.playerCount) {
@@ -351,7 +354,7 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 			const minimumRemakeVoteCount =
 				(game.customGameSettings.fascistCount && (game.general.playerCount as number) - game.customGameSettings.fascistCount) || // TODO: fix this
 				Math.floor((game.general.playerCount as number) / 2) + 2; // TODO: fix this
-			const remakePlayerCount = game.remakeData.filter((player: any) => player.isRemaking).length;
+			const remakePlayerCount = game.remakeData?.filter((player: any) => player.isRemaking).length || 0;
 
 			if (!game.general.isRemade && game.general.isRemaking && remakePlayerCount <= minimumRemakeVoteCount) {
 				game.general.isRemaking = false;
@@ -378,7 +381,10 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 			}
 
 			game.chats.push(chat);
-			game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
+
+			if (game.remakeData) {
+				game.remakeData.find((player: any) => player.userName === passport.user).isRemaking = false;
+			}
 		}
 		if (game.gameState.isTracksFlipped) {
 			game.publicPlayersState[playerIndex].leftGame = true;
