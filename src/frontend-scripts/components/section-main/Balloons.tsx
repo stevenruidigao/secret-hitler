@@ -4,6 +4,8 @@ import $ from 'jquery';
 /* eslint-disable */
 
 export default class Balloons extends React.Component {
+	container: any;
+
 	componentDidMount() {
 		setTimeout(() => {
 			$(this.container).addClass('active');

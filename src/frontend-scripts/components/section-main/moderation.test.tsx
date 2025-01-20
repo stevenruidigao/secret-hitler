@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Moderation from './Moderation';
+import Moderation from './Moderation.tsx';
 
 describe('Moderation', () => {
 	it('should initialize correctly', () => {

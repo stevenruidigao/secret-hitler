@@ -33,16 +33,17 @@ const keyboardShortcuts: Record<string, any> = {
 };
 
 class CardFlinger extends React.Component {
+	static propTypes: any;
 	props: any;
 
-	state = {
+	state: any = {
 		isHovered: false,
 		hoveredClass: null,
 		expandingIndex: null, // index of expanding card in [0, 1, 2, 3, 4]
 		expansionTimer: 0, // number returned by setTimeout
 	};
 
-	handleHover = (classes: string[]) => {
+	handleHover = (classes: string) => {
 		this.setState({
 			isHovered: !this.state.isHovered,
 			hoveredClass: classes,
@@ -51,7 +52,7 @@ class CardFlinger extends React.Component {
 
 	onKeyUp(event: any) {
 		// ignore typing in chat/reporting
-		if (this.state.expandingIndex === null || ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+		if (this.state.expandingIndex === null || ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')) return; // TODO: check?
 
 		clearTimeout(this.state.expansionTimer);
 		this.setState({
@@ -72,7 +73,7 @@ class CardFlinger extends React.Component {
 		const keyIndex = keyboardShortcuts[phase][String.fromCharCode(event.keyCode)];
 
 		// ignore typing in chat/reporting, or if keyboard shortcuts are disabled
-		if (keyIndex === undefined || keyboardShortcutsSetting === 'disable' || ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+		if (keyIndex === undefined || keyboardShortcutsSetting === 'disable' || ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')) return; // TODO: check
 
 		if (keyboardShortcutsSetting === '0s' && phase === 'voting') {
 			// instantly vote
@@ -158,7 +159,7 @@ class CardFlinger extends React.Component {
 			const { phase } = gameState;
 			const { status } = general;
 			const { userName } = userInfo;
-			const currentPlayer = publicPlayersState.find((player) => player.userName === userName);
+			const currentPlayer = publicPlayersState.find((player: any) => player.userName === userName);
 			const currentPlayerStatus = currentPlayer ? currentPlayer.governmentStatus : null;
 
 			if (userInfo.gameSettings && userInfo.gameSettings.disableHelpMessages) {
@@ -227,7 +228,7 @@ class CardFlinger extends React.Component {
 			<section className="cardflinger-container">
 				{renderHelpMessage()}
 				{positions.map((position, i) => {
-					const stateObj = cardFlingerState.find((flinger) => flinger.position === position);
+					const stateObj = cardFlingerState.find((flinger: any) => flinger.position === position);
 
 					let frontClasses = 'cardflinger-card front';
 					let backClasses = 'cardflinger-card back';

@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import GamesList from './GamesList';
+import GamesList from './GamesList.tsx';
 
 describe('GamesList', () => {
 	it('should initialize correctly', () => {

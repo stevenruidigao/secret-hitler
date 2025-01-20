@@ -2,6 +2,8 @@ import React from 'react';
 import dayjs from 'dayjs';
 
 class Leaderboard extends React.Component {
+	state: any;
+
 	constructor(props: any) {
 		super(props);
 
@@ -49,7 +51,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Seasonal Elo leaders</h2>
 										<ul>
-											{this.state.seasonalLeaderboardElo.map((user) => (
+											{this.state.seasonalLeaderboardElo.map((user: any) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>
@@ -67,7 +69,7 @@ class Leaderboard extends React.Component {
 										<h2 className="ui header">Daily Elo leaders</h2>
 										<ul>
 											{this.state.dailyLeaderboardElo.map(
-												(user) =>
+												(user: any) =>
 													user.dailyEloDifference.toFixed(0) >= 0 && (
 														<li key={user.userName}>
 															<p>
@@ -88,7 +90,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Seasonal XP leaders</h2>
 										<ul>
-											{this.state.seasonalLeaderboardXP.map((user) => (
+											{this.state.seasonalLeaderboardXP.map((user: any) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>
@@ -106,7 +108,7 @@ class Leaderboard extends React.Component {
 										<h2 className="ui header">Daily XP leaders</h2>
 										<ul>
 											{this.state.dailyLeaderboardXP.map(
-												(user) =>
+												(user: any) =>
 													user.dailyXPDifference.toFixed(0) >= 0 && (
 														<li key={user.userName}>
 															<p>
@@ -127,7 +129,7 @@ class Leaderboard extends React.Component {
 									<>
 										<h2 className="ui header">Most recent rainbow players</h2>
 										<ul>
-											{this.state.rainbowLeaderboard.map((user) => (
+											{this.state.rainbowLeaderboard.map((user: any) => (
 												<li key={user.userName}>
 													<p>
 														<a href={`#/profile/${user.userName}`}>{user.userName}</a>

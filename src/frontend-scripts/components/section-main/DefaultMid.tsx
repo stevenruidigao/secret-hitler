@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 
 import { viewPatchNotes } from '../../actions/actions.ts';
 
-const mapStateToProps = ({ version, userInfo }) => ({ version, userInfo });
+const mapStateToProps = ({ version, userInfo }: any) => ({ version, userInfo });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
 	readPatchNotes: () => {
 		dispatch(viewPatchNotes());
 		fetch('/viewPatchNotes', {
@@ -18,14 +18,15 @@ const mapDispatchToProps = (dispatch) => ({
 	},
 });
 
-const PatchAlert = ({ isActive, onClick }) => (isActive ? <div className="patch-alert" onClick={onClick} /> : null);
+const PatchAlert = ({ isActive, onClick }: { isActive: boolean; onClick: React.MouseEventHandler }) =>
+	isActive ? <div className="patch-alert" onClick={onClick} /> : null;
 
 PatchAlert.propTypes = {
 	isActive: PropTypes.bool,
 	onClick: PropTypes.func,
 };
 
-const DefaultMid = ({ version, readPatchNotes, quickDefault, userInfo }) => (
+const DefaultMid = ({ version, readPatchNotes, quickDefault, userInfo }: any) => (
 	<section className="defaultmid">
 		<div className="poll">
 			<a target="_blank" href="/polls">

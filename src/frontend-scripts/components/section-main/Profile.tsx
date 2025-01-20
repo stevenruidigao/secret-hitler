@@ -21,7 +21,11 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 class ProfileWrapper extends React.Component {
-	constructor(props) {
+	static defaultProps: any;
+	static propTypes: any;
+	props: any;
+
+	constructor(props: any) {
 		super(props);
 
 		this.state = {

@@ -1,7 +1,7 @@
 import React from 'react'; // eslint-disable-line
 import 'sweetalert2/src/sweetalert2.scss';
-import PropTypes, { node } from 'prop-types';
-import { Scrollbars } from 'react-custom-scrollbars';
+import PropTypes from 'prop-types';
+import ReactCustomScrollbars from 'react-custom-scrollbars';
 import { Modal, Header, Button, Icon } from 'semantic-ui-react';
 
 import socket from '../../socket.ts';
@@ -24,6 +24,7 @@ declare global {
 }
 
 const plausible = global.plausible;
+const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
 export class Main extends React.Component {
 	static propTypes: any;
@@ -345,7 +346,7 @@ export class Main extends React.Component {
 				{midSection === 'game' || midSection === 'replay' ? (
 					RenderMidSection()
 				) : (
-					<Scrollbars className="scrollbar-container-main" renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
+					<Scrollbars className="scrollbar-container-main" renderThumbVertical={(props: any) => <div {...props} className="thumb-vertical" />}>
 						<div className="section-main-content-container">{RenderMidSection()}</div>
 					</Scrollbars>
 				)}

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { PLAYER_COLORS } from '../../constants.ts';
 
-const DisplayLobbies = (props) => {
+const DisplayLobbies = (props: any) => {
 	const { game, userInfo, userList } = props;
 	const gameClasses = () => {
 		let classes = 'browser-row';
@@ -27,15 +27,15 @@ const DisplayLobbies = (props) => {
 		return classes;
 	};
 
-	const playerCount = (game) => {
-		const availableSeatCounts = new Array(game.maxPlayersCount)
+	const playerCount = (game: any) => {
+		const availableSeatCounts: number[] = new Array(game.maxPlayersCount)
 			.fill(true)
-			.map((el, i) => (game.excludedPlayerCount.includes(i + 1) || i + 1 < game.minPlayersCount ? false : i + 1))
-			.filter((el) => el);
+			.map((el, i) => i + 1)
+			.filter((el) => !game.excludedPlayerCount.includes(el) && el >= game.minPlayersCount);
 
 		let str = '';
 
-		availableSeatCounts.forEach((el) => {
+		availableSeatCounts.forEach((el: number) => {
 			if (availableSeatCounts.includes(el)) {
 				if (el === game.maxPlayersCount) {
 					str = `${str}${el}`;
@@ -105,7 +105,7 @@ const DisplayLobbies = (props) => {
 			casualGameTooltip = 'Casual game - results do not count for wins or losses';
 		}
 
-		const hasPlayerCount = (count) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
+		const hasPlayerCount = (count: number) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
 
 		const hasR6 = game.rebalance6p && hasPlayerCount(6);
 		const hasR7 = game.rebalance7p && hasPlayerCount(7);
@@ -345,7 +345,7 @@ const DisplayLobbies = (props) => {
 	};
 
 	const playerIcons = () => {
-		const players = [];
+		const players: any[] = [];
 		const total = [];
 		const { gameSettings } = userInfo;
 		// Might be a simpler way to write this. Just getting all the data we need and storing it in players[]
@@ -353,10 +353,10 @@ const DisplayLobbies = (props) => {
 			return null;
 		}
 
-		game.userNames.forEach((el) => players.push({ userName: game.private ? '' : el }));
-		game.customCardback.forEach((el, index) => (players[index].customCardback = el));
+		game.userNames.forEach((el: string) => players.push({ userName: game.private ? '' : el }));
+		game.customCardback.forEach((el: any, index: number) => (players[index].customCardback = el));
 		players.forEach((player, index) => {
-			const userStats = userList.list ? userList.list.find((el) => el.userName === player.userName) : null;
+			const userStats = userList.list ? userList.list.find((el: any) => el.userName === player.userName) : null;
 
 			if (userStats) {
 				players[index].wins = userStats.overall.wins;

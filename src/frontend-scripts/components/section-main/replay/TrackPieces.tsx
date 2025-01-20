@@ -18,7 +18,7 @@ const ElectionTracker = ({ position }: { position: number }) => {
 	return <div className={classes} />;
 };
 
-const TrackPieces = ({ phase, track, electionTracker }) => {
+const TrackPieces = ({ phase, track, electionTracker }: { phase: string; track: any; electionTracker: number }) => {
 	const cards = handToCards(track);
 	const redCards = cards.slice(0, track.reds);
 	const blueCards = cards.slice(track.reds);

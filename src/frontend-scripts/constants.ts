@@ -1,8 +1,14 @@
 import cn from 'classnames';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
+import quarterOfYear from 'dayjs/plugin/quarterOfYear.js';
+import timezone from 'dayjs/plugin/timezone.js';
+import utc from 'dayjs/plugin/utc.js';
 
 dayjs.extend(duration);
+dayjs.extend(quarterOfYear);
+dayjs.extend(timezone);
+dayjs.extend(utc);
 
 export const TOU_CHANGES = [
 	{
@@ -40,10 +46,9 @@ export const TOU_CHANGES = [
 	},
 ];
 
-const msFromStart = dayjs().subtract(dayjs('2025-01-01T00:00:00.000Z').valueOf()).valueOf();
-
-export const CURRENT_SEASON_NUMBER = 22 + Math.ceil(msFromStart / dayjs.duration(3, 'months').asMilliseconds());
-export const CURRENT_SEASON_END = dayjs('2025-01-01T00:00:00.000Z').add(dayjs.duration((CURRENT_SEASON_NUMBER - 22) * 3, 'months'));
+const now = dayjs().tz('Etc/UTC');
+export const CURRENT_SEASON_NUMBER = 23 + now.diff(dayjs('2025-01-01T00:00:00.000Z'), 'quarter');
+export const CURRENT_SEASON_END = now.endOf('quarter');
 
 const ALPHANUMERIC = [...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'];
 const SYMBOLS = [...' -_=+!"£$%^&*()\\/.,<>?#~\'@;:[]{}'];

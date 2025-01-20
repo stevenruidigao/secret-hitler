@@ -70,7 +70,7 @@ export default class Confetti extends React.Component {
 				},
 			};
 
-			function confettiParticle(colorOptions) {
+			function confettiParticle(colorOptions: any) {
 				this.x = Math.random() * W; // x-coordinate
 				this.y = Math.random() * H - H; //y-coordinate
 				this.r = RandomFromTo(10, 30); //radius;

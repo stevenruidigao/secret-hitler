@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Checkbox, Message } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
+import relativeTime from 'dayjs/plugin/relativeTime.js';
 
 import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.ts';
 import { processEmotes } from '../../emotes.tsx';
@@ -10,13 +11,18 @@ import { processEmotes } from '../../emotes.tsx';
 import DisplayLobbies from './DisplayLobbies.tsx';
 
 dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 export class GamesList extends React.Component {
+	static defaultProps: any;
+	static propTypes: any;
+	props: any;
+
 	state = {
 		filtersVisible: false,
 	};
 
-	toggleFilter = (value) => {
+	toggleFilter = (value: any) => {
 		const { gameFilter, changeGameFilter } = this.props;
 
 		gameFilter[value] = !gameFilter[value];
@@ -30,7 +36,7 @@ export class GamesList extends React.Component {
 		});
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps(nextProps: any) {
 		const { generalChats } = this.props;
 		const nextGeneralChats = nextProps.generalChats;
 
@@ -176,7 +182,7 @@ export class GamesList extends React.Component {
 	renderGameList() {
 		const { gameList, userInfo, userList } = this.props;
 
-		const compareGames = (a, b) => {
+		const compareGames = (a: any, b: any) => {
 			if (a.seatedCount !== b.seatedCount) return b.seatedCount - a.seatedCount;
 			const aName = a.name.toLowerCase();
 			const bName = b.name.toLowerCase();
@@ -187,8 +193,8 @@ export class GamesList extends React.Component {
 			}
 		};
 
-		const thisUser = userInfo.userName && userList.list && userList.list.find((u) => u.userName == userInfo.userName);
-		const sortTypeThenName = (a, b) => {
+		const thisUser = userInfo.userName && userList.list && userList.list.find((u: any) => u.userName == userInfo.userName);
+		const sortTypeThenName = (a: any, b: any) => {
 			const isRainbow = thisUser && !thisUser.isPrivate && thisUser.isRainbowOverall;
 			const isPrivate = thisUser && thisUser.isPrivate;
 
@@ -213,7 +219,7 @@ export class GamesList extends React.Component {
 
 		if (gameList.length) {
 			return gameList
-				.filter((game) => {
+				.filter((game: any) => {
 					const { pub, priv, unstarted, inprogress, completed, timedMode, rainbow, standard, customgame, casualgame } = this.props.gameFilter;
 
 					return !(
@@ -229,7 +235,7 @@ export class GamesList extends React.Component {
 						(game.casualGame && casualgame)
 					);
 				})
-				.sort((a, b) => {
+				.sort((a: any, b: any) => {
 					const userInGame =
 						userInfo && userInfo.userName && a.userNames && a.userNames.includes(userInfo.userName)
 							? -1
@@ -241,7 +247,7 @@ export class GamesList extends React.Component {
 					const diff = Math.min(2, statusSortOrder.indexOf(a.gameStatus)) - Math.min(2, statusSortOrder.indexOf(b.gameStatus));
 					return userInGame || diff || sortTypeThenName(a, b);
 				})
-				.map((game, index) => (
+				.map((game: any, index: number) => (
 					<DisplayLobbies key={game.uid} game={game} socket={this.props.socket} userList={this.props.userList} userInfo={this.props.userInfo} />
 				));
 		}
@@ -249,7 +255,7 @@ export class GamesList extends React.Component {
 
 	render() {
 		const toggleFilter = () => {
-			this.setState((state) => ({
+			this.setState((state: any) => ({
 				filtersVisible: !state.filtersVisible,
 			}));
 		};
@@ -258,8 +264,8 @@ export class GamesList extends React.Component {
 			<section className={this.state.filtersVisible ? 'browser-container' : 'browser-container filters-hidden'}>
 				<a href="#/changelog">
 					<h5 title="A season is an optional new tier of elo that is reset every 3 months.">
-						{dayjs(new Date()) > CURRENT_SEASON_END - dayjs.duration(1, 'month')
-							? `Season ends ${dayjs(CURRENT_SEASON_END).fromNow()}.`
+						{dayjs().isAfter(CURRENT_SEASON_END.subtract(1, 'month'))
+							? `Season ends ${CURRENT_SEASON_END.fromNow()} (${CURRENT_SEASON_END.toString()}).`
 							: `Welcome to season ${CURRENT_SEASON_NUMBER}!`}
 					</h5>
 				</a>

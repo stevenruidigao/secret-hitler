@@ -15,6 +15,8 @@ $.fn.checkbox = Checkbox;
 $.fn.modal = Modal;
 
 class Settings extends React.Component {
+	props: any;
+
 	state = {
 		namechangeValue: '',
 		sliderValues: [8, 24],

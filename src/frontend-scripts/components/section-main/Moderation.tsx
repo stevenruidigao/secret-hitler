@@ -9,7 +9,9 @@ import { Form, Header, Button, Modal } from 'semantic-ui-react';
 $.fn.checkbox = Checkbox;
 
 export default class Moderation extends React.Component {
-	state = {
+	props: any;
+
+	state: any = {
 		selectedUser: '',
 		userList: [],
 		gameList: [],
@@ -46,13 +48,13 @@ export default class Moderation extends React.Component {
 		const self = this;
 		const { socket } = this.props;
 
-		socket.on('lagTestResults', (data) => {
+		socket.on('lagTestResults', (data: number) => {
 			this.setState({
 				lagMeterStatus: `Average lag: ${data} ms`,
 			});
 		});
 
-		socket.on('modInfo', (info) => {
+		socket.on('modInfo', (info: any) => {
 			this.setState({
 				userList: info.userList,
 				gameList: info.gameList,
@@ -232,7 +234,7 @@ export default class Moderation extends React.Component {
 	};
 
 	renderPlayerInput() {
-		const playerInputKeyup = (e) => {
+		const playerInputKeyup = (e: any) => {
 			this.setState({ playerInputText: `${e.target.value}` });
 		};
 
@@ -243,23 +245,25 @@ export default class Moderation extends React.Component {
 		);
 	}
 
-	routeToGame(gameId) {
-		window.location = `#/table/${gameId}`;
+	routeToGame(gameId: string) {
+		// window.location = `#/table/${gameId}`;
+		window.location.href = `#/table/${gameId}`; // TODO: check; changed from above
 	}
 
-	fetchReplay(gameId) {
-		window.location = `#/replay/${gameId}`;
+	fetchReplay(gameId: string) {
+		// window.location = `#/replay/${gameId}`;
+		window.location.href = `#/replay/${gameId}`; // TODO: check; changed from above
 	}
 
 	renderUserlist() {
-		const radioChange = (userName) => {
+		const radioChange = (userName: string) => {
 			this.setState({ selectedUser: userName });
 		};
 		const { userList, userSort } = this.state;
-		const ips = userList.map((user) => user.ip);
-		const bannedips = this.state.log.filter((log) => log.actionTaken === 'ban' || log.actionTaken === 'timeOut').map((log) => log.ip);
-		const timednames = this.state.log.filter((log) => log.actionTaken === 'timeOut2').map((log) => log.userActedOn);
-		const splitIP = (ip) => {
+		const ips = userList.map((user: any) => user.ip);
+		const bannedips = this.state.log.filter((log: any) => log.actionTaken === 'ban' || log.actionTaken === 'timeOut').map((log: any) => log.ip);
+		const timednames = this.state.log.filter((log: any) => log.actionTaken === 'timeOut2').map((log: any) => log.userActedOn);
+		const splitIP = (ip: string) => {
 			if (!ip) return ['', ''];
 			let idx = ip.lastIndexOf('.');
 
@@ -270,7 +274,7 @@ export default class Moderation extends React.Component {
 
 			return [ip.substring(0, idx), ip.substring(idx + 1)];
 		};
-		const renderStatus = (user) => {
+		const renderStatus = (user: any) => {
 			const status = user.status;
 			if (!status || status.type === 'none') {
 				return <i className={'status unclickable icon'} />;
@@ -285,14 +289,15 @@ export default class Moderation extends React.Component {
 					{ privateIcon: status.type === 'private' },
 					'icon',
 				);
-				const title = {
+				const title: any = {
 					playing: 'This player is playing in a standard game.',
 					observing: 'This player is observing a game.',
 					rainbow: 'This player is playing in a experienced-player-only game.',
 					replay: 'This player is watching a replay.',
 					private: 'This player is playing in a private game.',
 				};
-				const onClick = {
+
+				const onClick: any = {
 					playing: this.routeToGame,
 					observing: this.routeToGame,
 					rainbow: this.routeToGame,
@@ -310,8 +315,8 @@ export default class Moderation extends React.Component {
 				);
 			}
 		};
-		const IPdata = {};
-		ips.forEach((ip) => {
+		const IPdata: any = {};
+		ips.forEach((ip: any) => {
 			const data = splitIP(ip);
 			if (!IPdata[data[0]]) IPdata[data[0]] = { unique: 0 };
 			if (!IPdata[data[0]][data[1]]) {
@@ -320,34 +325,34 @@ export default class Moderation extends React.Component {
 			}
 			IPdata[data[0]][data[1]]++;
 		});
-		const getIPType = (user) => {
+		const getIPType = (user: any) => {
 			const data = splitIP(user.ip);
 			if (IPdata[data[0]][data[1]] > 1) return 'multi';
 			if (IPdata[data[0]].unique > 1) return 'multi2';
 			return '';
 		};
-		const getUserType = (user) => {
+		const getUserType = (user: any) => {
 			if (user.isTor) return 'istor';
 			if (bannedips.includes(user.ip)) return 'isbannedbefore';
 			if (timednames.includes(user.userName)) return 'istimedbefore';
 			return '';
 		};
-		const checkEmail = (email) => {
+		const checkEmail = (email: string) => {
 			if (email.startsWith('-')) return 'emailunverified';
 			return '';
 		};
 
 		return userList
-			.filter((user) => {
+			.filter((user: any) => {
 				if (this.state.playerInputText) {
 					return user.userName.indexOf(this.state.playerInputText) === 0;
 				} else {
 					return true;
 				}
 			})
-			.sort((a, b) =>
+			.sort((a: any, b: any) =>
 				(() => {
-					const getAmt = (a, b) => {
+					const getAmt = (a: any, b: any) => {
 						if (userSort.type === 'IP' && a.ip != b.ip) return a.ip > b.ip ? 1 : -1;
 						if (userSort.type === 'email' && a.email.toLowerCase() != b.email.toLowerCase()) return a.email > b.email ? 1 : -1;
 						return a.userName.toLowerCase() > b.userName.toLowerCase() ? 1 : -1;
@@ -355,7 +360,7 @@ export default class Moderation extends React.Component {
 					return getAmt(a, b) * (userSort.direction === 'descending' ? 1 : -1);
 				})(),
 			)
-			.map((user, index) => (
+			.map((user: any, index: number) => (
 				<tr key={index}>
 					<td>
 						<input
@@ -380,11 +385,11 @@ export default class Moderation extends React.Component {
 	}
 
 	renderGameList() {
-		const gameRadioChange = (game) => {
+		const gameRadioChange = (game: any) => {
 			this.setState({ playerInputText: game.uid });
 		};
 		const { gameList, gameSort } = this.state;
-		const getGameType = (game) => {
+		const getGameType = (game: any) => {
 			if (game.unlisted) return 'unlistedGame';
 			if (game.custom) return 'custom';
 			if (game.casual) return 'casual';
@@ -392,9 +397,9 @@ export default class Moderation extends React.Component {
 			return 'ranked';
 		};
 		return gameList
-			.sort((a, b) =>
+			.sort((a: any, b: any) =>
 				(() => {
-					const getAmt = (a, b) => {
+					const getAmt = (a: any, b: any) => {
 						if (gameSort.type === 'uid' && a.uid != b.uid) return a.uid > b.uid ? 1 : -1;
 						if (gameSort.type === 'electionNum' && a.electionNum != b.electionNum) return a.electionNum > b.electionNum ? 1 : -1;
 						return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
@@ -402,7 +407,7 @@ export default class Moderation extends React.Component {
 					return getAmt(a, b) * (gameSort.direction === 'descending' ? 1 : -1);
 				})(),
 			)
-			.map((game, index) => (
+			.map((game: any, index: number) => (
 				<tr key={index}>
 					<td>
 						<input
@@ -424,7 +429,7 @@ export default class Moderation extends React.Component {
 	}
 
 	renderGameButtons() {
-		const takeModAction = (action) => {
+		const takeModAction = (action: string) => {
 			if (action) {
 				this.props.socket.emit('updateModAction', {
 					modName: this.props.userInfo.userName,
@@ -434,7 +439,11 @@ export default class Moderation extends React.Component {
 							: action === 'resetGameName'
 								? `RESETGAMENAME${this.state.playerInputText}`
 								: this.state.playerInputText || this.state.selectedUser,
-					ip: this.state.playerInputText ? '' : this.state.selectedUser ? this.state.userList.find((user) => user.userName === this.state.selectedUser).ip : '',
+					ip: this.state.playerInputText
+						? ''
+						: this.state.selectedUser
+							? this.state.userList.find((user: any) => user.userName === this.state.selectedUser).ip
+							: '',
 					comment: this.state.actionTextValue,
 					action,
 				});
@@ -475,7 +484,7 @@ export default class Moderation extends React.Component {
 	renderButtons() {
 		const { socket, userInfo } = this.props;
 		const { playerInputText, selectedUser, userList, actionTextValue, lagMeterStatus } = this.state;
-		const takeModAction = (action) => {
+		const takeModAction = (action: any) => {
 			if (action === 'lagMeter') {
 				this.setState(
 					{
@@ -488,7 +497,7 @@ export default class Moderation extends React.Component {
 								socket.emit('updateModAction', {
 									modName: userInfo.userName,
 									userName: playerInputText || selectedUser,
-									ip: playerInputText ? '' : selectedUser ? userList.find((user) => user.userName === selectedUser).ip : '',
+									ip: playerInputText ? '' : selectedUser ? userList.find((user: any) => user.userName === selectedUser).ip : '',
 									comment: actionTextValue,
 									action,
 									frontEndTime: Date.now(),
@@ -511,7 +520,7 @@ export default class Moderation extends React.Component {
 							: action === 'resetGameName'
 								? `RESETGAMENAME${playerInputText}`
 								: playerInputText || selectedUser,
-					ip: playerInputText ? '' : selectedUser ? userList.find((user) => user.userName === selectedUser).ip : '',
+					ip: playerInputText ? '' : selectedUser ? userList.find((user: any) => user.userName === selectedUser).ip : '',
 					comment: actionTextValue,
 					action,
 				});
@@ -1145,7 +1154,7 @@ export default class Moderation extends React.Component {
 
 	renderModLog() {
 		const { logSort, logCount } = this.state;
-		const clickSort = (type) => {
+		const clickSort = (type: any) => {
 			this.setState({
 				logSort: {
 					type,
@@ -1153,7 +1162,7 @@ export default class Moderation extends React.Component {
 				},
 			});
 		};
-		const modRetrieveClick = (e) => {
+		const modRetrieveClick = (e: any) => {
 			e.preventDefault();
 
 			this.setState(
@@ -1169,7 +1178,7 @@ export default class Moderation extends React.Component {
 		const elem = document.getElementById('playernameelem');
 		const name = elem ? elem.value : '';
 
-		const niceAction = {
+		const niceAction: any = {
 			comment: 'Comment',
 			warn: 'Issue Warning',
 			removeWarning: 'Delete Warning',
@@ -1282,13 +1291,13 @@ export default class Moderation extends React.Component {
 					<tbody>
 						{this.state.log
 							.filter(
-								(report) =>
+								(report: any) =>
 									(report.userActedOn && report.userActedOn.includes(name)) ||
 									(report.modUserName && report.modUserName.includes(name)) ||
 									(report.ip && report.ip.includes(name)),
 							)
-							.filter((entry) => (this.state.modLogToday ? new Date(entry.date).toDateString() === new Date().toDateString() : true))
-							.sort((a, b) => {
+							.filter((entry: any) => (this.state.modLogToday ? new Date(entry.date).toDateString() === new Date().toDateString() : true))
+							.sort((a: any, b: any) => {
 								const { logSort } = this.state;
 								const aDate = new Date(a.date);
 								const bDate = new Date(b.date);
@@ -1312,15 +1321,15 @@ export default class Moderation extends React.Component {
 									return a[logSort.type] > b[logSort.type] ? 1 : -1;
 								}
 							})
-							.map((report, index) => (
+							.map((report: any, index: number) => (
 								<tr key={index}>
 									<td style={{ whiteSpace: 'nowrap' }}>{report.modUserName}</td>
 									<td style={{ whiteSpace: 'nowrap' }}>{dayjs(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
 									<td style={{ width: '120px', minWidth: '120px' }}>{niceAction[report.actionTaken] ? niceAction[report.actionTaken] : report.actionTaken}</td>
 									<td style={{ whiteSpace: 'normal', wordWrap: 'break-word', maxWidth: '200px', minWidth: '120px' }}>{report.userActedOn}</td>
 									<td style={{ whiteSpace: 'nowrap' }}>{report.ip}</td>
-									<td style={{ Width: '200px', minWidth: '200px' }}>
-										{report.modNotes.split('\n').map((v, index) => (
+									<td style={{ width: '200px', minWidth: '200px' }}>
+										{report.modNotes.split('\n').map((v: any, index: number) => (
 											<p key={index} style={{ margin: '0px' }}>
 												{v}
 											</p>
@@ -1338,20 +1347,20 @@ export default class Moderation extends React.Component {
 	}
 
 	renderActionText() {
-		const handleTextChange = (e) => {
+		const handleTextChange = (e: any) => {
 			this.setState({ actionTextValue: `${e.target.value}` });
 		};
 
 		return <textarea placeholder="Comment" value={this.state.actionTextValue} onChange={handleTextChange} spellCheck="false" />;
 	}
 
-	broadcastClick = (e) => {
+	broadcastClick = (e: any) => {
 		e.preventDefault();
 
 		$(this.bModal).modal('show');
 	};
 
-	handleBroadcastSubmit = (e) => {
+	handleBroadcastSubmit = (e: any) => {
 		e.preventDefault();
 		$(this.bModal).modal('hide');
 
@@ -1370,12 +1379,12 @@ export default class Moderation extends React.Component {
 	render() {
 		const { userSort, showActions } = this.state;
 
-		const broadcastKeyup = (e) => {
+		const broadcastKeyup = (e: any) => {
 			this.setState({
 				broadcastText: e.target.value,
 			});
 		};
-		const toggleModLogToday = (e) => {
+		const toggleModLogToday = (e: any) => {
 			const { modLogToday } = this.state;
 			e.preventDefault();
 
@@ -1383,7 +1392,7 @@ export default class Moderation extends React.Component {
 				modLogToday: !modLogToday,
 			});
 		};
-		const clickSort = (type) => {
+		const clickSort = (type: any) => {
 			this.setState({
 				userSort: {
 					type,
@@ -1397,7 +1406,7 @@ export default class Moderation extends React.Component {
 				<a href="#/">
 					<i className="remove icon" />
 				</a>
-				<h2 style={{ userSelect: 'none', WebkitUserSelect: 'none', MsUserSelect: 'none' }}>Moderation</h2>
+				<h2 style={{ userSelect: 'none', WebkitUserSelect: 'none', msUserSelect: 'none' }}>Moderation</h2>
 				{showActions && (
 					<a className="broadcast" href="#" onClick={this.broadcastClick}>
 						Broadcast
@@ -1606,7 +1615,7 @@ export default class Moderation extends React.Component {
 										<input
 											autoFocus
 											value={this.state.filterValue}
-											onChange={(e) => {
+											onChange={(e: any) => {
 												this.setState({
 													filterValue: e.target.value,
 												});
@@ -1643,7 +1652,7 @@ export default class Moderation extends React.Component {
 					<div className="ui input">
 						<form onSubmit={this.handleBroadcastSubmit} style={{ marginLeft: '10vw', width: '30vw', display: 'flex', flexDirection: 'column' }}>
 							<textarea
-								maxLength="300"
+								maxLength={300}
 								placeholder="Broadcast"
 								onChange={broadcastKeyup}
 								className="broadcast-input"

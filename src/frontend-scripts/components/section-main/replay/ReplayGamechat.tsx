@@ -8,7 +8,7 @@ import { loadReplay, updateUser } from '../../../actions/actions.ts';
 import { processEmotes } from '../../../emotes.tsx';
 import { PLAYER_COLORS } from '../../../constants.ts';
 
-const { Scrollbars } = ReactCustomScrollbars as any; // TODO: why? I hate this
+const Scrollbars = ReactCustomScrollbars as any; // TODO: why? I hate this
 
 const mapDispatchToProps = (dispatch: (data: any) => any) => ({
 	loadReplay: (summary: any) => dispatch(loadReplay(summary)),

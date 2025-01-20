@@ -1,14 +1,17 @@
 import React from 'react';
 
 import Select from 'react-select';
-import Switch from 'react-switch';
+import ReactSwitch from 'react-switch';
 import { Range } from 'rc-slider';
 
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
 import blacklistedWords from '@/iso/blacklistedWords.ts';
 import flags from '@/utils/flags.ts';
+
+const Switch = ReactSwitch as any; // TODO: is there anything else we can do
 
 export default class CreateGame extends React.Component {
 	static propTypes: any;
@@ -1045,7 +1048,7 @@ export default class CreateGame extends React.Component {
 						<i className="big arrows alternate horizontal icon" />
 						<h4 className="ui header">Elo limited game</h4>
 						<Switch
-							onChange={(checked) => {
+							onChange={(checked: boolean) => {
 								this.setState({ isEloLimited: checked });
 							}}
 							className="create-game-switch"
@@ -1065,15 +1068,15 @@ export default class CreateGame extends React.Component {
 	}
 
 	renderXPSlider() {
-		const origMarks = { 250: '250', 500: '500', 1000: '1000', 1500: '1500', 2000: '2000' };
+		const origMarks: Record<string, string> = { 250: '250', 500: '500', 1000: '1000', 1500: '1500', 2000: '2000' };
 		const { userInfo, userList } = this.props;
 		if (userInfo.gameSettings && userInfo.gameSettings.disableElo) return null;
 		let player = null;
-		if (userList.list) player = userList.list.find((p) => p.userName === userInfo.userName);
+		if (userList.list) player = userList.list.find((p: any) => p.userName === userInfo.userName);
 		const playerXP = (player && player.xpOverall && Math.min(2000, player.xpOverall)) || 0;
 		const marks = Object.keys(origMarks)
 			.filter((k) => origMarks[k] <= playerXP)
-			.reduce((obj, key) => {
+			.reduce((obj: any, key) => {
 				obj[key] = origMarks[key];
 				return obj;
 			}, {});
@@ -1089,7 +1092,8 @@ export default class CreateGame extends React.Component {
 							<input
 								value={this.state.xpSliderValue[0]}
 								onChange={(e) => {
-									if (!isNaN(e.target.value)) {
+									if (!isNaN(e.target.value as any)) {
+										// TODO: check
 										this.setState({ xpSliderValue: [e.target.value] });
 									}
 								}}
@@ -1101,7 +1105,7 @@ export default class CreateGame extends React.Component {
 						<i className="big arrows alternate horizontal icon" />
 						<h4 className="ui header">XP limited game</h4>
 						<Switch
-							onChange={(checked) => {
+							onChange={(checked: boolean) => {
 								this.setState({ isXPLimited: checked });
 							}}
 							className="create-game-switch"
@@ -1134,7 +1138,7 @@ export default class CreateGame extends React.Component {
 					return <div key={`F${i}`} className="deckcard" style={{ backgroundImage: "url('../images/cards/fascistp-l.png')" }} />; // eslint-disable-line
 				}),
 			);
-		const thirds = [];
+		const thirds: React.JSX.Element[][] = [];
 		data.forEach((elem, idx) => {
 			if (thirds[Math.floor(idx / rowWidth)] == null) thirds[Math.floor(idx / rowWidth)] = [];
 			thirds[Math.floor(idx / rowWidth)][idx % rowWidth] = elem;
@@ -1157,7 +1161,7 @@ export default class CreateGame extends React.Component {
 		const { customGameSettings } = this.state;
 		const offX = 94;
 		const offY = 6;
-		const powers = customGameSettings.powers.map((p) => {
+		const powers = customGameSettings.powers.map((p: string | null) => {
 			if (p == null || p == '' || p == 'null') return 'None';
 			if (p == 'investigate') return 'Inv';
 			if (p == 'deckpeek') return 'Peek';
@@ -1171,7 +1175,7 @@ export default class CreateGame extends React.Component {
 		const hzStart = customGameSettings.hitlerZone;
 		const vzPoint = customGameSettings.vetoZone;
 		const hitKnowsFas = customGameSettings.hitKnowsFas;
-		const getHZ = (pos) => {
+		const getHZ = (pos: number) => {
 			if (pos < hzStart) return 'Off';
 			if (pos > hzStart) return 'On';
 			return 'Start';
@@ -1419,7 +1423,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Hitler sees fascists</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ customGameSettings: { ...this.state.customGameSettings, hitKnowsFas: checked } });
 								}}
 								checked={this.state.customGameSettings.hitKnowsFas}
@@ -1436,7 +1440,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Fascists can shoot hitler</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ customGameSettings: { ...this.state.customGameSettings, fasCanShootHit: checked } });
 								}}
 								checked={this.state.customGameSettings.fasCanShootHit}
@@ -1637,7 +1641,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Game name:</h4>
 							<div className="ui input">
 								<input
-									maxLength="20"
+									maxLength={20}
 									placeholder="New Game"
 									onKeyPress={(e) => {
 										const { LEGALCHARACTERS } = require('../../constants.ts');
@@ -1668,7 +1672,7 @@ export default class CreateGame extends React.Component {
 								<i className="big yellow lock icon" />
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({
 											privateShowing: checked,
 											gameType: checked ? 'private' : this.state.customGameSettings.enabled ? 'custom' : 'ranked',
@@ -1690,7 +1694,7 @@ export default class CreateGame extends React.Component {
 							<div className="four wide column ui input">
 								<input
 									className="password-input"
-									maxLength="20"
+									maxLength={20}
 									placeholder="Password"
 									type="text"
 									autoFocus
@@ -1707,7 +1711,7 @@ export default class CreateGame extends React.Component {
 								<i className="big green lock icon" />
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({
 											unlistedGame: checked,
 											gameType: checked ? 'casual' : 'ranked',
@@ -1754,7 +1758,7 @@ export default class CreateGame extends React.Component {
 							</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ flappyMode: checked });
 								}}
 								checked={this.state.flappyMode}
@@ -1778,7 +1782,7 @@ export default class CreateGame extends React.Component {
 								</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({ flappyOnlyMode: checked });
 									}}
 									checked={this.state.flappyOnlyMode}
@@ -1825,7 +1829,7 @@ export default class CreateGame extends React.Component {
 							</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ timedMode: checked });
 								}}
 								checked={this.state.timedMode}
@@ -1848,7 +1852,7 @@ export default class CreateGame extends React.Component {
 								</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({ isVerifiedOnly: checked });
 									}}
 									checked={this.state.isVerifiedOnly}
@@ -1897,7 +1901,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Speed mode - most animations and pauses greatly reduced and fewer gamechats</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ experiencedmode: checked });
 								}}
 								checked={this.state.experiencedmode}
@@ -1914,7 +1918,7 @@ export default class CreateGame extends React.Component {
 							let isRainbow = false;
 							let user;
 							if (this.props.userList.list) {
-								user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
+								user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
 							}
 							if (user) {
 								isRainbow = user.isRainbowOverall;
@@ -1926,7 +1930,7 @@ export default class CreateGame extends React.Component {
 										<h4 className="ui header">Rainbow game - only fellow 50+ game veterans can be seated in this game</h4>
 										<Switch
 											className="create-game-switch"
-											onChange={(checked) => {
+											onChange={(checked: boolean) => {
 												this.setState({
 													rainbowgame: checked,
 													isVerifiedOnly: !checked,
@@ -1952,7 +1956,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Blind mode - player's names are replaced with random animal names, anonymizing them.</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({ blindMode: checked });
 								}}
 								checked={this.state.blindMode}
@@ -1971,7 +1975,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Disable observer chat</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({ disableobserverlobby: checked, disableobserver: checked });
 									}}
 									checked={this.state.disableobserverlobby}
@@ -1986,7 +1990,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Disable observer chat during game{this.state.disableobserverlobby ? '' : ' only'}</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({ disableobserver: checked });
 									}}
 									checked={this.state.disableobserver}
@@ -2011,7 +2015,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Private only game - only other anonymous players can be seated.</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({
 											privateonlyGame: checked,
 											isVerifiedOnly: false,
@@ -2034,7 +2038,7 @@ export default class CreateGame extends React.Component {
 								<h4 className="ui header">Make Votes to Remake Anonymous.</h4>
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({
 											privateAnonymousRemakes: checked,
 										});
@@ -2057,7 +2061,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Avalon SH - Adds roles from The Resistance: Avalon to the game, causal only</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({
 										avalonSH: checked,
 										gameType: checked ? 'casual' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked',
@@ -2076,7 +2080,7 @@ export default class CreateGame extends React.Component {
 							{this.state.avalonSH && (
 								<Switch
 									className="create-game-switch"
-									onChange={(checked) => {
+									onChange={(checked: boolean) => {
 										this.setState({
 											withPercival: checked,
 										});
@@ -2116,7 +2120,7 @@ export default class CreateGame extends React.Component {
 							<h4 className="ui header">Custom Game - Use a custom fascist track.</h4>
 							<Switch
 								className="create-game-switch"
-								onChange={(checked) => {
+								onChange={(checked: boolean) => {
 									this.setState({
 										customGameSettings: Object.assign(this.state.customGameSettings, { enabled: checked }),
 										gameType: checked ? 'custom' : this.state.privateShowing || this.state.privateonlygame ? 'private' : 'ranked',

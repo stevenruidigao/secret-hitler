@@ -2,7 +2,14 @@ import React, { useMemo } from 'react';
 import { getNumberWithOrdinal, PLAYER_COLORS as PLAYER_COLORS } from '../../constants.ts';
 import { processEmotes } from '../../emotes.tsx';
 
-const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, allEmotes, gameInfo }) => {
+const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, allEmotes, gameInfo }: {
+	chat: any;
+	playerListPlayer: any;
+	seatedUserNames: string[];
+	gameSettings: any;
+	allEmotes: any;
+	gameInfo: any;
+}) => {
 	const timestamp = (
 		<span className="chat-timestamp">{`${`0${new Date(chat.timestamp).getHours()}`.slice(-2)}:${`0${new Date(chat.timestamp).getMinutes()}`.slice(
 			-2,
@@ -18,7 +25,8 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 
 	const chatIndex = JSON.stringify(chat);
 
-	const renderPreviousSeasonAward = (type) => {
+	// TODO: code duplication with GameChatItem.tsx
+	const renderPreviousSeasonAward = (type: string) => {
 		switch (type) {
 			case 'bronze':
 				return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
@@ -39,7 +47,8 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 		}
 	};
 
-	const getClassesFromType = (type) => {
+	// TODO: code duplication with GameChatItem.tsx
+	const getClassesFromType = (type: string) => {
 		if (type === 'player') {
 			return 'chat-player';
 		} else {
@@ -47,7 +56,8 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 		}
 	};
 
-	const parseClaim = (claim) => {
+	// TODO: code duplication with GameChat.tsx
+	const parseClaim = (claim: string) => {
 		const mode = gameSettings?.claimCharacters || 'legacy';
 		let liberalChar = 'L';
 		let fascistChar = 'F';
@@ -77,7 +87,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 			<div className={`item game-chat ${chat?.chat[1]?.type || ''}`} key={chatIndex}>
 				{timestamp}
 				<span className="game-chat">
-					{chatContents.map((chatSegment, index) => {
+					{chatContents.map((chatSegment: any, index: number) => {
 						if (chatSegment.type) {
 							const classes = getClassesFromType(chatSegment.type);
 
@@ -98,7 +108,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 				<span className="claim-chat">
 					{chatContents &&
 						chatContents.length &&
-						chatContents.map((chatSegment, index) => {
+						chatContents.map((chatSegment: any, index: number) => {
 							if (chatSegment.type) {
 								return (
 									<span key={index} className={getClassesFromType(chatSegment.type)}>
@@ -118,7 +128,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 				<span className="game-chat">
 					{chatContents &&
 						chatContents.length &&
-						chatContents.map((chatSegment, index) => {
+						chatContents.map((chatSegment: any, index: number) => {
 							if (chatSegment.type) {
 								return (
 									<span key={index} className={getClassesFromType(chatSegment.type)}>
@@ -168,7 +178,7 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 				>
 					{isSeated ? (
 						''
-					) : chat?.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito ? (
+					) : chat?.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito ? ( // TODO: fix this undefined var?
 						<span data-tooltip="Incognito" data-inverted>
 							<span className="admincolor">(Incognito) 🚫</span>
 						</span>
@@ -201,17 +211,17 @@ const GameChatItem = ({ chat, playerListPlayer, seatedUserNames, gameSettings, a
 						? isSeated
 							? isBlind
 								? `${
-										gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName)]
-									} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
-								: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
-							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
+										gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName)]
+									} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
+								: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
+							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito // TODO: fix this undefined var?
 								? chat.hiddenUsername
 								: isBlind && !isMod
 									? '?'
 									: chat.userName
 						: isBlind && (!isMod || (isMod && isSeated))
 							? '?'
-							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
+							: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito // TODO: fix this undefined var?
 								? chat.hiddenUsername
 								: chat.userName}
 					{': '}

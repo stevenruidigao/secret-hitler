@@ -371,7 +371,7 @@ class ReplayWrapper extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReplayWrapper);
+export default connect<{}, {}, any>(mapStateToProps, mapDispatchToProps)(ReplayWrapper); // TODO: was not generic before, so why now?
 
 Replay.propTypes = {
 	allEmotes: PropTypes.object,

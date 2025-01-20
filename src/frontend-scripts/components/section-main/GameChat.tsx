@@ -4,22 +4,24 @@ import { connect } from 'react-redux';
 import $ from 'jquery';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { Scrollbars } from 'react-custom-scrollbars';
+import ReactCustomScrollbars from 'react-custom-scrollbars';
 import Swal from 'sweetalert2';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 
-const mapDispatchToProps = (dispatch) => ({
-	loadReplay: (summary) => dispatch(loadReplay(summary)),
-	toggleNotes: (notesStatus) => dispatch(toggleNotes(notesStatus)),
-	updateUser: (userInfo) => dispatch(updateUser(userInfo)),
+const { Scrollbars } = ReactCustomScrollbars as any; // TODO: why????
+
+const mapDispatchToProps = (dispatch: (data: any) => any) => ({
+	loadReplay: (summary: any) => dispatch(loadReplay(summary)),
+	toggleNotes: (notesStatus: any) => dispatch(toggleNotes(notesStatus)),
+	updateUser: (userInfo: any) => dispatch(updateUser(userInfo)),
 });
 
-const mapStateToProps = ({ notesActive }) => ({ notesActive });
+const mapStateToProps = ({ notesActive }: { notesActive: boolean }) => ({ notesActive });
 
-const ClaimButton = ({ cards, onClick }) => {
+const ClaimButton = ({ cards, onClick }: { cards: string; onClick: React.MouseEventHandler }) => {
 	return (
 		<div className="card-container" onClick={onClick}>
 			{['fascist', 'liberal'].includes(cards) ? (
@@ -37,7 +39,13 @@ const ClaimButton = ({ cards, onClick }) => {
 	);
 };
 
-const ClaimButtons = ({ claimOptions, handleClaimButtonClick }) => (
+const ClaimButtons = ({
+	claimOptions,
+	handleClaimButtonClick,
+}: {
+	claimOptions: string[];
+	handleClaimButtonClick: (event: React.MouseEvent, claim: string) => any;
+}) => (
 	<div className="claim-button-container">
 		{claimOptions.map((claimOption) => (
 			<ClaimButton
@@ -51,21 +59,26 @@ const ClaimButtons = ({ claimOptions, handleClaimButtonClick }) => (
 	</div>
 );
 
-const ClaimPeek = ({ handleClaimButtonClick }) => {
+const ClaimPeek = ({ handleClaimButtonClick }: { handleClaimButtonClick: (event: React.MouseEvent, claim: string) => any }) => {
 	const [claimCards, setClaimCards] = useState('');
-	const handleCardsClick = (e, claim) => {
+	const handleCardsClick = (e: React.MouseEvent, claim: string) => {
 		if (claim === 'rrr' || claim === 'bbb') {
 			handleClaimButtonClick(e, claim);
 		} else {
 			setClaimCards(claim);
 		}
 	};
+
 	if (!claimCards) {
 		return <ClaimButtons claimOptions={['rrr', 'rrb', 'rbb', 'bbb']} handleClaimButtonClick={handleCardsClick} />;
 	} else if (claimCards === 'rrb') {
 		return <ClaimButtons claimOptions={['rrb', 'rbr', 'brr']} handleClaimButtonClick={handleClaimButtonClick} />;
 	} else if (claimCards === 'rbb') {
 		return <ClaimButtons claimOptions={['rbb', 'brb', 'bbr']} handleClaimButtonClick={handleClaimButtonClick} />;
+	} else {
+		// TODO: so uh what goes here?
+		console.warn(`Error: invalid claim: ${claimCards}`);
+		return <></>;
 	}
 };
 
@@ -124,7 +137,7 @@ class GameChat extends React.Component {
 		});
 	}
 
-	componentDidUpdate(prevProps, nextProps) {
+	componentDidUpdate(prevProps: any, nextProps: any) {
 		const { userInfo, gameInfo } = this.props;
 		this.scrollChats();
 
@@ -132,16 +145,16 @@ class GameChat extends React.Component {
 			(prevProps &&
 				userInfo.userName &&
 				userInfo.isSeated &&
-				prevProps.gameInfo.publicPlayersState.filter((player) => player.isDead).length !==
-					gameInfo.publicPlayersState.filter((player) => player.isDead).length &&
-				gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).isDead) ||
+				prevProps.gameInfo.publicPlayersState.filter((player: any) => player.isDead).length !==
+					gameInfo.publicPlayersState.filter((player: any) => player.isDead).length &&
+				gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).isDead) ||
 			(prevProps &&
 				userInfo.userName &&
 				gameInfo.gameState.phase === 'presidentSelectingPolicy' &&
-				((gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
-					gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).governmentStatus === 'isPresident') ||
-					(gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
-						gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName).governmentStatus === 'isChancellor')) &&
+				((gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
+					gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).governmentStatus === 'isPresident') ||
+					(gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
+						gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName).governmentStatus === 'isChancellor')) &&
 				prevProps.gameInfo.gameState.phase !== 'presidentSelectingPolicy')
 		) {
 			this.setState({ inputValue: '' });
@@ -297,7 +310,7 @@ class GameChat extends React.Component {
 		}
 	};
 
-	handleInsertEmote = (emote, isHelper) => {
+	handleInsertEmote = (emote: string, isHelper: boolean) => {
 		const { chatValue, emoteColonIndex } = this.state;
 		const textAfterColon =
 			':' +
@@ -321,7 +334,7 @@ class GameChat extends React.Component {
 		if (!isHelper) this.chatInput.focus();
 	};
 
-	handleKeyPress = (e) => {
+	handleKeyPress = (e?: any) => {
 		const { emoteHelperSelectedIndex, emoteHelperElements, emoteColonIndex, excludedColonIndices } = this.state;
 		const { keyCode } = e;
 		const emoteHelperElementCount = emoteHelperElements && emoteHelperElements.length;
@@ -368,7 +381,7 @@ class GameChat extends React.Component {
 		return this.state.badWord[0] && Date.now() - this.state.textLastChanged < 1000;
 	};
 
-	handleSubmit = (e) => {
+	handleSubmit = (e?: any) => {
 		const { gameInfo } = this.props;
 
 		if (e) {
@@ -461,7 +474,7 @@ class GameChat extends React.Component {
 
 	handleClickedClaimButton = () => {
 		const { gameInfo, userInfo } = this.props;
-		const playerIndex = gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName);
+		const playerIndex = gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName);
 		this.setState({
 			claim: this.state.claim ? '' : gameInfo.playersState[playerIndex].claim,
 		});
@@ -481,8 +494,8 @@ class GameChat extends React.Component {
 		);
 	}
 
-	isPlayerInGame(players, username) {
-		players.map((player) => {
+	isPlayerInGame(players: any[], username: string) {
+		players.map((player: any) => {
 			if (player.userName === username) {
 				return true;
 			}
@@ -495,13 +508,13 @@ class GameChat extends React.Component {
 		const { gameState, publicPlayersState } = gameInfo;
 		const { gameSettings, userName, isSeated } = userInfo;
 		const isDead = (() => {
-			if (userName && publicPlayersState.length && publicPlayersState.find((player) => userName === player.userName)) {
-				return publicPlayersState.find((player) => userName === player.userName).isDead;
+			if (userName && publicPlayersState.length && publicPlayersState.find((player: any) => userName === player.userName)) {
+				return publicPlayersState.find((player: any) => userName === player.userName).isDead;
 			}
 		})();
 		const isGovernmentDuringPolicySelection = (() => {
 			if (gameState && (gameState.phase === 'presidentSelectingPolicy' || gameState.phase === 'chancellorSelectingPolicy') && userName && isSeated) {
-				const player = publicPlayersState.find((p) => p.userName === userName);
+				const player = publicPlayersState.find((p: any) => p.userName === userName);
 				return player && (player.governmentStatus === 'isPresident' || player.governmentStatus === 'isChancellor');
 			}
 		})();
@@ -640,21 +653,21 @@ class GameChat extends React.Component {
 		const { gameInfo, userInfo, userList } = this.props;
 		const { gameSettings } = userInfo;
 		const isBlind = gameInfo.general && gameInfo.general.blindMode && !gameInfo.gameState.isCompleted;
-		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map((player) => player.userName) : [];
+		const seatedUserNames = gameInfo.publicPlayersState ? gameInfo.publicPlayersState.map((player: any) => player.userName) : [];
 		const { showFullChat, showPlayerChat, showGameChat, showObserverChat } = this.state;
 		const time = new Date().getTime();
 		/**
 		 * @param {array} tournyWins - array of tournywins in epoch ms numbers (date.getTime())
 		 * @return {jsx}
 		 */
-		const renderCrowns = (tournyWins) => {
+		const renderCrowns = (tournyWins: number[]) => {
 			return tournyWins
 				.filter((winTime) => time - winTime < 10800000)
 				.map((crown) => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
 		};
-		const compareChatStrings = (a, b) => {
-			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map((object) => object.text).join('');
-			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map((object) => object.text).join('');
+		const compareChatStrings = (a: any, b: any) => {
+			const stringA = typeof a.chat === 'string' ? a.chat : a.chat.map((object: any) => object.text).join('');
+			const stringB = typeof b.chat === 'string' ? b.chat : b.chat.map((object: any) => object.text).join('');
 
 			return stringA > stringB ? 1 : -1;
 		};
@@ -666,7 +679,8 @@ class GameChat extends React.Component {
 				userInfo.staffRole !== 'veteran',
 		);
 
-		const renderPreviousSeasonAward = (type) => {
+		// TODO: code duplication with GameChatItem.tsx
+		const renderPreviousSeasonAward = (type: string) => {
 			switch (type) {
 				case 'bronze':
 					return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
@@ -687,7 +701,8 @@ class GameChat extends React.Component {
 			}
 		};
 
-		const getClassesFromType = (type) => {
+		// TODO: code duplication with GameChatItem.tsx
+		const getClassesFromType = (type: string) => {
 			if (type === 'player') {
 				return 'chat-player';
 			} else {
@@ -695,7 +710,8 @@ class GameChat extends React.Component {
 			}
 		};
 
-		const parseClaim = (claim) => {
+		// TODO: code duplication with GameChatItem.tsx
+		const parseClaim = (claim: string) => {
 			const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'legacy';
 			let liberalChar = 'L';
 			let fascistChar = 'F';
@@ -721,7 +737,9 @@ class GameChat extends React.Component {
 		};
 
 		if (gameInfo && gameInfo.chats && (!gameInfo.general.private || userInfo.isSeated || isStaff)) {
-			let list = gameInfo.chats.sort((a, b) => (a.timestamp === b.timestamp ? compareChatStrings(a, b) : new Date(a.timestamp) - new Date(b.timestamp)));
+			let list = gameInfo.chats.sort((a: any, b: any) =>
+				a.timestamp === b.timestamp ? compareChatStrings(a, b) : new Date(a.timestamp).valueOf() - new Date(b.timestamp).valueOf(),
+			); // TODO: used to not have valueOf()
 			const chatLength = (userInfo && userInfo.gameSettings && userInfo.gameSettings.truncatedSize) || 250;
 			if (showPlayerChat && showGameChat && showObserverChat && !showFullChat) {
 				list = list.slice(-chatLength);
@@ -748,8 +766,8 @@ class GameChat extends React.Component {
 				}
 				list = listAcc;
 			}
-			const processedChats = list.reduce((acc, chat, i) => {
-				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player) => player.userName === chat.userName) : undefined;
+			const processedChats = list.reduce((acc: any, chat: any, i: number) => {
+				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player: any) => player.userName === chat.userName) : undefined;
 				const isMod =
 					playerListPlayer &&
 					playerListPlayer.staffRole &&
@@ -767,7 +785,7 @@ class GameChat extends React.Component {
 						<div className={chat.chat[1] && chat.chat[1].type ? `item game-chat ${chat.chat[1].type}` : 'item game-chat'} key={i}>
 							{this.handleTimestamps(chat.timestamp)}
 							<span className="game-chat">
-								{chatContents.map((chatSegment, index) => {
+								{chatContents.map((chatSegment: any, index: number) => {
 									if (chatSegment.type) {
 										const classes = getClassesFromType(chatSegment.type);
 
@@ -788,7 +806,7 @@ class GameChat extends React.Component {
 							<span className="claim-chat">
 								{chatContents &&
 									chatContents.length &&
-									chatContents.map((chatSegment, index) => {
+									chatContents.map((chatSegment: any, index: number) => {
 										if (chatSegment.type) {
 											return (
 												<span key={index} className={getClassesFromType(chatSegment.type)}>
@@ -808,7 +826,7 @@ class GameChat extends React.Component {
 							<span className="game-chat">
 								{chatContents &&
 									chatContents.length &&
-									chatContents.map((chatSegment, index) => {
+									chatContents.map((chatSegment: any, index: number) => {
 										if (chatSegment.type) {
 											return (
 												<span key={index} className={getClassesFromType(chatSegment.type)}>
@@ -904,9 +922,11 @@ class GameChat extends React.Component {
 									? isSeated
 										? isBlind
 											? `${
-													gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName)]
-												} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
-											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
+													gameInfo.general.replacementNames[
+														gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName)
+													]
+												} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
+											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
 										: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
 											? chat.hiddenUsername
 											: isBlind && !isMod
@@ -932,7 +952,7 @@ class GameChat extends React.Component {
 	renderEmoteHelper() {
 		const { allEmotes } = this.props;
 		const { emoteHelperSelectedIndex, emoteHelperElements } = this.state;
-		const helperHover = (index) => {
+		const helperHover = (index: number) => {
 			this.setState({
 				emoteHelperSelectedIndex: index,
 			});
@@ -944,7 +964,7 @@ class GameChat extends React.Component {
 
 		return (
 			<div className="emote-helper-container">
-				{emoteHelperElements.map((el, index) => (
+				{emoteHelperElements.map((el: any, index: number) => (
 					<div
 						onMouseOver={() => {
 							helperHover(index);
@@ -974,22 +994,22 @@ class GameChat extends React.Component {
 		const { socket, userInfo, gameInfo, userList } = this.props;
 		const { emoteColonIndex, playersToWhitelist, showPlayerChat, showGameChat, showObserverChat, showFullChat, notesEnabled, lock } = this.state;
 
-		const selectedWhitelistplayer = (playerName) => {
-			const playerIndex = playersToWhitelist.findIndex((player) => player.userName === playerName);
+		const selectedWhitelistplayer = (playerName: string) => {
+			const playerIndex = playersToWhitelist.findIndex((player: any) => player.userName === playerName);
 
 			playersToWhitelist[playerIndex].isSelected = !playersToWhitelist[playerIndex].isSelected;
 
 			this.setState(playersToWhitelist);
 		};
 		const submitWhitelist = () => {
-			const whitelistPlayers = playersToWhitelist.filter((player) => player.isSelected).map((player) => player.userName);
+			const whitelistPlayers = playersToWhitelist.filter((player: any) => player.isSelected).map((player: any) => player.userName);
 			socket.emit('updateGameWhitelist', {
 				uid: gameInfo.general.uid,
 				whitelistPlayers,
 			});
 			$(this.whitelistModal).modal('hide');
 		};
-		const MenuButton = ({ children }) => <div className="item">{children}</div>;
+		const MenuButton = ({ children }: any) => <div className="item">{children}</div>;
 		const WhiteListButton = () => {
 			if (userInfo.isSeated && gameInfo.general.private && !gameInfo.gameState.isStarted) {
 				return (
@@ -1009,7 +1029,11 @@ class GameChat extends React.Component {
 					if (gameInfo.general.uid.indexOf('Remake') === -1) {
 						window.location.href = '#/table/'.concat(gameInfo.general.uid, 'Remake1');
 					} else {
-						window.location.href = '#/table/'.concat(gameInfo.general.uid.split('Remake')[0], 'Remake', parseInt(gameInfo.general.uid.split('Remake')[1]) + 1);
+						window.location.href = '#/table/'.concat(
+							gameInfo.general.uid.split('Remake')[0],
+							'Remake',
+							(parseInt(gameInfo.general.uid.split('Remake')[1]) + 1).toString(),
+						);
 					}
 					window.location.reload();
 				};
@@ -1055,7 +1079,7 @@ class GameChat extends React.Component {
 				</MenuButton>
 			);
 		};
-		const routeToOtherTournyTable = (e) => {
+		const routeToOtherTournyTable = (e: any) => {
 			e.preventDefault();
 			const { uid } = gameInfo.general;
 			const tableUidLastLetter = uid.charAt(gameInfo.general.uid.length - 1);
@@ -1078,10 +1102,10 @@ class GameChat extends React.Component {
 				userInfo.staffRole !== 'altmod' &&
 				userInfo.staffRole !== 'veteran',
 		);
-		const hasNoAEM = (players) => {
+		const hasNoAEM = (players: any[]) => {
 			if (!userList || !userList.list) return false;
 			return userList.list.every(
-				(user) =>
+				(user: any) =>
 					!(
 						players.includes(user.userName) &&
 						user.staffRole &&
@@ -1114,7 +1138,7 @@ class GameChat extends React.Component {
 			});
 		};
 
-		const modDeleteGame = (reason) => {
+		const modDeleteGame = (reason: string) => {
 			socket.emit('updateModAction', {
 				modName: userInfo.userName,
 				userName: `DELGAME${gameInfo.general.uid}`,
@@ -1124,7 +1148,7 @@ class GameChat extends React.Component {
 			location.hash = '';
 		};
 
-		const sendModEndGame = (winningTeamName) => {
+		const sendModEndGame = (winningTeamName: string) => {
 			Swal.fire({
 				title: 'Are you sure you want to end this game with the ' + winningTeamName + ' team winning?',
 				showCancelButton: true,
@@ -1338,9 +1362,11 @@ class GameChat extends React.Component {
 				>
 					{emoteColonIndex >= 0 && this.renderEmoteHelper()}
 					<Scrollbars
-						ref={(c) => (this.scrollbar = c)}
+						ref={(c: any) => {
+							this.scrollbar = c;
+						}}
 						onScroll={this.handleChatScrolled}
-						renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
+						renderThumbVertical={(props: any) => <div {...props} className="thumb-vertical" />}
 					>
 						<div className="ui list">{this.processChats()}</div>
 					</Scrollbars>
@@ -1349,7 +1375,7 @@ class GameChat extends React.Component {
 					{(() => {
 						const claimButtons = (userInfo.gameSettings && userInfo.gameSettings.claimButtons) || 'text';
 						if (this.state.claim && !gameInfo.gameState.isCompleted) {
-							const handleClaimButtonClick = (e, claim) => {
+							const handleClaimButtonClick = (e: any, claim: string) => {
 								const chat = {
 									userName: userInfo.userName,
 									claimState: claim,
@@ -1549,7 +1575,7 @@ class GameChat extends React.Component {
 						) {
 							return (
 								<div
-									className={hasNoAEM(gameInfo.publicPlayersState.map((player) => player.userName)) ? 'ui primary button' : 'ui primary button disabled'}
+									className={hasNoAEM(gameInfo.publicPlayersState.map((player: any) => player.userName)) ? 'ui primary button' : 'ui primary button disabled'}
 									title="Click here to subscribe to mod-only chat"
 									onClick={this.handleSubscribeModChat}
 								>
@@ -1613,8 +1639,8 @@ class GameChat extends React.Component {
 							gameInfo.playersState &&
 							gameInfo.playersState.length &&
 							userInfo.userName &&
-							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].claim &&
-							!gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].isDead
+							gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)].claim &&
+							!gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)].isDead
 						) {
 							return (
 								<div className="claim-button" title="Click here to make a claim in chat" onClick={this.handleClickedClaimButton}>
@@ -1680,8 +1706,8 @@ class GameChat extends React.Component {
 					<h2 className="ui header">Select player(s) below to whitelist for seating in this private game.</h2>
 					<ul>
 						{this.state.playersToWhitelist
-							.sort((a, b) => (a.userName > b.userName ? 1 : -1))
-							.map((player, index) => {
+							.sort((a: any, b: any) => (a.userName > b.userName ? 1 : -1))
+							.map((player: any, index: number) => {
 								const uid = Math.random().toString(36).substring(2);
 
 								return (

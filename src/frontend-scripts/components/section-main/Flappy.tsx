@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 
-const Flappy = ({ isFacist, userInfo, gameInfo, socket }) => {
+const Flappy = ({ isFacist, userInfo, gameInfo, socket }: { isFacist: boolean; userInfo: any; gameInfo: any; socket: Socket }) => {
 	const cb = new Image();
 
 	cb.src = '/images/default_cardback.png';
@@ -10,13 +11,13 @@ const Flappy = ({ isFacist, userInfo, gameInfo, socket }) => {
 	let vert = 50;
 	let lastFlapTime = Date.now() - 1000;
 
-	const pylonCoords = [];
+	const pylonCoords: any[] = [];
 
 	/**
 	 * @param {number} cardY
 	 * @param {object} pylon
 	 */
-	const detectCollisionAndPass = (cardY, pylon) => {
+	const detectCollisionAndPass = (cardY: number, pylon: any) => {
 		const { offset, x } = pylon;
 		if (cardY < 30 + offset / 2 || cardY + 57 > 150 + offset / 2) {
 			socket.emit('flappyEvent', {
@@ -33,7 +34,10 @@ const Flappy = ({ isFacist, userInfo, gameInfo, socket }) => {
 	};
 
 	const draw = () => {
-		const ctx = document.getElementById(isFacist ? 'flappy-canvas-2' : 'flappy-canvas-1').getContext('2d');
+		const ctx = (document.getElementById(isFacist ? 'flappy-canvas-2' : 'flappy-canvas-1') as HTMLCanvasElement | null)?.getContext('2d');
+
+		if (!ctx) return; // TODO: check correctness
+
 		const timeDiff = Date.now() - lastFlapTime;
 
 		// vert = vert - (1000 * gameInfo.flappyState ? gameInfo.flappyState.flapDistance : 1 - timeDiff) * 0.001;

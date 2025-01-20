@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
 
 export default class Reports extends React.Component {
-	constructor() {
-		super();
+	props: any;
+
+	constructor(props: any) {
+		super(props);
 
 		this.state = {
 			reports: [],

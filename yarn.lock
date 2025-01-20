@@ -3310,7 +3310,7 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
-"@types/jquery@^3.5.32":
+"@types/jquery@*", "@types/jquery@^3.5.32":
   version "3.5.32"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.32.tgz#3eb0da20611b92c7c49ebed6163b52a4fdc57def"
   integrity sha512-b9Xbf4CkMqS02YH8zACqN1xzdxc3cO735Qe5AbSUFmyOiaWAbcpqh9Wna+Uk0vgACvoQHpWDg2rGdHkYPLmCiQ==
@@ -3541,6 +3541,13 @@
   version "0.16.8"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.8.tgz#ce5ace04cfeabe7ef87c0091e50752e36707deff"
   integrity sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==
+
+"@types/semantic-ui-checkbox@^2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@types/semantic-ui-checkbox/-/semantic-ui-checkbox-2.2.6.tgz#b971561563a4bc264b039a0b4e7b5358a006986a"
+  integrity sha512-N6lHQfr3wsSXATiKW0dx6sQkd8i7BZDkehbMva9wo6XxBPBN13PoeUKzwBjrFNXjVjy8sMTbXgsWvM30cAf+Dg==
+  dependencies:
+    "@types/jquery" "*"
 
 "@types/send@*":
   version "0.17.4"
