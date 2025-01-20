@@ -3,13 +3,13 @@ import https from 'https';
 
 import { Server, Socket } from 'socket.io';
 
-import Account, { IAccount } from '../../../models/account.ts';
-import BannedIP from '../../../models/bannedIP.ts';
-import ModAction from '../../../models/modAction.ts';
-import PlayerReport from '../../../models/playerReport.ts';
-import Profile from '../../../models/profile/index.ts';
+import Account, { IAccount } from '@/models/account.ts';
+import BannedIP from '@/models/bannedIP.ts';
+import ModAction from '@/models/modAction.ts';
+import PlayerReport from '@/models/playerReport.ts';
+import Profile from '@/models/profile/index.ts';
 
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 import { removeBadge, checkBadgesAccount } from '../badges.ts';
 import { completeGame, saveAndDeleteGame } from '../game/end-game.ts';

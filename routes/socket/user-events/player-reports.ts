@@ -1,7 +1,7 @@
 import https from 'https';
 
 // import Account from '../../../models/account';
-import PlayerReport from '../../../models/playerReport.ts';
+import PlayerReport from '@/models/playerReport.ts';
 
 import { userList, games } from '../models.ts';
 

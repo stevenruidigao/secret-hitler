@@ -5,9 +5,9 @@ import Account from '@/models/account.ts';
 import BannedIP, { IBannedIP } from '@/models/bannedIP.ts';
 import ModAction from '@/models/modAction.ts';
 
-import version from '@/version.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
+import version from '@/shared/version.ts';
 
-import type { ActiveGame } from './game.d.ts';
 import { doesIPMatchCIDR } from './ip-obf.ts';
 import { globalSettingsClient } from './redis.ts';
 

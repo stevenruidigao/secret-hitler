@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
+import type { ActiveGame } from '@/shared/game.d.ts';
+
 import { chatReplacements } from '../chatReplacements.ts';
-import type { ActiveGame } from '../game.d.ts';
 import { saveAndDeleteGame } from '../game/end-game.ts';
 import { gameCreationDisabled, games, userList } from '../models.ts';
 import { sendGameList, sendGameInfo } from '../user-requests.ts';

@@ -1,8 +1,9 @@
 import { Socket } from 'socket.io';
 
+import type { ActiveGame } from '@/shared/game.d.ts';
+
 import { chatReplacements } from '../chatReplacements.ts';
 import { runCommand } from '../commands.ts';
-import type { ActiveGame } from '../game.d.ts';
 import { emoteList, userList, generalChats, getLastGenchatModPingAsync, setLastGenchatModPingAsync, getPrivateChatTruncate, newStaff } from '../models.ts';
 import { makeReport } from '../report.ts';
 import { sendCommandChatsUpdate, sendInProgressGameUpdate, sendPlayerChatUpdate } from '../util.ts';

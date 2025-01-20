@@ -11,11 +11,11 @@ import { Provider } from 'react-redux';
 
 import polyfills from '@/iso/polyfills.ts';
 
-import AppComponent from './components/App.tsx';
 import account from './account.ts';
+import chatanimation from './chatAnimation.ts';
+import AppComponent from './components/App.tsx';
 import shapp from './reducers/sh-app.ts';
 import rootSaga from './sagas.ts';
-import chatanimation from './chatanimation.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const container = document.getElementById('game-container');

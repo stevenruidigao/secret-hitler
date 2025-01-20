@@ -1,10 +1,10 @@
 import { Socket } from 'socket.io';
 
 import Account from '@/models/account.ts';
-import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
+import type { ActiveGame, Player } from '@/shared/game.d.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 import { userInBlacklist } from '@/utils/index.ts';
 
-import type { ActiveGame, Player } from '../game.d.ts';
 import { games, limitNewPlayers } from '../models.ts';
 import { updateUserStatus, sendGameList } from '../user-requests.ts';
 import { sendCommandChatsUpdate } from '../util.ts';

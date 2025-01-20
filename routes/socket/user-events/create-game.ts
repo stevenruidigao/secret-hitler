@@ -2,13 +2,13 @@ import { Server, Socket } from 'socket.io';
 // @ts-expect-error: no types for 'gfycat-style-urls'
 import { generateCombination } from 'gfycat-style-urls';
 
-import Account from '../../../models/account.ts';
-import Game from '../../../models/game.ts';
+import Account from '@/models/account.ts';
+import Game from '@/models/game.ts';
 
-import { LEGAL_CHARACTERS } from '../../../src/frontend-scripts/constants.ts';
+import { LEGAL_CHARACTERS } from '@/shared/constants.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
-import type { ActiveGame } from '../game.d.ts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.ts';
 import { updateUserStatus, sendGameList } from '../user-requests.ts';
 import { secureGame } from '../util.ts';

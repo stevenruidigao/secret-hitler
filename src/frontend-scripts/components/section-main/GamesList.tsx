@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 
-import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '../../constants.ts';
+import { CURRENT_SEASON_NUMBER, CURRENT_SEASON_END } from '@/shared/constants.ts';
 import { processEmotes } from '../../emotes.tsx';
 
 import DisplayLobbies from './DisplayLobbies.tsx';

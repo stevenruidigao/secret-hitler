@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 import ReactCustomScrollbars from 'react-custom-scrollbars';
 import Swal from 'sweetalert2';
 
+import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
+
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
-import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '../../constants.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 
 const { Scrollbars } = ReactCustomScrollbars as any; // TODO: why????

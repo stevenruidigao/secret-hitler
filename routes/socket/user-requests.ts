@@ -8,10 +8,10 @@ import PlayerReport from '@/models/playerReport.ts';
 import { getProfile } from '@/models/profile/utils.ts';
 import Signups from '@/models/signups.ts';
 
-import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
-import version from '@/version.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import version from '@/shared/version.ts';
 
-import type { ActiveGame } from './game.d.ts';
 import { obfIP } from './ip-obf.ts';
 import {
 	games,

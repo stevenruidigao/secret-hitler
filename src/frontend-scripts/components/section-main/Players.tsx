@@ -5,10 +5,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import classnames from 'classnames';
-import Policies from './Policies.tsx';
+
+import { getNumberWithOrdinal, PLAYER_COLORS } from '@/shared/constants.ts';
+
 import { togglePlayerNotes } from '../../actions/actions.ts';
-import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.ts';
 import UserPopup from '../reusable/UserPopup.tsx';
+
+import Policies from './Policies.tsx';
 
 $.fn.dropdown = Dropdown;
 
@@ -29,7 +32,7 @@ class Players extends React.Component {
 		const { socket, userInfo, gameInfo } = this.props;
 
 		if (userInfo.gameSettings && !userInfo.gameSettings.disablePlayerNotes) {
-			socket.on('notesUpdate', (notes) => {
+			socket.on('notesUpdate', (notes: any) => {
 				this.setState({ playerNotes: notes });
 			});
 
@@ -299,7 +302,7 @@ class Players extends React.Component {
 			return prependCrowns(userName);
 		};
 
-		return publicPlayersState.map((player, i) => (
+		return publicPlayersState.map((player: any, i: number) => (
 			<div
 				key={player.userName}
 				onClick={() => {
@@ -321,7 +324,7 @@ class Players extends React.Component {
 				}
 				className={(() => {
 					let classes = 'player-container';
-					const user = userList.list && userList.list.find((play) => play.userName === player.userName);
+					const user = userList.list && userList.list.find((play: any) => play.userName === player.userName);
 
 					if (playersState && Object.keys(playersState).length && playersState[i] && playersState[i].notificationStatus) {
 						classes = `${classes} notifier ${playersState[i].notificationStatus}`;

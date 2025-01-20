@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactCustomScrollbars from 'react-custom-scrollbars';
 
+import { PLAYER_COLORS } from '@/shared/constants.ts';
+
 import { loadReplay, updateUser } from '../../../actions/actions.ts';
 import { processEmotes } from '../../../emotes.tsx';
-import { PLAYER_COLORS } from '../../../constants.ts';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why? I hate this
 

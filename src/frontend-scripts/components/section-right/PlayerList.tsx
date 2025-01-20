@@ -1,15 +1,17 @@
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
-import cn from 'classnames';
 import $ from 'jquery';
-import Modal from 'semantic-ui-modal';
+import cn from 'classnames';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import Modal from 'semantic-ui-modal';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { fetchProfile } from '../../actions/actions.ts';
-import { getNumberWithOrdinal, PLAYER_COLORS } from '../../constants.ts';
-import UserPopup from '../reusable/UserPopup.tsx';
+
+import { getNumberWithOrdinal, PLAYER_COLORS } from '@/shared/constants.ts';
 import { userInBlacklist } from '@/utils/index.ts';
+
+import { fetchProfile } from '../../actions/actions.ts';
+import UserPopup from '../reusable/UserPopup.tsx';
 
 $.fn.modal = Modal;
 

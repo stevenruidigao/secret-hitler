@@ -8,7 +8,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 
-import blacklistedWords from '@/iso/blacklistedWords.ts';
+import blacklistedWords from '@/shared/blacklistedWords.ts';
 import flags from '@/utils/flags.ts';
 
 const Switch = ReactSwitch as any; // TODO: is there anything else we can do

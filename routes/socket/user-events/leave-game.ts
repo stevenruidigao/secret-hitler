@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
-import adjectives from '../../../utils/adjectives.ts';
-import animals from '../../../utils/animals.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
+import adjectives from '@/utils/adjectives.ts';
+import animals from '@/utils/animals.ts';
 
-import type { ActiveGame } from '../game.d.ts';
 import { saveAndDeleteGame } from '../game/end-game.ts';
 import startGame from '../game/start-game.ts';
 

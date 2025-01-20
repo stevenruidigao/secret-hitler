@@ -10,9 +10,9 @@ import ModThread from '@/models/modThread.ts';
 import Profile from '@/models/profile/index.ts';
 import { getProfile } from '@/models/profile/utils.ts';
 
-import { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
+import { DEFAULT_THEME_COLORS, CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import version from '@/shared/version.ts';
 import savedTorIps from '@/utils/savedTorIPs.ts';
-import version from '@/version.ts';
 
 import { accounts } from './accounts.ts';
 import { processImage } from './image-processor.ts';

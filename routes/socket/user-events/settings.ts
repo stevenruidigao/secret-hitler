@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 
-import Account, { IGameSettings, ITheme } from '../../../models/account.ts';
-import { CURRENT_SEASON_NUMBER } from '../../../src/frontend-scripts/constants.ts';
+import Account, { IGameSettings, ITheme } from '@/models/account.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 import { userList } from '../models.ts';
 import { sendUserList } from '../user-requests.ts';

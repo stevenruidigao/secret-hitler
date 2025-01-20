@@ -1,7 +1,6 @@
 import { Socket } from 'socket.io';
 
-import PlayerNote from '../../../models/playerNote.ts';
-
+import PlayerNote from '@/models/playerNote.ts';
 import { sendPlayerNotes } from '../user-requests.ts';
 
 /**

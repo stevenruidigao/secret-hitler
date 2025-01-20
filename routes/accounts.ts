@@ -8,7 +8,7 @@ import BannedIP from '@/models/bannedIP.ts';
 import Profile from '@/models/profile/index.ts';
 import Signups from '@/models/signups.ts';
 
-import blacklistedWords from '@/iso/blacklistedWords.ts';
+import blacklistedWords from '@/shared/blacklistedWords.ts';
 import bannedEmails from '@/utils/disposableEmails.ts';
 
 import { verifyRoutes, setVerify } from './verification.ts';

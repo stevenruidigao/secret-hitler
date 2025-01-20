@@ -55,14 +55,14 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
+import type { ActiveGame } from '@/shared/game.d.ts';
 import Account, { IAccount } from '@/models/account.ts';
-import { TOU_CHANGES } from '@/src/frontend-scripts/constants.ts';
-import version from '@/version.ts';
+import { TOU_CHANGES } from '@/shared/constants.ts';
+import version from '@/shared/version.ts';
 
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.ts';
 import { handleAEMMessages } from './util.ts';
 
-import type { ActiveGame } from './game.d.ts';
 import { selectPlayerToAssassinate } from './game/assassination.ts';
 import { selectChancellor } from './game/election-util.ts';
 import { selectVoting, selectPresidentPolicy, selectChancellorPolicy, selectChancellorVoteOnVeto, selectPresidentVoteOnVeto } from './game/election.ts';

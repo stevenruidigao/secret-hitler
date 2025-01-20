@@ -1,8 +1,8 @@
 import https from 'https';
 
 import Account, { IAccount } from '@/models/account.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
 
-import type { ActiveGame } from './game.d.ts';
 import { newStaff } from './models.ts';
 
 function sendReport(game: ActiveGame | undefined, report: any, data: any, type: string) {

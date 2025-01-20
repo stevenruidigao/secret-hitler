@@ -3,11 +3,12 @@ import _ from 'lodash';
 import Account from '@/models/account.ts';
 import GameSummaryBuilder from '@/models/game-summary/GameSummaryBuilder.ts';
 
-import type { ActiveGame } from '../game.d.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
+
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.ts';
 
 import { shufflePolicies, startElection } from './common.ts';
-import { CURRENT_SEASON_NUMBER } from '@/src/frontend-scripts/constants.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 /**
  * @param {object} game - game to act on.

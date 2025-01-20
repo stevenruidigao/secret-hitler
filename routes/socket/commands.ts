@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
 
 import Account from '@/models/account.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
 
-import type { ActiveGame } from './game.d.ts';
 import { selectPlayerToAssassinate } from './game/assassination.ts';
 import { selectChancellor } from './game/election-util.ts';
 import { selectVoting } from './game/election.ts';

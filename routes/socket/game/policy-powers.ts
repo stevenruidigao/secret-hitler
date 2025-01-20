@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '../game.d.ts';
+import type { ActiveGame } from '@/shared/game.d.ts';
+
 import { sendGameList } from '../user-requests.ts';
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.ts';
 

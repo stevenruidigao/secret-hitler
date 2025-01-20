@@ -1,9 +1,10 @@
 import React from 'react';
-import { PLAYER_COLORS, getBadWord } from '../../constants.ts';
 import PropTypes from 'prop-types';
-import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 import { Scrollbars } from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
+
+import { PLAYER_COLORS, getBadWord } from '@/shared/constants.ts';
+import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 
 export default class GeneralChat extends React.Component {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];

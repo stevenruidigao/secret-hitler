@@ -1,18 +1,20 @@
-import { connect } from 'react-redux';
-import { fetchReplay } from '../../actions/actions.ts';
-import Table from '../reusable/Table.tsx';
 import React from 'react'; // eslint-disable-line no-unused-vars
+import { connect } from 'react-redux';
+import $ from 'jquery';
+import _ from 'lodash';
+import dayjs from 'dayjs';
+import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { PLAYER_COLORS } from '../../constants.ts';
-import Swal from 'sweetalert2';
-import $ from 'jquery';
 import { Dropdown } from 'semantic-ui-react';
-import dayjs from 'dayjs';
+
+import { PLAYER_COLORS } from '@/shared/constants.ts';
+import { getBlacklistIndex, userInBlacklist } from '@/utils/index.ts';
+
+import { fetchReplay } from '../../actions/actions.ts';
+import Table from '../reusable/Table.tsx';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 import UserPopup from '../reusable/UserPopup.tsx';
-import { getBlacklistIndex, userInBlacklist } from '@/utils/index.ts';
-import _ from 'lodash';
 
 const mapStateToProps = ({ profile }) => ({ profile });
 const mapDispatchToProps = (dispatch) => ({

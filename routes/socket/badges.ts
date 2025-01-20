@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 
-import Account from '../../models/account.ts';
+import Account from '@/models/account.ts';
 
 dayjs.extend(utc);
 
