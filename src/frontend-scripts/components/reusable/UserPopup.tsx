@@ -130,9 +130,9 @@ const UserPopup = ({
 	renderInProfile,
 }: {
 	socket: Socket;
-	userInfo: any;
-	gameInfo: any;
-	userList: any;
+	userInfo?: any;
+	gameInfo?: any;
+	userList?: any;
 	children: any;
 	userName: string;
 	position: 'top left' | 'top right' | 'bottom right' | 'bottom left' | 'right center' | 'left center' | 'top center' | 'bottom center';

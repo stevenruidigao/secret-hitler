@@ -33,7 +33,7 @@ class Players extends React.Component {
 				this.setState({ playerNotes: notes });
 			});
 
-			const seatedPlayers = gameInfo.publicPlayersState.filter((player) => player.userName !== userInfo.userName).map((player) => player.userName);
+			const seatedPlayers = gameInfo.publicPlayersState.filter((player: any) => player.userName !== userInfo.userName).map((player: any) => player.userName);
 
 			if (seatedPlayers.length) {
 				socket.emit('getPlayerNotes', {
@@ -43,7 +43,7 @@ class Players extends React.Component {
 			}
 		}
 
-		socket.on('gameJoinStatusUpdate', (data) => {
+		socket.on('gameJoinStatusUpdate', (data: any) => {
 			if (data.status === 'blacklisted') {
 				$(this.blacklistModal).modal('show');
 			}
@@ -55,7 +55,7 @@ class Players extends React.Component {
 		this.props.socket.off('gameJoinStatusUpdate');
 	}
 
-	handlePlayerReport = (userName) => {
+	handlePlayerReport = (userName: any) => {
 		const { gameInfo, userInfo, isReplay } = this.props;
 
 		if ((!gameInfo.general.unlistedGame && !gameInfo.general.private && userInfo.userName && userInfo.userName !== userName) || isReplay) {
@@ -155,7 +155,7 @@ class Players extends React.Component {
 		}
 	};
 
-	renderPreviousGovtToken(i) {
+	renderPreviousGovtToken(i: any) {
 		const { publicPlayersState } = this.props.gameInfo;
 
 		if (publicPlayersState && publicPlayersState[i].previousGovernmentStatus) {
@@ -163,7 +163,7 @@ class Players extends React.Component {
 		}
 	}
 
-	renderGovtToken(i) {
+	renderGovtToken(i: any) {
 		const { publicPlayersState } = this.props.gameInfo;
 
 		if (publicPlayersState && publicPlayersState[i].governmentStatus) {
@@ -171,7 +171,7 @@ class Players extends React.Component {
 		}
 	}
 
-	renderLoader(i) {
+	renderLoader(i: any) {
 		const { publicPlayersState } = this.props.gameInfo;
 
 		if (publicPlayersState && publicPlayersState[i].isLoader) {
@@ -179,10 +179,10 @@ class Players extends React.Component {
 		}
 	}
 
-	renderPlayerNotesIcon(index) {
+	renderPlayerNotesIcon(index: number) {
 		const { userInfo, gameInfo, togglePlayerNotes, playerNotesActive } = this.props;
 		const { userName } = gameInfo.publicPlayersState[index];
-		const clickedPlayerNote = (playerNoteSeatEnabled) => {
+		const clickedPlayerNote = (playerNoteSeatEnabled: boolean) => {
 			togglePlayerNotes(!playerNotesActive ? userName : '');
 
 			this.setState({
@@ -194,7 +194,7 @@ class Players extends React.Component {
 		if (userInfo.userName && userName !== userInfo.userName) {
 			return (
 				<i
-					onClick={(e) => {
+					onClick={(e: any) => {
 						e.stopPropagation();
 						clickedPlayerNote(index);
 					}}
@@ -219,7 +219,7 @@ class Players extends React.Component {
 		const isStaff = userInfo.staffRole && userInfo.staffRole !== 'veteran' && userInfo.staffRole !== 'altmod';
 
 		const time = Date.now();
-		const renderPlayerName = (player, i) => {
+		const renderPlayerName = (player: any, i: number) => {
 			const userName =
 				isBlind && !isReplay
 					? gameInfo.gameState.isTracksFlipped && gameInfo.general.replacementNames
@@ -247,12 +247,14 @@ class Players extends React.Component {
 				}
 			};
 
-			const prependCrowns = (str) => (
+			const prependCrowns = (str: string) => (
 				<span>
 					{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 						(!gameInfo.general.blindMode || gameInfo.gameState.isCompleted) &&
 						player.tournyWins &&
-						player.tournyWins.filter((winTime) => time - winTime < 10800000).map((crown, ind) => <span className="crown-icon" key={player.tournyWins[ind]} />)}
+						player.tournyWins
+							.filter((winTime: number) => time - winTime < 10800000)
+							.map((crown: any, ind: any) => <span className="crown-icon" key={player.tournyWins[ind]} />)}
 
 					{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 						(!gameInfo.general.blindMode || gameInfo.gameState.isCompleted) &&
@@ -453,7 +455,7 @@ class Players extends React.Component {
 			userInfo.userName &&
 			!gameInfo.gameState.isTracksFlipped &&
 			gameInfo.publicPlayersState.length < gameInfo.general.maxPlayersCount &&
-			(!userInfo.userName || !gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName))
+			(!userInfo.userName || !gameInfo.publicPlayersState.find((player: any) => player.userName === userInfo.userName))
 		) {
 			return gameInfo.general.isTourny ? (
 				<div className="ui left pointing label tourny" onClick={this.clickedTakeSeat}>
@@ -467,14 +469,14 @@ class Players extends React.Component {
 		}
 	}
 
-	handlePasswordSubmit = (e) => {
+	handlePasswordSubmit = (e: any) => {
 		e.preventDefault();
 
 		this.props.onClickedTakeSeat(this.state.passwordValue);
 		$(this.passwordModal).modal('hide');
 	};
 
-	handleReportSubmit = (e) => {
+	handleReportSubmit = (e: any) => {
 		const { gameInfo } = this.props;
 		e.preventDefault();
 
@@ -482,7 +484,9 @@ class Players extends React.Component {
 			return;
 		}
 
-		const index = gameInfo.gameState.isStarted ? gameInfo.publicPlayersState.findIndex((player) => player.userName === this.state.reportedPlayer) : undefined;
+		const index = gameInfo.gameState.isStarted
+			? gameInfo.publicPlayersState.findIndex((player: any) => player.userName === this.state.reportedPlayer)
+			: undefined;
 		if (this.state.reportLength <= 140) {
 			this.props.socket.emit('playerReport', {
 				uid: gameInfo.general.uid,
@@ -501,7 +505,7 @@ class Players extends React.Component {
 
 	clickedTakeSeat = () => {
 		const { gameInfo, userInfo, onClickedTakeSeat, userList } = this.props;
-		const user = userList.list ? userList.list.find((user) => user.userName === userInfo.userName) : null;
+		const user = userList.list ? userList.list.find((user: any) => user.userName === userInfo.userName) : null;
 
 		if (userInfo.userName) {
 			if (user && user.staff && user.staff.incognito) {
@@ -533,10 +537,10 @@ class Players extends React.Component {
 
 	render() {
 		const { isReplay } = this.props;
-		const handlePasswordInputChange = (e) => {
+		const handlePasswordInputChange = (e: any) => {
 			this.setState({ passwordValue: `${e.target.value}` });
 		};
-		const handleReportTextChange = (e) => {
+		const handleReportTextChange = (e: any) => {
 			this.setState({
 				reportLength: Number(e.target.value.length),
 				reportTextValue: `${e.target.value}`,
@@ -670,7 +674,7 @@ class Players extends React.Component {
 					<div className="ui input">
 						<form onSubmit={this.handlePasswordSubmit}>
 							<input
-								maxLength="20"
+								maxLength={20}
 								placeholder="Password"
 								onChange={handlePasswordInputChange}
 								value={this.state.passwordValue}
@@ -698,11 +702,11 @@ class Players extends React.Component {
 	}
 }
 
-const mapDispatchToProps = (dispatch) => ({
-	togglePlayerNotes: (playerName) => dispatch(togglePlayerNotes(playerName)),
+const mapDispatchToProps = (dispatch: any) => ({
+	togglePlayerNotes: (playerName: string) => dispatch(togglePlayerNotes(playerName)),
 });
 
-const mapStateToProps = ({ playerNotesActive }) => ({
+const mapStateToProps = ({ playerNotesActive }: { playerNotesActive: boolean }) => ({
 	playerNotesActive,
 });
 
