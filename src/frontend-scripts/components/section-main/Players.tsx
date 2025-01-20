@@ -28,6 +28,18 @@ class Players extends React.Component {
 		reportLength: 0,
 	};
 
+	blacklistModal: any;
+	reportModal: any;
+	passwordModal: any;
+	incognitoModal: any;
+	privatePlayerInPublicGameModal: any;
+	notRainbowModal: any;
+	verifiedModal: any;
+	elominimumModal: any;
+	xpminimumModal: any;
+	signinModal: any;
+	privategamepassword: any;
+
 	componentDidMount() {
 		const { socket, userInfo, gameInfo } = this.props;
 
@@ -58,7 +70,7 @@ class Players extends React.Component {
 		this.props.socket.off('gameJoinStatusUpdate');
 	}
 
-	handlePlayerReport = (userName: any) => {
+	handlePlayerReport = (userName: string) => {
 		const { gameInfo, userInfo, isReplay } = this.props;
 
 		if ((!gameInfo.general.unlistedGame && !gameInfo.general.private && userInfo.userName && userInfo.userName !== userName) || isReplay) {
@@ -68,7 +80,7 @@ class Players extends React.Component {
 		}
 	};
 
-	handlePlayerClick = (index, name) => {
+	handlePlayerClick = (index: any, name: any) => {
 		const { userInfo, gameInfo, socket } = this.props;
 		const { gameState } = gameInfo;
 		const { phase, clickActionInfo } = gameState;
@@ -135,7 +147,8 @@ class Players extends React.Component {
 
 		if (phase === 'assassination' && userInfo.userName) {
 			if (clickActionInfo[0] === userInfo.userName && clickActionInfo[1].includes(index)) {
-				if (!gameSettings.disableKillConfirmation) {
+				if (!userInfo.gameSettings.disableKillConfirmation) {
+					// TODO: check; used to be `if (!gameSettings.disableKillConfirmation) {`
 					Swal.fire({
 						title: `Are you sure you want to assassinate {${index + 1}} ${name}?`,
 						showCancelButton: true,
@@ -192,14 +205,14 @@ class Players extends React.Component {
 				playerNoteSeatEnabled,
 			});
 		};
-		const note = this.state.playerNotes.find((note) => note.notedUser === userName);
+		const note = this.state.playerNotes.find((note: any) => note.notedUser === userName);
 
 		if (userInfo.userName && userName !== userInfo.userName) {
 			return (
 				<i
 					onClick={(e: any) => {
 						e.stopPropagation();
-						clickedPlayerNote(index);
+						clickedPlayerNote(Boolean(index)); // TODO: uhhhh: used to be index, not Boolean(index)
 					}}
 					title={note ? note.note : ''}
 					className={
@@ -655,7 +668,7 @@ class Players extends React.Component {
 								<div className="item">Other</div>
 							</div>
 						</div>
-						<textarea placeholder="Comment" value={this.state.reportTextValue} onChange={handleReportTextChange} spellCheck="false" maxLength="500" />
+						<textarea placeholder="Comment" value={this.state.reportTextValue} onChange={handleReportTextChange} spellCheck="false" maxLength={500} />
 						<span className={this.state.reportLength > 140 ? 'counter error' : 'counter'}>{140 - this.state.reportLength}</span>
 						<div
 							onClick={this.handleReportSubmit}

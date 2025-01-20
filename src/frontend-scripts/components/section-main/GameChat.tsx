@@ -128,6 +128,12 @@ class GameChat extends React.Component<GameChatProps> {
 	};
 
 	scrollbar: any;
+	leaveGameModal: any;
+	leaveTournyQueueModal: any;
+	gameChatInput: any;
+	whitelistModal: any;
+	chatInput: any;
+	modendgameModal: any;
 
 	constructor(props: GameChatProps) {
 		super(props);
@@ -237,7 +243,7 @@ class GameChat extends React.Component<GameChatProps> {
 
 	renderNotes() {
 		if (this.state.notesEnabled) {
-			const notesChange = (e) => {
+			const notesChange = (e: any) => {
 				this.setState({ notesValue: `${e.target.value}` });
 			};
 			return (
@@ -261,7 +267,7 @@ class GameChat extends React.Component<GameChatProps> {
 		}
 	};
 
-	handleTyping = (e) => {
+	handleTyping = (e: any) => {
 		e.preventDefault();
 		const { gameInfo, allEmotes } = this.props;
 		const { badWord } = this.state;
@@ -269,7 +275,7 @@ class GameChat extends React.Component<GameChatProps> {
 		let { excludedColonIndices } = this.state;
 		const emoteNames = Object.keys(allEmotes).map((emoteName) => emoteName.slice(1, emoteName.length - 1));
 		let emoteColonIndex = value.substring(0, e.target.selectionStart).lastIndexOf(':');
-		let filteredEmotes = [];
+		let filteredEmotes: any[] = [];
 		const colonSplitText = value.substring(0, emoteColonIndex).split(':');
 
 		if (
@@ -281,7 +287,7 @@ class GameChat extends React.Component<GameChatProps> {
 			emoteColonIndex = -1;
 		}
 
-		excludedColonIndices = excludedColonIndices.map((i) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
+		excludedColonIndices = excludedColonIndices.map((i: number) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
 
 		if (value.lastIndexOf(':') === e.target.selectionStart - 1) {
 			this.setState({ emoteHelperSelectedIndex: -1 });
@@ -460,7 +466,7 @@ class GameChat extends React.Component<GameChatProps> {
 		}
 	}
 
-	handleChatFilterClick = (e) => {
+	handleChatFilterClick = (e: any) => {
 		const filter = e.currentTarget.getAttribute('data-filter');
 		switch (filter) {
 			case 'Player':

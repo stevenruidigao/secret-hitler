@@ -276,6 +276,7 @@ class PlayerList extends React.Component {
 							)
 						: cn({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
 
+				// TODO: partially duplicated in Profile.tsx
 				const renderStatus = () => {
 					const status = user.status;
 
@@ -293,8 +294,7 @@ class PlayerList extends React.Component {
 							{ private: status.type === 'private' },
 							'icon',
 						);
-
-						const title = {
+						const title: any = {
 							playing: 'This player is playing in a standard game.',
 							observing: 'This player is observing a game.',
 							rainbow: 'This player is playing in a experienced-player-only game.',
@@ -302,7 +302,7 @@ class PlayerList extends React.Component {
 							private: 'This player is playing in a private game.',
 						};
 
-						const onClick = {
+						const onClick: any = {
 							playing: this.routeToGame,
 							observing: this.routeToGame,
 							rainbow: this.routeToGame,
@@ -508,6 +508,8 @@ class PlayerList extends React.Component {
 								{ clickable: this.props.isUserClickable },
 							)
 						: cn({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
+
+				// TODO: duplicated in Profile.tsx
 				const renderStatus = () => {
 					const status = user.status;
 
@@ -525,14 +527,16 @@ class PlayerList extends React.Component {
 							{ private: status.type === 'private' },
 							'icon',
 						);
-						const title = {
+
+						const title: any = {
 							playing: 'This player is playing in a standard game.',
 							observing: 'This player is observing a game.',
 							rainbow: 'This player is playing in a experienced-player-only game.',
 							replay: 'This player is watching a replay.',
 							private: 'This player is playing in a private game.',
 						};
-						const onClick = {
+
+						const onClick: any = {
 							playing: this.routeToGame,
 							observing: this.routeToGame,
 							rainbow: this.routeToGame,
@@ -634,7 +638,7 @@ class PlayerList extends React.Component {
 
 	render() {
 		const { userInfo } = this.props;
-		const adminGradientData = { A: 'godhemzelve', d: 'moira', m: 'vig', i: 'admin', n: 'godhemzelve', s: 'vig' };
+		const adminGradientData: any = { A: 'godhemzelve', d: 'moira', m: 'vig', i: 'admin', n: 'godhemzelve', s: 'vig' };
 
 		return (
 			<section className="playerlist">

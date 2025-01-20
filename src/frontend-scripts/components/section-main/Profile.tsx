@@ -25,9 +25,11 @@ const mapDispatchToProps = (dispatch: (data: any) => any) => ({
 class ProfileWrapper extends React.Component {
 	static defaultProps: any;
 	static propTypes: any;
-	props: any;
 
+	props: any;
 	state: any;
+
+	blacklistModal: any;
 
 	constructor(props: any) {
 		super(props);
@@ -47,7 +49,8 @@ class ProfileWrapper extends React.Component {
 		let updatedState = null;
 
 		if (name !== newName) {
-			updatedState = { ...updatedState, profileUser: newName, blacklistClicked: false }; // TODO: uhhh what
+			// updatedState = { ...updatedState, profileUser: newName, blacklistClicked: false };
+			updatedState = { profileUser: newName, blacklistClicked: false }; // TODO: uhhh what see above
 		}
 
 		return updatedState;
@@ -500,7 +503,7 @@ class ProfileWrapper extends React.Component {
 				? this.props.profile.staffRole
 				: null;
 
-		const staffRolePrefixes = { admin: '(A) 📛', editor: '(E) 🔰', moderator: '(M) 🌀' };
+		const staffRolePrefixes: any = { admin: '(A) 📛', editor: '(E) 🔰', moderator: '(M) 🌀' };
 
 		let prefix = '';
 		if (userAdminRole) {
@@ -517,6 +520,7 @@ class ProfileWrapper extends React.Component {
 			window.location.href = `#/replay/${gameId}`; // TODO: old - above: same?
 		};
 
+		// TODO: partially duplicated in PlayerList.tsx
 		const renderStatus = () => {
 			const status = user ? user.status : null;
 
@@ -534,7 +538,7 @@ class ProfileWrapper extends React.Component {
 					'icon',
 				);
 
-				const title = {
+				const title: any = {
 					playing: 'This player is playing in a standard game.',
 					observing: 'This player is observing a game.',
 					rainbow: 'This player is playing in a experienced-player-only game.',
@@ -542,7 +546,7 @@ class ProfileWrapper extends React.Component {
 					private: 'This player is playing in a private game.',
 				};
 
-				const onClick = {
+				const onClick: any = {
 					playing: routeToGame,
 					observing: routeToGame,
 					rainbow: routeToGame,
