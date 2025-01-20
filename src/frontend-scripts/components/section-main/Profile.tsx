@@ -46,7 +46,7 @@ class ProfileWrapper extends React.Component {
 	static getDerivedStateFromProps(nextProps: any, prevState: any) {
 		const name = prevState && prevState.profileUser;
 		const newName = nextProps && nextProps.profile && nextProps.profile._id;
-		let updatedState = null;
+		let updatedState: any = null;
 
 		if (name !== newName) {
 			// updatedState = { ...updatedState, profileUser: newName, blacklistClicked: false };
