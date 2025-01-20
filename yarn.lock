@@ -3480,6 +3480,13 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.7.tgz#50ae4353eaaddc04044279812f52c8c65857dbcb"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
+"@types/react-color@^2.17.12":
+  version "2.17.12"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.17.12.tgz#687802c438d77f57da6f9dd8466a755132d9e8bd"
+  integrity sha512-QFGzyXqUFtIQsVsjd4PG3Ks+4DBCYDwd0rV/tdS4nnvPf/pzZrEtM1uwZZfjwg3dVrrJ2J3hWR3KzkEVOI0I/g==
+  dependencies:
+    "@types/reactcss" "*"
+
 "@types/react-custom-scrollbars@^4.0.13":
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/@types/react-custom-scrollbars/-/react-custom-scrollbars-4.0.13.tgz#38f11b0922503a433374b005c7e32b5279d739d8"
@@ -3491,6 +3498,13 @@
   version "16.9.25"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.25.tgz#fc6440aaae3d2d3aa10f6afeb7f1b0c4a55d5e31"
   integrity sha512-ZK//eAPhwft9Ul2/Zj+6O11YR6L4JX0J2sVeBC9Ft7x7HFN7xk7yUV/zDxqV6rjvqgl6r8Dq7oQImxtyf/Mzcw==
+
+"@types/react-dropzone@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@types/react-dropzone/-/react-dropzone-4.2.2.tgz#af0a2595169700c8ab1114e9096285499beaff40"
+  integrity sha512-okO6HY+w7V0uHoy6JpLY6BwY/s/oObtXZmUQdX0ycjPeLhK8Af/xf79CFkLA1fM6oVp16n1d962ejdkEXk375Q==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-redux@^7.1.34":
   version "7.1.34"
@@ -3522,6 +3536,11 @@
     "@types/prop-types" "*"
     "@types/scheduler" "^0.16"
     csstype "^3.0.2"
+
+"@types/reactcss@*":
+  version "1.2.13"
+  resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.13.tgz#11c7468cc96b5353f7af998a5664deae21c7af08"
+  integrity sha512-gi3S+aUi6kpkF5vdhUsnkwbiSEIU/BEJyD7kBy2SudWBUuKmJk8AQKE0OVcQQeEy40Azh0lV6uynxlikYIJuwg==
 
 "@types/redis@^2.8.0":
   version "2.8.32"
@@ -3556,6 +3575,13 @@
   dependencies:
     "@types/jquery" "*"
 
+"@types/semantic-ui-dimmer@*":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@types/semantic-ui-dimmer/-/semantic-ui-dimmer-2.2.5.tgz#3be07a65857398a0ec8e4dd127c8b3bac393be06"
+  integrity sha512-0p0EMwJ1G/Vi7Vti9U+HdMk6aXhInQ6K84KHj7gSM1YI4qvFwed0nsm4CGR8IXUa6SkS8Da0mSVcCLlPduv/lg==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/semantic-ui-dropdown@^2.2.9":
   version "2.2.9"
   resolved "https://registry.yarnpkg.com/@types/semantic-ui-dropdown/-/semantic-ui-dropdown-2.2.9.tgz#146b97d8bf690ddc0633ab67ad12e17e1952bc04"
@@ -3563,6 +3589,14 @@
   dependencies:
     "@types/jquery" "*"
     "@types/semantic-ui-api" "*"
+
+"@types/semantic-ui-modal@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/semantic-ui-modal/-/semantic-ui-modal-2.2.7.tgz#12a7a502876109daa0a2638d9f2923a16da30772"
+  integrity sha512-vkazvqzPrutKH1jFt+xtpEmcdkLTZojb0RmW/zpS4MsLl7lgvFywfAjewdQgsFW5AEOku4KwrWoBTl7brh35/g==
+  dependencies:
+    "@types/jquery" "*"
+    "@types/semantic-ui-dimmer" "*"
 
 "@types/send@*":
   version "0.17.4"

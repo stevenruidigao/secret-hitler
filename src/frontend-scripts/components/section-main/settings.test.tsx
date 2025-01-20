@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Settings from './Settings';
+import Settings from './Settings.tsx';
 
 describe('Settings', () => {
 	it('should initialize correctly', () => {

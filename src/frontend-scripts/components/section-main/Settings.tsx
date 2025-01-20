@@ -1,23 +1,28 @@
 import React from 'react';
 import $ from 'jquery';
-import Range from 'rc-slider';
+import { Range } from 'rc-slider'; // TODO: check; used to be `import Range`
 import Modal from 'semantic-ui-modal';
 import Checkbox from 'semantic-ui-checkbox';
-import Dropzone from 'react-dropzone';
+import ReactDropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
-import Cropper from 'react-cropper';
+import { Cropper } from 'react-cropper'; // TODO: check; used to be `import Cropper`
 import 'cropperjs/dist/cropper.css';
-import SweetAlert2 from 'react-sweetalert2';
+import ReactSweetAlert2 from 'react-sweetalert2';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 
 $.fn.checkbox = Checkbox;
 $.fn.modal = Modal;
 
+const Dropzone = ReactDropzone as any; // TODO: why?
+const SweetAlert2 = ReactSweetAlert2 as any; // TODO: why?
+
 class Settings extends React.Component {
+	static defaultProps: any;
+	static propTypes: any;
 	props: any;
 
-	state = {
+	state: any = {
 		namechangeValue: '',
 		sliderValues: [8, 24],
 		imageUid: Math.random().toString(36).substring(6),
@@ -114,7 +119,7 @@ class Settings extends React.Component {
 		});
 	}
 
-	handleSoundChange = (e) => {
+	handleSoundChange = (e: any) => {
 		this.setState(
 			{
 				soundSelected: e.target.value,
@@ -127,7 +132,7 @@ class Settings extends React.Component {
 		);
 	};
 
-	handleClaimCharactersChange = (e) => {
+	handleClaimCharactersChange = (e: any) => {
 		this.setState(
 			{
 				claimCharacters: e.target.value,
@@ -140,7 +145,7 @@ class Settings extends React.Component {
 		);
 	};
 
-	handleClaimButtonsChange = (e) => {
+	handleClaimButtonsChange = (e: any) => {
 		this.setState(
 			{
 				claimButtons: e.target.value,
@@ -153,7 +158,7 @@ class Settings extends React.Component {
 		);
 	};
 
-	handleKeyboardShortcutsChange = (e) => {
+	handleKeyboardShortcutsChange = (e: any) => {
 		this.setState(
 			{
 				keyboardShortcuts: e.target.value,
@@ -166,26 +171,26 @@ class Settings extends React.Component {
 		);
 	};
 
-	toggleGameSettings = (value) => {
-		const obj = {};
+	toggleGameSettings = (value: string) => {
+		const obj: any = {};
 
 		obj[value] = !this.state[value];
 		this.props.socket.emit('updateGameSettings', obj);
 		this.setState(obj);
 	};
 
-	sliderChange = (event) => {
+	sliderChange = (event: any) => {
 		this.setState({ fontSize: event[0] });
 	};
 
-	sliderDrop = (event) => {
+	sliderDrop = (event: any) => {
 		this.props.socket.emit('updateGameSettings', {
 			fontSize: this.state.fontSize,
 		});
 	};
 
 	renderFonts() {
-		const changeFontSubmit = (fontName) => {
+		const changeFontSubmit = (fontName: string) => {
 			this.setState({
 				fontChecked: fontName,
 			});
@@ -323,7 +328,8 @@ class Settings extends React.Component {
 	}
 
 	renderPronouns() {
-		const changePronounSubmit = (pronouns) => {
+		const changePronounSubmit = (pronouns: string) => {
+			// TODO: is this right?
 			this.setState({
 				playerPronouns: pronouns,
 			});
@@ -460,8 +466,8 @@ class Settings extends React.Component {
 		} = this.state;
 		const { socket } = this.props;
 		const docStyle = document.documentElement.style;
-		const getHSLstring = (color) => `hsl(${Math.round(color.h)}, ${Math.round(color.s * 100)}%, ${Math.round(color.l * 100)}%)`;
-		const renderPicker = (name) => (
+		const getHSLstring = (color: any) => `hsl(${Math.round(color.h)}, ${Math.round(color.s * 100)}%, ${Math.round(color.l * 100)}%)`;
+		const renderPicker = (name: string) => (
 			<div className="picker-container">
 				<div
 					className="picker-close-button"
@@ -474,7 +480,7 @@ class Settings extends React.Component {
 				<SketchPicker
 					disableAlpha
 					color={this.state[`${name}Color`]}
-					onChangeComplete={(color) => {
+					onChangeComplete={(color: any) => {
 						const { hsl } = color;
 						const newColor = getHSLstring(hsl);
 
@@ -683,7 +689,7 @@ class Settings extends React.Component {
 	}
 
 	render() {
-		const onDrop = (files, rejectedFile) => {
+		const onDrop = (files: any, rejectedFile: any) => {
 			if (rejectedFile.length) {
 				this.setState({
 					cardbackUploadStatus: 'The file you selected is not an image.',
@@ -721,7 +727,7 @@ class Settings extends React.Component {
 			});
 		};
 
-		const onCropperReady = (cropper) => {
+		const onCropperReady = (cropper: any) => {
 			this.setState({
 				cropper: cropper,
 			});
@@ -760,7 +766,7 @@ class Settings extends React.Component {
 						preview: '',
 					});
 				})
-				.catch((err) => {
+				.catch((err: JQuery.jqXHR<any>) => {
 					if (err.status == 413) {
 						this.setState({
 							cardbackUploadStatus: 'Image too large.',
@@ -778,14 +784,14 @@ class Settings extends React.Component {
 				});
 		};
 
-		const previewClearClick = (event) => {
+		const previewClearClick = (event: any) => {
 			event.preventDefault();
 			this.setState({ preview: '', cardbackUploadStatus: null });
 		};
 
 		const gameSettings = this.props.gameSettings || window.gameSettings;
 
-		const ownProfileSubmit = (event) => {
+		const ownProfileSubmit = (event: any) => {
 			event.preventDefault();
 
 			window.location.hash = `#/profile/${this.props.userInfo.userName}`;
@@ -1006,7 +1012,7 @@ class Settings extends React.Component {
 											type="text"
 											name="truncatedSize"
 											value={this.state.truncatedSize}
-											onChange={(e) => {
+											onChange={(e: any) => {
 												if (/^\d{1,}$/.test(e.target.value) || e.target.value === '') {
 													if (e.target.value === '') {
 														this.setState({ truncatedSize: e.target.value });

@@ -1,15 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Scrollbars } from 'react-custom-scrollbars';
+import ReactCustomScrollbars from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
 
-import { PLAYER_COLORS, getBadWord } from '@/shared/constants.ts';
+import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
+
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
+import PreviousSeasonAward from '../reusable/Awards.tsx';
+
+const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
 export default class GeneralChat extends React.Component {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
-	state = {
+	static defaultProps: any;
+	static propTypes: any;
+
+	props: any;
+	state: any = {
 		lock: false,
 		badWord: [null, null],
 		textLastChanged: 0,
@@ -23,13 +31,16 @@ export default class GeneralChat extends React.Component {
 		modDMs: null,
 	};
 
+	scrollbar: any;
+	chatInput: any;
+
 	componentDidMount() {
 		if (this.scrollbar) {
 			this.scrollbar.scrollToBottom();
 		}
 
 		if (this.props.socket) {
-			this.props.socket.on('openModDMs', (data) => {
+			this.props.socket.on('openModDMs', (data: any) => {
 				this.setState({ modDMs: data, genchat: false });
 			});
 
@@ -37,7 +48,7 @@ export default class GeneralChat extends React.Component {
 				this.setState({ modDMs: null, genchat: true });
 			});
 
-			this.props.socket.on('inProgressModDMUpdate', (dm) => {
+			this.props.socket.on('inProgressModDMUpdate', (dm: any) => {
 				this.setState({ modDMs: dm });
 			});
 		}
@@ -55,28 +66,7 @@ export default class GeneralChat extends React.Component {
 		}
 	}
 
-	renderPreviousSeasonAward(type) {
-		switch (type) {
-			case 'bronze':
-				return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
-			case 'silver':
-				return <span title="This player was in the 2nd tier of ranks in the previous season" className="season-award silver" />;
-			case 'gold':
-				return <span title="This player was in the top tier of ranks in the previous season" className="season-award gold" />;
-			case 'gold1':
-				return <span title="This player was the #1 ranked player of the previous season" className="season-award gold1" />;
-			case 'gold2':
-				return <span title="This player was 2nd highest player of the previous season" className="season-award gold2" />;
-			case 'gold3':
-				return <span title="This player was 3rd highest player of the previous season" className="season-award gold3" />;
-			case 'gold4':
-				return <span title="This player was 4th highest player of the previous season" className="season-award gold4" />;
-			case 'gold5':
-				return <span title="This player was 5th highest player of the previous season" className="season-award gold5" />;
-		}
-	}
-
-	handleTyping = (e) => {
+	handleTyping = (e: any) => {
 		e.preventDefault();
 		const { allEmotes } = this.props;
 		const { badWord, textChangeTimer } = this.state;
@@ -84,7 +74,7 @@ export default class GeneralChat extends React.Component {
 		const { value } = e.target;
 		const emoteNames = Object.keys(allEmotes).map((emoteName) => emoteName.slice(1, emoteName.length - 1));
 		let emoteColonIndex = value.substring(0, e.target.selectionStart).lastIndexOf(':');
-		let filteredEmotes = [];
+		let filteredEmotes: any[] = [];
 		const colonSplitText = value.substring(0, emoteColonIndex).split(':');
 
 		if (
@@ -96,7 +86,7 @@ export default class GeneralChat extends React.Component {
 			emoteColonIndex = -1;
 		}
 
-		excludedColonIndices = excludedColonIndices.map((i) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
+		excludedColonIndices = excludedColonIndices.map((i: number) => (value.length <= i || value[i] !== ':' ? null : i)).filter(Number.isInteger);
 
 		if (value.lastIndexOf(':') === e.target.selectionStart - 1) {
 			this.setState({ emoteHelperSelectedIndex: -1 });
@@ -167,7 +157,7 @@ export default class GeneralChat extends React.Component {
 			};
 		}
 
-		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find((play) => play.userName === userName) : undefined;
+		const user = Object.keys(this.props.userList).length ? this.props.userList.list.find((play: any) => play.userName === userName) : undefined;
 
 		if (!user) {
 			return {
@@ -242,7 +232,7 @@ export default class GeneralChat extends React.Component {
 		}
 	};
 
-	handleInsertEmote = (emote, isHelper) => {
+	handleInsertEmote = (emote: any, isHelper: boolean) => {
 		const { chatValue, emoteColonIndex } = this.state;
 		const textAfterColon =
 			':' +
@@ -266,7 +256,7 @@ export default class GeneralChat extends React.Component {
 		if (!isHelper) this.chatInput.focus();
 	};
 
-	handleKeyPress = (e) => {
+	handleKeyPress = (e: any) => {
 		const { emoteHelperSelectedIndex, emoteHelperElements, emoteColonIndex, excludedColonIndices } = this.state;
 		const { keyCode } = e;
 		const emoteHelperElementCount = emoteHelperElements && emoteHelperElements.length;
@@ -392,7 +382,7 @@ export default class GeneralChat extends React.Component {
 	}
 
 	renderChats() {
-		let timestamp;
+		let timestamp: any;
 		const { userInfo, userList, generalChats } = this.props;
 		const time = Date.now();
 
@@ -400,7 +390,7 @@ export default class GeneralChat extends React.Component {
 		 * @param {array} tournyWins - array of tournywins in epoch ms numbers (date.getTime())
 		 * @return {jsx}
 		 */
-		const renderCrowns = (tournyWins) =>
+		const renderCrowns = (tournyWins: number[]) =>
 			tournyWins
 				.filter((winTime) => time - winTime < 10800000)
 				.map((crown) => <span key={crown} title="This player has recently won a tournament." className="crown-icon" />);
@@ -409,10 +399,10 @@ export default class GeneralChat extends React.Component {
 
 		return (
 			chatToRender.list &&
-			chatToRender.list.map((chat, i) => {
+			chatToRender.list.map((chat: any, i: number) => {
 				const { gameSettings } = userInfo;
 				const isMod = Boolean(chat.staffRole) || chat.userName.substring(0, 11) == '[BROADCAST]';
-				const user = chat.userName && Object.keys(userList).length ? userList.list.find((player) => player.userName === chat.userName) : undefined;
+				const user = chat.userName && Object.keys(userList).length ? userList.list.find((player: any) => player.userName === chat.userName) : undefined;
 				const userClasses =
 					!user || (gameSettings && gameSettings.disablePlayerColorsInChat)
 						? 'chat-user'
@@ -428,9 +418,9 @@ export default class GeneralChat extends React.Component {
 						{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 							chat.tournyWins &&
 							renderCrowns(chat.tournyWins)}
-						{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
-							chat.previousSeasonAward &&
-							this.renderPreviousSeasonAward(chat.previousSeasonAward)}
+						{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) && chat.previousSeasonAward && (
+							<PreviousSeasonAward type={chat.previousSeasonAward} />
+						)}
 						{!(userInfo.gameSettings && Object.keys(userInfo.gameSettings).length && userInfo.gameSettings.disableCrowns) &&
 							chat.specialTournamentStatus &&
 							chat.specialTournamentStatus.slice(1) === 'captain' && (
@@ -498,7 +488,7 @@ export default class GeneralChat extends React.Component {
 	renderEmoteHelper() {
 		const { allEmotes } = this.props;
 		const { emoteHelperSelectedIndex, emoteHelperElements } = this.state;
-		const helperHover = (index) => {
+		const helperHover = (index: number) => {
 			this.setState({
 				emoteHelperSelectedIndex: index,
 			});
@@ -510,7 +500,7 @@ export default class GeneralChat extends React.Component {
 
 		return (
 			<div className="emote-helper-container">
-				{emoteHelperElements.map((el, index) => (
+				{emoteHelperElements.map((el: any, index: number) => (
 					<div
 						onMouseOver={() => {
 							helperHover(index);
@@ -573,9 +563,11 @@ export default class GeneralChat extends React.Component {
 				<section className="segment chats">
 					{emoteColonIndex >= 0 && this.renderEmoteHelper()}
 					<Scrollbars
-						ref={(c) => (this.scrollbar = c)}
+						ref={(c: any) => {
+							this.scrollbar = c;
+						}}
 						onScroll={this.handleChatScrolled}
-						renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
+						renderThumbVertical={(props: any) => <div {...props} className="thumb-vertical" />}
 					>
 						<div className="ui list genchat-container">{this.renderChats()}</div>
 					</Scrollbars>

@@ -26,6 +26,7 @@ export interface PublicPlayer {
 
 export interface Player extends PublicPlayer {
 	staff: any;
+	claim?: any;
 }
 
 export type CardFlingerState = {

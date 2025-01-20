@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
+import { Socket } from 'socket.io-client';
 
 let signupType = 'getSignups';
 
-const Signups = ({ socket }) => {
-	const [signuplog, updateSignuplog] = useState([]);
+const Signups = ({ socket }: { socket: Socket }) => {
+	const [signuplog, updateSignuplog] = useState<any[]>([]);
 	const [logSort, updateLogSort] = useState({ type: 'date', direction: 'descending' });
 	useEffect(() => {
 		socket.emit(signupType);
@@ -26,7 +27,7 @@ const Signups = ({ socket }) => {
 	}, []);
 
 	const renderSignupsLog = () => {
-		const clickSort = (type) => {
+		const clickSort = (type: string) => {
 			updateLogSort({
 				type,
 				direction: logSort.direction === 'descending' && type === logSort.type ? 'ascending' : 'descending',
@@ -154,7 +155,7 @@ const Signups = ({ socket }) => {
 					color: 'lightblue',
 					userSelect: 'none',
 					WebkitUserSelect: 'none',
-					MsUserSelect: 'none',
+					msUserSelect: 'none',
 					textDecoration: 'underline',
 					left: '0',
 					top: '10px',

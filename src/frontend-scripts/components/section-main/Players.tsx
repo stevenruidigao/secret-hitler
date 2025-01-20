@@ -19,7 +19,7 @@ class Players extends React.Component {
 	static propTypes: any;
 	props: any;
 
-	state = {
+	state: any = {
 		passwordValue: '',
 		reportedPlayer: '',
 		reportTextValue: '',

@@ -8,9 +8,12 @@ import ReactCustomScrollbars from 'react-custom-scrollbars';
 import Swal from 'sweetalert2';
 import { Socket } from 'socket.io-client';
 
+import type { ActiveGame } from '@/shared/game.d.ts';
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
+
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
+import PreviousSeasonAward from '../reusable/Awards.tsx';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
@@ -85,7 +88,7 @@ const ClaimPeek = ({ handleClaimButtonClick }: { handleClaimButtonClick: (event:
 
 type GameChatProps = {
 	userInfo: any;
-	gameInfo: any;
+	gameInfo: ActiveGame;
 	socket: Socket;
 	userList: {
 		list: any[];
@@ -95,7 +98,7 @@ type GameChatProps = {
 	toggleNotes: Function;
 };
 
-class GameChat extends React.Component {
+class GameChat extends React.Component<GameChatProps> {
 	static propTypes: any;
 	props: GameChatProps;
 
@@ -158,7 +161,7 @@ class GameChat extends React.Component {
 		});
 	}
 
-	componentDidUpdate(prevProps: GameChatProps, nextProps: GameChatProps) {
+	componentDidUpdate(prevProps: GameChatProps, nextProps: any) {
 		const { userInfo, gameInfo } = this.props;
 		this.scrollChats();
 
@@ -166,16 +169,16 @@ class GameChat extends React.Component {
 			(prevProps &&
 				userInfo.userName &&
 				userInfo.isSeated &&
-				prevProps.gameInfo.publicPlayersState.filter((player: any) => player.isDead).length !==
-					gameInfo.publicPlayersState.filter((player: any) => player.isDead).length &&
-				gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.isDead) ||
+				prevProps.gameInfo.publicPlayersState.filter((player) => player.isDead).length !==
+					gameInfo.publicPlayersState.filter((player) => player.isDead).length &&
+				gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName)?.isDead) ||
 			(prevProps &&
 				userInfo.userName &&
 				gameInfo.gameState.phase === 'presidentSelectingPolicy' &&
-				((gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
-					gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.governmentStatus === 'isPresident') ||
-					(gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName) &&
-						gameInfo.publicPlayersState.find((player: any) => userInfo.userName === player.userName)?.governmentStatus === 'isChancellor')) &&
+				((gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
+					gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName)?.governmentStatus === 'isPresident') ||
+					(gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName) &&
+						gameInfo.publicPlayersState.find((player) => userInfo.userName === player.userName)?.governmentStatus === 'isChancellor')) &&
 				prevProps.gameInfo.gameState.phase !== 'presidentSelectingPolicy')
 		) {
 			this.setState({ inputValue: '' });
@@ -495,7 +498,7 @@ class GameChat extends React.Component {
 
 	handleClickedClaimButton = () => {
 		const { gameInfo, userInfo } = this.props;
-		const playerIndex = gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName);
+		const playerIndex = gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName);
 		this.setState({
 			claim: this.state.claim ? '' : gameInfo.playersState[playerIndex].claim,
 		});
@@ -529,8 +532,8 @@ class GameChat extends React.Component {
 		const { gameState, publicPlayersState } = gameInfo;
 		const { gameSettings, userName, isSeated } = userInfo;
 		const isDead = (() => {
-			if (userName && publicPlayersState.length && publicPlayersState.find((player: any) => userName === player.userName)) {
-				return publicPlayersState.find((player: any) => userName === player.userName).isDead;
+			if (userName && publicPlayersState.length && publicPlayersState.find((player) => userName === player.userName)) {
+				return publicPlayersState.find((player) => userName === player.userName)?.isDead;
 			}
 		})();
 		const isGovernmentDuringPolicySelection = (() => {
@@ -702,24 +705,7 @@ class GameChat extends React.Component {
 
 		// TODO: code duplication with GameChatItem.tsx
 		const renderPreviousSeasonAward = (type: string) => {
-			switch (type) {
-				case 'bronze':
-					return <span title="This player was in the 3rd tier of ranks in the previous season" className="season-award bronze" />;
-				case 'silver':
-					return <span title="This player was in the 2nd tier of ranks in the previous season" className="season-award silver" />;
-				case 'gold':
-					return <span title="This player was in the top tier of ranks in the previous season" className="season-award gold" />;
-				case 'gold1':
-					return <span title="This player was the #1 ranked player of the previous season" className="season-award gold1" />;
-				case 'gold2':
-					return <span title="This player was 2nd highest player of the previous season" className="season-award gold2" />;
-				case 'gold3':
-					return <span title="This player was 3rd highest player of the previous season" className="season-award gold3" />;
-				case 'gold4':
-					return <span title="This player was 4th highest player of the previous season" className="season-award gold4" />;
-				case 'gold5':
-					return <span title="This player was 5th highest player of the previous season" className="season-award gold5" />;
-			}
+			return <PreviousSeasonAward type={type} />;
 		};
 
 		// TODO: code duplication with GameChatItem.tsx
@@ -875,10 +861,9 @@ class GameChat extends React.Component {
 								chat.tournyWins &&
 								!isBlind &&
 								renderCrowns(chat.tournyWins)}
-							{!(gameSettings && Object.keys(gameSettings).length && gameSettings.disableCrowns) &&
-								chat.previousSeasonAward &&
-								!isBlind &&
-								renderPreviousSeasonAward(chat.previousSeasonAward)}
+							{!(gameSettings && Object.keys(gameSettings).length && gameSettings.disableCrowns) && chat.previousSeasonAward && !isBlind && (
+								<PreviousSeasonAward type={chat.previousSeasonAward} />
+							)}
 							{!(gameSettings && Object.keys(gameSettings).length && gameSettings.disableCrowns) &&
 								chat.specialTournamentStatus &&
 								chat.specialTournamentStatus.slice(1) === 'captain' &&
@@ -943,11 +928,10 @@ class GameChat extends React.Component {
 									? isSeated
 										? isBlind
 											? `${
-													gameInfo.general.replacementNames[
-														gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName)
-													]
-												} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
-											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer: any) => publicPlayer.userName === chat.userName) + 1}}`
+													gameInfo.general.replacementNames &&
+													gameInfo.general.replacementNames[gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName)]
+												} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
+											: `${chat.userName} {${gameInfo.publicPlayersState.findIndex((publicPlayer) => publicPlayer.userName === chat.userName) + 1}}`
 										: chat.staffRole === 'moderator' && chat.userName === 'Incognito' && canSeeIncognito
 											? chat.hiddenUsername
 											: isBlind && !isMod

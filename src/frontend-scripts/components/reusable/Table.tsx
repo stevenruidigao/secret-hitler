@@ -29,7 +29,7 @@ const TBody = ({ rows }: { rows: any[] }) => (
  * @param {object} uiTable - todo
  * @return {jsx}
  */
-const Table = ({ headers, rows, uiTable }: { headers: any[]; rows: any[]; uiTable: string }) => (
+const Table = ({ headers, rows, uiTable }: { headers: any[]; rows: any[]; uiTable?: string }) => (
 	<table className={`ui ${uiTable} table`}>
 		<thead>
 			<tr>

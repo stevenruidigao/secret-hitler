@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Tracks from './Tracks';
+import Tracks from './Tracks.tsx';
 
 describe('Tracks', () => {
 	it('should initialize correctly', () => {

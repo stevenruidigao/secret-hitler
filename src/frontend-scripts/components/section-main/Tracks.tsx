@@ -1,14 +1,22 @@
 import React from 'react';
-import CardFlinger from './CardFlinger.tsx';
-import EnactedPolicies from './EnactedPolicies.tsx';
 import PropTypes from 'prop-types';
 import { Popup } from 'semantic-ui-react';
-import playSound from '../reusable/playSound.ts';
 import dayjs from 'dayjs';
-import * as Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
+
+import playSound from '../reusable/playSound.ts';
+
+import CardFlinger from './CardFlinger.tsx';
+import EnactedPolicies from './EnactedPolicies.tsx';
 
 class Tracks extends React.Component {
+	static defaultProps: any;
+	static propTypes: any;
+
 	props: any;
+	state: any;
+
+	intervalId: any;
 	_ismounted = false;
 
 	constructor(props: any) {
@@ -59,7 +67,7 @@ class Tracks extends React.Component {
 		});
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps(nextProps: any) {
 		const { gameInfo, userInfo } = this.props;
 
 		if (!gameInfo.gameState.isStarted) {
@@ -114,7 +122,7 @@ class Tracks extends React.Component {
 		}
 	}
 
-	optionIcons(gameInfo) {
+	optionIcons(gameInfo: any) {
 		const game = gameInfo.general;
 
 		let rebalance69p;
@@ -161,7 +169,7 @@ class Tracks extends React.Component {
 		if (gameInfo.customGameSettings && gameInfo.customGameSettings.enabled) {
 			customgameactive = <i className="setting icon" />;
 		} else {
-			const hasPlayerCount = (count) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
+			const hasPlayerCount = (count: number) => game.minPlayersCount <= count && count <= game.maxPlayersCount && !game.excludedPlayerCount.includes(count);
 
 			const hasR6 = game.rebalance6p && hasPlayerCount(6);
 			const hasR7 = game.rebalance7p && hasPlayerCount(7);
@@ -446,7 +454,7 @@ class Tracks extends React.Component {
 
 				if (gameInfo.customGameSettings.powers) {
 					// Only need to detect one property, either they're all there or none are.
-					powers = gameInfo.customGameSettings.powers.map((p) => {
+					powers = gameInfo.customGameSettings.powers.map((p: string | null) => {
 						if (p == null) return 'None';
 						if (p == 'investigate') return 'Inv';
 						if (p == 'deckpeek') return 'Peek';
@@ -477,7 +485,7 @@ class Tracks extends React.Component {
 					}
 				}
 
-				const getHZ = (pos) => {
+				const getHZ = (pos: number) => {
 					if (pos < hzStart) return 'Off';
 					if (pos > hzStart) return 'On';
 					return 'Start';

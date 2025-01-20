@@ -16,16 +16,18 @@ import Table from '../reusable/Table.tsx';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 import UserPopup from '../reusable/UserPopup.tsx';
 
-const mapStateToProps = ({ profile }) => ({ profile });
-const mapDispatchToProps = (dispatch) => ({
+const mapStateToProps = ({ profile }: any) => ({ profile });
+const mapDispatchToProps = (dispatch: (data: any) => any) => ({
 	// updateActiveStats: activeStat => dispatch(updateActiveStats(activeStat)),
-	fetchReplay: (gameId) => dispatch(fetchReplay(gameId)),
+	fetchReplay: (gameId: string) => dispatch(fetchReplay(gameId)),
 });
 
 class ProfileWrapper extends React.Component {
 	static defaultProps: any;
 	static propTypes: any;
 	props: any;
+
+	state: any;
 
 	constructor(props: any) {
 		super(props);
@@ -39,37 +41,37 @@ class ProfileWrapper extends React.Component {
 		};
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
+	static getDerivedStateFromProps(nextProps: any, prevState: any) {
 		const name = prevState && prevState.profileUser;
 		const newName = nextProps && nextProps.profile && nextProps.profile._id;
 		let updatedState = null;
 
 		if (name !== newName) {
-			updatedState = { ...updatedState, profileUser: newName, blacklistClicked: false };
+			updatedState = { ...updatedState, profileUser: newName, blacklistClicked: false }; // TODO: uhhh what
 		}
 
 		return updatedState;
 	}
 
-	formatDateString(dateString) {
+	formatDateString(dateString: string) {
 		const date = new Date(dateString);
 
 		return [date.getMonth() + 1, date.getDate(), date.getFullYear()].join('-');
 	}
 
-	successRate(trials, outcomes) {
+	successRate(trials: number, outcomes: number) {
 		return trials > 0 ? parseFloat(((outcomes / trials) * 100).toFixed(2)) + '%' : '---';
 	}
 
-	successRow(name, trials, outcomes) {
+	successRow(name: string, trials: number, outcomes: number) {
 		return [name, trials, this.successRate(trials, outcomes)];
 	}
 
-	successRowMatches(name, libGames, libWins, fasGames, fasWins) {
+	successRowMatches(name: string, libGames: number, libWins: number, fasGames: number, fasWins: number) {
 		return [name, libGames + fasGames, this.successRate(libGames, libWins), this.successRate(fasGames, fasWins)];
 	}
 
-	gamesAndSuccessTable(name, libGames, libWins, fasGames, fasWins) {
+	gamesAndSuccessTable(name: string, libGames: number, libWins: number, fasGames: number, fasWins: number) {
 		return [
 			[name, libGames + fasGames, this.successRate(libGames + fasGames, libWins + fasWins)],
 			[name + ' (Liberal)', libGames, this.successRate(libGames, libWins)],
@@ -224,9 +226,9 @@ class ProfileWrapper extends React.Component {
 
 	Badges() {
 		const { badges } = this.props.profile;
-		const changeSort = (sort) => this.setState({ badgeSort: sort });
-		const compare = (a, b) => (a === b ? 0 : a > b ? 1 : -1);
-		const compareID = (a, b) => {
+		const changeSort = (sort: any) => this.setState({ badgeSort: sort });
+		const compare = (a: any, b: any) => (a === b ? 0 : a > b ? 1 : -1);
+		const compareID = (a: any, b: any) => {
 			const aNum = parseInt(a.match(/\d+$/));
 			const bNum = parseInt(b.match(/\d+$/));
 
@@ -237,7 +239,7 @@ class ProfileWrapper extends React.Component {
 		};
 
 		let badgesToSort = _.clone(badges);
-		badgesToSort = badgesToSort.sort((a, b) =>
+		badgesToSort = badgesToSort.sort((a: any, b: any) =>
 			this.state.badgeSort === 'badge' ? compareID(a.id, b.id) : compare(new Date(a.dateAwarded), new Date(b.dateAwarded)) || compareID(a.id, b.id),
 		);
 
@@ -257,7 +259,7 @@ class ProfileWrapper extends React.Component {
 				/>
 				<br />
 				<br />
-				{badgesToSort.map((x) => (
+				{badgesToSort.map((x: any) => (
 					<React.Fragment key={x.id}>
 						<img
 							style={{ padding: '2px', display: 'inline', cursor: 'pointer' }}
@@ -319,8 +321,8 @@ class ProfileWrapper extends React.Component {
 
 	RecentGames() {
 		const { recentGames } = this.props.profile;
-		const rows = recentGames.map((game) => ({
-			onClick: (e) => {
+		const rows = recentGames.map((game: any) => ({
+			onClick: (e: any) => {
 				window.location.hash = `/replay/${game._id}`;
 			},
 			cells: [
@@ -354,10 +356,10 @@ class ProfileWrapper extends React.Component {
 				bioStatus: this.state.bioStatus === 'editing' ? 'displayed' : 'editing',
 			});
 		};
-		const bioChange = (e) => {
+		const bioChange = (e: any) => {
 			this.setState({ bioValue: `${e.target.value}` });
 		};
-		const bioKeyDown = (e) => {
+		const bioKeyDown = (e: any) => {
 			if (e.keyCode === 13) {
 				this.props.socket.emit('updateBio', this.state.bioValue);
 				this.setState({ bioStatus: 'displayed' });
@@ -370,24 +372,27 @@ class ProfileWrapper extends React.Component {
 				return 'Nothing here!';
 			}
 
-			const formattedBio = [];
+			const formattedBio: any[] = [];
 			const words = text.split(' ');
 
-			words.forEach((word, index) => {
+			words.forEach((word: string, index: number) => {
 				const validSiteURL = /http[s]?:\/\/(secrethitler\.io|localhost:8080)\/([a-zA-Z0-9#?=&\/\._-]*)/i;
 				if (validSiteURL.test(word)) {
 					const data = validSiteURL.exec(word);
-					const replayURL = data[2].startsWith('game/#/replay/');
 
-					formattedBio.push(
-						<a
-							key={index}
-							href={replayURL ? '/game/' + data[2].substring(5) : '/' + data[2]}
-							title={replayURL ? 'Link to a SH.io replay' : 'Link to something inside of SH.io'}
-						>
-							{replayURL ? data[2].substring(7) : data[2]}
-						</a>,
-					);
+					if (data) {
+						const replayURL = data[2].startsWith('game/#/replay/');
+
+						formattedBio.push(
+							<a
+								key={index}
+								href={replayURL ? '/game/' + data[2].substring(5) : '/' + data[2]}
+								title={replayURL ? 'Link to a SH.io replay' : 'Link to something inside of SH.io'}
+							>
+								{replayURL ? data[2].substring(7) : data[2]}
+							</a>,
+						);
+					}
 				} else if (/^https:\/\//i.test(word)) {
 					formattedBio.push(
 						<a key={index} href={word} title="External link" target="_blank" rel="nofollow noreferrer noopener">
@@ -420,7 +425,7 @@ class ProfileWrapper extends React.Component {
 							return (
 								<textarea
 									placeholder="Write something about yourself here"
-									maxLength="500"
+									maxLength={500}
 									autoFocus
 									spellCheck="false"
 									value={this.state.bioValue || profile.bio}
@@ -452,7 +457,7 @@ class ProfileWrapper extends React.Component {
 		$(this.blacklistModal).modal('show');
 	};
 
-	profileSearchSubmit = (e) => {
+	profileSearchSubmit = (e: any) => {
 		e.preventDefault();
 
 		window.location.hash = `#/profile/${this.state.profileSearchValue}`;
@@ -460,7 +465,7 @@ class ProfileWrapper extends React.Component {
 
 	Profile() {
 		const { gameSettings, profile, userInfo, userList } = this.props;
-		const user = userList.list ? userList.list.find((u) => u.userName == profile._id) : null;
+		const user = userList.list ? userList.list.find((u: any) => u.userName == profile._id) : null;
 		// const w =
 		// 	gameSettings && gameSettings.disableSeasonal
 		// 		? this.state.userListFilter === 'all'
@@ -502,12 +507,14 @@ class ProfileWrapper extends React.Component {
 			prefix = staffRolePrefixes[userAdminRole];
 		}
 
-		const routeToGame = (gameId) => {
-			window.location = `#/table/${gameId}`;
+		const routeToGame = (gameId: string) => {
+			// window.location = `#/table/${gameId}`;
+			window.location.href = `#/table/${gameId}`; // TODO: old: above; same?
 		};
 
-		const fetchReplay = (gameId) => {
-			window.location = `#/replay/${gameId}`;
+		const fetchReplay = (gameId: string) => {
+			// window.location = `#/replay/${gameId}`;
+			window.location.href = `#/replay/${gameId}`; // TODO: old - above: same?
 		};
 
 		const renderStatus = () => {
@@ -526,6 +533,7 @@ class ProfileWrapper extends React.Component {
 					{ private: status.type === 'private' },
 					'icon',
 				);
+
 				const title = {
 					playing: 'This player is playing in a standard game.',
 					observing: 'This player is observing a game.',
@@ -533,6 +541,7 @@ class ProfileWrapper extends React.Component {
 					replay: 'This player is watching a replay.',
 					private: 'This player is playing in a private game.',
 				};
+
 				const onClick = {
 					playing: routeToGame,
 					observing: routeToGame,
@@ -545,7 +554,7 @@ class ProfileWrapper extends React.Component {
 			}
 		};
 
-		const handleSearchProfileChange = (e) => {
+		const handleSearchProfileChange = (e: any) => {
 			this.setState({ profileSearchValue: e.currentTarget.value });
 		};
 
@@ -604,7 +613,7 @@ class ProfileWrapper extends React.Component {
 									placeholder="Search profiles.."
 									value={this.state.profileSearchValue}
 									onChange={handleSearchProfileChange}
-									maxLength="20"
+									maxLength={20}
 									spellCheck="false"
 								/>
 							</div>
@@ -644,13 +653,13 @@ class ProfileWrapper extends React.Component {
 
 		const blacklist = profile._id !== this.props?.userInfo?.userName ? this.props?.profile?.blacklist : this.props?.userInfo?.gameSettings?.blacklist;
 
-		const getTimestamp = (ts) => {
-			const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s);
+		const getTimestamp = (ts: any) => {
+			const pad = (n: any, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s);
 			const d = new Date(ts);
 			return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 		};
 
-		const getBlackListInfo = (element) => {
+		const getBlackListInfo = (element: any) => {
 			if (typeof element === 'string') {
 				return {
 					username: element,
@@ -702,7 +711,7 @@ class ProfileWrapper extends React.Component {
 								</tr>
 							</thead>
 							<tbody>
-								{blacklist.map((playerName) => {
+								{blacklist.map((playerName: any) => {
 									const userName = playerName?.userName || playerName;
 									const blacklistInfo = getBlackListInfo(playerName);
 									return (

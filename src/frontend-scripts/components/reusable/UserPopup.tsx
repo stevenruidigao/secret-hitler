@@ -135,8 +135,8 @@ const UserPopup = ({
 	userList?: any;
 	children: any;
 	userName: string;
-	position: 'top left' | 'top right' | 'bottom right' | 'bottom left' | 'right center' | 'left center' | 'top center' | 'bottom center';
-	index: number;
+	position?: 'top left' | 'top right' | 'bottom right' | 'bottom left' | 'right center' | 'left center' | 'top center' | 'bottom center';
+	index?: number;
 	renderInProfile?: boolean;
 }) => {
 	const [reportVisible, setReportVisible] = useState(false);
@@ -244,7 +244,7 @@ const UserPopup = ({
 				position={position}
 				className="user-popup"
 			>
-				<Popup.Header>{notVisible ? '?' : blindMode ? (isTracksFlipped ? gameInfo?.general?.replacementNames[index] : '?') : userName}</Popup.Header>
+				<Popup.Header>{notVisible ? '?' : blindMode ? (isTracksFlipped && index ? gameInfo?.general?.replacementNames[index] : '?') : userName}</Popup.Header>
 				<Popup.Content>
 					{user && user.playerPronouns && user.playerPronouns !== '' && !notVisible && !blindMode && <div>({user.playerPronouns})</div>}
 					<List>

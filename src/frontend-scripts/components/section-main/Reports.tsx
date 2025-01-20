@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import { Checkbox } from 'semantic-ui-react';
 
 export default class Reports extends React.Component {
+	static propTypes: any;
 	props: any;
+	state: any;
 
 	constructor(props: any) {
 		super(props);
@@ -19,7 +21,7 @@ export default class Reports extends React.Component {
 	componentDidMount() {
 		this.props.socket.emit('getUserReports');
 
-		this.props.socket.on('reportInfo', (reports) => {
+		this.props.socket.on('reportInfo', (reports: any) => {
 			this.setState({
 				reports,
 			});
@@ -36,13 +38,13 @@ export default class Reports extends React.Component {
 		/**
 		 * @param {string} type - description of how to sort the reports log
 		 */
-		const sortClick = (type) => {
+		const sortClick = (type: string) => {
 			this.setState({
 				sortType: type,
 				sortDirection: sortDirection === 'descending' ? 'ascending' : 'descending',
 			});
 		};
-		const activeClick = (report) => {
+		const activeClick = (report: any) => {
 			this.props.socket.emit('updateModAction', {
 				isReportResolveChange: true,
 				_id: report._id,
@@ -102,7 +104,7 @@ export default class Reports extends React.Component {
 					</thead>
 					<tbody>
 						{this.state.reports
-							.sort((a, b) => {
+							.sort((a: any, b: any) => {
 								const aDate = new Date(a.date);
 								const bDate = new Date(b.date);
 
@@ -125,7 +127,7 @@ export default class Reports extends React.Component {
 									return a[sortType] > b[sortType] ? 1 : -1;
 								}
 							})
-							.map((report, index) => (
+							.map((report: any, index: number) => (
 								<tr key={index} style={{ background: report.isActive ? '#cdf9db' : '#708a78' }}>
 									<td>{dayjs(new Date(report.date)).format('YYYY-MM-DD HH:mm')}</td>
 									<td>
