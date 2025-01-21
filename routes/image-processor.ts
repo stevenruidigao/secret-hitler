@@ -9,7 +9,7 @@ import { sendGameList } from './socket/user-requests.ts';
 
 const io = global.io;
 
-export const processImage = (username: string, raw: string, callback: Function) => {
+export const processImage = (username: string, raw: string, callback: (message: string | null, err?: any) => void) => {
 	sharp(Buffer.from(raw, 'base64'))
 		.resize(70, 95)
 		.toFile(path.join('public/images/custom-cardbacks/', path.basename(`${username}.png`)), (err) => {

@@ -1,6 +1,6 @@
 import https from 'https';
 
-import Account, { IAccount } from '@/models/account.ts';
+import Account from '@/models/account.ts';
 import type { ActiveGame } from '@/shared/game.d.ts';
 
 import { newStaff } from './models.ts';
@@ -145,53 +145,59 @@ export const makeReport = (data: any, game?: ActiveGame, type = 'report') => {
 			}
 		});
 
-		Account.findOne({ username: player }, (err: Error, account: IAccount) => {
-			if (err) console.log(err, 'err finding user');
-			else if (account) data.ip = account.lastConnectedIP || account.signupIP;
-			throwerIP = data.ip;
+		// Account.findOne({ username: player }, (err: Error, account: IAccount) => {
+		// 	if (err) console.log(err, 'err finding user');
 
-			const matches: Record<string | number, any> = {};
-			Account.find({ username: { $in: otherPlayers } })
-				.then((accounts) => {
-					accounts.forEach((account) => {
-						let ip = '';
-						if (account) ip = account.lastConnectedIP || account.signupIP || ip;
+		Account.findOne({ username: player })
+			.then((account) => {
+				if (account) data.ip = account.lastConnectedIP || account.signupIP;
+				throwerIP = data.ip;
 
-						const seat = seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
-						if (ip === throwerIP) {
-							matches[seat] = `${account.username} {${seat + 1}}`;
-						} else if (
-							ip.includes('.') && // Ensure both IPs are IPv4
-							throwerIP.includes('.') &&
-							ip.split('.').splice(0, 3).join('.') === // Splice off last block
-								throwerIP.split('.').splice(0, 3).join('.') // to determine if the IPs are a 3-block match
-						) {
-							matches[seat] = `${account.username} {${seat + 1}} (3-block)`;
-						} else if (
-							ip.includes(':') && // Ensure both IPs are IPv6
-							throwerIP.includes(':') &&
-							ip.split(':').splice(0, 4).join(':') === // Splice off first four blocks to check if they match
-								throwerIP.split(':').splice(0, 4).join(':') // to determine if the IPs are a 4-block match
-						) {
-							matches[seat] = `${account.username} {${seat + 1}} (4-block IPv6)`;
+				const matches: Record<string | number, any> = {};
+				Account.find({ username: { $in: otherPlayers } })
+					.then((accounts) => {
+						accounts.forEach((account) => {
+							let ip = '';
+							if (account) ip = account.lastConnectedIP || account.signupIP || ip;
+
+							const seat = seatedPlayers.findIndex((elem: any) => elem.userName === account.username);
+							if (ip === throwerIP) {
+								matches[seat] = `${account.username} {${seat + 1}}`;
+							} else if (
+								ip.includes('.') && // Ensure both IPs are IPv4
+								throwerIP.includes('.') &&
+								ip.split('.').splice(0, 3).join('.') === // Splice off last block
+									throwerIP.split('.').splice(0, 3).join('.') // to determine if the IPs are a 3-block match
+							) {
+								matches[seat] = `${account.username} {${seat + 1}} (3-block)`;
+							} else if (
+								ip.includes(':') && // Ensure both IPs are IPv6
+								throwerIP.includes(':') &&
+								ip.split(':').splice(0, 4).join(':') === // Splice off first four blocks to check if they match
+									throwerIP.split(':').splice(0, 4).join(':') // to determine if the IPs are a 4-block match
+							) {
+								matches[seat] = `${account.username} {${seat + 1}} (4-block IPv6)`;
+							}
+						});
+					})
+					.then(() => {
+						const sortedSeats = Object.keys(matches).sort();
+						if (sortedSeats.length > 0) {
+							const sortedMatches: any[] = [];
+
+							for (const seat of sortedSeats) {
+								sortedMatches.push(matches[seat]);
+							}
+
+							report.content += `\n__**Matching IPs**__: ${sortedMatches.join(', ')}`;
 						}
+						report.content += `\n**<https://secrethitler.io/game/#/table/${uid}>**`;
+						sendReport(game, report, data, type);
 					});
-				})
-				.then(() => {
-					const sortedSeats = Object.keys(matches).sort();
-					if (sortedSeats.length > 0) {
-						const sortedMatches: any[] = [];
-
-						for (const seat of sortedSeats) {
-							sortedMatches.push(matches[seat]);
-						}
-
-						report.content += `\n__**Matching IPs**__: ${sortedMatches.join(', ')}`;
-					}
-					report.content += `\n**<https://secrethitler.io/game/#/table/${uid}>**`;
-					sendReport(game, report, data, type);
-				});
-		});
+			})
+			.catch((err) => {
+				console.log(err, 'err finding user');
+			});
 	}
 
 	if (type === 'modchat' || type === 'modchatdelayed') {

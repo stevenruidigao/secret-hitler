@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import passport from 'passport';
 import fetch from 'node-fetch';
 
-import Account, { IAccount } from '@/models/account.ts';
+import Account from '@/models/account.ts';
 import EightEightCounter from '@/models/eightEightCounter.ts';
 import BannedIP from '@/models/bannedIP.ts';
 import Profile from '@/models/profile/index.ts';
@@ -68,10 +68,11 @@ const checkIP = (config: any) => {
 			email: Boolean(email),
 			unobfuscatedIP: signupIP,
 		});
-		creationDisabledSignup.save(() => {
+
+		creationDisabledSignup.save().then(() => {
 			res.status(403).json({
 				message:
-					'Creating new accounts is currently disabled.  This is likely due to limitations on our current server hardware.  If you need an exception, please contact our moderators on discord.',
+					'Creating new accounts is currently disabled. This is likely due to limitations on our current server hardware. If you need an exception, please contact our moderators on discord.',
 			});
 		});
 	} else if (torIps.includes(signupIP)) {
@@ -87,7 +88,7 @@ const checkIP = (config: any) => {
 			oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
 		});
 
-		torSignup.save(() => {
+		torSignup.save().then(() => {
 			res.status(403).json({
 				message: 'Use of TOR is not allowed on this site.',
 			});
@@ -107,7 +108,8 @@ const checkIP = (config: any) => {
 			unobfuscatedIP: signupIP,
 			oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
 		});
-		rateLimitSignup.save(() => {
+
+		rateLimitSignup.save().then(() => {
 			res.status(403).json({
 				message: 'An internal server error occurred. Please try again later.',
 			});
@@ -144,10 +146,10 @@ const checkIP = (config: any) => {
 					oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
 				});
 
-				fragSignup.save(() => {
+				fragSignup.save().then(() => {
 					res.status(401).json({
 						message:
-							'Creating new accounts is currently disabled.  This is likely due to limitations on our current server hardware.  If you need an exception, please contact our moderators on Discord.',
+							'Creating new accounts is currently disabled. This is likely due to limitations on our current server hardware. If you need an exception, please contact our moderators on Discord.',
 					});
 				});
 
@@ -159,25 +161,25 @@ const checkIP = (config: any) => {
 						if (banType == 'nocache') res.status(403).json({ message: 'The server is still getting its bearings, try again in a few moments.' });
 						else if (banType === 'small' || banType === 'big') {
 							res.status(403).json({
-								message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.',
+								message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.',
 							});
 							ipBanned = true;
 						} else if (banType === 'tiny') {
 							res.status(403).json({
-								message: `Your IP address was timed out.  If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
+								message: `Your IP address was timed out. If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
 									unbanTime,
 								)}`,
 							});
 							ipBanned = true;
 						} else if (banType == 'new') {
 							res.status(403).json({
-								message: 'You can only make accounts once per day.  If you need an exception to this rule, contact the moderators on our discord channel.',
+								message: 'You can only make accounts once per day. If you need an exception to this rule, contact the moderators on our discord channel.',
 							});
 							ipBanned = true;
 						} else {
 							console.log(`Unhandled IP ban type: ${banType}`);
 							res.status(403).json({
-								message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.',
+								message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.',
 							});
 							ipBanned = true;
 						}
@@ -256,7 +258,8 @@ const continueSignup = (config: any) => {
 			unobfuscatedIP: signupIP,
 			oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
 		});
-		vpnSignup.save(() => {
+
+		vpnSignup.save().then(() => {
 			res.status(403).json({
 				message: 'Use of a VPN is currently not allowed on this site. Contact the moderators on Discord for an exception.',
 			});
@@ -311,12 +314,8 @@ const continueSignup = (config: any) => {
 				oauthID: `${config.isOAuth && config.type === 'discord' ? accountObj.discord?.id : ''}`,
 			});
 
-			(Account as any).register(new Account(accountObj), Math.random().toString(36).substring(2), (err: Error, account: IAccount) => {
-				if (err) {
-					// console.log(err, 'err in creating oauth account', accountObj);
-					res.status(503).json({ message: 'There was an error processing your request. Please try again later.' });
-					return;
-				} else {
+			Account.register(new Account(accountObj), Math.random().toString(36).substring(2))
+				.then((account) => {
 					if (hasBypass) consumeBypass(bypassKey, username, signupIP);
 					const newPlayerBan = new BannedIP({
 						bannedDate: new Date(),
@@ -326,65 +325,75 @@ const continueSignup = (config: any) => {
 					});
 
 					passport.authenticate(type)(req, res, () => {
-						oauthSignup.save(() => {
-							newPlayerBan.save(() => {
+						oauthSignup.save().then(() => {
+							newPlayerBan.save().then(() => {
 								req.login(account, () => {
 									res.redirect('/game');
 								});
 							});
 						});
 					});
-				}
-			});
+				})
+				.catch((err) => {
+					console.log(err, 'err in creating oauth account', accountObj);
+					res.status(503).json({ message: 'There was an error processing your request. Please try again later.' });
+					return;
+				});
 		} else {
-			(Account as any).register(new Account(save), password, (err: Error) => {
-				if (err) {
+			Account.register(new Account(save), password)
+				.then(() => {
+					if (hasBypass) consumeBypass(bypassKey, username, signupIP);
+
+					if (email) {
+						setVerify({ username, email });
+					}
+
+					passport.authenticate('local')(req, res, () => {
+						const newPlayerBan = new BannedIP({
+							bannedDate: new Date(),
+							type: 'new',
+							ip: handleDefaultIPv6Range(signupIP),
+							permanent: false,
+						});
+
+						newPlayerBan.save();
+
+						if (!save.gameSettings.isPrivate) {
+							const newSignup = new Signups({
+								date: new Date(),
+								userName: username,
+								type: 'local',
+								ip: obfIP(signupIP),
+								email: Boolean(email),
+								unobfuscatedIP: signupIP,
+								oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
+							});
+
+							newSignup.save().then(() => {
+								res.send();
+							});
+						} else {
+							const privSignup = new Signups({
+								date: new Date(),
+								userName: username,
+								type: 'private',
+								ip: obfIP(signupIP),
+								email: Boolean(email),
+								unobfuscatedIP: signupIP,
+								oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
+							});
+
+							privSignup.save().then(() => {
+								res.send();
+							});
+						}
+					});
+				})
+				.catch((err) => {
 					console.log(err);
 					res.status(500).json({ message: err.toString() });
 					return;
-				}
-				if (hasBypass) consumeBypass(bypassKey, username, signupIP);
-				if (email) {
-					setVerify({ username, email });
-				}
-				passport.authenticate('local')(req, res, () => {
-					const newPlayerBan = new BannedIP({
-						bannedDate: new Date(),
-						type: 'new',
-						ip: handleDefaultIPv6Range(signupIP),
-						permanent: false,
-					});
-					newPlayerBan.save();
-					if (!save.gameSettings.isPrivate) {
-						const newSignup = new Signups({
-							date: new Date(),
-							userName: username,
-							type: 'local',
-							ip: obfIP(signupIP),
-							email: Boolean(email),
-							unobfuscatedIP: signupIP,
-							oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
-						});
-						newSignup.save(() => {
-							res.send();
-						});
-					} else {
-						const privSignup = new Signups({
-							date: new Date(),
-							userName: username,
-							type: 'private',
-							ip: obfIP(signupIP),
-							email: Boolean(email),
-							unobfuscatedIP: signupIP,
-							oauthID: `${config.isOAuth && config.type === 'discord' ? config.profile.id : ''}`,
-						});
-
-						privSignup.save(() => {
-							res.send();
-						});
-					}
 				});
-			});
 		}
 	}
 };
@@ -525,7 +534,7 @@ export const accounts = (torIpsParam: any) => {
 				date: new Date(),
 				username,
 			});
-			new88.save(() => {
+			new88.save().then(() => {
 				res.status(401).json({
 					message: 'Usernames that end with 88 are not allowed.',
 				});
@@ -535,24 +544,31 @@ export const accounts = (torIpsParam: any) => {
 			const queryObj = email
 				? { $or: [{ username: new RegExp(`\\b${username}\\b`, 'i') }, { 'verification.email': email }] }
 				: { username: new RegExp(`\\b${username}\\b`, 'i') };
-			Account.find(queryObj, (err: Error, accounts) => {
-				if (err) {
+			// Account.find(queryObj, (err: Error, accounts) => {
+			// 	if (err) {
+			// 		console.log(err);
+			// 		res.status(500).json({ message: err.toString() });
+			// 		return;
+			// 	}
+			Account.find(queryObj)
+				.then((accounts) => {
+					if (accounts.length) {
+						if (accounts.some((acc) => acc.username.toLowerCase() === username.toLowerCase())) {
+							res.status(401).json({ message: 'That account already exists.' });
+							return;
+						} else {
+							res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
+							return;
+						}
+					}
+
+					checkIP(continueSignupConfig);
+				})
+				.catch((err: Error) => {
 					console.log(err);
 					res.status(500).json({ message: err.toString() });
 					return;
-				}
-				if (accounts.length) {
-					if (accounts.some((acc) => acc.username.toLowerCase() === username.toLowerCase())) {
-						res.status(401).json({ message: 'That account already exists.' });
-						return;
-					} else {
-						res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
-						return;
-					}
-				}
-
-				checkIP(continueSignupConfig);
-			});
+				});
 		}
 	});
 
@@ -569,7 +585,7 @@ export const accounts = (torIpsParam: any) => {
 						return next();
 					} else {
 						console.log(`Unhandled IP ban type: ${banType}`);
-						res.status(403).json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on Discord.' });
+						res.status(403).json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on Discord.' });
 					}
 				} else return next();
 			});
@@ -593,12 +609,12 @@ export const accounts = (torIpsParam: any) => {
 
 					if ((req.ipBanned === 'small' || req.ipBanned === 'big') && !player?.gameSettings?.ignoreIPBans) {
 						req.logOut();
-						res.status(403).json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on Discord.' });
+						res.status(403).json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on Discord.' });
 						return next();
 					} else if (req.ipBanned === 'tiny') {
 						req.logOut();
 						res.status(403).json({
-							message: `Your IP address was timed out.  If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
+							message: `Your IP address was timed out. If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
 								req.ipBanEnd,
 							)}`,
 						});
@@ -615,7 +631,7 @@ export const accounts = (torIpsParam: any) => {
 				if (player.isBanned) {
 					req.logOut();
 					res.status(403).json({
-						message: 'Your account has been banned.  If you believe this is in error, contact the moderators on Discord.',
+						message: 'Your account has been banned. If you believe this is in error, contact the moderators on Discord.',
 						// TODO: include the reason moderators provided for the account ban, if it exists
 					});
 					return next();
@@ -633,6 +649,7 @@ export const accounts = (torIpsParam: any) => {
 
 					torSignup.save();
 					req.logOut();
+
 					res.status(403).json({
 						message: 'Use of TOR is not allowed on this site.',
 					});
@@ -664,7 +681,7 @@ export const accounts = (torIpsParam: any) => {
 				if (player.isTimeout && new Date() < player.isTimeout) {
 					req.logOut();
 					res.status(403).json({
-						message: `Your account has been timed out.  If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
+						message: `Your account has been timed out. If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
 							player.isTimeout,
 						)}`,
 						// TODO: include the reason moderators provided for the account timeout, if it exists
@@ -703,32 +720,33 @@ export const accounts = (torIpsParam: any) => {
 				message: `That doesn't look like a valid email address.`,
 			});
 		} else {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
-				if (err) {
-					return next();
-				}
+			Account.findOne({ 'verification.email': email })
+				.then((account) => {
+					if (account && process.env.NODE_ENV === 'production') {
+						res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
+					} else {
+						Account.findOne({ username })
+							.then((account) => {
+								if (!account) return;
 
-				if (account && process.env.NODE_ENV === 'production') {
-					res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
-				} else {
-					Account.findOne({ username })
-						.then((account) => {
-							if (!account) return;
+								if (!account.verification) {
+									account.verification = {};
+								}
 
-							if (!account.verification) {
-								account.verification = {};
-							}
-
-							account.verification.email = email;
-							account.save(() => {
-								setVerify({ username: req.user.username, email, res });
+								account.verification.email = email;
+								account.save(() => {
+									setVerify({ username: req.user.username, email, res });
+								});
+							})
+							.catch((err) => {
+								console.log(err, 'err in account in add email');
 							});
-						})
-						.catch((err: Error) => {
-							console.log(err, 'err in account in add email');
-						});
-				}
-			});
+					}
+				})
+				.catch((err) => {
+					console.warn(err);
+					return next();
+				});
 		}
 	});
 
@@ -745,33 +763,36 @@ export const accounts = (torIpsParam: any) => {
 				message: `That doesn't look like a valid email address.`,
 			});
 		} else {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
-				if (err) {
+			Account.findOne({ 'verification.email': email })
+				.then((account) => {
+					if (account && process.env.NODE_ENV === 'production') {
+						res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
+					} else {
+						Account.findOne({ username })
+							.then((account) => {
+								if (!account) return;
+
+								if (!account.verification) {
+									account.verification = {};
+								}
+
+								account.verification.email = email;
+								account.verified = false;
+
+								account.save(() => {
+									setVerify({ username, email, res });
+								});
+							})
+							.catch((err) => {
+								console.warn(err);
+								return next();
+							});
+					}
+				})
+				.catch((err) => {
+					console.warn(err);
 					return next();
-				}
-
-				if (account && process.env.NODE_ENV === 'production') {
-					res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
-				} else {
-					Account.findOne({ username }, (err: Error, account: IAccount) => {
-						if (err) {
-							return next();
-						}
-
-						if (!account) return;
-
-						if (!account.verification) {
-							account.verification = {};
-						}
-
-						account.verification.email = email;
-						account.verified = false;
-						(account.save as Function)(() => {
-							setVerify({ username, email, res });
-						});
-					});
-				}
-			});
+				});
 		}
 	});
 
@@ -780,17 +801,18 @@ export const accounts = (torIpsParam: any) => {
 		const { email } = verification;
 
 		if (verification && email) {
-			Account.findOne({ 'verification.email': email }, (err: Error, account: IAccount) => {
-				if (err) {
+			Account.findOne({ 'verification.email': email })
+				.then((account) => {
+					if (account && process.env.NODE_ENV === 'production') {
+						res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
+					} else {
+						setVerify({ username: req.user.username, email, res });
+					}
+				})
+				.catch((err) => {
+					console.warn(err);
 					return next();
-				}
-
-				if (account && process.env.NODE_ENV === 'production') {
-					res.status(401).json({ message: 'That email address is being used by another verified account, please change that or use another email.' });
-				} else {
-					setVerify({ username: req.user.username, email, res });
-				}
-			});
+				});
 		}
 	});
 
@@ -817,10 +839,10 @@ export const accounts = (torIpsParam: any) => {
 				else if (banType === 'small' || banType === 'big') {
 					res
 						.status(403)
-						.json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.' });
+						.json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.' });
 				} else if (banType === 'tiny') {
 					res.status(403).json({
-						message: `Your IP address was timed out.  If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
+						message: `Your IP address was timed out. If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
 							unbanTime,
 						)}`,
 					});
@@ -828,7 +850,7 @@ export const accounts = (torIpsParam: any) => {
 					console.log(`Unhandled IP ban type: ${banType}`);
 					res
 						.status(403)
-						.json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.' });
+						.json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.' });
 				}
 			} else {
 				passport.authenticate(type, (profile) => {
@@ -866,7 +888,7 @@ export const accounts = (torIpsParam: any) => {
 									if (accountCreationDisabled.status) {
 										res.status(403).json({
 											message:
-												'Creating new accounts is temporarily disabled most likely due to a spam/bot/griefing attack.  If you need an exception, please contact our moderators on discord.',
+												'Creating new accounts is temporarily disabled most likely due to a spam/bot/griefing attack. If you need an exception, please contact our moderators on discord.',
 										});
 									} else {
 										// see if there's an existing sh account with their oauth name, if so have them select a new username, if not make an account.
@@ -881,7 +903,7 @@ export const accounts = (torIpsParam: any) => {
 														date: new Date(),
 														username: profile.username, // TODO: check, used to be `username`
 													});
-													new88.save(() => {
+													new88.save().then(() => {
 														req.session.oauthProfile = profile;
 														res.redirect('/oauth-select-username');
 													});
@@ -967,22 +989,22 @@ export const accounts = (torIpsParam: any) => {
 				} else if (banType === 'small' || banType === 'big') {
 					res
 						.status(403)
-						.json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.' });
+						.json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.' });
 				} else if (banType === 'tiny') {
 					res.status(403).json({
-						message: `Your IP address was timed out.  If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
+						message: `Your IP address was timed out. If you believe this is in error, contact the moderators on Discord. Your timeout expires on ${new Date(
 							unbanTime,
 						)}`,
 					});
 				} else if (banType === 'new') {
 					res.status(403).json({
-						message: 'You can only make accounts once per day.  If you need an exception to this rule, contact the moderators on our discord channel.',
+						message: 'You can only make accounts once per day. If you need an exception to this rule, contact the moderators on our discord channel.',
 					});
 				} else {
 					console.log(`Unhandled IP ban type: ${banType}`);
 					res
 						.status(403)
-						.json({ message: 'You can no longer access this service.  If you believe this is in error, contact the moderators on our discord channel.' });
+						.json({ message: 'You can no longer access this service. If you believe this is in error, contact the moderators on our discord channel.' });
 				}
 			} else {
 				const continueSignupConfig = {

@@ -58,11 +58,19 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					}
 				} else {
 					// Try to find the IP from the account specified if possible.
-					Account.findOne({ username: data.userName }, (err: Error, account: IAccount) => {
-						if (err) console.log(err, 'err finding user');
-						else if (account) data.ip = account.lastConnectedIP || account.signupIP;
-						handleModerationAction(socket, passport, data, true, modUserNames, superModUserNames);
-					});
+					// Account.findOne({ username: data.userName }).then((err: Error, account: IAccount) => {
+					// 	if (err) console.log(err, 'err finding user');
+					// 	else if (account) data.ip = account.lastConnectedIP || account.signupIP;
+					// 	handleModerationAction(socket, passport, data, true, modUserNames, superModUserNames);
+					// });
+					Account.findOne({ username: data.userName })
+						.then((account) => {
+							if (account) data.ip = account.lastConnectedIP || account.signupIP;
+							handleModerationAction(socket, passport, data, true, modUserNames, superModUserNames);
+						})
+						.catch((err) => {
+							console.log(err, 'err finding user');
+						});
 					return;
 				}
 			}
@@ -555,7 +563,14 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						});
 
 						ipban.save().then(() => {
-							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
+							// Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
+							// 	if (users && users.length > 0) {
+							// 		users.forEach((user) => {
+							// 			banAccount(user.username);
+							// 		});
+							// 	}
+							// });
+							Account.find({ lastConnectedIP: data.ip }).then(function (users) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
 										banAccount(user.username);
@@ -767,7 +782,14 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 
 					if (isSuperMod) {
 						ipbanl.save().then(() => {
-							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
+							// Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
+							// 	if (users && users.length > 0) {
+							// 		users.forEach((user) => {
+							// 			banAccount(user.username);
+							// 		});
+							// 	}
+							// });
+							Account.find({ lastConnectedIP: data.ip }).then(function (users: IAccount[]) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
 										banAccount(user.username);

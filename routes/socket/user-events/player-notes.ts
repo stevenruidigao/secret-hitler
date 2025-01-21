@@ -12,7 +12,7 @@ export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: strin
 		if (note) {
 			note.note = data.note;
 
-			note.save(() => {
+			note.save().then(() => {
 				sendPlayerNotes(socket, { userName: data.userName, seatedPlayers: [data.notedUser] });
 			});
 		} else {
@@ -22,7 +22,7 @@ export const handleUpdatedPlayerNote = (socket: Socket, data: { notedUser: strin
 				note: data.note,
 			});
 
-			playerNote.save(() => {
+			playerNote.save().then(() => {
 				sendPlayerNotes(socket, { userName: data.userName, seatedPlayers: [data.notedUser] });
 			});
 		}

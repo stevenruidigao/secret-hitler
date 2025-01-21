@@ -102,8 +102,10 @@ export const handleHasSeenNewPlayerModal = (socket: Socket) => {
 
 	if (passport && Object.keys(passport).length) {
 		const { user } = passport;
-		Account.findOne({ username: user }).then((account: any) => {
-			account.hasNotDismissedSignupModal = false;
+		Account.findOne({ username: user }).then((account) => {
+			if (!account) return;
+
+			account.dismissedSignupModal = true;
 			socket.emit('checkRestrictions');
 			account.save();
 		});

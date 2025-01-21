@@ -187,7 +187,7 @@ const gatherStaffUsernames = () => {
 			editorUserNames = accounts.filter((account) => account.staffRole === 'editor').map((account) => account.username);
 			adminUserNames = accounts.filter((account) => account.staffRole === 'admin').map((account) => account.username);
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err, 'err in finding staffroles');
 		});
 };

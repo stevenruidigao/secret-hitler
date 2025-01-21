@@ -44,16 +44,17 @@ export const verifyRoutes = () => {
 						}
 
 						account.verified = true;
-						(account as any).save(() => {
+
+						account.save(() => {
 							res.redirect('/account');
 						});
 					})
-					.catch((err: Error) => {
+					.catch((err) => {
 						console.log(err, 'error in account in verify');
 						return next();
 					});
 			})
-			.catch((err: Error) => {
+			.catch((err) => {
 				console.log(err, 'err in verify get');
 				return next();
 			});
@@ -63,14 +64,14 @@ export const verifyRoutes = () => {
 		const { username, token } = req.params;
 
 		ResetPassword.findOne({ username, token, expirationDate: { $gte: now } })
-			.then((reset: any) => {
+			.then((reset) => {
 				if (!reset) {
 					return next();
 				}
 
 				res.render('page-resetpassword', {});
 			})
-			.catch((err: Error) => {
+			.catch((err) => {
 				console.log(err, 'err in reset password get');
 				return next();
 			});
@@ -93,7 +94,7 @@ export const verifyRoutes = () => {
 		}
 
 		ResetPassword.findOneAndDelete({ username, token: tok, expirationDate: { $gte: now } })
-			.then((reset: any) => {
+			.then((reset) => {
 				if (!reset) {
 					res.status(400).send();
 				} else {
@@ -111,12 +112,12 @@ export const verifyRoutes = () => {
 								});
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'err in reset password find');
 						});
 				}
 			})
-			.catch((err: Error) => {
+			.catch((err) => {
 				console.log(err, 'err in reset password post');
 			});
 	});

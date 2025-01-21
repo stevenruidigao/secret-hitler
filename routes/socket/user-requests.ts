@@ -127,7 +127,7 @@ export const getModInfo = (games: Record<any, any>, users: any[], socket: Socket
 				showActions: !isTrial && isAEM,
 			});
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err, 'err in finding mod actions');
 		});
 };
@@ -140,7 +140,7 @@ export const sendSignups = (socket: Socket, types = ['local', 'discord', 'github
 		.then((signups) => {
 			socket.emit('signupsInfo', signups);
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err, 'err in finding signups');
 		});
 };
@@ -167,7 +167,7 @@ export const sendModInfo = (games: Record<any, ActiveGame>, socket: Socket, coun
 		.then((users) => {
 			getModInfo(games, users, socket, {}, count, isTrial, isAEM);
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err, 'err in sending mod info');
 		});
 };
@@ -247,7 +247,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 				lastSeen: account?.lastVersionSeen || 'none',
 			});
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err);
 		});
 };
@@ -263,7 +263,7 @@ export const sendPlayerNotes = (socket: Socket, data: any) => {
 				socket.emit('notesUpdate', notes);
 			}
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err, 'err in getting playernotes');
 		});
 };
@@ -280,7 +280,7 @@ export const sendReplayGameData = (socket: Socket, uid: string) => {
 				socket.emit('replayGameData', game);
 			}
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			if (err) {
 				console.log(err, 'game err retrieving for replay');
 			}
@@ -385,7 +385,7 @@ export const sendGameInfo = (socket: Socket, uid: string) => {
 			.then((game) => {
 				socket.emit('manualReplayRequest', game ? game.uid : '');
 			})
-			.catch((err: Error) => {
+			.catch((err) => {
 				if (err) {
 					console.log(err, 'game err retrieving for replay');
 				}

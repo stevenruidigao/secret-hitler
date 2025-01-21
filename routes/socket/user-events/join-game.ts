@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io';
 
 import Account from '@/models/account.ts';
+
 import type { ActiveGame, Player } from '@/shared/game.d.ts';
 import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 import { userInBlacklist } from '@/utils/index.ts';

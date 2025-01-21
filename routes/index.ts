@@ -3,7 +3,7 @@ import passport from 'passport'; // eslint-disable-line no-unused-vars
 import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 
-import Account, { IAccount, IGameSettings } from '@/models/account.ts'; // eslint-disable-line no-unused-vars
+import Account, { IGameSettings } from '@/models/account.ts'; // eslint-disable-line no-unused-vars
 import GameSummary from '@/models/game-summary/index.ts';
 import Game from '@/models/game.ts';
 import ModThread from '@/models/modThread.ts';
@@ -464,14 +464,14 @@ export default () => {
 		GameSummary.findById(id)
 			.lean()
 			.exec()
-			.then((gs: any) => {
+			.then((gs) => {
 				if (!gs) {
 					res.status(404).send('Game summary not found');
 				} else {
 					res.json(gs);
 				}
 			})
-			.catch((err: Error) => console.debug(err)); // TODO: is this an error? used to be `.catch((err: Error) => debug(err));`
+			.catch((err) => console.debug(err)); // TODO: is this an error? used to be `.catch((err: Error) => debug(err));`
 	});
 
 	app.get('/modThread', (req: any, res) => {
@@ -493,22 +493,24 @@ export default () => {
 				ModThread.findById(id)
 					.lean()
 					.exec()
-					.then((dm: any) => {
+					.then((dm) => {
 						if (!dm) {
 							res.status(404).send('Mod thread not found');
 						} else {
 							const chatLog: string[] = [];
 
-							for (const message of dm.messages) {
-								chatLog.push(
-									`${message.userName}${message.userName ? (message.type === 'leave' || message.type === 'join' ? ' ' : ': ') : ''}${mangle(message.chat)}`,
-								);
+							if (dm.messages) {
+								for (const message of dm.messages as any[]) {
+									chatLog.push(
+										`${message.userName}${message.userName ? (message.type === 'leave' || message.type === 'join' ? ' ' : ': ') : ''}${mangle(message.chat)}`,
+									);
+								}
 							}
 
 							res.send(chatLog.join('<br>'));
 						}
 					})
-					.catch((err: Error) => console.debug(err));
+					.catch((err) => console.debug(err));
 			} else {
 				res.status(401).send('You cannot access this resource. Ensure you are logged in.');
 			}
@@ -540,7 +542,7 @@ export default () => {
 							res.send(game);
 						}
 					})
-					.catch((err: Error) => console.debug(err));
+					.catch((err) => console.debug(err));
 			} else {
 				res.status(401).send('You cannot access this resource. Ensure you are logged in.');
 			}
@@ -554,7 +556,7 @@ export default () => {
 	});
 
 	app.get('/viewPatchNotes', ensureAuthenticated, (req: any, res) => {
-		Account.updateOne({ username: req.user.username }, { lastVersionSeen: version.number }, null).catch((err: any) => {
+		Account.updateOne({ username: req.user.username }, { lastVersionSeen: version.number }, null).catch((err) => {
 			res.sendStatus(err ? 404 : 202);
 		});
 	});
@@ -594,7 +596,7 @@ export default () => {
 							message: 'You can only change your cardback once every 30 seconds.',
 						});
 					} else {
-						processImage(username, raw, (resp: any, err: Error) => {
+						processImage(username, raw, (resp, err) => {
 							res.json({ message: (err ? err.message : '') || resp });
 						});
 					}

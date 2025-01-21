@@ -2,7 +2,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 
 import Account from '@/models/account.ts';
-import BannedIP, { IBannedIP } from '@/models/bannedIP.ts';
+import BannedIP from '@/models/bannedIP.ts';
 import ModAction from '@/models/modAction.ts';
 
 import type { ActiveGame } from '@/shared/game.d.ts';
@@ -379,7 +379,7 @@ export const testIP = (IP: any, callback: any) => {
 	else if (ipbansNotEnforced.status) callback(null);
 	else {
 		BannedIP.find({})
-			.then((allIPs: IBannedIP[]) => {
+			.then((allIPs) => {
 				const ips: any[] = [];
 
 				for (const potentialMatch of allIPs) {
