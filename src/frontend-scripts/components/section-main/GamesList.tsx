@@ -60,6 +60,7 @@ export class GamesList extends React.Component {
 		}
 	};
 
+	// TODO: redo this as a map
 	renderFilters() {
 		const { gameFilter, notify } = this.props;
 

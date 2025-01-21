@@ -13,7 +13,7 @@ import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/consta
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
-import PreviousSeasonAward from '../reusable/Awards.tsx';
+import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 

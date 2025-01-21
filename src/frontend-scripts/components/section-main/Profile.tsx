@@ -15,6 +15,7 @@ import { fetchReplay } from '../../actions/actions.ts';
 import Table from '../reusable/Table.tsx';
 import CollapsibleSegment from '../reusable/CollapsibleSegment.tsx';
 import UserPopup from '../reusable/UserPopup.tsx';
+import UserStatus from '../reusable/UserStatus.tsx';
 
 const mapStateToProps = ({ profile }: any) => ({ profile });
 const mapDispatchToProps = (dispatch: (data: any) => any) => ({
@@ -510,10 +511,10 @@ class ProfileWrapper extends React.Component {
 			prefix = staffRolePrefixes[userAdminRole];
 		}
 
-		const routeToGame = (gameId: string) => {
-			// window.location = `#/table/${gameId}`;
-			window.location.href = `#/table/${gameId}`; // TODO: old: above; same?
-		};
+		// const routeToGame = (gameId: string) => {
+		// 	// window.location = `#/table/${gameId}`;
+		// 	window.location.href = `#/table/${gameId}`; // TODO: old: above; same?
+		// };
 
 		const fetchReplay = (gameId: string) => {
 			// window.location = `#/replay/${gameId}`;
@@ -522,40 +523,7 @@ class ProfileWrapper extends React.Component {
 
 		// TODO: partially duplicated in PlayerList.tsx
 		const renderStatus = () => {
-			const status = user ? user.status : null;
-
-			if (!status || status.type === 'none') {
-				return null;
-			} else {
-				const iconClasses = cn(
-					'status',
-					{ clickable: true },
-					{ search: status.type === 'observing' },
-					{ fav: status.type === 'playing' },
-					{ rainbow: status.type === 'rainbow' },
-					{ record: status.type === 'replay' },
-					{ private: status.type === 'private' },
-					'icon',
-				);
-
-				const title: any = {
-					playing: 'This player is playing in a standard game.',
-					observing: 'This player is observing a game.',
-					rainbow: 'This player is playing in a experienced-player-only game.',
-					replay: 'This player is watching a replay.',
-					private: 'This player is playing in a private game.',
-				};
-
-				const onClick: any = {
-					playing: routeToGame,
-					observing: routeToGame,
-					rainbow: routeToGame,
-					replay: fetchReplay,
-					private: routeToGame,
-				};
-
-				return <i title={title[status.type]} className={iconClasses} onClick={onClick[status.type].bind(this, status.gameId)} />;
-			}
+			return <UserStatus user={user} fetchReplay={fetchReplay} />;
 		};
 
 		const handleSearchProfileChange = (e: any) => {

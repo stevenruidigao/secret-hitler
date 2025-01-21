@@ -94,6 +94,8 @@ export type ActiveGame = {
 		remakeCount?: number;
 		modDeleteDelay?: number;
 		privateAnonymousRemakes: any;
+		date?: any;
+		isRainbow?: any;
 	};
 	private: Partial<{
 		lock: any;
@@ -149,6 +151,8 @@ export type ActiveGame = {
 			liberal: number;
 			fascist: number;
 		};
+		isHidden?: boolean;
+		isBlurred?: boolean;
 	};
 	publicPlayersState: PublicPlayer[];
 	playersState: Player[];

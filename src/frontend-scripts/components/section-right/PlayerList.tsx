@@ -1,7 +1,6 @@
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import $ from 'jquery';
-import cn from 'classnames';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import Modal from 'semantic-ui-modal';
@@ -11,8 +10,9 @@ import { getNumberWithOrdinal, PLAYER_COLORS } from '@/shared/constants.ts';
 import { userInBlacklist } from '@/utils/index.ts';
 
 import { fetchProfile } from '../../actions/actions.ts';
-import PreviousSeasonAward from '../reusable/Awards.tsx';
+import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
 import UserPopup from '../reusable/UserPopup.tsx';
+import UserStatus from '../reusable/UserStatus.tsx';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
@@ -52,10 +52,10 @@ class PlayerList extends React.Component {
 		$('.playerlistinfo').modal('setting', 'transition', 'scale').modal('show');
 	};
 
-	routeToGame(gameId: string) {
-		// window.location = `#/table/${gameId}`;
-		window.location.href = `#/table/${gameId}`; // TODO: check; old above
-	}
+	// routeToGame(gameId: string) {
+	// 	// window.location = `#/table/${gameId}`;
+	// 	window.location.href = `#/table/${gameId}`; // TODO: check; old above
+	// }
 
 	alphabetical(sort?: any) {
 		return (a: any, b: any) => (a.userName.toLowerCase() > b.userName.toLowerCase() ? 1 : -1);
@@ -256,62 +256,29 @@ class PlayerList extends React.Component {
 				const percent = ((user[period][winType] / (user[period][winType] + user[period][lossType])) * 100).toFixed(0);
 				const percentDisplay = user[period][winType] + user[period][lossType] > 9 ? `${percent}%` : '';
 
-				const disableIfUnclickable = (f: any) => {
-					if (this.props.isUserClickable) {
-						return f;
-					}
+				// const disableIfUnclickable = (f: any) => {
+				// 	if (this.props.isUserClickable) {
+				// 		return f;
+				// 	}
 
-					return () => null;
-				};
+				// 	return () => null;
+				// };
 
 				const userClasses =
 					(gameSettings && gameSettings.disableSeasonal ? user.isRainbowOverall : user.isRainbowSeason) ||
 					Boolean(user.staffRole && user.staffRole.length) ||
 					user.isContributor
-						? cn(
+						? classnames(
 								PLAYER_COLORS(user, !(gameSettings && gameSettings.disableSeasonal), 'username', gameSettings && gameSettings.disableElo),
 								{ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) },
 								{ unclickable: !this.props.isUserClickable },
 								{ clickable: this.props.isUserClickable },
 							)
-						: cn({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
+						: classnames({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
 
 				// TODO: partially duplicated in Profile.tsx
 				const renderStatus = () => {
-					const status = user.status;
-
-					if (!status || status.type === 'none') {
-						return <i className={'status unclickable icon'} />;
-					} else {
-						const iconClasses = classnames(
-							'status',
-							{ unclickable: !this.props.isUserClickable },
-							{ clickable: this.props.isUserClickable },
-							{ search: status.type === 'observing' },
-							{ fav: status.type === 'playing' },
-							{ rainbow: status.type === 'rainbow' },
-							{ record: status.type === 'replay' },
-							{ private: status.type === 'private' },
-							'icon',
-						);
-						const title: any = {
-							playing: 'This player is playing in a standard game.',
-							observing: 'This player is observing a game.',
-							rainbow: 'This player is playing in a experienced-player-only game.',
-							replay: 'This player is watching a replay.',
-							private: 'This player is playing in a private game.',
-						};
-
-						const onClick: any = {
-							playing: this.routeToGame,
-							observing: this.routeToGame,
-							rainbow: this.routeToGame,
-							replay: this.props.fetchReplay,
-							private: this.routeToGame,
-						};
-
-						return <i title={title[status.type]} className={iconClasses} onClick={disableIfUnclickable(onClick[status.type]).bind(this, status.gameId)} />;
-					}
+					return <UserStatus user={user} fetchReplay={this.props.fetchReplay} isUserClickable={this.props.isUserClickable} />;
 				};
 
 				// const renderCrowns = () =>
@@ -489,63 +456,29 @@ class PlayerList extends React.Component {
 				const percent = ((user[period][winType] / (user[period][winType] + user[period][lossType])) * 100).toFixed(0);
 				const percentDisplay = user[period][winType] + user[period][lossType] > 9 ? `${percent}%` : '';
 
-				const disableIfUnclickable = (f: any) => {
-					if (this.props.isUserClickable) {
-						return f;
-					}
+				// const disableIfUnclickable = (f: any) => {
+				// 	if (this.props.isUserClickable) {
+				// 		return f;
+				// 	}
 
-					return () => null;
-				};
+				// 	return () => null;
+				// };
 
 				const userClasses =
 					(gameSettings && gameSettings.disableSeasonal ? user.isRainbowOverall : user.isRainbowSeason) ||
 					Boolean(user.staffRole && user.staffRole.length) ||
 					user.isContributor
-						? cn(
+						? classnames(
 								PLAYER_COLORS(user, !(gameSettings && gameSettings.disableSeasonal), 'username', gameSettings && gameSettings.disableElo),
 								{ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) },
 								{ unclickable: !this.props.isUserClickable },
 								{ clickable: this.props.isUserClickable },
 							)
-						: cn({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
+						: classnames({ blacklisted: gameSettings && userInBlacklist(user.userName, gameSettings.blacklist) }, 'username');
 
-				// TODO: duplicated in Profile.tsx
+				// TODO: partially duplicated in Profile.tsx
 				const renderStatus = () => {
-					const status = user.status;
-
-					if (!status || status.type === 'none') {
-						return null;
-					} else {
-						const iconClasses = classnames(
-							'status',
-							{ unclickable: !this.props.isUserClickable },
-							{ clickable: this.props.isUserClickable },
-							{ search: status.type === 'observing' },
-							{ fav: status.type === 'playing' },
-							{ rainbow: status.type === 'rainbow' },
-							{ record: status.type === 'replay' },
-							{ private: status.type === 'private' },
-							'icon',
-						);
-
-						const title: any = {
-							playing: 'This player is playing in a standard game.',
-							observing: 'This player is observing a game.',
-							rainbow: 'This player is playing in a experienced-player-only game.',
-							replay: 'This player is watching a replay.',
-							private: 'This player is playing in a private game.',
-						};
-
-						const onClick: any = {
-							playing: this.routeToGame,
-							observing: this.routeToGame,
-							rainbow: this.routeToGame,
-							replay: this.props.fetchReplay,
-							private: this.routeToGame,
-						};
-
-						return <i title={title[status.type]} className={iconClasses} onClick={disableIfUnclickable(onClick[status.type]).bind(this, status.gameId)} />;
-					}
+					return <UserStatus user={user} fetchReplay={this.props.fetchReplay} isUserClickable={this.props.isUserClickable} />;
 				};
 
 				// const renderCrowns = () =>

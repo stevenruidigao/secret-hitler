@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
 
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
-import PreviousSeasonAward from '../reusable/Awards.tsx';
+import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 

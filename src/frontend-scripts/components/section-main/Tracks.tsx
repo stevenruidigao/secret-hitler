@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Popup } from 'semantic-ui-react';
 import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
+import { Socket } from 'socket.io-client';
+import { Popup } from 'semantic-ui-react';
+
+import type { ActiveGame } from '@/shared/game.d.ts';
 
 import playSound from '../reusable/playSound.ts';
 
@@ -13,7 +16,12 @@ class Tracks extends React.Component {
 	static defaultProps: any;
 	static propTypes: any;
 
-	props: any;
+	props: {
+		socket: Socket;
+		gameInfo: ActiveGame;
+		userInfo: any;
+	};
+
 	state: any;
 
 	intervalId: any;
@@ -21,6 +29,9 @@ class Tracks extends React.Component {
 
 	constructor(props: any) {
 		super(props);
+
+		this.props = props;
+
 		this.state = {
 			remakeStatus: false,
 			minutes: 0,
@@ -122,7 +133,7 @@ class Tracks extends React.Component {
 		}
 	}
 
-	optionIcons(gameInfo: any) {
+	optionIcons(gameInfo: ActiveGame) {
 		const game = gameInfo.general;
 
 		let rebalance69p;
@@ -306,6 +317,7 @@ class Tracks extends React.Component {
 			unlistedGameTooltip = 'Unlisted Game - Not Visible in Game List';
 		}
 
+		// TODO: redo this as a map
 		return (
 			<div className="options-icons-container">
 				{gameInfo.customGameSettings && gameInfo.customGameSettings.enabled && (
@@ -472,11 +484,11 @@ class Tracks extends React.Component {
 					hitKnowsFas = gameInfo.customGameSettings.hitKnowsFas;
 				} else {
 					// Should only happen before a game starts, but as a precaution typical settings are used.
-					if (gameInfo.general.playerCount < 7) {
+					if (gameInfo.general.playerCount && gameInfo.general.playerCount < 7) {
 						powers = ['None', 'None', 'Peek', 'Gun', 'Gun'];
 						numFas = 1;
 						hitKnowsFas = true;
-					} else if (gameInfo.general.playerCount < 9) {
+					} else if (gameInfo.general.playerCount && gameInfo.general.playerCount < 9) {
 						powers = ['None', 'Inv', 'Elect', 'Gun', 'Gun'];
 						numFas = 2;
 					} else {
@@ -648,9 +660,9 @@ class Tracks extends React.Component {
 						className={(() => {
 							let classes = 'track bottom-track-back';
 
-							if (gameInfo.general.playerCount < 7) {
+							if (gameInfo.general.playerCount && gameInfo.general.playerCount < 7) {
 								classes += ' track0';
-							} else if (gameInfo.general.playerCount < 9) {
+							} else if (gameInfo.general.playerCount && gameInfo.general.playerCount < 9) {
 								classes += ' track1';
 							} else {
 								classes += ' track2';

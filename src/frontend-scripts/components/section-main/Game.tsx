@@ -1,5 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 
+import type { ActiveGame } from '@/shared/game.d.ts';
 import playSound from '../reusable/playSound.ts';
 
 import Tracks from './Tracks.tsx';
@@ -8,12 +11,24 @@ import Players from './Players.tsx';
 import Confetti from './Confetti.tsx';
 import Balloons from './Balloons.tsx';
 import Flappy from './Flappy.tsx';
-import PropTypes from 'prop-types';
 
 export default class Game extends React.Component {
 	static defaultProps: any;
 	static propTypes: any;
-	props: any;
+
+	props: {
+		allEmotes: any;
+		gameInfo: ActiveGame;
+		onClickedTakeSeat: any;
+		userInfo: any;
+		userList: any;
+		socket: Socket;
+	};
+
+	constructor(props: any) {
+		super(props);
+		this.props = props;
+	}
 
 	componentDidUpdate(prevProps: any) {
 		const { userInfo, gameInfo } = this.props;
@@ -142,8 +157,8 @@ export default class Game extends React.Component {
 						!userInfo.gameSettings.disableConfetti &&
 						gameInfo &&
 						gameInfo.publicPlayersState &&
-						gameInfo.publicPlayersState.find((player: any) => player.userName === userInfo.userName) &&
-						gameInfo.publicPlayersState.find((player: any) => player.userName === userInfo.userName).isConfetti
+						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName) &&
+						gameInfo.publicPlayersState.find((player) => player.userName === userInfo.userName)?.isConfetti
 					) {
 						return balloons ? <Balloons /> : <Confetti />;
 					}
