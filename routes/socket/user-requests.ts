@@ -207,12 +207,18 @@ export const sendUserGameSettings = (socket: Socket) => {
 					customCardback: account.gameSettings?.customCardback,
 					previousSeasonAward: account.gameSettings?.previousSeasonAward,
 					specialTournamentStatus: account.gameSettings?.specialTournamentStatus,
-					overall: {
-						...account.overall,
-						elo: Math.floor(account.overall?.elo || 1600),
-					},
+					overall: account.overall
+						? (account.overall as any).toObject()
+						: {
+								wins: 0,
+								losses: 0,
+								rainbowWins: 0,
+								rainbowLosses: 0,
+								elo: 1600,
+								xp: 0,
+							},
 					season: account.seasons
-						? account.seasons.get(CURRENT_SEASON_NUMBER.toString())
+						? (account.seasons.get(CURRENT_SEASON_NUMBER.toString()) as any).toObject()
 						: {
 								wins: 0,
 								losses: 0,
@@ -227,6 +233,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 					},
 				};
 
+				userListInfo.overall.elo = Math.floor(userListInfo.overall.elo);
 				userListInfo.season.elo = Math.floor(userListInfo.season.elo);
 
 				userList.push(userListInfo);

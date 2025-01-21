@@ -297,8 +297,8 @@ export default () => {
 				return;
 			}
 
-			getProfile(username).then((profile: any) => {
-				let _profile;
+			getProfile(username).then((profile) => {
+				let _profile: any;
 
 				if (profile) {
 					_profile = profile.toObject();
@@ -363,8 +363,6 @@ export default () => {
 						? (account.pastElo as any).toObject()
 						: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
 
-				_profile.overall = account.overall;
-
 				const defaultSeason = {
 					wins: 0,
 					losses: 0,
@@ -374,7 +372,13 @@ export default () => {
 					xp: 0,
 				};
 
+				_profile.overall = account.overall || defaultSeason;
 				_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) || defaultSeason : defaultSeason;
+
+				_profile.overall.xp = Math.floor(_profile.overall.xp);
+				_profile.overall.elo = Math.floor(_profile.overall.elo);
+				_profile.season.xp = Math.floor(_profile.season.xp);
+				_profile.season.elo = Math.floor(_profile.season.elo);
 
 				if (account.staffRole) {
 					if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo) {
