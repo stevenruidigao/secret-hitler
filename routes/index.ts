@@ -145,89 +145,95 @@ export default () => {
 			}
 
 			Profile.findOne({ _id: username })
-				.then((profile: any) => {
+				.then((profile) => {
 					if (profile) {
 						profile.lastConnectedIP = ip; // why?
 						profile.save();
 					}
 				})
-				.catch((err: Error) => {
+				.catch((err) => {
 					console.log(err, 'profile find err');
 				});
 
-			Account.findOne({ username }, (err: Error, account: IAccount) => {
-				if (err) {
-					console.log(err);
-					return;
-				}
-
-				checkBadgesAccount(account);
-
-				let blacklist: string[] = [];
-				let gameSettingsWithoutBlacklist: IGameSettings | unknown = {};
-
-				if (account.gameSettings) {
-					blacklist = account.gameSettings.blacklist || blacklist;
-					const gameSettings = (account.gameSettings.toObject as Function)();
-
-					if (gameSettings.blacklist) {
-						delete gameSettings.blacklist;
+			Account.findOne({ username })
+				.then((account) => {
+					if (!account) {
+						res.redirect('/observe/'); // TODO: is this correct?
+						return;
 					}
 
-					gameSettingsWithoutBlacklist = gameSettings;
-				}
+					checkBadgesAccount(account);
 
-				const backgroundColor = account?.theme?.backgroundColor || DEFAULT_THEME_COLORS.baseBackgroundColor;
-				const textColor = account?.theme?.textColor || DEFAULT_THEME_COLORS.baseTextColor;
-				const [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
-				const [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
+					let blacklist: string[] = [];
+					let gameSettingsWithoutBlacklist: IGameSettings | unknown = {};
 
-				const gameObj: Record<string, any> = {
-					game: true,
-					staffRole: account.staffRole || '',
-					isContributor: account.isContributor || false,
-					isTournamentMod: account.isTournamentMod || false,
-					verified: req.user.verified,
-					dismissedSignupModal: account.dismissedSignupModal,
-					username,
-					gameSettings: gameSettingsWithoutBlacklist,
-					blacklist,
-					primaryColor: account?.theme?.primaryColor || DEFAULT_THEME_COLORS.primaryColor,
-					secondaryColor: account?.theme?.secondaryColor || DEFAULT_THEME_COLORS.secondaryColor,
-					tertiaryColor: account?.theme?.tertiaryColor || DEFAULT_THEME_COLORS.tertiaryColor,
-					backgroundColor,
-					secondaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
-						backgroundLightness > 50 ? backgroundLightness - 7 : backgroundLightness + 7
-					}%)`,
-					tertiaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
-						backgroundLightness > 50 ? backgroundLightness - 14 : backgroundLightness + 14
-					}%)`,
-					textColor,
-					secondaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 7 : textLightness + 7}%)`,
-					tertiaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 14 : textLightness + 14}%)`,
-				};
+					if (account.gameSettings) {
+						blacklist = account.gameSettings.blacklist || blacklist;
+						const gameSettings = (account.gameSettings.toObject as Function)();
 
-				if (process.env.NODE_ENV === 'production') {
-					gameObj.prodCacheBustToken = prodCacheBustToken;
-				}
+						if (gameSettings.blacklist) {
+							delete gameSettings.blacklist;
+						}
 
-				account.lastConnectedIP = ip;
-				account.lastConnected = new Date();
+						gameSettingsWithoutBlacklist = gameSettings;
+					}
 
-				if (
-					(account.ipHistory && account.ipHistory.length === 0) ||
-					(account.ipHistory && account.ipHistory.length > 0 && account.ipHistory[account.ipHistory.length - 1].ip !== ip)
-				) {
-					account.ipHistory.push({
-						date: new Date(),
-						ip: ip,
+					const backgroundColor = account?.theme?.backgroundColor || DEFAULT_THEME_COLORS.baseBackgroundColor;
+					const textColor = account?.theme?.textColor || DEFAULT_THEME_COLORS.baseTextColor;
+					const [backgroundHue, backgroundSaturation, backgroundLightness] = getHSLcolors(backgroundColor);
+					const [textHue, textSaturation, textLightness] = getHSLcolors(textColor);
+
+					const gameObj: Record<string, any> = {
+						game: true,
+						staffRole: account.staffRole || '',
+						isContributor: account.isContributor || false,
+						isTournamentMod: account.isTournamentMod || false,
+						verified: req.user.verified,
+						dismissedSignupModal: account.dismissedSignupModal,
+						username,
+						gameSettings: gameSettingsWithoutBlacklist,
+						blacklist,
+						primaryColor: account?.theme?.primaryColor || DEFAULT_THEME_COLORS.primaryColor,
+						secondaryColor: account?.theme?.secondaryColor || DEFAULT_THEME_COLORS.secondaryColor,
+						tertiaryColor: account?.theme?.tertiaryColor || DEFAULT_THEME_COLORS.tertiaryColor,
+						backgroundColor,
+						secondaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
+							backgroundLightness > 50 ? backgroundLightness - 7 : backgroundLightness + 7
+						}%)`,
+						tertiaryBackgroundColor: `hsl(${backgroundHue}, ${backgroundSaturation}%, ${
+							backgroundLightness > 50 ? backgroundLightness - 14 : backgroundLightness + 14
+						}%)`,
+						textColor,
+						secondaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 7 : textLightness + 7}%)`,
+						tertiaryTextColor: `hsl(${textHue}, ${textSaturation}%, ${textLightness > 50 ? textLightness - 14 : textLightness + 14}%)`,
+					};
+
+					if (process.env.NODE_ENV === 'production') {
+						gameObj.prodCacheBustToken = prodCacheBustToken;
+					}
+
+					account.lastConnectedIP = ip;
+					account.lastConnected = new Date();
+
+					if (
+						(account.ipHistory && account.ipHistory.length === 0) ||
+						(account.ipHistory && account.ipHistory.length > 0 && account.ipHistory[account.ipHistory.length - 1].ip !== ip)
+					) {
+						account.ipHistory.push({
+							date: new Date(),
+							ip: ip,
+						});
+					}
+
+					account.save().then(() => {
+						res.render('game', gameObj);
 					});
-				}
-
-				(account.save as Function)(() => {
-					res.render('game', gameObj);
+				})
+				.catch((err) => {
+					{
+						console.log(err);
+					}
 				});
-			});
 		}
 	});
 
@@ -287,169 +293,169 @@ export default () => {
 		const authedUser = req.session && req.session.passport && req.session.passport.user;
 		const username = req.query.username;
 
-		Account.findOne({ username }, (err: any, account: IAccount) => {
-			if (err) {
-				return new Error(err);
-			}
-
-			if (!account) {
-				res.status(404).send('Profile not found');
-				return;
-			}
-
-			getProfile(username).then((profile) => {
-				let _profile: any;
-
-				if (profile) {
-					_profile = profile.toObject();
-				} else {
-					const noData = {
-						events: 0,
-						successes: 0,
-					};
-
-					const noTeamData = {
-						fascist: noData,
-						liberal: noData,
-					};
-
-					const noPlayerNumberData = {
-						5: noTeamData,
-						6: noTeamData,
-						7: noTeamData,
-						8: noTeamData,
-						9: noTeamData,
-						10: noTeamData,
-						fascist: noData,
-						liberal: noData,
-					};
-
-					_profile = {
-						_id: username,
-						recentGames: [],
-						stats: {
-							actions: {
-								legacyShotAccuracy: noData,
-								legacyVoteAccuracy: noData,
-								shotAccuracy: noData,
-								voteAccuracy: noData,
-							},
-							matches: {
-								allMatches: noData,
-								casualMatches: noTeamData,
-								emoteMatches: noTeamData,
-								fascist: noData,
-								greyMatches: noPlayerNumberData,
-								legacyMatches: noData,
-								liberal: noData,
-								practiceMatches: noTeamData,
-								rainbowMatches: noPlayerNumberData,
-								silentMatches: noTeamData,
-							},
-						},
-					};
+		Account.findOne({ username })
+			.then((account) => {
+				if (!account) {
+					res.status(404).send('Profile not found');
+					return;
 				}
 
-				_profile.created = dayjs(account.created).format('MM/DD/YYYY');
-				_profile.customCardback = account?.gameSettings?.customCardback;
-				_profile.bio = account.bio;
-				_profile.lastConnected = account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
-				_profile.badges = account.badges || [];
-				_profile.eloPercentile = Object.keys(account?.eloPercentile || {}).length ? account.eloPercentile : undefined;
-				_profile.maxElo = account?.gameSettings?.staff?.disableVisibleElo ? undefined : Math.round(account?.maxElo || 1600);
-				_profile.pastElo = account?.gameSettings?.staff?.disableVisibleElo
-					? undefined
-					: (account.pastElo as any).toObject().length
-						? (account.pastElo as any).toObject()
-						: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
+				getProfile(username).then((profile) => {
+					let _profile: any;
 
-				const defaultSeason = {
-					wins: 0,
-					losses: 0,
-					rainbowWins: 0,
-					rainbowLosses: 0,
-					elo: 1600,
-					xp: 0,
-				};
-
-				_profile.overall = account.overall || defaultSeason;
-				_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) || defaultSeason : defaultSeason;
-
-				_profile.overall.xp = Math.floor(_profile.overall.xp);
-				_profile.overall.elo = Math.floor(_profile.overall.elo);
-				_profile.season.xp = Math.floor(_profile.season.xp);
-				_profile.season.elo = Math.floor(_profile.season.elo);
-
-				if (account.staffRole) {
-					if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo) {
-						delete _profile.overall.elo;
-						delete _profile.season.elo;
-					}
-
-					if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP) {
-						delete _profile.overall.xp;
-						delete _profile.season.xp;
-					}
-				}
-
-				_profile.isRainbowOverall = account.isRainbowOverall;
-				_profile.isRainbowSeason = account.isRainbowSeason;
-				_profile.staffRole = account.staffRole;
-				_profile.staff = {};
-				_profile.staff.disableVisibleXP = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP;
-				_profile.staff.disableVisibleElo = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo;
-				_profile.playerPronouns = account?.gameSettings?.playerPronouns || '';
-
-				Account.findOne({ username: authedUser }).then((acc) => {
-					if (acc && account.username === acc.username) {
-						if (!acc.gameSettings) {
-							acc.gameSettings = {};
-						}
-
-						acc.gameSettings.hasUnseenBadge = false;
-						acc.save();
-					}
-
-					if (
-						acc &&
-						acc.staffRole &&
-						(acc.staffRole === 'trialmod' || acc.staffRole === 'moderator' || acc.staffRole === 'editor' || acc.staffRole === 'admin')
-					) {
-						try {
-							_profile.lastConnectedIP = '-' + obfIP(account.lastConnectedIP);
-						} catch (e) {
-							_profile.lastConnectedIP = "Couldn't find IP";
-							console.log(e);
-						}
-
-						try {
-							_profile.signupIP = '-' + obfIP(account.signupIP);
-						} catch (e) {
-							_profile.signupIP = "Couldn't find IP";
-							console.log(e);
-						}
-
-						_profile.lastConnected = dayjs(account.lastConnected).format('MM/DD/YYYY h:mm');
-						_profile.created = dayjs(account.created).format('MM/DD/YYYY h:mm');
-
-						if (acc.staffRole !== 'trialmod') {
-							_profile.blacklist = account?.gameSettings?.blacklist;
-						}
+					if (profile) {
+						_profile = profile.toObject();
 					} else {
-						_profile.lastConnectedIP = undefined;
-						_profile.signupIP = undefined;
+						const noData = {
+							events: 0,
+							successes: 0,
+						};
 
-						if (account?.gameSettings?.isPrivate) {
-							// They are private and lastConnectedIP is set to undefined (ie. requester is not AEM)
-							res.status(404).send('Profile not found');
-							return;
+						const noTeamData = {
+							fascist: noData,
+							liberal: noData,
+						};
+
+						const noPlayerNumberData = {
+							5: noTeamData,
+							6: noTeamData,
+							7: noTeamData,
+							8: noTeamData,
+							9: noTeamData,
+							10: noTeamData,
+							fascist: noData,
+							liberal: noData,
+						};
+
+						_profile = {
+							_id: username,
+							recentGames: [],
+							stats: {
+								actions: {
+									legacyShotAccuracy: noData,
+									legacyVoteAccuracy: noData,
+									shotAccuracy: noData,
+									voteAccuracy: noData,
+								},
+								matches: {
+									allMatches: noData,
+									casualMatches: noTeamData,
+									emoteMatches: noTeamData,
+									fascist: noData,
+									greyMatches: noPlayerNumberData,
+									legacyMatches: noData,
+									liberal: noData,
+									practiceMatches: noTeamData,
+									rainbowMatches: noPlayerNumberData,
+									silentMatches: noTeamData,
+								},
+							},
+						};
+					}
+
+					_profile.created = dayjs(account.created).format('MM/DD/YYYY');
+					_profile.customCardback = account?.gameSettings?.customCardback;
+					_profile.bio = account.bio;
+					_profile.lastConnected = account.lastConnected ? dayjs(account.lastConnected).format('MM/DD/YYYY') : '';
+					_profile.badges = account.badges || [];
+					_profile.eloPercentile = Object.keys(account?.eloPercentile || {}).length ? account.eloPercentile : undefined;
+					_profile.maxElo = account?.gameSettings?.staff?.disableVisibleElo ? undefined : Math.round(account?.maxElo || 1600);
+					_profile.pastElo = account?.gameSettings?.staff?.disableVisibleElo
+						? undefined
+						: (account.pastElo as any).toObject().length
+							? (account.pastElo as any).toObject()
+							: [{ date: new Date(), value: Math.round(account?.overall?.elo || 1600) }];
+
+					const defaultSeason = {
+						wins: 0,
+						losses: 0,
+						rainbowWins: 0,
+						rainbowLosses: 0,
+						elo: 1600,
+						xp: 0,
+					};
+
+					_profile.overall = account.overall || defaultSeason;
+					_profile.season = account.seasons ? account.seasons.get(CURRENT_SEASON_NUMBER.toString()) || defaultSeason : defaultSeason;
+
+					_profile.overall.xp = Math.floor(_profile.overall.xp);
+					_profile.overall.elo = Math.floor(_profile.overall.elo);
+					_profile.season.xp = Math.floor(_profile.season.xp);
+					_profile.season.elo = Math.floor(_profile.season.elo);
+
+					if (account.staffRole) {
+						if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo) {
+							delete _profile.overall.elo;
+							delete _profile.season.elo;
+						}
+
+						if (account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP) {
+							delete _profile.overall.xp;
+							delete _profile.season.xp;
 						}
 					}
 
-					res.json(_profile);
+					_profile.isRainbowOverall = account.isRainbowOverall;
+					_profile.isRainbowSeason = account.isRainbowSeason;
+					_profile.staffRole = account.staffRole;
+					_profile.staff = {};
+					_profile.staff.disableVisibleXP = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP;
+					_profile.staff.disableVisibleElo = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleElo;
+					_profile.playerPronouns = account?.gameSettings?.playerPronouns || '';
+
+					Account.findOne({ username: authedUser }).then((acc) => {
+						if (acc && account.username === acc.username) {
+							if (!acc.gameSettings) {
+								acc.gameSettings = {};
+							}
+
+							acc.gameSettings.hasUnseenBadge = false;
+							acc.save();
+						}
+
+						if (
+							acc &&
+							acc.staffRole &&
+							(acc.staffRole === 'trialmod' || acc.staffRole === 'moderator' || acc.staffRole === 'editor' || acc.staffRole === 'admin')
+						) {
+							try {
+								_profile.lastConnectedIP = '-' + obfIP(account.lastConnectedIP);
+							} catch (e) {
+								_profile.lastConnectedIP = "Couldn't find IP";
+								console.log(e);
+							}
+
+							try {
+								_profile.signupIP = '-' + obfIP(account.signupIP);
+							} catch (e) {
+								_profile.signupIP = "Couldn't find IP";
+								console.log(e);
+							}
+
+							_profile.lastConnected = dayjs(account.lastConnected).format('MM/DD/YYYY h:mm');
+							_profile.created = dayjs(account.created).format('MM/DD/YYYY h:mm');
+
+							if (acc.staffRole !== 'trialmod') {
+								_profile.blacklist = account?.gameSettings?.blacklist;
+							}
+						} else {
+							_profile.lastConnectedIP = undefined;
+							_profile.signupIP = undefined;
+
+							if (account?.gameSettings?.isPrivate) {
+								// They are private and lastConnectedIP is set to undefined (ie. requester is not AEM)
+								res.status(404).send('Profile not found');
+								return;
+							}
+						}
+
+						res.json(_profile);
+					});
 				});
+			})
+			.catch((err) => {
+				return new Error(err);
 			});
-		});
 	});
 
 	app.get('/gameSummary', (req, res) => {
@@ -548,7 +554,7 @@ export default () => {
 	});
 
 	app.get('/viewPatchNotes', ensureAuthenticated, (req: any, res) => {
-		Account.updateOne({ username: req.user.username }, { lastVersionSeen: version.number }, null, (err: any) => {
+		Account.updateOne({ username: req.user.username }, { lastVersionSeen: version.number }, null).catch((err: any) => {
 			res.sendStatus(err ? 404 : 202);
 		});
 	});

@@ -68,21 +68,27 @@ export const checkUserStatus = (socket: Socket, callback: Function) => {
 				// destroySession(username);
 			};
 
-			Account.findOne({ username: user }, function (err: Error, account: any) {
-				if (account) {
-					if (account.isBanned || (account.isTimeout && new Date() < account.isTimeout)) {
-						logOutUser(user);
-					} else {
-						testIP(account.lastConnectedIP, (banType: string) => {
-							if (banType && banType != 'new' && banType != 'fragbanSmall' && banType != 'fragbanLarge' && !account.gameSettings.ignoreIPBans) logOutUser(user);
-							else {
-								sendUserList();
-								callback();
-							}
-						});
+			Account.findOne({ username: user })
+				.then(function (account: any) {
+					// Used to have err but was unused so removed
+					if (account) {
+						if (account.isBanned || (account.isTimeout && new Date() < account.isTimeout)) {
+							logOutUser(user);
+						} else {
+							testIP(account.lastConnectedIP, (banType: string) => {
+								if (banType && banType != 'new' && banType != 'fragbanSmall' && banType != 'fragbanLarge' && !account.gameSettings.ignoreIPBans)
+									logOutUser(user);
+								else {
+									sendUserList();
+									callback();
+								}
+							});
+						}
 					}
-				}
-			});
+				})
+				.catch((err: any) => {
+					console.log(err);
+				});
 		} else callback();
 	} else callback();
 };

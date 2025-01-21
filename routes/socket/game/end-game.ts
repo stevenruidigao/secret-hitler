@@ -121,7 +121,7 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 /**
  * @param {object} game - game to act on.
  */
-export const saveGame = (game: ActiveGame) => {
+export const saveGame = async (game: ActiveGame) => {
 	const summary = game.gameState.isCompleted && game.private.summary && game.private.summary.publish();
 
 	/**
@@ -134,9 +134,9 @@ export const saveGame = (game: ActiveGame) => {
 	try {
 		if (summary && summary.toObject() && game.general.uid !== 'devgame' && !game.general.private) {
 			enhanced = buildEnhancedGameSummary(summary.toObject());
-			updateProfiles(game, enhanced, { cache: true });
+			await updateProfiles(game, enhanced, { cache: true });
 			if (!game.summarySaved) {
-				summary.save();
+				await summary.save();
 				game.summarySaved = true;
 			}
 		} else {
@@ -147,14 +147,14 @@ export const saveGame = (game: ActiveGame) => {
 	}
 
 	debugLogger('Saving game: %O', summary);
-	gameToSave.save();
+	await gameToSave.save();
 };
 
 // Save a game and then potentially perform another action (usually deleting the game)
 export const saveOrUpdateGame = (gameID: string, callback: Function) => {
 	const gameInMemory = games[gameID];
 
-	Game.findOne({ uid: gameID }).then((game) => {
+	return Game.findOne({ uid: gameID }).then(async (game) => {
 		if (game) {
 			const newObject = generateGameObject(gameInMemory); // in theory this should only be chats (as the only time a game is saved and *not* deleted is on game end) but for forwards compatibility all keys are checked
 
@@ -166,17 +166,17 @@ export const saveOrUpdateGame = (gameID: string, callback: Function) => {
 				}
 			}
 
-			game.save();
+			await game.save();
 		} else {
-			saveGame(gameInMemory);
+			await saveGame(gameInMemory);
 		}
 
 		if (callback) callback();
 	});
 };
 
-export const saveAndDeleteGame = (gameID: string) => {
-	saveOrUpdateGame(gameID, () => {
+export const saveAndDeleteGame = async (gameID: string) => {
+	await saveOrUpdateGame(gameID, () => {
 		delete games[gameID];
 		sendGameList();
 	});
@@ -186,11 +186,11 @@ export const saveAndDeleteGame = (gameID: string) => {
  * @param {object} game - game to act on.
  * @param {string} winningTeamName - name of the team that won this game.
  */
-export const completeGame = (game: ActiveGame, winningTeamName: string) => {
+export const completeGame = async (game: ActiveGame, winningTeamName: string) => {
 	if (game && game.unsentReports) {
-		game.unsentReports.forEach((report: any) => {
+		for (const report of game.unsentReports) {
 			makeReport({ ...report }, game, report.type === 'modchat' ? 'modchatdelayed' : 'reportdelayed');
-		});
+		}
 
 		game.unsentReports = [];
 	}
@@ -243,6 +243,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 			{ text: ' win the game.' },
 		],
 	};
+
 	const remainingPoliciesChat = {
 		isRemainingPolicies: true,
 		timestamp: new Date(),
@@ -260,26 +261,29 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 	};
 
 	if (!(game.general.isTourny && game.general.tournyInfo.round === 1)) {
-		winningPrivatePlayers?.forEach((player: any, index: number) => {
-			const play = publicPlayersState.find((play) => play.userName === player.userName);
-
-			if (!play) return;
-
-			play.notificationStatus = 'success';
-			play.isConfetti = true;
-			player.wonGame = true;
-		});
-
-		setTimeout(() => {
-			winningPrivatePlayers?.forEach((player: any, index: number) => {
+		if (winningPrivatePlayers) {
+			for (const player of winningPrivatePlayers) {
 				const play = publicPlayersState.find((play) => play.userName === player.userName);
 
 				if (!play) return;
 
-				play.isConfetti = false;
-			});
-			sendInProgressGameUpdate(game, true);
-		}, 15000);
+				play.notificationStatus = 'success';
+				play.isConfetti = true;
+				player.wonGame = true;
+			}
+
+			setTimeout(() => {
+				for (const player of winningPrivatePlayers) {
+					const play = publicPlayersState.find((play) => play.userName === player.userName);
+
+					if (!play) return;
+
+					play.isConfetti = false;
+				}
+
+				sendInProgressGameUpdate(game, true);
+			}, 15000);
+		}
 	}
 
 	game.general.status = winningTeamName === 'fascist' ? 'Fascists win the game.' : 'Liberals win the game.';
@@ -302,7 +306,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 
 	sendInProgressGameUpdate(game);
 
-	saveGame(game);
+	await saveGame(game);
 
 	game.general.isRecorded = true;
 
@@ -315,13 +319,13 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 		!game.general.practiceGame &&
 		!game.general.unlistedGame
 	) {
-		Account.find({
+		await Account.find({
 			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
 		})
-			.then((results) => {
+			.then(async (results) => {
 				const isRainbow = game.general.rainbowgame;
 				const isTournamentFinalGame = game.general.isTourny && game.general.tournyInfo.round === 2;
-				const eloAdjustments = rateEloGame(game, results, winningPlayerNames || []); // TODO: there has to be a better way
+				const eloAdjustments = await rateEloGame(game, results, winningPlayerNames || []); // TODO: there has to be a better way
 
 				const byUsername = (a: any, b: any) => {
 					if (a.userName === b.userName)
@@ -392,7 +396,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					});
 				});
 
-				results.forEach((player: any) => {
+				for (const player of results as any[]) {
 					const listUser = userList.find((user) => user.userName === player.username);
 
 					if (listUser) {
@@ -528,7 +532,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 					checkBadgesELO(player, game.general.uid);
 					checkBadgesXP(player, game.general.uid);
 
-					player.save(() => {
+					await player.save().then(() => {
 						const userEntry = userList.find((user) => user.userName === player.username);
 
 						if (userEntry) {
@@ -582,18 +586,18 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 							sendUserList();
 						}
 					});
-				});
+				}
 
 				sendInProgressGameUpdate(game);
 			})
-			.catch((err: Error) => {
+			.catch((err) => {
 				console.log(err, 'error in updating accounts at end of game');
 			});
 	} else if (game.general.playerChats === 'disabled' || game.general.practiceGame) {
 		// 2 XP for win, 1 for loss
-		Account.find({
+		await Account.find({
 			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
-		}).then((results) => {
+		}).then(async (results) => {
 			for (const player of results) {
 				if (!player.overall) {
 					player.overall = {
@@ -643,7 +647,7 @@ export const completeGame = (game: ActiveGame, winningTeamName: string) => {
 				player.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
 
 				checkBadgesXP(player, game.general.uid);
-				player.save();
+				await player.save();
 			}
 		});
 	}

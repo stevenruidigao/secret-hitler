@@ -108,37 +108,37 @@ export const handlePlayerReport = (passport: any, data: any, callback: Function)
 		reportError = true;
 	}
 
-	playerReport.save((err) => {
-		if (err) {
-			console.log(err, 'Failed to save player report');
-			callback({ success: false, error: 'Error submitting report.' });
-			return;
-		}
-
-		// Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then(accounts => {
-		// 	accounts.forEach(account => {
-		// 		const onlineSocketId = Array.from(io.sockets.sockets.keys()).find(
-		// 			socketId =>
-		// 				io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === account.username
-		// 		);
-
-		// 		account.gameSettings.newReport = true;
-
-		// 		if (onlineSocketId) {
-		// 			io.sockets.sockets[onlineSocketId].emit('reportUpdate', true);
-		// 		}
-		// 		account.save();
-		// 	});
-		// });
-
-		if (typeof callback === 'function') {
-			if (reportError) {
-				callback({ success: false, error: 'Error submitting report.' });
-			} else {
-				callback({ success: true });
+	playerReport
+		.save()
+		.then(() => {
+			if (typeof callback === 'function') {
+				if (reportError) {
+					callback({ success: false, error: 'Error submitting report.' });
+				} else {
+					callback({ success: true });
+				}
 			}
-		}
-	});
+		})
+		.catch((err) => {
+			console.log(err, 'Failed to save player report');
+			callback({ success: false, error: 'Error submitting report.' }); // TODO: check, was refactored
+
+			// Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then(accounts => {
+			// 	accounts.forEach(account => {
+			// 		const onlineSocketId = Array.from(io.sockets.sockets.keys()).find(
+			// 			socketId =>
+			// 				io.sockets.sockets.get(socketId).handshake.session.passport && io.sockets.sockets.get(socketId).handshake.session.passport.user === account.username
+			// 		);
+
+			// 		account.gameSettings.newReport = true;
+
+			// 		if (onlineSocketId) {
+			// 			io.sockets.sockets[onlineSocketId].emit('reportUpdate', true);
+			// 		}
+			// 		account.save();
+			// 	});
+			// });
+		});
 };
 
 export const handlePlayerReportDismiss = () => {

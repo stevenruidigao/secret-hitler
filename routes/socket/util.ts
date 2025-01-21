@@ -9,6 +9,7 @@ import type { ActiveGame } from '@/shared/game.d.ts';
 import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 import { newStaff } from './models.ts';
+import { Document, Types } from 'mongoose';
 
 const io = global.io;
 
@@ -337,7 +338,14 @@ const winnerBiasPoints = (game: ActiveGame) => {
 	}
 };
 
-export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlayerNames: string[]) => {
+export const rateEloGame = async (
+	game: ActiveGame,
+	accounts: (Document<unknown, object, IAccount> &
+		IAccount & {
+			_id: Types.ObjectId;
+		})[],
+	winningPlayerNames: string[],
+) => {
 	const size = game.general.playerCount as number; // TODO: fix this
 	// The default starting elo is 1600 (totally arbitrary but now we are stuck with it)
 	const defaultELO = 1600;
@@ -369,7 +377,7 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 	const ratingUpdates: any = {};
 	const date = new Date(); // ensure we use the same date for each player
 
-	accounts.forEach((account) => {
+	for (const account of accounts) {
 		if (!account.overall) {
 			account.overall = {
 				xp: 0,
@@ -438,10 +446,10 @@ export const rateEloGame = (game: ActiveGame, accounts: IAccount[], winningPlaye
 		}
 
 		account.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
-		(account as any).save();
+		await account.save();
 
 		ratingUpdates[account.username] = { change, changeSeason, xpChange, xpChangeSeason };
-	});
+	}
 
 	return ratingUpdates;
 	// TODO: Future work: Someone should make this a single function, applied twice: once to overall and once to seasonal.
@@ -451,7 +459,7 @@ export const destroySession = (username: string) => {
 	if (process.env.NODE_ENV !== 'production') {
 		let mongoClient: any;
 
-		mongodb.MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err: Error, client: any) => {
+		mongodb.MongoClient.connect('mongodb://localhost:27017').then((client: any) => {
 			// TODO: check: used to be `Mongoclient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (err, client) => {`
 			mongoClient = client;
 		});

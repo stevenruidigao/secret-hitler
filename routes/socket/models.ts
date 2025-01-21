@@ -363,7 +363,7 @@ export const createNewBypass = () => {
 // There's a mountain of "new" type bans.
 const unbanTime = new Date().valueOf() - 64800000;
 
-BannedIP.deleteMany({ type: 'new', bannedDate: { $lte: unbanTime }, permanent: { $ne: true } }, (err) => {
+BannedIP.deleteMany({ type: 'new', bannedDate: { $lte: unbanTime }, permanent: { $ne: true } }).catch((err) => {
 	if (err) throw err;
 });
 
@@ -378,9 +378,8 @@ export const testIP = (IP: any, callback: any) => {
 	if (!IP) callback('Bad IP!');
 	else if (ipbansNotEnforced.status) callback(null);
 	else {
-		BannedIP.find({}, (err, allIPs: IBannedIP[]) => {
-			if (err) callback(err);
-			else {
+		BannedIP.find({})
+			.then((allIPs: IBannedIP[]) => {
 				const ips: any[] = [];
 
 				for (const potentialMatch of allIPs) {
@@ -418,7 +417,9 @@ export const testIP = (IP: any, callback: any) => {
 				} else {
 					callback(null);
 				}
-			}
-		});
+			})
+			.catch((err) => {
+				if (err) callback(err);
+			});
 	}
 };

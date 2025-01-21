@@ -7,7 +7,8 @@ import { flattenListOpts } from '@/utils/index.ts';
 
 import Account from '../account.ts';
 
-import Profile from './index.ts';
+import Profile, { IProfile } from './index.ts';
+import { Document } from 'mongoose';
 
 const debugLogger = debug('game:profile');
 
@@ -143,7 +144,18 @@ function profileDeltaWithMatchType(username: string, game: any, gameSummary: any
 }
 
 // username: String, game: enhancedGameSummary, options: { version: String, cache: Boolean }
-function updateProfile(username: string, game: any, gameSummary: any, options: any = {}) {
+function updateProfile(
+	username: string,
+	game: any,
+	gameSummary: any,
+	options: any = {},
+): Promise<
+	Document<unknown, object, IProfile> &
+		IProfile &
+		Required<{
+			_id: string;
+		}>
+> {
 	const { version, cache } = options;
 	const { delta, matchType, playerCountToLog } = profileDeltaWithMatchType(username, game, gameSummary);
 
@@ -197,12 +209,12 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 		)
 			.exec()
 			// drop the document when recalculating profiles
-			.then((profile: any) => {
+			.then((profile) => {
 				if (!profile) {
 					return null;
 				} else if (version && profile.version !== version) {
 					return profile
-						.update({ version }, { overwrite: true })
+						.updateOne({ version }, { overwrite: true })
 						.exec()
 						.then(() => updateProfile(username, game, gameSummary, options));
 				} else {
@@ -210,13 +222,13 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 				}
 			})
 			// fetch account creation date when profile is first added
-			.then((profile: any) => {
+			.then((profile) => {
 				if (!profile) {
 					return null;
 				} else if (!profile.created) {
 					return Account.findOne({ username: profile._id })
 						.exec()
-						.then((account: any) => {
+						.then((account) => {
 							if (account) {
 								profile.created = account.created;
 								return profile.save();
@@ -226,41 +238,49 @@ function updateProfile(username: string, game: any, gameSummary: any, options: a
 					return profile;
 				}
 			})
-			.then((profile: any) => {
+			.then((profile) => {
 				if (!profile) return null;
-				Account.findOne({ username }).then((account: any) => {
+
+				Account.findOne({ username }).then((account) => {
+					if (!account) {
+						return;
+					}
+
+					const stats = profile.stats as any;
+
 					checkBadgesGamesPlayed(
 						account,
-						profile.stats.matches.greyMatches.liberal.events +
-							profile.stats.matches.greyMatches.fascist.events +
-							profile.stats.matches.rainbowMatches.liberal.events +
-							profile.stats.matches.rainbowMatches.fascist.events +
-							profile.stats.matches.practiceMatches.liberal.events +
-							profile.stats.matches.practiceMatches.fascist.events +
-							profile.stats.matches.silentMatches.liberal.events +
-							profile.stats.matches.silentMatches.fascist.events,
-						profile.stats.matches.greyMatches.liberal.successes +
-							profile.stats.matches.greyMatches.fascist.successes +
-							profile.stats.matches.rainbowMatches.liberal.successes +
-							profile.stats.matches.rainbowMatches.fascist.successes +
-							profile.stats.matches.practiceMatches.liberal.successes +
-							profile.stats.matches.practiceMatches.fascist.successes +
-							profile.stats.matches.silentMatches.liberal.successes +
-							profile.stats.matches.silentMatches.fascist.successes,
-						profile.stats.matches.customMatches.liberal.events + profile.stats.matches.customMatches.fascist.events,
-						profile.stats.matches.silentMatches.liberal.events + profile.stats.matches.silentMatches.fascist.events,
-						profile.stats.matches.emoteMatches.liberal.events + profile.stats.matches.emoteMatches.fascist.events,
+						stats.matches.greyMatches.liberal.events +
+							stats.matches.greyMatches.fascist.events +
+							stats.matches.rainbowMatches.liberal.events +
+							stats.matches.rainbowMatches.fascist.events +
+							stats.matches.practiceMatches.liberal.events +
+							stats.matches.practiceMatches.fascist.events +
+							stats.matches.silentMatches.liberal.events +
+							stats.matches.silentMatches.fascist.events,
+						stats.matches.greyMatches.liberal.successes +
+							stats.matches.greyMatches.fascist.successes +
+							stats.matches.rainbowMatches.liberal.successes +
+							stats.matches.rainbowMatches.fascist.successes +
+							stats.matches.practiceMatches.liberal.successes +
+							stats.matches.practiceMatches.fascist.successes +
+							stats.matches.silentMatches.liberal.successes +
+							stats.matches.silentMatches.fascist.successes,
+						stats.matches.customMatches.liberal.events + stats.matches.customMatches.fascist.events,
+						stats.matches.silentMatches.liberal.events + stats.matches.silentMatches.fascist.events,
+						stats.matches.emoteMatches.liberal.events + stats.matches.emoteMatches.fascist.events,
 						gameSummary.id,
 					);
+
 					account.save();
 				});
 			})
-			.then((profile: any) => {
+			.then((profile) => {
 				if (!profile) return null;
 				else if (cache) return profiles.push(profile);
 				else return profile;
 			})
-			.catch((err: Error) => debugLogger(err))
+			.catch((err) => debugLogger(err))
 	);
 }
 

@@ -121,13 +121,13 @@ export const verifyRoutes = () => {
 			});
 	});
 
-	VerifyAccount.deleteMany({ expirationDate: { $lt: now } }, (err) => {
+	VerifyAccount.deleteMany({ expirationDate: { $lt: now } }).catch((err) => {
 		if (err) {
 			console.log(err, 'err deleting verify accounts');
 		}
 	});
 
-	ResetPassword.deleteMany({ expirationDate: { $lt: now } }, (err) => {
+	ResetPassword.deleteMany({ expirationDate: { $lt: now } }).catch((err) => {
 		if (err) {
 			console.log(err, 'err deleting reset password');
 		}
@@ -152,7 +152,7 @@ export const setVerify = ({ username, email, res, isResetPassword }: { username:
 		}),
 	);
 
-	verify.save(() => {
+	verify.save().then(() => {
 		// console.log(`localhost:8080/${isResetPassword ? 'reset-password' : 'verify-account'}/${username}/${token}`);
 
 		nmMailgun.sendMail({

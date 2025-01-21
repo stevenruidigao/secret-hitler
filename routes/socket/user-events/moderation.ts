@@ -120,12 +120,13 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 				.then((report) => {
 					if (report) {
 						report.isActive = !report.isActive;
-						report.save(() => {
+
+						report.save().then(() => {
 							sendUserReports(socket);
 						});
 					}
 				})
-				.catch((err: Error) => {
+				.catch((err) => {
 					console.log(err, 'err in finding player report');
 				});
 		} else if (data.action === 'getFilteredData') {
@@ -200,7 +201,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							});
 						}
 					})
-					.catch((err: Error) => {
+					.catch((err) => {
 						console.log(err, 'ban user err');
 					});
 			};
@@ -225,7 +226,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'clearTimeout user err');
 						});
 					break;
@@ -282,9 +283,10 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 					break;
 				case 'clearTimeoutIP':
-					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err) => {
+					BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }).catch((err) => {
 						if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 					});
+
 					console.log(handleDefaultIPv6Range(data.ip));
 					break;
 				case 'clearTimeoutAndTimeoutIP':
@@ -298,11 +300,11 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 
-							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }, (err) => {
+							BannedIP.deleteMany({ ip: handleDefaultIPv6Range(data.ip), type: { $in: ['tiny', 'small'] }, permanent: { $ne: true } }).catch((err) => {
 								if (err) socket.emit('sendAlert', `IP clear failed:\n${err}`);
 							});
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'clearTimeout user err');
 						});
 					break;
@@ -379,7 +381,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									logOutUser(data.userName);
 								} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err, 'rainbow user error');
 							});
 					} else {
@@ -436,7 +438,9 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 											if (!success) {
 												return;
 											}
+
 											success = false;
+
 											Profile.findOne({ _id: data.userName }).then((profile) => {
 												if (profile) {
 													const newProfile = JSON.parse(JSON.stringify(profile));
@@ -444,7 +448,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 													const renamedProfile = new Profile(newProfile);
 													renamedProfile.save();
 												}
-												Profile.remove({ _id: data.userName }, () => {
+
+												Profile.deleteMany({ _id: data.userName }).then(() => {
 													success = true;
 												});
 											});
@@ -549,7 +554,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							permanent: false,
 						});
 
-						ipban.save(() => {
+						ipban.save().then(() => {
 							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
@@ -602,7 +607,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						ip: handleDefaultIPv6Range(data.ip),
 						permanent: false,
 					});
-					timeout.save(() => {
+
+					timeout.save().then(() => {
 						Account.findOne({ username: data.userName })
 							.then((account) => {
 								if (account) {
@@ -614,7 +620,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err, 'timeout user err');
 							});
 					});
@@ -631,7 +637,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'timeout2 user err');
 						});
 					break;
@@ -641,7 +647,8 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						type: 'tiny',
 						ip: handleDefaultIPv6Range(data.ip),
 					});
-					timeout3.save(() => {
+
+					timeout3.save().then(() => {
 						Account.findOne({ username: data.userName })
 							.then((account) => {
 								if (account) {
@@ -653,7 +660,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err, 'timeout3 user err');
 							});
 					});
@@ -670,7 +677,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'timeout4 user err');
 						});
 					break;
@@ -693,7 +700,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'private convert user err');
 						});
 					break;
@@ -716,7 +723,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err, 'private convert user err');
 						});
 					break;
@@ -738,10 +745,11 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					if (isSuperMod) {
 						// TODO: Add Profile Backup (for accidental/bugged deletions)
 						Profile.findOne({ _id: data.userName })
-							.remove(() => {
+							.deleteMany() // TODO: INSPECT CAREFULLY I DO NOT KNOW IF THIS WORKS
+							.then(() => {
 								logOutUser(data.userName);
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					} else {
@@ -758,7 +766,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 					});
 
 					if (isSuperMod) {
-						ipbanl.save(() => {
+						ipbanl.save().then(() => {
 							Account.find({ lastConnectedIP: data.ip }, function (err: Error, users: IAccount[]) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
@@ -806,7 +814,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							}
 						})
-						.catch((err: Error) => {
+						.catch((err) => {
 							console.log(err);
 						});
 					break;
@@ -856,7 +864,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -886,7 +894,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -906,7 +914,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -924,7 +932,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -943,7 +951,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -962,7 +970,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -982,7 +990,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -1002,7 +1010,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -1021,7 +1029,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								}
 							})
-							.catch((err: Error) => {
+							.catch((err) => {
 								console.log(err);
 							});
 					}
@@ -1154,7 +1162,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 										account.save();
 									} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 								})
-								.catch((err: Error) => {
+								.catch((err) => {
 									console.log(err, 'set wins/losses error');
 								});
 						}
