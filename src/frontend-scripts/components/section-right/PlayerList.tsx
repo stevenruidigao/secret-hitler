@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import $ from 'jquery';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 import Modal from 'semantic-ui-modal';
 import ReactCustomScrollbars from 'react-custom-scrollbars';
 
@@ -33,10 +34,20 @@ const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
 	return Object.assign({}, ownProps, dispatchProps, { isUserClickable });
 };
 
-class PlayerList extends React.Component {
+export type PlayerListProps = {
+	userInfo: any;
+	userList: any;
+	socket: Socket;
+	isUserClickable: boolean;
+	fetchReplay: Function;
+};
+
+class PlayerList extends React.Component<PlayerListProps> {
 	static defaultProps: any;
 	static propTypes: any;
-	props: any;
+
+	props: PlayerListProps;
+
 	state: any = {
 		userListFilter: 'all',
 		expandInfo: {
@@ -47,6 +58,11 @@ class PlayerList extends React.Component {
 			priv: false,
 		},
 	};
+
+	constructor(props: PlayerListProps) {
+		super(props);
+		this.props = props;
+	}
 
 	clickInfoIcon = () => {
 		$('.playerlistinfo').modal('setting', 'transition', 'scale').modal('show');

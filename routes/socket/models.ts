@@ -192,11 +192,17 @@ export const formattedUserList = (isAEM: boolean) => {
 			// Blacklists are sent in the sendUserGameSettings event.
 			// blacklist: user.blacklist,
 			customCardback: user.customCardback,
-			overall: user.overall,
+			overall: {
+				...user.overall,
+				elo: Math.floor(user.overall?.elo || 1600),
+			},
 			isRainbowOverall: user.isRainbowOverall,
 			isRainbowSeason: user.isRainbowSeason,
 			status: user.status && user.status.type && user.status.type != 'none' ? user.status : undefined,
-			season: user.season, // TODO: check, used to be `user.seasons ? user.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {}`
+			season: {
+				...user.season,
+				elo: Math.floor(user.season?.elo || 1600),
+			}, // TODO: check, used to be `user.seasons ? user.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {}`
 			previousSeasonAward: user.previousSeasonAward,
 			specialTournamentStatus: user.specialTournamentStatus,
 			timeLastGameCreated: user.timeLastGameCreated,

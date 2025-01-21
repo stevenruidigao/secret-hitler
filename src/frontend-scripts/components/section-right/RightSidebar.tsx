@@ -3,7 +3,16 @@ import PlayerList from './PlayerList.tsx';
 import GeneralChat from './GeneralChat.tsx';
 import PropTypes from 'prop-types';
 
-const RightSidebar = (props: any) => {
+const RightSidebar = (props: {
+	gameInfo: any;
+	userInfo: any;
+	socket: any;
+	generalChats: any;
+	userList: any;
+	midSection: string;
+	allEmotes: any;
+	forceMounted: boolean;
+}) => {
 	let classes = 'ui section-right transition';
 	if (props.midSection === 'game') {
 		classes += ' game';

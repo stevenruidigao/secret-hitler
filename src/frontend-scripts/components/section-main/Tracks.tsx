@@ -17,7 +17,7 @@ class Tracks extends React.Component {
 	static propTypes: any;
 
 	props: {
-		socket: Socket;
+		socket?: Socket;
 		gameInfo: ActiveGame;
 		userInfo: any;
 	};
@@ -317,7 +317,7 @@ class Tracks extends React.Component {
 			unlistedGameTooltip = 'Unlisted Game - Not Visible in Game List';
 		}
 
-		// TODO: redo this as a map
+		// TODO: redo this as a map or something
 		return (
 			<div className="options-icons-container">
 				{gameInfo.customGameSettings && gameInfo.customGameSettings.enabled && (
@@ -447,7 +447,7 @@ class Tracks extends React.Component {
 		};
 
 		const updateRemake = () => {
-			this.props.socket.emit('updateRemake', {
+			this.props.socket?.emit('updateRemake', {
 				remakeStatus: !this.state.remakeStatus,
 				uid: gameInfo.general.uid,
 			});

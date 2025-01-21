@@ -1,3 +1,8 @@
+import { List } from 'immutable';
+
+export type Policy = 'fascist' | 'liberal';
+export type Hand = { reds: number; blues: number } & Policy[];
+
 export interface PublicPlayer {
 	userName: string;
 	customCardback: any;

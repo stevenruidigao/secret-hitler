@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default class DevHelpers extends React.PureComponent {
-	constructor(props = {}) {
+	constructor(props: {}) {
 		super(props);
 	}
 

@@ -10,13 +10,23 @@ import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
-export default class GeneralChat extends React.Component {
+type GeneralChatProps = {
+	gameInfo: any;
+	userInfo: any;
+	socket: any;
+	generalChats: any;
+	userList: any;
+	allEmotes: any;
+};
+
+export default class GeneralChat extends React.Component<GeneralChatProps> {
 	defaultEmotes = ['ja', 'nein', 'blobsweat', 'wethink', 'limes'];
 
 	static defaultProps: any;
 	static propTypes: any;
 
-	props: any;
+	props: GeneralChatProps;
+
 	state: any = {
 		lock: false,
 		badWord: [null, null],
@@ -33,6 +43,11 @@ export default class GeneralChat extends React.Component {
 
 	scrollbar: any;
 	chatInput: any;
+
+	constructor(props: GeneralChatProps) {
+		super(props);
+		this.props = props;
+	}
 
 	componentDidMount() {
 		if (this.scrollbar) {

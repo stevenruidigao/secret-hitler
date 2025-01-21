@@ -34,8 +34,8 @@ declare global {
 const select = (state: any) => state;
 
 class TopLevelErrorBoundary extends React.Component {
-	state: any;
 	static propTypes: any;
+	state: any;
 
 	constructor(props: any) {
 		super(props);
@@ -540,13 +540,13 @@ export class App extends React.Component {
 													overflowY: 'scroll',
 												}}
 											>
-												{this.state.alertMsg.data.map((change, index) => {
+												{this.state.alertMsg.data.map((change: any, index: number) => {
 													return (
 														<div key={index}>
 															<h4 style={{ fontFamily: '"Comfortaa", Lato, sans-serif' }}>
 																{this.state.alertMsg.data[0].changeVer === '0.0' ? '' : `Version ${change.changeVer}`}
 															</h4>
-															{change.changeDesc.split('\n').map((item, index) => (
+															{change.changeDesc.split('\n').map((item: string, index: number) => (
 																<p key={index} style={{ fontFamily: '"Comfortaa", Lato, sans-serif' }}>
 																	{item}
 																</p>
@@ -700,7 +700,7 @@ export class App extends React.Component {
 										overflowY: 'scroll',
 									}}
 								>
-									{this.state.warnings.warnings.map((warning) => {
+									{this.state.warnings.warnings.map((warning: any) => {
 										return (
 											<div key={warning}>
 												<p style={{ fontFamily: '"Roboto", sans-serif' }}>

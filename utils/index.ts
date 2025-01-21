@@ -3,6 +3,8 @@
 import { none } from 'option';
 import { Range, List } from 'immutable';
 
+import type { Hand, Policy } from '@/shared/game.d.ts';
+
 /**************************
  * IMMUTABLES AND OPTIONS *
  ***************************/
@@ -33,8 +35,6 @@ export const mapOpt2 = (f: any) => {
 /*****************
  * GAME ENTITIES *
  *****************/
-
-type Policy = 'fascist' | 'liberal';
 
 /*
  * ALIASES:
@@ -81,7 +81,7 @@ export const handDiff = (handX: any, handY: any) => {
 
 // expects hand to contain only a single card
 // (hand: Hand) => Policy
-export const handToPolicy = (hand: any) => {
+export const handToPolicy = (hand: Hand) => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
 		if (hand.reds > 0 && hand.blues > 0) {
 			throw new Error('Expected hand to contain only a single card');
@@ -94,9 +94,9 @@ export const handToPolicy = (hand: any) => {
 
 // consistently ordered 'fascist' first, followed by 'liberal'
 // (hand: Hand) => List[Policy]
-export const handToPolicies = (hand: any): List<Policy> => {
+export const handToPolicies = (hand: Hand): List<Policy> => {
 	if (hand.hasOwnProperty('reds') && hand.hasOwnProperty('blues')) {
-		const toPolicies = (count: number, type: any) => {
+		const toPolicies = (count: number, type: Policy) => {
 			return Range(0, count)
 				.map((i) => type)
 				.toList();
@@ -108,7 +108,7 @@ export const handToPolicies = (hand: any): List<Policy> => {
 		return reds.concat(blues).toList();
 	}
 
-	return hand;
+	return List(hand); // TODO: check correctness: used to be `return hand;`.
 };
 
 // (policy: Policy) => Hand
@@ -130,6 +130,7 @@ export const policyToString = (policy: Policy, userInfo: any) => {
 	const mode = (userInfo && userInfo.gameSettings && userInfo.gameSettings.claimCharacters) || 'short';
 	let liberalChar = 'L';
 	let fascistChar = 'F';
+
 	if (mode === 'legacy') {
 		liberalChar = 'B';
 		fascistChar = 'R';
@@ -144,13 +145,13 @@ export const policyToString = (policy: Policy, userInfo: any) => {
 export const text = (type: any, text: any, space?: any, comma?: any) => ({ type, text, space, comma });
 
 // (hand: Hand) => String ('R*B*')
-export const handToText = (hand: any, userInfo: any) => {
+export const handToText = (hand: Hand, userInfo: any) => {
 	if (handToPolicies(hand).size === 0) {
 		return [];
 	}
 
 	return handToPolicies(hand)
-		.map((policy: Policy, index: number, list: any) => text(policy, policyToString(policy, userInfo), false, isComma(index, list, userInfo)))
+		.map((policy: Policy, index: number, list: List<Policy>) => text(policy, policyToString(policy, userInfo), false, isComma(index, list, userInfo)))
 		.concat(text('normal', ''))
 		.toArray();
 };
@@ -166,11 +167,15 @@ export const capitalize = (s: string) => {
 
 // (target: Object, subset: Object) => Boolean
 // compares attributes with strict equality
-export const objectContains = (target: any, subset: any) => {
+export const objectContains = (target: Record<string, any>, subset: Record<string, any>) => {
 	return Object.keys(subset).reduce((acc, key) => acc && target[key] === subset[key], true);
 };
 
-export const getBlacklistIndex = (userName: string, blacklist?: any[]) => {
+interface BlacklistedUser {
+	userName: string;
+}
+
+export const getBlacklistIndex = (userName: string, blacklist?: BlacklistedUser[]) => {
 	if (typeof blacklist === 'undefined') {
 		return -1;
 	}
@@ -182,7 +187,7 @@ export const getBlacklistIndex = (userName: string, blacklist?: any[]) => {
 	return -1;
 };
 
-export const userInBlacklist = (userName: string, blacklist?: any[]) => {
+export const userInBlacklist = (userName: string, blacklist?: BlacklistedUser[]) => {
 	if (typeof blacklist === 'undefined') {
 		return false;
 	}

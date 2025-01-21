@@ -4,6 +4,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
+import { Socket } from 'socket.io-client';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { Dropdown } from 'semantic-ui-react';
@@ -23,17 +24,27 @@ const mapDispatchToProps = (dispatch: (data: any) => any) => ({
 	fetchReplay: (gameId: string) => dispatch(fetchReplay(gameId)),
 });
 
-class ProfileWrapper extends React.Component {
+export type ProfileWrapperProps = {
+	profile: any;
+	userInfo: any;
+	socket: Socket;
+	userList: any;
+	gameSettings: any;
+	isUserClickable: boolean;
+};
+
+class ProfileWrapper extends React.Component<ProfileWrapperProps> {
 	static defaultProps: any;
 	static propTypes: any;
 
-	props: any;
+	props: ProfileWrapperProps;
 	state: any;
 
 	blacklistModal: any;
 
-	constructor(props: any) {
+	constructor(props: ProfileWrapperProps) {
 		super(props);
+		this.props = props;
 
 		this.state = {
 			bioStatus: 'displayed',

@@ -3,14 +3,17 @@ import { connect } from 'react-redux';
 import { toggleNotes } from '../actions/actions.ts';
 import PropTypes from 'prop-types';
 
-const mapDispatchToProps = (dispatch) => ({
-		toggleNotes: (notesStatus) => dispatch(toggleNotes(notesStatus)),
+const mapDispatchToProps = (dispatch: (data: any) => any) => ({
+		toggleNotes: (notesStatus: any) => dispatch(toggleNotes(notesStatus)),
 	}),
-	dragOverFn = (e) => {
+	dragOverFn = (e: Event) => {
 		e.preventDefault();
 	};
 
 class GameNotes extends React.Component {
+	static propTypes: any;
+	props: any;
+
 	state = {
 		top: 110,
 		left: 690,
@@ -32,7 +35,7 @@ class GameNotes extends React.Component {
 
 	resizeDragStart = () => {};
 
-	noteDrop = (e) => {
+	noteDrop = (e: any) => {
 		e.preventDefault();
 		if (!this.state.isResizing) {
 			const offset = e.dataTransfer.getData('coordinates/text').split(',');
@@ -57,7 +60,7 @@ class GameNotes extends React.Component {
 		document.body.removeEventListener('drop', this.noteDrop);
 	}
 
-	noteDragStart = (e) => {
+	noteDragStart = (e: any) => {
 		const style = window.getComputedStyle(e.target, null);
 
 		e.dataTransfer.setData(
@@ -67,7 +70,7 @@ class GameNotes extends React.Component {
 	};
 
 	render() {
-		const notesChange = (e) => {
+		const notesChange = (e: any) => {
 			this.props.changeNotesValue(`${e.target.value}`);
 			localStorage.setItem('GameNotes', e.target.value);
 		};
