@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Socket } from 'socket.io-client';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 import playSound from '../reusable/playSound.ts';
 
 import Tracks from './Tracks.tsx';

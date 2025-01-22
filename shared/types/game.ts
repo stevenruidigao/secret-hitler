@@ -1,18 +1,20 @@
-import { List } from 'immutable';
-
 export type Policy = 'fascist' | 'liberal';
 export type Hand = { reds: number; blues: number } & Policy[];
 
 export interface PublicPlayer {
 	userName: string;
-	customCardback: any;
+	customCardback?: {
+		fileExtension?: string;
+		saveTime?: string;
+		uid?: string;
+	};
 	previousSeasonAward: string;
 	connected: boolean;
 	isRemakeVoting?: boolean;
 	pingTime?: number;
 	cardStatus: {
-		cardDisplayed: boolean;
-		cardFront: string;
+		cardDisplayed?: boolean;
+		cardFront?: string;
 		cardBack: any;
 		isFlipped?: boolean;
 	};
@@ -30,14 +32,22 @@ export interface PublicPlayer {
 }
 
 export interface Player extends PublicPlayer {
-	staff: any;
+	staff?: any;
 	claim?: any;
+	role?: any;
+	playersState: Player[];
+	gameChats: any[];
+	wonGame?: boolean;
+	wasInvestigated?: boolean;
+	voteStatus?: any;
+	policyNotification?: boolean;
+	cardFlingerState?: CardFlingerState[];
 }
 
 export type CardFlingerState = {
-	position: string;
-	action: string;
-	notificationStatus: string;
+	position?: string;
+	action?: string;
+	notificationStatus?: string;
 	cardStatus: {
 		isFlipped: boolean;
 		cardFront: string;
@@ -105,7 +115,7 @@ export type ActiveGame = {
 	private: Partial<{
 		lock: any;
 		gameCreatorName: string;
-		seatedPlayers: any[];
+		seatedPlayers: Player[];
 		privatePassword: string;
 		reports: any;
 		policies: string[];

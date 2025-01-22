@@ -55,7 +55,7 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
 import Account, { IAccount } from '@/models/account.ts';
 import { TOU_CHANGES } from '@/shared/constants.ts';
 import version from '@/shared/version.ts';
@@ -388,24 +388,26 @@ export const socketRoutes = () => {
 							account.feedbackSubmissions.push(newFeedback);
 						}
 
-						let feedback: any = {
+						const feedback: any = {
 							content: `__**Player**__: ${passport.user}\n__**Feedback**__: ${data.feedback}`,
 							username: 'Feedback',
 							allowed_mentions: { parse: [] },
 						};
 
 						try {
-							feedback = JSON.stringify(feedback);
+							const jsonFeedback = JSON.stringify(feedback);
+
 							const req = https.request({
 								hostname: 'discordapp.com',
 								path: process.env.DISCORDFEEDBACKURL,
 								method: 'POST',
 								headers: {
 									'Content-Type': 'application/json',
-									'Content-Length': Buffer.byteLength(feedback),
+									'Content-Length': Buffer.byteLength(jsonFeedback),
 								},
 							});
-							req.end(feedback);
+
+							req.end(jsonFeedback);
 							socket.emit('feedbackResponse', { status: 'success', message: 'Thank you for submitting feedback!' });
 						} catch (e) {
 							console.log(e);

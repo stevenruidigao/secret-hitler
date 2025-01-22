@@ -1,12 +1,12 @@
 import { Server, Socket } from 'socket.io';
 
 import Account from '@/models/account.ts';
-import type { ActiveGame } from '@/shared/game.d.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
+import { User } from '@/shared/types/routes.ts';
 
 import { selectPlayerToAssassinate } from './game/assassination.ts';
 import { selectChancellor } from './game/election-util.ts';
 import { selectVoting } from './game/election.ts';
-import { User } from './models.ts';
 import { makeReport } from './report.ts';
 import { sendInProgressGameUpdate, sendCommandChatsUpdate, LineGuess } from './util.ts';
 
@@ -61,7 +61,7 @@ type Command = {
 	observerOnly: boolean;
 	seatedOnly: boolean;
 	gameStartedOnly: boolean;
-	run?: any;
+	run: Function;
 };
 
 /**
@@ -448,7 +448,7 @@ commands.getCommand = function (name: string) {
 		console.warn('seatedPlayers was undefined, setting to empty array, game:', JSON.stringify(game));
 	}
 
-	const { seatedPlayers } = game.private;
+	const seatedPlayers = game.private.seatedPlayers || []; // TODO: check
 
 	const player = game.publicPlayersState.find((player) => player.userName === passport.user);
 
@@ -485,9 +485,14 @@ commands.getCommand = function (name: string) {
 			);
 
 			if (game.general.playerChats === 'disabled') {
-				seatedPlayers
-					.find((seatedPlayer: any) => seatedPlayer.userName === player.userName)
-					.gameChats.push({
+				const seatedPlayer = seatedPlayers.find((seatedPlayer) => seatedPlayer.userName === player.userName);
+
+				if (seatedPlayer) {
+					if (!seatedPlayer.gameChats) {
+						seatedPlayer.gameChats = [];
+					}
+
+					seatedPlayer.gameChats.push({
 						timestamp: new Date(),
 						gameChat: true,
 						chat: [
@@ -500,6 +505,7 @@ commands.getCommand = function (name: string) {
 							{ text: ' has been successfully pinged.' },
 						],
 					});
+				}
 
 				game.private.hiddenInfoChat?.push({
 					timestamp: new Date(),

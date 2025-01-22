@@ -5,7 +5,8 @@ import Account from '@/models/account.ts';
 import BannedIP from '@/models/bannedIP.ts';
 import ModAction from '@/models/modAction.ts';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
+import type { User } from '@/shared/types/routes.ts';
 import version from '@/shared/version.ts';
 
 import { doesIPMatchCIDR } from './ip-obf.ts';
@@ -50,36 +51,6 @@ export const getPrivateChatTruncate = async () => {
 export const emoteList = emotes;
 
 export const games: Record<string, ActiveGame> = {};
-
-export type User = {
-	isPrivate: boolean;
-	userName: string;
-	playerPronouns?: string;
-	customCardback?: {
-		uid?: string;
-		fileExtension?: string;
-		saveTime?: string;
-	};
-	staffRole: string;
-	staff?: {
-		disableVisibleElo?: boolean;
-		disableVisibleXP?: boolean;
-		disableStaffColor?: boolean;
-		incognito?: boolean;
-	};
-	isContributor: boolean;
-	status: any;
-	timeLastGameCreated?: number;
-	lastMessage?: any;
-	blacklist?: any[];
-	overall: any;
-	season: any;
-	isRainbowOverall: boolean;
-	isRainbowSeason: boolean;
-	previousSeasonAward?: string;
-	specialTournamentStatus?: string;
-	tournyWins: any;
-};
 
 export const userList: User[] = [];
 

@@ -8,7 +8,8 @@ import PlayerReport from '@/models/playerReport.ts';
 import { getProfile } from '@/models/profile/utils.ts';
 import Signups from '@/models/signups.ts';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
+import { User } from '@/shared/types/routes.ts';
 import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 import version from '@/shared/version.ts';
 
@@ -27,7 +28,6 @@ import {
 	gameListEmitter,
 	formattedGameList,
 	staffList,
-	User,
 } from './models.ts';
 import { sendInProgressGameUpdate } from './util.ts';
 
@@ -229,7 +229,7 @@ export const sendUserGameSettings = (socket: Socket) => {
 							},
 					status: {
 						type: 'none',
-						gameId: null,
+						gameId: undefined,
 					},
 				};
 
@@ -343,7 +343,7 @@ export const updateUserStatus = (passport: any, game?: ActiveGame, override?: st
 									? 'playing'
 									: 'none'
 						: 'none',
-			gameId: game ? game.general.uid : false,
+			gameId: game ? game.general.uid : undefined,
 		};
 
 		sendUserList();

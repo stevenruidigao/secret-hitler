@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { sendGameList } from '../user-requests.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
@@ -85,6 +85,10 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 		}
 
 		game.private.seatedPlayers.forEach((player) => {
+			if (!player.gameChats) {
+				player.gameChats = [];
+			}
+
 			player.gameChats.push(chat);
 		});
 

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// @ts-expect-error: no types for 'passport-local-mongoose'
 import passportLocalMongoose from 'passport-local-mongoose';
 
 const { Schema } = mongoose;

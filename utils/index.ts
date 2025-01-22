@@ -3,7 +3,7 @@
 import { none } from 'option';
 import { Range, List } from 'immutable';
 
-import type { Hand, Policy } from '@/shared/game.d.ts';
+import type { Hand, Policy } from '@/shared/types/game.ts';
 
 /**************************
  * IMMUTABLES AND OPTIONS *

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
 import { saveAndDeleteGame } from '../game/end-game.ts';
@@ -180,9 +180,9 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		newGame.publicPlayersState = game.publicPlayersState
 			.filter((player) =>
 				game.remakeData
-					?.filter((rmkPlayer: any) => rmkPlayer.isRemaking)
-					.map((rmkPlayer: any) => rmkPlayer.userName)
-					.some((rmkPlayer: any) => rmkPlayer === player.userName),
+					?.filter((rmkPlayer) => rmkPlayer.isRemaking)
+					.map((rmkPlayer) => rmkPlayer.userName)
+					.some((rmkPlayer) => rmkPlayer === player.userName),
 			)
 			.map((player) => ({
 				userName: player.userName,
@@ -233,7 +233,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 			policies: [],
 		};
 
-		game.publicPlayersState.forEach((player, i: number) => {
+		game.publicPlayersState.forEach((player, i) => {
 			if (game.private?.seatedPlayers && game.private?.seatedPlayers[i] && game.private.seatedPlayers[i].role) {
 				player.cardStatus.cardFront = 'secretrole';
 				player.cardStatus.cardBack = game.private.seatedPlayers[i].role;
@@ -388,6 +388,10 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 
 					if (game.private?.seatedPlayers) {
 						game.private.seatedPlayers.forEach((player) => {
+							if (!player.gameChats) {
+								player.gameChats = [];
+							}
+
 							player.gameChats.push(remainingPoliciesChat);
 						});
 					}

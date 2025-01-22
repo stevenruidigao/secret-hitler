@@ -5,7 +5,7 @@ import util from 'util';
 import { Webhook } from 'discord-webhook-node';
 
 import { IAccount } from '@/models/account.ts';
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 import { newStaff } from './models.ts';

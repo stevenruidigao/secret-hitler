@@ -1,7 +1,7 @@
 import { LineGuess } from './util.ts';
 
 test('parseLineGuess', (done) => {
-	const data = [
+	const data: [string, LineGuess | null][] = [
 		['123', new LineGuess({ hit: null, regs: [1, 2, 3] })],
 		['56h7', new LineGuess({ hit: 6, regs: [5, 6, 7] })],
 		['123456789', new LineGuess({ hit: null, regs: [1, 2, 3, 4, 5, 6, 7, 8, 9] })],
@@ -19,7 +19,7 @@ test('parseLineGuess', (done) => {
 
 		console.log(x, expected);
 
-		if (x !== expected && !x.equals(expected)) {
+		if (x !== expected && !(expected && x?.equals(expected))) {
 			done.fail(`Unexpected`);
 		}
 	}

@@ -6,7 +6,7 @@ import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSum
 import Game, { IGame } from '@/models/game.ts';
 import { updateProfiles } from '@/models/profile/utils.ts';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
 import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 import animals from '@/utils/animals.ts';
 import adjectives from '@/utils/adjectives.ts';
@@ -406,9 +406,18 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 						listUser.isRainbowSeason = player.isRainbowSeason;
 					}
 
-					const seatedPlayer = seatedPlayers?.find((p: any) => p.userName === player.username);
+					const seatedPlayer = seatedPlayers?.find((p) => p.userName === player.username);
 
-					seatedPlayers?.forEach((eachPlayer: any, i: number) => {
+					if (!seatedPlayer) {
+						continue;
+					}
+
+					if (!seatedPlayer.gameChats) {
+						seatedPlayer.gameChats = [];
+					}
+
+					for (let i = 0; i < seatedPlayers.length; i++) {
+						const eachPlayer = seatedPlayers[i];
 						const playerChange = eloAdjustments[eachPlayer.userName];
 						const activeChange = player.gameSettings.disableSeasonal ? playerChange?.change : playerChange?.changeSeason;
 						const activeChangeXP = player.gameSettings.disableSeasonal ? playerChange?.xpChange : playerChange?.xpChangeSeason;
@@ -456,7 +465,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 								],
 							});
 						}
-					});
+					}
 
 					let winner = false;
 
@@ -536,20 +545,29 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 						const userEntry = userList.find((user) => user.userName === player.username);
 
 						if (userEntry) {
+							const defaultStats = {
+								wins: 0,
+								losses: 0,
+								rainbowWins: 0,
+								rainbowLosses: 0,
+								elo: 1600,
+								xp: 0,
+							};
+
 							if (!userEntry.overall) {
-								userEntry.overall = {};
+								userEntry.overall = defaultStats;
 							}
 
 							if (!userEntry.season) {
-								userEntry.season = {};
+								userEntry.season = defaultStats;
 							}
 
 							if (!player.overall) {
-								player.overall = {};
+								player.overall = defaultStats;
 							}
 
 							if (!player.season) {
-								player.season = {};
+								player.season = defaultStats;
 							}
 
 							userEntry.season.xp = player.season.xp || 0;

@@ -1,11 +1,11 @@
 import https from 'https';
 
 import Account from '@/models/account.ts';
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { newStaff } from './models.ts';
 
-function sendReport(game: ActiveGame | undefined, report: any, data: any, type: string) {
+function sendReport(game: ActiveGame | undefined, report: { content: string }, data: { type: string }, type: string) {
 	if (!game) return;
 
 	if (!game.private.seatedPlayers) {
@@ -47,17 +47,17 @@ function sendReport(game: ActiveGame | undefined, report: any, data: any, type: 
 
 		if (process.env.NODE_ENV === 'production') {
 			try {
-				report = JSON.stringify(report);
+				const jsonReport = JSON.stringify(report);
 				const req = https.request({
 					hostname: 'discordapp.com',
 					path: process.env.DISCORDREPORTURL,
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Content-Length': Buffer.byteLength(report),
+						'Content-Length': Buffer.byteLength(jsonReport),
 					},
 				});
-				req.end(report);
+				req.end(jsonReport);
 			} catch (e) {
 				console.log(e);
 			}

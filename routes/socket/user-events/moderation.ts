@@ -820,7 +820,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 									const game = games[uid];
 									const foundUser = game.publicPlayersState.find((user) => user.userName === data.userName);
 									if (foundUser) {
-										foundUser.customCardback = '';
+										foundUser.customCardback = {}; // TODO: check
 										sendCommandChatsUpdate(game);
 										sendGameList();
 									}

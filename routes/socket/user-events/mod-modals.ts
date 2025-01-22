@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
 import ModAction from '@/models/modAction.ts';
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { makeReport } from '../report.ts';
 import { sendInProgressGameUpdate } from '../util.ts';

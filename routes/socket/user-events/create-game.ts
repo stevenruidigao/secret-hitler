@@ -6,7 +6,7 @@ import Account from '@/models/account.ts';
 import Game from '@/models/game.ts';
 
 import { LEGAL_CHARACTERS } from '@/shared/constants.ts';
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.ts';

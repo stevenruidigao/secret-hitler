@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { makeReport } from '../report.ts';
 import { sendGameList } from '../user-requests.ts';

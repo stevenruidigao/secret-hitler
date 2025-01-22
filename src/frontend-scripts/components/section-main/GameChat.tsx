@@ -8,7 +8,7 @@ import ReactCustomScrollbars from 'react-custom-scrollbars';
 import Swal from 'sweetalert2';
 import { Socket } from 'socket.io-client';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';

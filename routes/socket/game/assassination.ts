@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/game.d.ts';
+import type { ActiveGame } from '@/shared/types/game.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
 
 import { completeGame } from './end-game.ts';
@@ -10,9 +10,10 @@ export const assassinateMerlin = (game: ActiveGame) => {
 		game.private = {};
 	}
 
-	const { seatedPlayers } = game.private;
-	const hitlerIndex = seatedPlayers?.findIndex((p: any) => p.role.cardName === 'hitler');
-	const hitler = seatedPlayers && hitlerIndex && seatedPlayers[hitlerIndex];
+	const seatedPlayers = game.private.seatedPlayers || []; // TODO: check
+
+	const hitlerIndex = seatedPlayers.findIndex((p) => p.role.cardName === 'hitler');
+	const hitler = seatedPlayers[hitlerIndex];
 
 	if (!game.private.lock.assassinateMerlin && game.general.avalonSH && !(game.general.isTourny && game.general.tournyInfo.isCancelled)) {
 		game.private.lock.assassinateMerlin = true;
@@ -30,6 +31,14 @@ export const assassinateMerlin = (game: ActiveGame) => {
 		sendInProgressGameUpdate(game);
 
 		setTimeout(() => {
+			if (!hitler) {
+				return;
+			}
+
+			if (!hitler.gameChats) {
+				hitler.gameChats = [];
+			}
+
 			if (hitlerIndex) {
 				game.publicPlayersState[hitlerIndex].cardStatus.cardBack = hitler.role;
 				game.publicPlayersState[hitlerIndex].cardStatus.isFlipped = true;
@@ -55,7 +64,11 @@ export const assassinateMerlin = (game: ActiveGame) => {
 					],
 				};
 
-				seatedPlayers?.forEach((player: any, i: number) => {
+				seatedPlayers?.forEach((player, i) => {
+					if (!player.gameChats) {
+						player.gameChats = [];
+					}
+
 					if (i !== hitlerIndex) {
 						player.gameChats.push(chat);
 					}
@@ -65,20 +78,20 @@ export const assassinateMerlin = (game: ActiveGame) => {
 			}
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.cardName === 'fascist')
-				.forEach((player: any) => {
+				.filter((player, index) => seatedPlayers && seatedPlayers[index].role.cardName === 'fascist')
+				.forEach((player) => {
 					player.nameStatus = 'fascist';
 				});
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.cardName === 'morgana')
-				.forEach((player: any) => {
+				.filter((player, index) => seatedPlayers && seatedPlayers[index].role.cardName === 'morgana')
+				.forEach((player) => {
 					player.nameStatus = 'morgana';
 				});
 
 			hitler.playersState
-				.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
-				.forEach((player: any) => {
+				.filter((player, index) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
+				.forEach((player) => {
 					player.notificationStatus = 'notification';
 				});
 
@@ -86,8 +99,8 @@ export const assassinateMerlin = (game: ActiveGame) => {
 				hitler.userName,
 				seatedPlayers &&
 					seatedPlayers
-						.filter((player: any, index: number) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
-						.map((player: any) => seatedPlayers && seatedPlayers.indexOf(player)),
+						.filter((player, index) => seatedPlayers && seatedPlayers[index].role.team === 'liberal')
+						.map((player) => seatedPlayers && seatedPlayers.indexOf(player)),
 			];
 
 			game.gameState.phase = 'assassination';
@@ -101,13 +114,14 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		game.private = {};
 	}
 
-	const { seatedPlayers } = game.private;
-	const target = seatedPlayers && seatedPlayers[data.playerIndex];
+	const seatedPlayers = game.private.seatedPlayers || []; // TODO: check
+
+	const target = seatedPlayers[data.playerIndex];
 	const publicTarget = game.publicPlayersState[data.playerIndex];
-	const merlinIndex = seatedPlayers && seatedPlayers.findIndex((p: any) => p.role.cardName === 'merlin');
-	const merlin = seatedPlayers && merlinIndex && seatedPlayers[merlinIndex];
+	const merlinIndex = seatedPlayers.findIndex((p) => p.role.cardName === 'merlin');
+	const merlin = seatedPlayers[merlinIndex]; // TODO: check
 	const winningTeam = target.role.cardName === 'merlin' ? 'fascist' : 'liberal';
-	const hitlerIndex = seatedPlayers && seatedPlayers.findIndex((p: any) => p.role.cardName === 'hitler');
+	const hitlerIndex = seatedPlayers.findIndex((p) => p.role.cardName === 'hitler');
 
 	if (game.gameState.isGameFrozen) {
 		if (socket) {
@@ -152,8 +166,8 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 
 	game.gameState.clickActionInfo[1] = [];
 
-	if (hitlerIndex) {
-		seatedPlayers[hitlerIndex].playersState.forEach((player: any) => {
+	if (hitlerIndex && seatedPlayers[hitlerIndex]) {
+		seatedPlayers[hitlerIndex].playersState.forEach((player) => {
 			player.notificationStatus = '';
 		});
 	}
@@ -216,7 +230,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		};
 
 		if (seatedPlayers) {
-			seatedPlayers.forEach((player: any) => {
+			seatedPlayers.forEach((player) => {
 				player.gameChats.push(winningChat);
 			});
 		}
