@@ -56,9 +56,9 @@ import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
 import { ActiveGame } from '@/shared/types/game.ts';
-import Account, { IAccount } from '@/models/account.ts';
 import { TOU_CHANGES } from '@/shared/constants.ts';
 import version from '@/shared/version.ts';
+import Account, { IAccount } from '@/models/account.ts';
 
 import { games, emoteList, cloneSettingsFromRedis, modDMs, getStaffList } from './models.ts';
 import { handleAEMMessages } from './util.ts';
@@ -651,7 +651,7 @@ export const socketRoutes = () => {
 
 				if (game && game.private && game.private.seatedPlayers) {
 					if (authenticated && (isAEM || (isTourneyMod && game.general.unlistedGame))) {
-						const players = game.private.seatedPlayers.map((player: any) => player.userName);
+						const players = game.private.seatedPlayers.map((player) => player.userName);
 						Account.find({ staffRole: { $exists: true, $ne: 'veteran' } }).then((accounts) => {
 							const staff = accounts
 								.filter((acc) => {
