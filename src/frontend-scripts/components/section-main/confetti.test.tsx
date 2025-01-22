@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Confetti from './Confetti';
+import Confetti from './Confetti.tsx';
 
 describe('Confetti', () => {
 	it('should initialize correctly', () => {

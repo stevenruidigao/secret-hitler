@@ -24,6 +24,9 @@ import RightSidebar from './section-right/RightSidebar.tsx';
 import DevHelpers from './DevHelpers.tsx';
 
 import '../../scss/style-dark.scss';
+import { AnyTxtRecord } from 'dns';
+import { Socket } from 'socket.io-client';
+import { User } from '@/shared/types/routes.ts';
 
 declare global {
 	interface Window {
@@ -77,15 +80,32 @@ TopLevelErrorBoundary.propTypes = {
 	children: PropTypes.object,
 };
 
-export class App extends React.Component {
+export type AppProps = {
+	dispatch: Function;
+	userInfo: any;
+	gameInfo: any;
+	socket: Socket;
+	midSection: string;
+	notesActive: boolean;
+	userList: {
+		list: User[];
+	};
+	generalChats: any[];
+	gameList: any[];
+	version: string;
+};
+
+export class App extends React.Component<AppProps> {
+	static propTypes: any;
+	props: AppProps;
+	state: any;
+
 	prevHash = '';
 	lastReconnectAttempt = new Date().valueOf();
-	props: any;
-	state: any;
-	static propTypes: any;
 
-	constructor(props: any) {
+	constructor(props: AppProps) {
 		super(props);
+		this.props = props;
 
 		this.handleSeatingUser = this.handleSeatingUser.bind(this);
 		this.handleLeaveGame = this.handleLeaveGame.bind(this);

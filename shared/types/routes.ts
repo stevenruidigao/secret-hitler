@@ -1,6 +1,7 @@
 import { IStats } from '@/models/account.ts';
 
-export type User = {
+// TODO: find common with Player
+export interface User {
 	isPrivate: boolean;
 	userName: string;
 	playerPronouns?: string;
@@ -29,4 +30,4 @@ export type User = {
 	previousSeasonAward?: string;
 	specialTournamentStatus?: string;
 	tournyWins: any;
-};
+}

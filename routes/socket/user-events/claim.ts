@@ -364,6 +364,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 			claim: data.claim,
 			claimState: data.claimState,
 		};
+
 		if (claimChat && claimChat.chat) {
 			if (seatedPlayers[playerIndex]) seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
 
@@ -376,6 +377,7 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 			sendInProgressGameUpdate(game);
 			return true;
 		}
+
 		return false;
 	}
 };

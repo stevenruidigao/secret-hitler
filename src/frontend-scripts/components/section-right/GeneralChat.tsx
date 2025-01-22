@@ -4,6 +4,7 @@ import ReactCustomScrollbars from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
 
 import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
+import { User } from '@/shared/types/routes.ts';
 
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
@@ -15,7 +16,9 @@ type GeneralChatProps = {
 	userInfo: any;
 	socket: any;
 	generalChats: any;
-	userList: any;
+	userList: {
+		list: User[];
+	};
 	allEmotes: any;
 };
 
@@ -188,7 +191,7 @@ export default class GeneralChat extends React.Component<GeneralChatProps> {
 			};
 		}
 
-		if ((user.xpOverall || 0) < 10 && !user.isRainbowOverall) {
+		if ((user.overall.xp || 0) < 10 && !user.overall.isRainbow) {
 			return {
 				isDisabled: true,
 				placeholder: 'You must have 10 XP to use general chat',

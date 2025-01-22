@@ -113,7 +113,7 @@ export const removeBadge = (user: any, badgeId: any) => {
  * @param {*} badgeText
  * @param {*} badgeTitle
  */
-export const awardBadge = (username: any, badgeId: any, badgeText: any, badgeTitle: any) => {
+export const awardBadge = (username: string, badgeId: any, badgeText: any, badgeTitle: any) => {
 	Account.findOne({ username }).then((user) => {
 		awardBadgePrequeried(user, badgeId, badgeText, badgeTitle);
 	});

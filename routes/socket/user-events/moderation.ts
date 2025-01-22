@@ -3,7 +3,7 @@ import https from 'https';
 
 import { Server, Socket } from 'socket.io';
 
-import Account, { IAccount } from '@/models/account.ts';
+import Account from '@/models/account.ts';
 import BannedIP from '@/models/bannedIP.ts';
 import ModAction from '@/models/modAction.ts';
 import PlayerReport from '@/models/playerReport.ts';
@@ -793,7 +793,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 							// 		});
 							// 	}
 							// });
-							Account.find({ lastConnectedIP: data.ip }).then(function (users: IAccount[]) {
+							Account.find({ lastConnectedIP: data.ip }).then(function (users) {
 								if (users && users.length > 0) {
 									users.forEach((user) => {
 										banAccount(user.username);

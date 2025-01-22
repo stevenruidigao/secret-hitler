@@ -9,11 +9,12 @@ import Swal from 'sweetalert2';
 import { Socket } from 'socket.io-client';
 
 import type { ActiveGame } from '@/shared/types/game.ts';
-import { PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
+import { CHAT_THRESHOLD, PLAYER_COLORS, getBadWord, getNumberWithOrdinal } from '@/shared/constants.ts';
 
 import { loadReplay, toggleNotes, updateUser } from '../../actions/actions.ts';
 import { renderEmotesButton, processEmotes } from '../../emotes.tsx';
 import PreviousSeasonAward from '../reusable/PreviousSeasonAward.tsx';
+import { User } from '@/shared/types/routes.ts';
 
 const Scrollbars = ReactCustomScrollbars as any; // TODO: why????
 
@@ -91,7 +92,7 @@ type GameChatProps = {
 	gameInfo: ActiveGame;
 	socket: Socket;
 	userList: {
-		list: any[];
+		list: User[];
 	};
 	allEmotes: any;
 	notesActive?: boolean;
@@ -607,7 +608,7 @@ class GameChat extends React.Component<GameChatProps> {
 				};
 			}
 		} else {
-			if ((user.xpOverall || 0) < 10 && !user.isRainbowOverall) {
+			if ((user.overall.xp || 0) < CHAT_THRESHOLD && !user.overall.isRainbow) {
 				return {
 					isDisabled: true,
 					placeholder: 'You must have 10 XP to use observer chat',

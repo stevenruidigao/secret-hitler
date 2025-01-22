@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line
 import { shallow } from 'enzyme';
-import Changelog from './Changelog';
+import Changelog from './Changelog.tsx';
 
 describe('Changelog', () => {
 	it('should initialize correctly', () => {

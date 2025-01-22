@@ -6,29 +6,43 @@ import { Range } from 'rc-slider';
 
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 
 import { LEGAL_CHARACTERS } from '@/shared/constants.ts';
 import blacklistedWords from '@/shared/blacklistedWords.ts';
+import { User } from '@/shared/types/routes.ts';
 import flags from '@/utils/flags.ts';
 
 const Switch = ReactSwitch as any; // TODO: is there anything else we can do
 
+export type CreateGameProps = {
+	userInfo: any;
+	userList: {
+		list: User[];
+	};
+	socket: Socket;
+};
+
 export default class CreateGame extends React.Component {
 	static propTypes: any;
-	props: any;
+	props: CreateGameProps;
 	state: any;
 
-	constructor(props: any) {
+	constructor(props: CreateGameProps) {
 		super(props);
+
+		this.props = props;
 
 		let isRainbow = false;
 		let user;
+
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 		}
+
 		if (user) {
-			isRainbow = user.isRainbowOverall;
+			isRainbow = user.overall.isRainbow;
 		}
 
 		this.state = {
@@ -333,10 +347,10 @@ export default class CreateGame extends React.Component {
 		let isRainbow = false;
 		let user;
 		if (this.props.userList.list) {
-			user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
+			user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 		}
 		if (user) {
-			isRainbow = user.isRainbowOverall;
+			isRainbow = user.overall.isRainbow;
 		}
 
 		switch (preset) {
@@ -1069,12 +1083,15 @@ export default class CreateGame extends React.Component {
 	}
 
 	renderXPSlider() {
-		const origMarks: Record<string, string> = { 250: '250', 500: '500', 1000: '1000', 1500: '1500', 2000: '2000' };
+		const origMarks: Record<string, number> = { '250': 250, '500': 500, '1000': 1000, '1500': 1500, '2000': 2000 };
 		const { userInfo, userList } = this.props;
+
 		if (userInfo.gameSettings && userInfo.gameSettings.disableElo) return null;
 		let player = null;
-		if (userList.list) player = userList.list.find((p: any) => p.userName === userInfo.userName);
-		const playerXP = (player && player.xpOverall && Math.min(2000, player.xpOverall)) || 0;
+
+		if (userList.list) player = userList.list.find((p) => p.userName === userInfo.userName);
+		const playerXP = (player && player.overall.xp && Math.min(2000, player.overall.xp)) || 0;
+
 		const marks = Object.keys(origMarks)
 			.filter((k) => origMarks[k] <= playerXP)
 			.reduce((obj: any, key) => {
@@ -1574,7 +1591,7 @@ export default class CreateGame extends React.Component {
 					errs.push(`ELO slider value is invalid, your maximum is ${max}.`);
 				}
 			} else if (this.state.isXPLimited) {
-				const playerXP = (player && player.xpOverall) || 0;
+				const playerXP = (player && player.overall.xp) || 0;
 
 				if (this.state.xpSliderValue[0] < 0 || this.state.xpSliderValue[0] > playerXP) {
 					errs.push(`XP slider value is invalid, your maximum is ${playerXP}.`);
@@ -1918,10 +1935,10 @@ export default class CreateGame extends React.Component {
 							let isRainbow = false;
 							let user;
 							if (this.props.userList.list) {
-								user = this.props.userList.list.find((user: any) => user.userName === this.props.userInfo.userName);
+								user = this.props.userList.list.find((user) => user.userName === this.props.userInfo.userName);
 							}
 							if (user) {
-								isRainbow = user.isRainbowOverall;
+								isRainbow = user.overall.isRainbow;
 							}
 							if (isRainbow) {
 								return (

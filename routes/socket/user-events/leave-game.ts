@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
 import adjectives from '@/utils/adjectives.ts';
 import animals from '@/utils/animals.ts';
 

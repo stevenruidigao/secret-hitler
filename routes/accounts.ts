@@ -665,6 +665,7 @@ export const accounts = (torIpsParam: any) => {
 				}
 
 				player.lastConnectedIP = ip;
+
 				if (
 					(player.ipHistory && player.ipHistory.length === 0) ||
 					(player.ipHistory && player.ipHistory.length > 0 && player.ipHistory[player.ipHistory.length - 1].ip !== ip)
@@ -674,7 +675,8 @@ export const accounts = (torIpsParam: any) => {
 						ip: ip,
 					});
 				}
-				player.save(() => {
+
+				player.save().then(() => {
 					res.send();
 				});
 

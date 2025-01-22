@@ -5,6 +5,8 @@ import quarterOfYear from 'dayjs/plugin/quarterOfYear.js';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 
+import { User } from './types/routes.ts';
+
 dayjs.extend(duration);
 dayjs.extend(quarterOfYear);
 dayjs.extend(timezone);
@@ -13,17 +15,15 @@ dayjs.extend(utc);
 export const CHAT_THRESHOLD = 10.0;
 export const RAINBOW_THRESHOLD = 50.0;
 
-export function getDefaultStats() {
-	return {
-		xp: 0,
-		elo: 1600,
-		wins: 0,
-		losses: 0,
-		rainbowWins: 0,
-		rainbowLosses: 0,
-		isRainbow: false,
-	};
-}
+export const getDefaultStats = () => ({
+	wins: 0,
+	losses: 0,
+	rainbowWins: 0,
+	rainbowLosses: 0,
+	xp: 0,
+	elo: 1600,
+	isRainbow: false,
+});
 
 export const TOU_CHANGES = [
 	{
@@ -84,7 +84,7 @@ export const LEGAL_CHARACTERS = (text: string): boolean => {
  * @param {boolean} eloDisabled - true if elo is off
  * @return {string} list of classes for colors.
  */
-export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: string, eloDisabled?: boolean) => {
+export const PLAYER_COLORS = (user: User, isSeasonal: boolean, defaultClass: string, eloDisabled?: boolean) => {
 	if (
 		Boolean(user.staffRole && user.staffRole.length && user.staffRole !== 'trialmod' && user.staffRole !== 'altmod') &&
 		!(user.staff && user.staff.disableStaffColor)
@@ -105,10 +105,10 @@ export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: stri
 	) {
 		return classnames(defaultClass, 'contributor');
 	} else {
-		const w = isSeasonal ? user.winsSeason : user.wins;
-		const l = isSeasonal ? user.lossesSeason : user.losses;
-		const rainbow = isSeasonal ? user.isRainbowSeason : user.isRainbowOverall;
-		const elo = isSeasonal ? user.eloSeason : user.eloOverall;
+		const w = isSeasonal ? user.season.wins : user.overall.wins;
+		const l = isSeasonal ? user.season.losses : user.overall.losses;
+		const rainbow = isSeasonal ? user.season.isRainbow : user.overall.isRainbow;
+		const elo = isSeasonal ? user.season.elo : user.overall.elo;
 		let grade;
 
 		if (elo < 1500) {

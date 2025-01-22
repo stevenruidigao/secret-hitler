@@ -1,5 +1,6 @@
 import { effects } from 'redux-saga';
-import buildEnhancedGameSummary from '../../models/game-summary/buildEnhancedGameSummary.ts';
+import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSummary.ts';
+
 import buildReplay from './replay/buildReplay.ts';
 import { updateMidsection } from './actions/actions.ts';
 

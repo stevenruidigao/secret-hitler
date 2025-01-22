@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 /* eslint-disable */
 
+// TODO: change this to use https://confetti.js.org
 export default class Confetti extends React.Component {
 	static propTypes: any;
 

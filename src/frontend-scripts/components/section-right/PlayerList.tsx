@@ -8,6 +8,7 @@ import Modal from 'semantic-ui-modal';
 import ReactCustomScrollbars from 'react-custom-scrollbars';
 
 import { getNumberWithOrdinal, PLAYER_COLORS } from '@/shared/constants.ts';
+import { User } from '@/shared/types/routes.ts';
 import { userInBlacklist } from '@/utils/index.ts';
 
 import { fetchProfile } from '../../actions/actions.ts';
@@ -36,7 +37,9 @@ const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
 
 export type PlayerListProps = {
 	userInfo: any;
-	userList: any;
+	userList: {
+		list: User[];
+	};
 	socket: Socket;
 	isUserClickable: boolean;
 	fetchReplay: Function;
@@ -481,7 +484,7 @@ class PlayerList extends React.Component<PlayerListProps> {
 				// };
 
 				const userClasses =
-					(gameSettings && gameSettings.disableSeasonal ? user.isRainbowOverall : user.isRainbowSeason) ||
+					(gameSettings && gameSettings.disableSeasonal ? user.overall.isRainbow : user.season.isRainbow) ||
 					Boolean(user.staffRole && user.staffRole.length) ||
 					user.isContributor
 						? classnames(

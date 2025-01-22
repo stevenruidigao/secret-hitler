@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2'; // TODO: check, used to be `* as Swal`
 import _ from 'lodash';
 
+import { User } from '@/shared/types/routes.ts';
+
 import toGameInfo from '../../../replay/toGameInfo.ts';
 import toDescription from '../../../replay/toDescription.ts';
 import socket from '../../../socket.ts';
@@ -169,7 +171,9 @@ const Replay = ({
 	replay: any;
 	isSmall: boolean;
 	userInfo: any;
-	userList: any;
+	userList: {
+		list: User[];
+	};
 	to: any;
 	gameData: any;
 	chatsShown: boolean;

@@ -1,6 +1,7 @@
 export type Policy = 'fascist' | 'liberal';
 export type Hand = { reds: number; blues: number } & Policy[];
 
+// TODO: find common with User
 export interface PublicPlayer {
 	userName: string;
 	customCardback?: {

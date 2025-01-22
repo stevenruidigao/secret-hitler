@@ -1,18 +1,34 @@
 import React from 'react'; // eslint-disable-line
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
+
+import { ActiveGame } from '@/shared/types/game.ts';
+
+export type PoliciesProps = {
+	gameInfo: ActiveGame;
+	userInfo: any;
+	socket: Socket;
+	deckInfo: any;
+	deckShown: boolean;
+};
 
 class Policies extends React.Component {
 	static defaultProps: any;
 	static propTypes: any;
-	props: any;
+	props: PoliciesProps;
+
+	constructor(props: PoliciesProps) {
+		super(props);
+		this.props = props;
+	}
 
 	clickedDraw() {
 		const { gameInfo, userInfo } = this.props;
 
 		if (
 			userInfo.userName &&
-			gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player: any) => player.userName === userInfo.userName)].policyNotification
+			gameInfo.playersState[gameInfo.publicPlayersState.findIndex((player) => player.userName === userInfo.userName)].policyNotification
 		) {
 			this.props.socket.emit('selectedPolicies', { uid: gameInfo.general.uid });
 		}
@@ -50,7 +66,7 @@ class Policies extends React.Component {
 				(gameInfo.customGameSettings && gameInfo.customGameSettings.deckState
 					? gameInfo.customGameSettings.deckState.lib + gameInfo.customGameSettings.deckState.fas
 					: 17) -
-				(gameInfo.gameState.undrawnPolicyCount + gameInfo.trackState.liberalPolicyCount + gameInfo.trackState.fascistPolicyCount);
+				(gameInfo.gameState.undrawnPolicyCount + gameInfo.trackState.policyCount.liberal + gameInfo.trackState.policyCount.fascist);
 
 			return _.range(1, 10).map((num) => {
 				let classes = `policy-card policy-discard policy-card-${num}`;
@@ -66,7 +82,7 @@ class Policies extends React.Component {
 			(gameInfo.customGameSettings && gameInfo.customGameSettings.deckState
 				? gameInfo.customGameSettings.deckState.lib + gameInfo.customGameSettings.deckState.fas
 				: 17) -
-			(gameInfo.gameState.undrawnPolicyCount + gameInfo.trackState.liberalPolicyCount + gameInfo.trackState.fascistPolicyCount);
+			(gameInfo.gameState.undrawnPolicyCount + gameInfo.trackState.policyCount.liberal + gameInfo.trackState.policyCount.fascist);
 
 		const renderDeckInReplay = () => {
 			// num is from 1 to 18, inclusive

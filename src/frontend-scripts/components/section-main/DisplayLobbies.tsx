@@ -3,9 +3,16 @@ import React from 'react'; // eslint-disable-line
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-import { PLAYER_COLORS } from '@/shared/constants.ts';
+import { getDefaultStats, PLAYER_COLORS } from '@/shared/constants.ts';
+import { User } from '@/shared/types/routes.ts';
 
-const DisplayLobbies = (props: any) => {
+const DisplayLobbies = (props: {
+	game: any;
+	userInfo: any;
+	userList: {
+		list: User[];
+	};
+}) => {
 	const { game, userInfo, userList } = props;
 	const gameClasses = () => {
 		let classes = 'browser-row';
@@ -353,24 +360,31 @@ const DisplayLobbies = (props: any) => {
 			return null;
 		}
 
-		game.userNames.forEach((el: string) => players.push({ userName: game.private ? '' : el }));
+		game.userNames.forEach((el: string) =>
+			players.push({
+				userName: game.private ? '' : el,
+				overall: getDefaultStats(),
+				season: getDefaultStats(),
+			}),
+		);
+
 		game.customCardback.forEach((el: any, index: number) => (players[index].customCardback = el));
 		players.forEach((player, index) => {
 			const userStats = userList.list ? userList.list.find((el: any) => el.userName === player.userName) : null;
 
 			if (userStats) {
-				players[index].wins = userStats.overall.wins;
-				players[index].losses = userStats.overall.losses;
-				players[index].eloOverall = userStats.overall.elo;
+				players[index].overall.wins = userStats.overall.wins;
+				players[index].overall.losses = userStats.overall.losses;
+				players[index].overall.elo = userStats.overall.elo;
 
 				if (userStats.season) {
-					players[index].winsSeason = userStats.season.wins;
-					players[index].lossesSeason = userStats.season.losses;
-					players[index].eloSeason = userStats.season.elo;
+					players[index].season.wins = userStats.season.wins;
+					players[index].season.losses = userStats.season.losses;
+					players[index].season.elo = userStats.season.elo;
 				}
 
-				players[index].isRainbowOverall = userStats.isRainbowOverall;
-				players[index].isRainbowSeason = userStats.isRainbowSeason;
+				players[index].overall.isRainbow = userStats.overall.isRainbow;
+				players[index].season.isRainbow = userStats.season.isRainbow;
 				players[index].staffRole = userStats.staffRole;
 				players[index].isContributor = userStats.isContributor;
 			}

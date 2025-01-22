@@ -3,8 +3,8 @@ import duration from 'dayjs/plugin/duration.js';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import { Socket } from 'socket.io';
 
+import { ActiveGame } from '@/shared/types/game.ts';
 import ModAction from '@/models/modAction.ts';
-import type { ActiveGame } from '@/shared/types/game.ts';
 
 import { makeReport } from '../report.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
