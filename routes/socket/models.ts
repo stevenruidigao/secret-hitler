@@ -166,13 +166,13 @@ export const formattedUserList = (isAEM: boolean) => {
 			overall: {
 				...user.overall,
 				elo: Math.floor(user.overall?.elo || 1600),
+				dateRainbow: undefined,
 			},
-			isRainbowOverall: user.isRainbowOverall,
-			isRainbowSeason: user.isRainbowSeason,
 			status: user.status && user.status.type && user.status.type != 'none' ? user.status : undefined,
 			season: {
 				...user.season,
 				elo: Math.floor(user.season?.elo || 1600),
+				dateRainbow: undefined,
 			}, // TODO: check, used to be `user.seasons ? user.seasons.get(CURRENT_SEASON_NUMBER.toString()) : {}`
 			previousSeasonAward: user.previousSeasonAward,
 			specialTournamentStatus: user.specialTournamentStatus,

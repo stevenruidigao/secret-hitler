@@ -1,12 +1,13 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame } from '@/shared/types/game.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
 import { runCommand } from '../commands.ts';
 import { emoteList, userList, generalChats, getLastGenchatModPingAsync, setLastGenchatModPingAsync, getPrivateChatTruncate, newStaff } from '../models.ts';
 import { makeReport } from '../report.ts';
 import { sendCommandChatsUpdate, sendInProgressGameUpdate, sendPlayerChatUpdate } from '../util.ts';
+import { CHAT_THRESHOLD } from '@/shared/constants.ts';
 
 const generalChatReplTime = Array(chatReplacements.length + 1).fill(0);
 
@@ -106,7 +107,7 @@ export const handleNewGeneralChat = async (
 		}
 	}
 
-	if (user.overall.xp >= 10.0 || user.isRainbowOverall || process.env.NODE_ENV !== 'production') {
+	if (user.overall.xp >= CHAT_THRESHOLD || user.overall.isRainbow || process.env.NODE_ENV !== 'production') {
 		const getStaffRole = () => {
 			if (modUserNames.includes(passport.user) || newStaff.modUserNames.includes(passport.user)) {
 				return 'moderator';
@@ -288,7 +289,7 @@ export const handleAddNewGameChat = async (
 			if (game.general.private && !game.general.whitelistedPlayers.includes(passport.user)) {
 				return;
 			}
-			if (user.overall.xp < 10 && !user.isRainbowOverall) {
+			if (user.overall.xp < CHAT_THRESHOLD && !user.overall.isRainbow) {
 				return;
 			}
 		}

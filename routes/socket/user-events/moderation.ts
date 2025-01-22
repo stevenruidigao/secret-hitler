@@ -9,7 +9,7 @@ import ModAction from '@/models/modAction.ts';
 import PlayerReport from '@/models/playerReport.ts';
 import Profile from '@/models/profile/index.ts';
 
-import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import { CURRENT_SEASON_NUMBER, getDefaultStats } from '@/shared/constants.ts';
 
 import { removeBadge, checkBadgesAccount } from '../badges.ts';
 import { completeGame, saveAndDeleteGame } from '../game/end-game.ts';
@@ -383,9 +383,13 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 						Account.findOne({ username: data.userName })
 							.then((account) => {
 								if (account) {
-									account.isRainbowOverall = true;
-									account.dateRainbowOverall = new Date();
+									if (!account.overall) {
+										account.overall = getDefaultStats();
+									}
+
+									account.overall.dateRainbow = new Date();
 									account.save();
+
 									logOutUser(data.userName);
 								} else socket.emit('sendAlert', `No account found with a matching username: ${data.userName}`);
 							})
@@ -1136,14 +1140,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 								.then((account) => {
 									if (account) {
 										if (!account.overall) {
-											account.overall = {
-												wins: 0,
-												losses: 0,
-												rainbowWins: 0,
-												rainbowLosses: 0,
-												elo: 1600,
-												xp: 0,
-											};
+											account.overall = getDefaultStats();
 										}
 
 										account.overall[setType] = isPlusOrMinus
@@ -1160,14 +1157,7 @@ export const handleModerationAction = (socket: Socket, passport: any, data: any,
 											let currentSeason = account.seasons.get(CURRENT_SEASON_NUMBER.toString()); // TODO: NEED TO CHANGE ON OTHER BRANCHES
 
 											if (!currentSeason) {
-												currentSeason = {
-													wins: 0,
-													losses: 0,
-													rainbowWins: 0,
-													rainbowLosses: 0,
-													elo: 1600,
-													xp: 0,
-												};
+												currentSeason = getDefaultStats();
 											}
 
 											currentSeason[setType] = isPlusOrMinus

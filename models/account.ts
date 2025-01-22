@@ -85,6 +85,8 @@ export interface IStats {
 	losses: number;
 	rainbowWins: number;
 	rainbowLosses: number;
+	isRainbow: boolean;
+	dateRainbow?: Date;
 }
 
 export interface IWarning {
@@ -169,9 +171,6 @@ export interface IAccount {
 		seasonal?: number;
 		overall?: number;
 	};
-	isRainbowSeason?: boolean;
-	isRainbowOverall?: boolean;
-	dateRainbowOverall?: Date;
 	badges?: IBadge[];
 	maxElo?: number;
 	pastElo?: IHistoricalElo[];
@@ -185,6 +184,8 @@ const Stats = new Schema<IStats>({
 	losses: { type: Number, default: 0 },
 	rainbowWins: { type: Number, default: 0 },
 	rainbowLosses: { type: Number, default: 0 },
+	isRainbow: { type: Boolean, default: false },
+	dateRainbow: { type: Date },
 });
 
 const Account = new Schema<IAccount>({
@@ -309,9 +310,6 @@ const Account = new Schema<IAccount>({
 		seasonal: Number,
 		overall: Number,
 	},
-	isRainbowSeason: Boolean,
-	isRainbowOverall: Boolean,
-	dateRainbowOverall: Date,
 	badges: [{ id: String, text: String, title: String, dateAwarded: Date }],
 	maxElo: { type: Number, default: 1600 },
 	pastElo: [{ date: Date, value: Number }],

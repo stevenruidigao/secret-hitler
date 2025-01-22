@@ -10,7 +10,7 @@ import Signups from '@/models/signups.ts';
 
 import { ActiveGame } from '@/shared/types/game.ts';
 import { User } from '@/shared/types/routes.ts';
-import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import { CURRENT_SEASON_NUMBER, getDefaultStats } from '@/shared/constants.ts';
 import version from '@/shared/version.ts';
 
 import { obfIP } from './ip-obf.ts';
@@ -199,34 +199,14 @@ export const sendUserGameSettings = (socket: Socket) => {
 					staffRole: account.staffRole || '',
 					isContributor: account.isContributor || false,
 					staff: account.gameSettings?.staff,
-					isRainbowOverall: account.isRainbowOverall || false,
-					isRainbowSeason: account.isRainbowSeason || false,
 					isPrivate: account.gameSettings?.isPrivate || false,
 					tournyWins: account.gameSettings?.tournyWins,
 					blacklist: account.gameSettings?.blacklist,
 					customCardback: account.gameSettings?.customCardback,
 					previousSeasonAward: account.gameSettings?.previousSeasonAward,
 					specialTournamentStatus: account.gameSettings?.specialTournamentStatus,
-					overall: account.overall
-						? (account.overall as any).toObject()
-						: {
-								wins: 0,
-								losses: 0,
-								rainbowWins: 0,
-								rainbowLosses: 0,
-								elo: 1600,
-								xp: 0,
-							},
-					season: account.seasons
-						? (account.seasons.get(CURRENT_SEASON_NUMBER.toString()) as any).toObject()
-						: {
-								wins: 0,
-								losses: 0,
-								rainbowWins: 0,
-								rainbowLosses: 0,
-								elo: 1600,
-								xp: 0,
-							},
+					overall: account.overall ? (account.overall as any).toObject() : getDefaultStats(),
+					season: account.seasons ? (account.seasons.get(CURRENT_SEASON_NUMBER.toString()) as any).toObject() : getDefaultStats(),
 					status: {
 						type: 'none',
 						gameId: undefined,

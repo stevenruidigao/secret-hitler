@@ -725,6 +725,11 @@ export const selectChancellorVoteOnVeto = (passport: any, game: ActiveGame, data
 					sendInProgressGameUpdate(game);
 					setTimeout(
 						() => {
+							if (!president.cardFlingerState) {
+								console.warn('president.cardFlingerState was undefined, game:', JSON.stringify(game));
+								return;
+							}
+
 							president.cardFlingerState[0].cardStatus.isFlipped = president.cardFlingerState[1].cardStatus.isFlipped = true;
 							president.cardFlingerState[0].notificationStatus = president.cardFlingerState[1].notificationStatus = 'notification';
 							chancellor.cardFlingerState = [];
@@ -988,6 +993,11 @@ export const selectChancellorPolicy = (passport: any, game: ActiveGame, data: an
 
 					setTimeout(
 						() => {
+							if (!chancellor.cardFlingerState) {
+								console.warn('chancellor.cardFlingerState was undefined, game:', JSON.stringify(game));
+								return;
+							}
+
 							chancellor.cardFlingerState[0].cardStatus.isFlipped = chancellor.cardFlingerState[1].cardStatus.isFlipped = true;
 							chancellor.cardFlingerState[0].notificationStatus = chancellor.cardFlingerState[1].notificationStatus = 'notification';
 							game.gameState.phase = 'chancellorVoteOnVeto';
@@ -1410,6 +1420,11 @@ export const selectPresidentPolicy = (passport: any, game: ActiveGame, data: any
 			() => {
 				president.cardFlingerState = [];
 
+				if (!chancellor.cardFlingerState) {
+					console.warn('chancellor.cardFlingerState was undefined, game:', JSON.stringify(game));
+					return;
+				}
+
 				chancellor.cardFlingerState.forEach((cardFlinger: any) => {
 					cardFlinger.cardStatus.isFlipped = true;
 				});
@@ -1678,16 +1693,24 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 		setTimeout(
 			() => {
-				seatedPlayers[presidentIndex].cardFlingerState[0].cardStatus.isFlipped =
-					seatedPlayers[presidentIndex].cardFlingerState[1].cardStatus.isFlipped =
-					seatedPlayers[presidentIndex].cardFlingerState[2].cardStatus.isFlipped =
-						true;
-				seatedPlayers[presidentIndex].cardFlingerState[0].notificationStatus =
-					seatedPlayers[presidentIndex].cardFlingerState[1].notificationStatus =
-					seatedPlayers[presidentIndex].cardFlingerState[2].notificationStatus =
-						'notification';
-				gameState.phase = 'presidentSelectingPolicy';
+				const president = seatedPlayers[presidentIndex];
 
+				if (!president.cardFlingerState) {
+					console.warn('president.cardFlingerState was undefined, game:', JSON.stringify(game));
+					return;
+				}
+
+				president.cardFlingerState[0].cardStatus.isFlipped =
+					president.cardFlingerState[1].cardStatus.isFlipped =
+					president.cardFlingerState[2].cardStatus.isFlipped =
+						true;
+
+				president.cardFlingerState[0].notificationStatus =
+					president.cardFlingerState[1].notificationStatus =
+					president.cardFlingerState[2].notificationStatus =
+						'notification';
+
+				gameState.phase = 'presidentSelectingPolicy';
 				game.gameState.previousElectedGovernment = [presidentIndex, chancellorIndex];
 
 				if (game.general.timedMode) {
@@ -2032,7 +2055,11 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 				if (!(game.general.status && game.general.status.startsWith('Vote'))) return; // TODO: fix; DISGUSTING hack to ensure we are still in the voting phase
 
 				const playerRecheck = seatedPlayers.find((player: any) => player.userName === passport.user);
-				game.publicPlayersState[playerIndex].isLoader = !playerRecheck.voteStatus.hasVoted;
+
+				if (playerRecheck) {
+					game.publicPlayersState[playerIndex].isLoader = !playerRecheck.voteStatus.hasVoted;
+				}
+
 				sendInProgressGameUpdate(game, true);
 			}, 2000)[Symbol.toPrimitive]();
 		}

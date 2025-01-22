@@ -15,7 +15,7 @@ export const handlePlayerReport = (passport: any, data: any, callback: Function)
 
 	if (
 		data.userName !== 'from replay' &&
-		(!user || (user.overall.wins + user.overall.losses < 2 && !user.isRainbowOverall)) &&
+		(!user || (user.overall.wins + user.overall.losses < 2 && !user.overall.isRainbow)) &&
 		process.env.NODE_ENV === 'production'
 	) {
 		return;

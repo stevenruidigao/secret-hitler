@@ -7,7 +7,7 @@ import Game, { IGame } from '@/models/game.ts';
 import { updateProfiles } from '@/models/profile/utils.ts';
 
 import { ActiveGame } from '@/shared/types/game.ts';
-import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import { CURRENT_SEASON_NUMBER, getDefaultStats, RAINBOW_THRESHOLD } from '@/shared/constants.ts';
 import animals from '@/utils/animals.ts';
 import adjectives from '@/utils/adjectives.ts';
 
@@ -291,11 +291,11 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 	game.gameState.timeCompleted = Date.now();
 	sendGameList();
 
-	publicPlayersState.forEach((publicPlayer, index: number) => {
+	publicPlayersState.forEach((publicPlayer, index) => {
 		publicPlayer.nameStatus = seatedPlayers && seatedPlayers[index].role.cardName;
 	});
 
-	seatedPlayers?.forEach((player: any) => {
+	seatedPlayers?.forEach((player) => {
 		player.gameChats.push(chat, remainingPoliciesChat);
 	});
 
@@ -320,7 +320,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 		!game.general.unlistedGame
 	) {
 		await Account.find({
-			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
+			username: { $in: seatedPlayers?.map((player) => player.userName) },
 		})
 			.then(async (results) => {
 				const isRainbow = game.general.rainbowgame;
@@ -340,15 +340,15 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 				}
 
 				seatedPlayers = [
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'hitler'),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'morgana'),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'fascist').sort(byUsername),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'merlin'),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'percival'),
-					...seatedPlayers.filter((e: any) => e.role.cardName === 'liberal').sort(byUsername),
+					...seatedPlayers.filter((e) => e.role.cardName === 'hitler'),
+					...seatedPlayers.filter((e) => e.role.cardName === 'morgana'),
+					...seatedPlayers.filter((e) => e.role.cardName === 'fascist').sort(byUsername),
+					...seatedPlayers.filter((e) => e.role.cardName === 'merlin'),
+					...seatedPlayers.filter((e) => e.role.cardName === 'percival'),
+					...seatedPlayers.filter((e) => e.role.cardName === 'liberal').sort(byUsername),
 				];
 
-				seatedPlayers.forEach((eachPlayer: any, i: number) => {
+				seatedPlayers.forEach((eachPlayer, i) => {
 					const playerChange = eloAdjustments[eachPlayer.userName];
 					const activeChange = playerChange?.change;
 					const activeChangeXP = playerChange?.xpChange;
@@ -402,11 +402,9 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 					if (listUser) {
 						listUser.overall = player.overall;
 						listUser.season = player.season;
-						listUser.isRainbowOverall = player.isRainbowOverall;
-						listUser.isRainbowSeason = player.isRainbowSeason;
 					}
 
-					const seatedPlayer = seatedPlayers?.find((p) => p.userName === player.username);
+					const seatedPlayer = seatedPlayers.find((p) => p.userName === player.username);
 
 					if (!seatedPlayer) {
 						continue;
@@ -545,14 +543,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 						const userEntry = userList.find((user) => user.userName === player.username);
 
 						if (userEntry) {
-							const defaultStats = {
-								wins: 0,
-								losses: 0,
-								rainbowWins: 0,
-								rainbowLosses: 0,
-								elo: 1600,
-								xp: 0,
-							};
+							const defaultStats = getDefaultStats();
 
 							if (!userEntry.overall) {
 								userEntry.overall = defaultStats;
@@ -571,9 +562,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 							}
 
 							userEntry.season.xp = player.season.xp || 0;
-							userEntry.isRainbowSeason = player.isRainbowSeason;
 							userEntry.overall.xp = player.overall.xp || 0;
-							userEntry.isRainbowOverall = player.isRainbowOverall;
 
 							if (winner) {
 								if (isRainbow) {
@@ -618,14 +607,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 		}).then(async (results) => {
 			for (const player of results) {
 				if (!player.overall) {
-					player.overall = {
-						xp: 0,
-						elo: 1600,
-						wins: 0,
-						losses: 0,
-						rainbowWins: 0,
-						rainbowLosses: 0,
-					};
+					player.overall = getDefaultStats();
 				}
 
 				if (!player.seasons) {
@@ -635,14 +617,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 				let currentSeason = player.seasons.get(CURRENT_SEASON_NUMBER.toString());
 
 				if (!currentSeason) {
-					currentSeason = {
-						xp: 0,
-						elo: 1600,
-						wins: 0,
-						losses: 0,
-						rainbowWins: 0,
-						rainbowLosses: 0,
-					};
+					currentSeason = getDefaultStats();
 				}
 
 				if (winningPlayerNames?.includes(player.username)) {
@@ -653,13 +628,13 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 					currentSeason.xp += 1;
 				}
 
-				if (player.overall.xp >= 50.0) {
-					player.isRainbowOverall = true;
-					player.dateRainbowOverall = new Date();
+				if (player.overall.xp >= RAINBOW_THRESHOLD) {
+					player.overall.isRainbow = true;
+					player.overall.dateRainbow = new Date();
 				}
 
-				if (currentSeason.xp >= 50.0) {
-					player.isRainbowSeason = true;
+				if (currentSeason.xp >= RAINBOW_THRESHOLD) {
+					currentSeason.isRainbow = true;
 				}
 
 				player.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);

@@ -1,4 +1,4 @@
-import cn from 'classnames';
+import classnames from 'classnames';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear.js';
@@ -9,6 +9,21 @@ dayjs.extend(duration);
 dayjs.extend(quarterOfYear);
 dayjs.extend(timezone);
 dayjs.extend(utc);
+
+export const CHAT_THRESHOLD = 10.0;
+export const RAINBOW_THRESHOLD = 50.0;
+
+export function getDefaultStats() {
+	return {
+		xp: 0,
+		elo: 1600,
+		wins: 0,
+		losses: 0,
+		rainbowWins: 0,
+		rainbowLosses: 0,
+		isRainbow: false,
+	};
+}
 
 export const TOU_CHANGES = [
 	{
@@ -69,19 +84,12 @@ export const LEGAL_CHARACTERS = (text: string): boolean => {
  * @param {boolean} eloDisabled - true if elo is off
  * @return {string} list of classes for colors.
  */
-/**
- * @param {object} user - user from userlist.
- * @param {boolean} isSeasonal - whether or not to display seasonal colors.
- * @param {string} defaultClass - the default class
- * @param {boolean} eloDisabled - true if elo is off
- * @return {string} list of classes for colors.
- */
 export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: string, eloDisabled?: boolean) => {
 	if (
 		Boolean(user.staffRole && user.staffRole.length && user.staffRole !== 'trialmod' && user.staffRole !== 'altmod') &&
 		!(user.staff && user.staff.disableStaffColor)
 	) {
-		return cn(defaultClass, {
+		return classnames(defaultClass, {
 			admin: user.staffRole === 'admin',
 			moderatorcolor: user.staffRole === 'moderator',
 			editorcolor: user.staffRole === 'editor',
@@ -95,13 +103,14 @@ export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: stri
 		(!(user.staffRole && user.staffRole.length && user.staffRole !== 'trialmod' && user.staffRole !== 'altmod') ||
 			!(user.staff && user.staff.disableStaffColor))
 	) {
-		return cn(defaultClass, 'contributor');
+		return classnames(defaultClass, 'contributor');
 	} else {
 		const w = isSeasonal ? user.winsSeason : user.wins;
 		const l = isSeasonal ? user.lossesSeason : user.losses;
 		const rainbow = isSeasonal ? user.isRainbowSeason : user.isRainbowOverall;
 		const elo = isSeasonal ? user.eloSeason : user.eloOverall;
 		let grade;
+
 		if (elo < 1500) {
 			grade = 0;
 		} else if (elo > 2100) {
@@ -109,12 +118,13 @@ export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: stri
 		} else {
 			grade = (elo - 1500) / 5;
 		}
+
 		const gradeObj: Record<string, boolean> = {};
 		gradeObj['elo' + grade.toFixed(0)] = true;
 
 		return rainbow
 			? eloDisabled
-				? cn(defaultClass, {
+				? classnames(defaultClass, {
 						experienced1: w + l > 49,
 						experienced2: w + l > 99,
 						experienced3: w + l > 199,
@@ -131,7 +141,7 @@ export const PLAYER_COLORS = (user: any, isSeasonal: boolean, defaultClass: stri
 						onfire9: w / (w + l) > 0.68,
 						onfire10: w / (w + l) > 0.7,
 					})
-				: cn(defaultClass, gradeObj)
+				: classnames(defaultClass, gradeObj)
 			: defaultClass;
 	}
 };
@@ -144,11 +154,13 @@ export const getBadWord = (text: string) => {
 		faggot: ['fag', 'f4gg0t', 'f4ggot', 'fagg0t', 'f4g'],
 		'Nazi Terms': ['1488', '卍', 'swastika'],
 	};
+
 	const exceptions = [/(i|o)f (a|4) g/gi, /underclaim on gov/gi, /bastard/gi, /big ga/gi, /among/gi, /mongod/gi, /mongolia/gi, /off again/gi, /pokemon game/gi]; // This list for all exceptions to bypass swear filter
 	let foundWord: (string | null)[] = [null, null]; // Future found bad word, in format of: [blacklisted word, variation]
 
-	// let ec = 0; //for future use in auto reporting
+	// let ec = 0; // for future use in auto reporting
 	let exceptedText = text;
+
 	for (const exception of exceptions) {
 		while (exceptedText.search(exception) > -1) {
 			exceptedText = exceptedText.replace(exception, '');
@@ -157,6 +169,7 @@ export const getBadWord = (text: string) => {
 	}
 
 	const flatText = exceptedText.replace(/\W/gi, '').toLowerCase();
+
 	Object.keys(badWords).forEach((key) => {
 		if (flatText.includes(key)) {
 			// True if spaceless text contains blacklisted word.
@@ -182,6 +195,7 @@ export const getBadWord = (text: string) => {
 			}
 		});
 	});*/
+
 	return foundWord;
 };
 

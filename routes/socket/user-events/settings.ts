@@ -110,8 +110,6 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 						staffRole: account.staffRole || '',
 						isContributor: account.isContributor || false,
 						staff: account.gameSettings.staff,
-						isRainbowOverall: account.isRainbowOverall,
-						isRainbowSeason: account.isRainbowSeason,
 						isPrivate: account.gameSettings.isPrivate,
 						tournyWins: account.gameSettings.tournyWins,
 						blacklist: account.gameSettings.blacklist,

@@ -26,8 +26,6 @@ export type User = {
 	blacklist?: any[];
 	overall: IStats;
 	season: IStats;
-	isRainbowOverall: boolean;
-	isRainbowSeason: boolean;
 	previousSeasonAward?: string;
 	specialTournamentStatus?: string;
 	tournyWins: any;

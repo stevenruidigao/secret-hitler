@@ -109,7 +109,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 							text: ' and chancellor ',
 						},
 						{
-							text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer.userName} {${chancellorIndex + 1}}`,
+							text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer?.userName} {${chancellorIndex + 1}}`,
 							type: 'player',
 						},
 						{
@@ -158,7 +158,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					text: ' nominates ',
 				},
 				{
-					text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer.userName} {${chancellorIndex + 1}}`,
+					text: game.general.blindMode ? `{${chancellorIndex + 1}}` : `${chancellorPlayer?.userName} {${chancellorIndex + 1}}`,
 					type: 'player',
 				},
 				{

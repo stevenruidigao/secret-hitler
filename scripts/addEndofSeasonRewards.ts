@@ -1,13 +1,14 @@
-const mongoose = require('mongoose');
-const Account = require('../models/account');
+import mongoose from 'mongoose';
+import Account from '@/models/account.ts';
+import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
 
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://localhost:27017/secret-hitler-app`);
 
 const bronze = [];
 const silver = [];
-const gold = [];
-const cutoff = 1737;
+const gold: any[] = [];
+const cutoff = 1500;
 
 // Account.find({ 'gameSettings.previousSeasonAward': { $exists: true } })
 // 	.cursor()
@@ -16,10 +17,24 @@ const cutoff = 1737;
 // 		account.save();
 // 	});
 
-Account.find({ eloSeason: { $gte: cutoff }, isBanned: { $exists: false } })
+// TODO: rewrite this to work with the new account model.
+Account.find({
+	seasons: {
+		[CURRENT_SEASON_NUMBER]: {
+			elo: { $gte: cutoff },
+		},
+	},
+	isBanned: { $exists: false },
+})
 	.cursor()
-	.eachAsync(account => {
-		const { eloSeason } = account;
+	.eachAsync((account) => {
+		if (!account.seasons) return;
+
+		const season = account.seasons.get(CURRENT_SEASON_NUMBER.toString());
+
+		if (!season) return;
+
+		const eloSeason = season.elo;
 
 		if (eloSeason >= cutoff && eloSeason < cutoff + 30) {
 			bronze.push(account.username);
@@ -38,7 +53,7 @@ Account.find({ eloSeason: { $gte: cutoff }, isBanned: { $exists: false } })
 		console.log(gold.length, 'gold');
 		console.log(
 			gold.sort((a, b) => a.elo - b.elo),
-			'gold'
+			'gold',
 		);
 		mongoose.connection.close();
 

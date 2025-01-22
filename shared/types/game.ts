@@ -53,6 +53,7 @@ export type CardFlingerState = {
 		cardFront: string;
 		cardBack: string;
 	};
+	discard?: boolean;
 };
 
 export type ActiveGame = {

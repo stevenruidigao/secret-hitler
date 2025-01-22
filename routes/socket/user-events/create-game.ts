@@ -183,7 +183,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 			lastModPing: 0,
 			chatReplTime: Array(chatReplacements.length + 1).fill(0),
 			disableGamechat: data.disableGamechat,
-			rainbowgame: user.isRainbowOverall ? data.rainbowgame : false,
+			rainbowgame: user.overall.isRainbow ? data.rainbowgame : false,
 			blindMode: data.blindMode,
 			timedMode: typeof data.timedMode === 'number' && data.timedMode >= 2 && data.timedMode <= 6000 ? data.timedMode : false,
 			flappyMode: data.flappyMode,

@@ -6,7 +6,7 @@ import { Webhook } from 'discord-webhook-node';
 
 import { IAccount } from '@/models/account.ts';
 import type { ActiveGame } from '@/shared/types/game.ts';
-import { CURRENT_SEASON_NUMBER } from '@/shared/constants.ts';
+import { CURRENT_SEASON_NUMBER, RAINBOW_THRESHOLD, getDefaultStats } from '@/shared/constants.ts';
 
 import { newStaff } from './models.ts';
 import { Document, Types } from 'mongoose';
@@ -88,7 +88,7 @@ export const secureGame = (game: ActiveGame) => {
 
 const combineInProgressChats = (game: ActiveGame, userName?: string) =>
 	userName && game.gameState.isTracksFlipped
-		? game.private?.seatedPlayers?.find((player: any) => player.userName === userName).gameChats.concat(game.chats)
+		? game.private?.seatedPlayers?.find((player) => player.userName === userName)?.gameChats.concat(game.chats)
 		: game.private?.unSeatedGameChats?.concat(game.chats);
 
 export const combineCommandChats = (game: ActiveGame, user: any, commandChats: any) =>
@@ -379,14 +379,7 @@ export const rateEloGame = async (
 
 	for (const account of accounts) {
 		if (!account.overall) {
-			account.overall = {
-				xp: 0,
-				elo: 1600,
-				wins: 0,
-				losses: 0,
-				rainbowWins: 0,
-				rainbowLosses: 0,
-			};
+			account.overall = getDefaultStats();
 		}
 
 		if (!account.seasons) {
@@ -400,14 +393,7 @@ export const rateEloGame = async (
 		}
 
 		if (!currentSeason) {
-			currentSeason = {
-				xp: 0,
-				elo: 1600,
-				wins: 0,
-				losses: 0,
-				rainbowWins: 0,
-				rainbowLosses: 0,
-			};
+			currentSeason = getDefaultStats();
 		}
 
 		const eloOverall = account.overall.elo ? account.overall.elo : defaultELO;
@@ -432,17 +418,17 @@ export const rateEloGame = async (
 			value: account.overall.elo,
 		});
 
-		account.overall.xp = (account.overall.xp || 0) + xpChange;
+		account.overall.xp += xpChange;
 		currentSeason.elo = eloSeason + changeSeason;
-		currentSeason.xp = (currentSeason.xp || 0) + xpChangeSeason;
+		currentSeason.xp += xpChangeSeason;
 
-		if (account.overall?.xp >= 50.0) {
-			account.isRainbowOverall = true;
-			account.dateRainbowOverall = new Date();
+		if (account.overall.xp >= RAINBOW_THRESHOLD) {
+			account.overall.isRainbow = true;
+			account.overall.dateRainbow = new Date();
 		}
 
-		if (currentSeason.xp >= 50.0) {
-			account.isRainbowSeason = true;
+		if (currentSeason.xp >= RAINBOW_THRESHOLD) {
+			currentSeason.isRainbow = true;
 		}
 
 		account.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
