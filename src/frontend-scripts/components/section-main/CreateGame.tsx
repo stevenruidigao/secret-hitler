@@ -2075,7 +2075,7 @@ export default class CreateGame extends React.Component {
 					<div className="row">
 						<div className="four wide column">
 							<i className="big shield icon" />
-							<h4 className="ui header">Avalon SH - Adds roles from The Resistance: Avalon to the game, causal only</h4>
+							<h4 className="ui header">Avalon SH - Adds roles from The Resistance: Avalon to the game, casual only</h4>
 							<Switch
 								className="create-game-switch"
 								onChange={(checked: boolean) => {
