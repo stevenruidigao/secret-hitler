@@ -30,7 +30,7 @@ const mapStateToProps = ({ replay, userInfo }: any) => ({
 	userInfo: userInfo,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
 	to: (position: any) => dispatch({ type: 'REPLAY_TO', position }),
 	exit: () => dispatch({ type: 'CLOSE_REPLAY' }),
 });
@@ -296,6 +296,7 @@ class ReplayWrapper extends React.Component {
 			window.location.hash = '#/';
 			this.props.exit();
 		};
+
 		const toggleChats = () => {
 			this.setState({
 				chatsShown: !this.state.chatsShown,

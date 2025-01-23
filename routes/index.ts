@@ -395,8 +395,6 @@ export default () => {
 						}
 					}
 
-					_profile.isRainbowOverall = account.isRainbowOverall;
-					_profile.isRainbowSeason = account.isRainbowSeason;
 					_profile.staffRole = account.staffRole;
 					_profile.staff = {};
 					_profile.staff.disableVisibleXP = account?.gameSettings?.staff && account.gameSettings.staff.disableVisibleXP;
@@ -573,7 +571,7 @@ export default () => {
 
 			Account.findOne({ username })
 				.then((account) => {
-					if (!account || !account.isRainbowOverall) {
+					if (!account || !account.overall?.isRainbow) {
 						res.json({
 							message: 'You need to be rainbow to upload a cardback.',
 						});

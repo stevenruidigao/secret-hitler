@@ -61,6 +61,7 @@ class Policies extends React.Component {
 				return <div className={classes} key={num} />;
 			});
 		};
+
 		const renderDiscard = () => {
 			const count =
 				(gameInfo.customGameSettings && gameInfo.customGameSettings.deckState
@@ -78,6 +79,7 @@ class Policies extends React.Component {
 				return <div className={classes} key={num} />;
 			});
 		};
+
 		const discardedPolicyCount =
 			(gameInfo.customGameSettings && gameInfo.customGameSettings.deckState
 				? gameInfo.customGameSettings.deckState.lib + gameInfo.customGameSettings.deckState.fas

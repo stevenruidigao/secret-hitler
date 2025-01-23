@@ -1,11 +1,11 @@
 import { text, handToText, mapOpt1, capitalize } from '@/utils/index.ts';
 
-export default function (snapshot, game, userInfo, hideHand) {
+export default function (snapshot: any, game: any, userInfo: any, hideHand: boolean) {
 	const { isVotePassed, jas, neins } = game.turns.get(snapshot.turnNum);
-	const usernameOf = (id) => game.usernameOf(id).valueOrElse('');
-	const claimToText = (claim) => (claim.valueOrElse([]).length !== 0 ? claim.valueOrElse(text('player', 'nothing')) : text('player', 'nothing'));
-	const claimHandToText = (claim, userInfo) => claimToText(mapOpt1((claim) => handToText(claim, userInfo))(claim));
-	const gameOverText = (supplied) => supplied.concat([text(game.winningTeam, capitalize(game.winningTeam) + 's'), text('normal', 'win the game.')]);
+	const usernameOf = (id: any) => game.usernameOf(id).valueOrElse('');
+	const claimToText = (claim: any) => (claim.valueOrElse([]).length !== 0 ? claim.valueOrElse(text('player', 'nothing')) : text('player', 'nothing'));
+	const claimHandToText = (claim: any, userInfo: any) => claimToText(mapOpt1((claim: any) => handToText(claim, userInfo))(claim));
+	const gameOverText = (supplied: any[]) => supplied.concat([text(game.winningTeam, capitalize(game.winningTeam) + 's'), text('normal', 'win the game.')]);
 
 	switch (snapshot.phase) {
 		case 'candidacy':
@@ -65,7 +65,7 @@ export default function (snapshot, game, userInfo, hideHand) {
 					text('normal', 'investigates'),
 					text('player', usernameOf(snapshot.investigationId)),
 					text('normal', 'and claims'),
-					claimToText(snapshot.investigationClaim.map((i) => text(i, capitalize(i)))),
+					claimToText(snapshot.investigationClaim.map((i: any) => text(i, capitalize(i)))),
 				];
 			} else {
 				// reverse investigation
@@ -74,7 +74,7 @@ export default function (snapshot, game, userInfo, hideHand) {
 					text('normal', 'shows their party to'),
 					text('player', usernameOf(investigator)),
 					text('normal', 'who claims'),
-					claimToText(snapshot.investigationClaim.map((i) => text(i, capitalize(i)))),
+					claimToText(snapshot.investigationClaim.map((i: any) => text(i, capitalize(i)))),
 				];
 			}
 		case 'policyPeek':

@@ -230,7 +230,7 @@ const ReplayControls = ({
 	turnsSize: number;
 	turnNum: number;
 	phase: string;
-	description: string;
+	description: any;
 	playback: any;
 	deck: any;
 	deckShown: boolean;

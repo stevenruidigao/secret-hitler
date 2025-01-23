@@ -1,6 +1,6 @@
 import { mapOpt1 } from '@/utils/index.ts';
 
-export default function toGameInfo(snapshot) {
+export default function toGameInfo(snapshot: any) {
 	const gameState = {
 		isTracksFlipped: true,
 		undrawnPolicyCount: snapshot.deckSize,
@@ -11,11 +11,11 @@ export default function toGameInfo(snapshot) {
 		experiencedMode: false,
 	};
 
-	const cardFlingerState = [];
+	const cardFlingerState: any[] = [];
 
 	const publicPlayersState = snapshot.players
-		.map((p, i) => {
-			const maybe = (predicate, field, value) => (predicate ? { [field]: value } : {});
+		.map((p: any, i: number) => {
+			const maybe = (predicate: boolean, field: string, value: any) => (predicate ? { [field]: value } : {});
 
 			const isSpecialElection = Number.isInteger(snapshot.specialElection);
 
@@ -28,7 +28,7 @@ export default function toGameInfo(snapshot) {
 			const maybeChancellor = maybe(!isSpecialElection && snapshot.chancellorId === i, 'governmentStatus', 'isChancellor');
 
 			const cardStatus = (() => {
-				const f = (cardDisplayed, isFlipped, cardFront, cardBack) => ({
+				const f = (cardDisplayed: boolean, isFlipped: boolean, cardFront: string, cardBack: any) => ({
 					cardDisplayed,
 					isFlipped,
 					cardFront,
@@ -49,7 +49,7 @@ export default function toGameInfo(snapshot) {
 						return f(true, true, 'ballot', {
 							cardName: snapshot.votes
 								.get(i)
-								.map((x) => (x ? 'ja' : 'nein'))
+								.map((x: boolean) => (x ? 'ja' : 'nein'))
 								.valueOrElse(null),
 						});
 					case 'investigation':
@@ -59,7 +59,7 @@ export default function toGameInfo(snapshot) {
 							cardName: isInvTarget && 'membership-' + p.loyalty,
 						});
 					case 'veto':
-						const vetoCard = (vote) => f(true, true, 'ballot', { cardName: vote ? 'ja' : 'nein' });
+						const vetoCard = (vote: boolean) => f(true, true, 'ballot', { cardName: vote ? 'ja' : 'nein' });
 
 						if (i === snapshot.chancellorId) {
 							return vetoCard(snapshot.chancellorVeto);
@@ -95,8 +95,10 @@ export default function toGameInfo(snapshot) {
 		.toArray();
 
 	const trackState = {
-		fascistPolicyCount: snapshot.track.reds,
-		liberalPolicyCount: snapshot.track.blues,
+		policyCount: {
+			fascist: snapshot.track.reds,
+			liberal: snapshot.track.blues,
+		},
 		enactedPolicies: [],
 		isBlurred: ['presidentLegislation', 'chancellorLegislation', 'policyPeek'].includes(snapshot.phase),
 		isHidden: true,

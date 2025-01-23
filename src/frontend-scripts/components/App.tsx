@@ -1,8 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
-import PropTypes, { any } from 'prop-types';
+import PropTypes from 'prop-types';
+import { Socket } from 'socket.io-client';
 import _ from 'lodash';
+
+import { User } from '@/shared/types/routes.ts';
 
 import {
 	updateUser,
@@ -15,6 +18,7 @@ import {
 	fetchProfile,
 	fetchReplay,
 } from '../actions/actions.ts';
+
 import socket from '../socket.ts';
 
 import GameNotes from './GameNotes.tsx';
@@ -24,9 +28,6 @@ import RightSidebar from './section-right/RightSidebar.tsx';
 import DevHelpers from './DevHelpers.tsx';
 
 import '../../scss/style-dark.scss';
-import { AnyTxtRecord } from 'dns';
-import { Socket } from 'socket.io-client';
-import { User } from '@/shared/types/routes.ts';
 
 declare global {
 	interface Window {
