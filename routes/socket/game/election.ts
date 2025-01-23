@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { makeReport } from '../report.ts';
 import { sendGameList } from '../user-requests.ts';
@@ -221,7 +221,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 				team === 'liberal' ? `liberal${game.trackState.policyCount.liberal}` : `fascist${game.trackState.policyCount.fascist}`;
 
 			if (!game.general.disableGamechat) {
-				seatedPlayers.forEach((player: any) => {
+				seatedPlayers.forEach((player) => {
 					player.gameChats.push(chat);
 				});
 
@@ -262,7 +262,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 				};
 
 				if (!game.general.disableGamechat) {
-					seatedPlayers.forEach((player: any) => {
+					seatedPlayers.forEach((player) => {
 						player.gameChats.push(chat);
 					});
 
@@ -285,7 +285,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 						() => {
 							if (game.gameState.timedModeEnabled) {
 								const president = seatedPlayers[presidentIndex];
-								let list = seatedPlayers.filter((player: any, i: number) => i !== presidentIndex && !seatedPlayers[i].isDead);
+								let list = seatedPlayers.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead);
 
 								game.gameState.timedModeEnabled = false;
 
@@ -308,7 +308,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 										break;
 									case 'The president must select a player for execution.':
 										if (president.role.team === 'fascist' && president.role.cardName !== 'hitler') {
-											list = list.filter((player: any) => player.role.cardName !== 'hitler');
+											list = list.filter((player) => player.role.cardName !== 'hitler');
 										}
 
 										selectPlayerToExecute({ user: president.userName }, game, { playerIndex: seatedPlayers.indexOf(_.shuffle(list)[0]) }, socket);
@@ -478,7 +478,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: ActiveGame, data:
 				};
 
 				if (!game.general.disableGamechat) {
-					seatedPlayers.forEach((player: any) => {
+					seatedPlayers.forEach((player) => {
 						player.gameChats.push(chat);
 					});
 
@@ -502,7 +502,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: ActiveGame, data:
 					};
 
 					if (!game.general.disableGamechat) {
-						seatedPlayers.forEach((player: any) => {
+						seatedPlayers.forEach((player) => {
 							player.gameChats.push(chat);
 						});
 
@@ -594,7 +594,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: ActiveGame, data
 	const presidentIndex = game.gameState.presidentIndex;
 	const president = seatedPlayers[presidentIndex];
 	const chancellorIndex = game.publicPlayersState.findIndex((player) => player.governmentStatus === 'isChancellor');
-	const chancellor = seatedPlayers.find((player: any) => player.userName === game.private._chancellorPlayerName);
+	const chancellor = seatedPlayers.find((player) => player.userName === game.private._chancellorPlayerName);
 	const publicChancellor = game.publicPlayersState[chancellorIndex];
 
 	if (game.gameState.isGameFrozen) {
@@ -675,7 +675,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: ActiveGame, data
 				};
 
 				if (!game.general.disableGamechat) {
-					seatedPlayers.forEach((player: any) => {
+					seatedPlayers.forEach((player) => {
 						player.gameChats.push(chat);
 					});
 
@@ -1363,7 +1363,7 @@ export const selectPresidentPolicy = (passport: any, game: ActiveGame, data: any
 		}
 
 		game.private.summary = game.private.summary.updateLog({
-			chancellorHand: game.private.currentElectionPolicies?.filter((p: any, i: number) => i !== data.selection),
+			chancellorHand: game.private.currentElectionPolicies?.filter((p, i) => i !== data.selection),
 		});
 
 		if (!game.private.currentElectionPolicies) {
@@ -1425,11 +1425,13 @@ export const selectPresidentPolicy = (passport: any, game: ActiveGame, data: any
 					return;
 				}
 
-				chancellor.cardFlingerState.forEach((cardFlinger: any) => {
-					cardFlinger.cardStatus.isFlipped = true;
-				});
+				// chancellor.cardFlingerState.forEach((cardFlinger) => {
+				// 	cardFlinger.cardStatus.isFlipped = true;
+				// });
+				// TODO: check, merged with below
 
-				chancellor.cardFlingerState.forEach((cardFlinger: any) => {
+				chancellor.cardFlingerState.forEach((cardFlinger) => {
+					cardFlinger.cardStatus.isFlipped = true;
 					cardFlinger.notificationStatus = 'notification';
 				});
 
@@ -1488,8 +1490,9 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 	const { seatedPlayers } = game.private;
 	const { experiencedMode } = game.general;
-	const player = seatedPlayers.find((player: any) => player.userName === passport.user); // TODO: optimize
-	const playerIndex = seatedPlayers.findIndex((play: any) => play.userName === passport.user);
+	// const player = seatedPlayers.find((player) => player.userName === passport.user);
+	const playerIndex = seatedPlayers.findIndex((play) => play.userName === passport.user);
+	const player = seatedPlayers[playerIndex]; // TODO: check, old above
 
 	if (game.gameState.isGameFrozen && !force) {
 		if (socket) {
@@ -1814,7 +1817,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 			game.gameState.previousElectedGovernment = [];
 
 			if (!game.general.disableGamechat) {
-				seatedPlayers?.forEach((player: any) => {
+				seatedPlayers.forEach((player) => {
 					player.gameChats.push(chat);
 				});
 
@@ -1898,16 +1901,17 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 		});
 
 		game.private.summary = game.private.summary.updateLog({
-			votes: seatedPlayers.map((p: any) => p.voteStatus.didVoteYes),
+			votes: seatedPlayers.map((p) => p.voteStatus.didVoteYes),
 		});
 
 		sendInProgressGameUpdate(game, true);
 
 		setTimeout(
 			() => {
-				const chat: any = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
+					chat: [],
 				};
 
 				game.publicPlayersState.forEach((play, i: number) => {
@@ -1927,7 +1931,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 				game.general.livingPlayerCount = game.general.livingPlayerCount || (game.general.playerCount as number); // TODO: do it better
 
-				if (seatedPlayers.filter((play: any) => play.voteStatus.didVoteYes && !play.isDead).length / game.general.livingPlayerCount > 0.5) {
+				if (seatedPlayers.filter((play) => play.voteStatus.didVoteYes && !play.isDead).length / game.general.livingPlayerCount > 0.5) {
 					const chancellorIndex = game.gameState.pendingChancellorIndex as number; // TODO: do not assert
 					const { presidentIndex } = game.gameState;
 
@@ -1937,7 +1941,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 					chat.chat = [{ text: 'The election passes.' }];
 
 					if (!experiencedMode && !game.general.disableGamechat) {
-						seatedPlayers.forEach((player: any) => {
+						seatedPlayers.forEach((player) => {
 							player.gameChats.push(chat);
 						});
 
@@ -1979,7 +1983,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 								});
 
 								if (!game.general.disableGamechat) {
-									seatedPlayers.forEach((player: any) => {
+									seatedPlayers.forEach((player) => {
 										player.gameChats.push(chat);
 									});
 
@@ -2015,7 +2019,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 							},
 						];
 
-						seatedPlayers.forEach((player: any) => {
+						seatedPlayers.forEach((player) => {
 							player.gameChats.push(chat);
 						});
 
@@ -2040,7 +2044,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 		game.private.lock.selectChancellor = false;
 	}
 
-	if (seatedPlayers.length !== seatedPlayers.filter((play: any) => play && play.voteStatus && play.voteStatus.hasVoted).length && player && player.voteStatus) {
+	if (seatedPlayers.length !== seatedPlayers.filter((play) => play && play.voteStatus && play.voteStatus.hasVoted).length && player && player.voteStatus) {
 		player.voteStatus.hasVoted = !player.voteStatus.hasVoted ? true : player.voteStatus.didVoteYes ? !data.vote : data.vote;
 		player.voteStatus.didVoteYes = player.voteStatus.hasVoted ? data.vote : false;
 
@@ -2054,7 +2058,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 			game.private.voteSpamData[playerIndex].unvoteTimer = setInterval(() => {
 				if (!(game.general.status && game.general.status.startsWith('Vote'))) return; // TODO: fix; DISGUSTING hack to ensure we are still in the voting phase
 
-				const playerRecheck = seatedPlayers.find((player: any) => player.userName === passport.user);
+				const playerRecheck = seatedPlayers.find((player) => player.userName === passport.user);
 
 				if (playerRecheck) {
 					game.publicPlayersState[playerIndex].isLoader = !playerRecheck.voteStatus.hasVoted;
@@ -2120,11 +2124,11 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 		sendInProgressGameUpdate(game, true);
 
-		if (seatedPlayers.filter((play: any) => play.voteStatus.hasVoted && !play.isDead).length === game.general.livingPlayerCount) {
+		if (seatedPlayers.filter((play) => play.voteStatus.hasVoted && !play.isDead).length === game.general.livingPlayerCount) {
 			game.general.status = 'Tallying results of ballots..';
 
-			seatedPlayers.forEach((player: any) => {
-				if (player.cardFlingerState.length) {
+			seatedPlayers.forEach((player) => {
+				if (player.cardFlingerState?.length) {
 					player.cardFlingerState[0].action = player.cardFlingerState[1].action = '';
 					player.cardFlingerState[0].action = player.cardFlingerState[1].action = '';
 					player.cardFlingerState[0].cardStatus.isFlipped = player.cardFlingerState[1].cardStatus.isFlipped = false;
@@ -2135,7 +2139,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 
 			setTimeout(
 				() => {
-					seatedPlayers.forEach((player: any) => {
+					seatedPlayers.forEach((player) => {
 						player.cardFlingerState = [];
 					});
 

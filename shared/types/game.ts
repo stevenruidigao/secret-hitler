@@ -1,6 +1,17 @@
 export type Policy = 'fascist' | 'liberal';
 export type Hand = { reds: number; blues: number } & Policy[];
 
+export type GameChat = {
+	timestamp: Date;
+	gameChat?: boolean;
+	isRemainingPolicies?: boolean;
+	chat: {
+		text?: string;
+		type?: string;
+		policies?: any[];
+	}[];
+};
+
 // TODO: find common with User
 export interface PublicPlayer {
 	userName: string;
@@ -37,7 +48,7 @@ export interface Player extends PublicPlayer {
 	claim?: any;
 	role?: any;
 	playersState: Player[];
-	gameChats: any[];
+	gameChats: GameChat[];
 	wonGame?: boolean;
 	wasInvestigated?: boolean;
 	voteStatus?: any;
@@ -154,7 +165,7 @@ export type ActiveGame = {
 		presidentIndex: number;
 		pendingChancellorIndex?: number | null;
 		previousElectedGovernment: number[];
-		specialElectionFormerPresidentIndex?: number;
+		specialElectionFormerPresidentIndex?: number | null;
 		clickActionInfo?: any[];
 		audioCue?: string;
 		isVetoEnabled?: boolean;

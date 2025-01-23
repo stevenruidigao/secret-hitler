@@ -140,18 +140,18 @@ export const handleUpdatedGameSettings = (socket: Socket, passport: any, data: a
 				(!account.gameSettings.privateToggleTime || account.gameSettings.privateToggleTime < Date.now() - 64800000)
 			) {
 				account.gameSettings.privateToggleTime = Date.now();
-				account.save(() => {
+				account.save().then(() => {
 					socket.emit('manualDisconnection');
 				});
 			} else {
 				account.gameSettings.isPrivate = currentPrivate;
-				account.save(() => {
+				account.save().then(() => {
 					socket.emit('gameSettings', account.gameSettings);
 					sendUserList();
 				});
 			}
 		})
-		.catch((err: Error) => {
+		.catch((err) => {
 			console.log(err);
 		});
 };

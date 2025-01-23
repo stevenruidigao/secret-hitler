@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { sendGameList } from '../user-requests.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
@@ -99,7 +99,7 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 		game.private.unSeatedGameChats.push(chat);
 	}
 
-	const modOnlyChat: any = {
+	const modOnlyChat: GameChat = {
 		timestamp: new Date(),
 		gameChat: true,
 		chat: [{ text: 'The deck has been shuffled: ' }],
@@ -123,10 +123,10 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
  * @param {object} game - game to act on.
  * @param {number} specialElectionPresidentIndex - number of index of the special election player (optional)
  */
-export const startElection = (game: any, specialElectionPresidentIndex?: number) => {
+export const startElection = (game: ActiveGame, specialElectionPresidentIndex?: number) => {
 	const { experiencedMode } = game.general;
 
-	if (game.trackState.fascistPolicyCount >= game.customGameSettings.vetoZone) {
+	if (game.trackState.policyCount.fascist >= game.customGameSettings.vetoZone) {
 		game.gameState.isVetoEnabled = true;
 	}
 
@@ -144,8 +144,8 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 		 * @param {number} index - index of the current president
 		 * @return {number} index of the next president
 		 */
-		const nextPresidentIndex = (index: number) => {
-			const nextIndex = index + 1 === game.general.playerCount ? 0 : index + 1;
+		const nextPresidentIndex = (index: number | null) => {
+			const nextIndex = !index || index + 1 === game.general.playerCount ? 0 : index + 1;
 
 			if (game.publicPlayersState[nextIndex].isDead) {
 				return nextPresidentIndex(nextIndex);
@@ -154,11 +154,11 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 			}
 		};
 
-		if (Number.isInteger(specialElectionPresidentIndex)) {
+		if (specialElectionPresidentIndex && Number.isInteger(specialElectionPresidentIndex)) {
 			return specialElectionPresidentIndex;
 		} else if (Number.isInteger(specialElectionFormerPresidentIndex)) {
 			game.gameState.specialElectionFormerPresidentIndex = null;
-			return nextPresidentIndex(specialElectionFormerPresidentIndex);
+			return nextPresidentIndex(specialElectionFormerPresidentIndex || null);
 		} else {
 			return nextPresidentIndex(presidentIndex);
 		}
@@ -166,7 +166,7 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 
 	game.private.summary = game.private.summary.nextTurn().updateLog({ presidentId: game.gameState.presidentIndex, deckState: _.clone(game.private.policies) });
 
-	const { seatedPlayers } = game.private; // eslint-disable-line one-var
+	const seatedPlayers = game.private.seatedPlayers || []; // eslint-disable-line one-var
 	const { presidentIndex, previousElectedGovernment } = game.gameState;
 	const pendingPresidentPlayer = seatedPlayers[presidentIndex];
 
@@ -187,17 +187,19 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 
 	pendingPresidentPlayer.playersState
 		.filter(
-			(player: any, index: number) =>
+			(player, index) =>
 				seatedPlayers[index] &&
 				!seatedPlayers[index].isDead &&
 				index !== presidentIndex &&
-				(game.general.livingPlayerCount > 5 ? !previousElectedGovernment.includes(index) : previousElectedGovernment[1] !== index),
+				(game.general.livingPlayerCount && game.general.livingPlayerCount > 5
+					? !previousElectedGovernment.includes(index)
+					: previousElectedGovernment[1] !== index),
 		)
-		.forEach((player: any) => {
+		.forEach((player) => {
 			player.notificationStatus = 'notification';
 		});
 
-	game.publicPlayersState.forEach((player: any) => {
+	game.publicPlayersState.forEach((player) => {
 		player.cardStatus.cardDisplayed = false;
 		player.governmentStatus = '';
 	});
@@ -215,10 +217,15 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 		game.private.timerId = setTimeout(
 			() => {
 				if (game.gameState.timedModeEnabled) {
+					if (!game.gameState.clickActionInfo) {
+						game.gameState.clickActionInfo = [];
+						console.warn('game.gameState.clickActionInfo not set in startElection, setting to [], game', JSON.stringify(game));
+					}
+
 					const chancellorIndex = _.shuffle(game.gameState.clickActionInfo[1])[0];
 
 					selectChancellor({ user: pendingPresidentPlayer.userName }, game, { chancellorIndex });
-					game.private.replayGameChats.push({
+					game.private.replayGameChats?.push({
 						gameChat: true,
 						timestamp: new Date(),
 						chat: [
@@ -238,18 +245,18 @@ export const startElection = (game: any, specialElectionPresidentIndex?: number)
 	}
 
 	game.gameState.clickActionInfo =
-		game.general.livingPlayerCount > 5
+		game.general.livingPlayerCount && game.general.livingPlayerCount > 5
 			? [
 					pendingPresidentPlayer.userName,
 					seatedPlayers
-						.filter((player: any, index: number) => !player.isDead && index !== presidentIndex && !previousElectedGovernment.includes(index))
-						.map((el: any) => seatedPlayers.indexOf(el)),
+						.filter((player, index) => !player.isDead && index !== presidentIndex && !previousElectedGovernment.includes(index))
+						.map((el) => seatedPlayers.indexOf(el)),
 				]
 			: [
 					pendingPresidentPlayer.userName,
 					seatedPlayers
-						.filter((player: any, index: number) => !player.isDead && index !== presidentIndex && previousElectedGovernment[1] !== index)
-						.map((el: any) => seatedPlayers.indexOf(el)),
+						.filter((player, index) => !player.isDead && index !== presidentIndex && previousElectedGovernment[1] !== index)
+						.map((el) => seatedPlayers.indexOf(el)),
 				];
 
 	sendInProgressGameUpdate(game);

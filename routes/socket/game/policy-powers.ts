@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { sendGameList } from '../user-requests.ts';
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.ts';
@@ -346,7 +346,7 @@ export const selectBurnCard = (passport: any, game: ActiveGame, data: any, socke
 				};
 
 				if (!game.general.disableGamechat) {
-					seatedPlayers?.forEach((player: any) => {
+					seatedPlayers.forEach((player) => {
 						player.gameChats.push(chat);
 					});
 
@@ -763,7 +763,7 @@ export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame
 			game.gameState.audioCue = 'selectedInvestigate';
 			seatedPlayers[playerIndex].wasInvestigated = true;
 
-			president.playersState.forEach((player: any) => {
+			president.playersState.forEach((player) => {
 				player.notificationStatus = '';
 			});
 
@@ -783,9 +783,10 @@ export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame
 
 			setTimeout(
 				() => {
-					const chat: any = {
+					const chat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
+						chat: [],
 					};
 
 					president.playersState[playerIndex].cardStatus = {
@@ -914,13 +915,13 @@ export const showPlayerLoyalty = (game: ActiveGame) => {
 		game.general.status = 'Waiting for President to show their party.';
 		president.playersState
 			.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead)
-			.forEach((player: any) => {
+			.forEach((player) => {
 				player.notificationStatus = 'notification';
 			});
 		game.publicPlayersState[presidentIndex].isLoader = true;
 		game.gameState.clickActionInfo = [
 			president.userName,
-			seatedPlayers.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead).map((player: any) => seatedPlayers.indexOf(player)),
+			seatedPlayers.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead).map((player) => seatedPlayers.indexOf(player)),
 		];
 		game.gameState.phase = 'selectPartyMembershipInvestigateReverse';
 		sendInProgressGameUpdate(game, true);
@@ -987,7 +988,7 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 			game.gameState.audioCue = 'selectedInvestigate';
 			seatedPlayers[presidentIndex].wasInvestigated = true;
 
-			president.playersState.forEach((player: any) => {
+			president.playersState.forEach((player) => {
 				player.notificationStatus = '';
 			});
 
@@ -1007,9 +1008,10 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 
 			setTimeout(
 				() => {
-					const chat: any = {
+					const chat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
+						chat: [],
 					};
 
 					targetPlayer.playersState[presidentIndex].cardStatus = {
@@ -1021,8 +1023,8 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 
 					if (!game.general.disableGamechat) {
 						seatedPlayers
-							.filter((player: any) => player.userName !== president.userName && player.userName !== targetPlayer.userName)
-							.forEach((player: any) => {
+							.filter((player) => player.userName !== president.userName && player.userName !== targetPlayer.userName)
+							.forEach((player) => {
 								chat.chat = [
 									{ text: 'President ' },
 									{
@@ -1153,15 +1155,15 @@ export const specialElection = (game: ActiveGame) => {
 		game.publicPlayersState[presidentIndex].isLoader = true;
 
 		president.playersState
-			.filter((player: any, index: number) => index !== presidentIndex && !seatedPlayers[index].isDead)
-			.forEach((player: any) => {
+			.filter((player, index: number) => index !== presidentIndex && !seatedPlayers[index].isDead)
+			.forEach((player) => {
 				player.notificationStatus = 'notification';
 			});
 
 		game.gameState.phase = 'specialElection';
 		game.gameState.clickActionInfo = [
 			president.userName,
-			seatedPlayers.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead).map((player: any) => seatedPlayers.indexOf(player)),
+			seatedPlayers.filter((player, i) => i !== presidentIndex && !seatedPlayers[i].isDead).map((player) => seatedPlayers.indexOf(player)),
 		];
 		sendInProgressGameUpdate(game, true);
 	}
@@ -1176,7 +1178,7 @@ export const specialElection = (game: ActiveGame) => {
 export const selectSpecialElection = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
 	const { playerIndex } = data;
 	const { presidentIndex } = game.gameState;
-	const gameChat: any = {
+	const gameChat: GameChat = {
 		timestamp: new Date(),
 		gameChat: true,
 		chat: [],
@@ -1230,14 +1232,14 @@ export const selectSpecialElection = (passport: any, game: ActiveGame, data: any
 
 		game.publicPlayersState[game.gameState.presidentIndex].isLoader = false;
 
-		seatedPlayers[game.gameState.presidentIndex].playersState.forEach((player: any) => {
+		seatedPlayers[game.gameState.presidentIndex].playersState.forEach((player) => {
 			player.notificationStatus = '';
 		});
 
 		if (!game.general.disableGamechat) {
 			seatedPlayers
-				.filter((player: any) => player.userName !== president.userName)
-				.forEach((player: any) => {
+				.filter((player) => player.userName !== president.userName)
+				.forEach((player) => {
 					gameChat.chat = [
 						{ text: 'President ' },
 						{
@@ -1305,14 +1307,14 @@ export const executePlayer = (game: ActiveGame) => {
 
 		president.playersState
 			.filter(
-				(player: any, index: number) =>
+				(player, index) =>
 					index !== presidentIndex &&
 					!seatedPlayers[index].isDead &&
 					((!game.customGameSettings.fasCanShootHit && !(president.role.team === 'fascist' && seatedPlayers[index].role.cardName === 'hitler')) ||
 						(game.customGameSettings.fasCanShootHit && !(president.role.team === 'fascist' && seatedPlayers[index].role.cardName === 'hitler')) ||
 						(game.customGameSettings.fasCanShootHit && president.role.team === 'fascist' && seatedPlayers[index].role.cardName === 'hitler')),
 			)
-			.forEach((player: any) => {
+			.forEach((player) => {
 				player.notificationStatus = 'notification';
 			});
 
@@ -1327,7 +1329,7 @@ export const executePlayer = (game: ActiveGame) => {
 							(game.customGameSettings.fasCanShootHit && !(president.role.team === 'fascist' && seatedPlayers[i].role.cardName === 'hitler')) ||
 							(game.customGameSettings.fasCanShootHit && president.role.team === 'fascist' && seatedPlayers[i].role.cardName === 'hitler')),
 				)
-				.map((player: any) => seatedPlayers.indexOf(player)),
+				.map((player) => seatedPlayers.indexOf(player)),
 		];
 		game.gameState.phase = 'execution';
 		sendInProgressGameUpdate(game);
@@ -1422,8 +1424,8 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 			game.private.unSeatedGameChats?.push(nonPresidentChat);
 
 			seatedPlayers
-				.filter((player: any) => player.userName !== president.userName)
-				.forEach((player: any) => {
+				.filter((player) => player.userName !== president.userName)
+				.forEach((player) => {
 					player.gameChats.push(nonPresidentChat);
 				});
 
@@ -1443,7 +1445,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 
 		game.publicPlayersState[presidentIndex].isLoader = false;
 
-		president.playersState.forEach((player: any) => {
+		president.playersState.forEach((player) => {
 			player.notificationStatus = '';
 		});
 
@@ -1515,7 +1517,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 					);
 				} else {
 					let libAlive = false;
-					seatedPlayers.forEach((p: any) => {
+					seatedPlayers.forEach((p) => {
 						if (p.role.team === 'liberal' && !p.isDead) libAlive = true;
 					});
 					if (!libAlive) {
@@ -1567,7 +1569,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 						);
 					} else {
 						let playersAlive = 0;
-						seatedPlayers.forEach((p: any) => {
+						seatedPlayers.forEach((p) => {
 							if (!p.isDead) playersAlive++;
 						});
 						if (playersAlive <= 2) {
@@ -1678,7 +1680,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 									policy === 'liberal' ? `liberal${game.trackState.policyCount.liberal}` : `fascist${game.trackState.policyCount.fascist}`;
 
 								if (!game.general.disableGamechat) {
-									seatedPlayers.forEach((player: any) => {
+									seatedPlayers.forEach((player) => {
 										player.gameChats.push(chat);
 									});
 

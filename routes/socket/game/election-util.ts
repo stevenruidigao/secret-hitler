@@ -36,7 +36,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 	const { chancellorIndex } = data;
 	const { presidentIndex } = game.gameState;
 	const { experiencedMode } = game.general;
-	const seatedPlayers = game.private.seatedPlayers?.filter((player: any) => !player.isDead);
+	const seatedPlayers = game.private.seatedPlayers?.filter((player) => !player.isDead);
 	const presidentPlayer = game.private.seatedPlayers && game.private.seatedPlayers[presidentIndex];
 	const chancellorPlayer = game.private.seatedPlayers && game.private.seatedPlayers[chancellorIndex];
 
@@ -70,7 +70,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			chancellorId: chancellorIndex,
 		});
 
-		presidentPlayer.playersState.forEach((player: any) => {
+		presidentPlayer.playersState.forEach((player) => {
 			player.notificationStatus = '';
 		});
 
@@ -92,7 +92,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 
 		sendInProgressGameUpdate(game, true);
 
-		seatedPlayers?.forEach((player: any) => {
+		seatedPlayers?.forEach((player) => {
 			if (!game.general.disableGamechat) {
 				player.gameChats.push({
 					gameChat: true,
@@ -184,7 +184,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 					game.private = {};
 				}
 
-				seatedPlayers?.forEach((player: any) => {
+				seatedPlayers?.forEach((player) => {
 					if (player.cardFlingerState && player.cardFlingerState.length) {
 						player.cardFlingerState[0].cardStatus.isFlipped = player.cardFlingerState[1].cardStatus.isFlipped = true;
 						player.cardFlingerState[0].notificationStatus = player.cardFlingerState[1].notificationStatus = 'notification';
@@ -225,7 +225,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 
 							if (activePlayerCount < (neededPlayers || 0)) {
 								if (!game.general.disableGamechat) {
-									seatedPlayers?.forEach((player: any) => {
+									seatedPlayers?.forEach((player) => {
 										player.gameChats.push({
 											gameChat: true,
 											timestamp: new Date(),
@@ -243,8 +243,8 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 
 							if (game.gameState.timedModeEnabled) {
 								const unvotedPlayerNames = game.private?.seatedPlayers
-									?.filter((player: any) => !player.voteStatus.hasVoted && !player.isDead)
-									.map((player: any) => player.userName);
+									?.filter((player) => !player.voteStatus.hasVoted && !player.isDead)
+									.map((player) => player.userName);
 
 								game.gameState.timedModeEnabled = false;
 								unvotedPlayerNames?.forEach((userName: string) => {

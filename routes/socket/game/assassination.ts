@@ -109,7 +109,7 @@ export const assassinateMerlin = (game: ActiveGame) => {
 	}
 };
 
-export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data: any, socket?: Socket) => {
+export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data: { playerIndex: number }, socket?: Socket) => {
 	if (!game.private) {
 		game.private = {};
 	}
