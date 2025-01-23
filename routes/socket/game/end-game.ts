@@ -6,7 +6,7 @@ import buildEnhancedGameSummary from '@/models/game-summary/buildEnhancedGameSum
 import Game, { IGame } from '@/models/game.ts';
 import { updateProfiles } from '@/models/profile/utils.ts';
 
-import { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import { CURRENT_SEASON_NUMBER, getDefaultStats, RAINBOW_THRESHOLD } from '@/shared/constants.ts';
 import animals from '@/utils/animals.ts';
 import adjectives from '@/utils/adjectives.ts';
@@ -24,55 +24,55 @@ const debugLogger = debug('game:summary');
 const io = global.io;
 
 export const generateGameObject = (game: ActiveGame): IGame => {
-	const casualBool = Boolean(game?.general?.casualGame); // Because Mongo is explicitly typed and integers are not truthy according to it
-	const practiceBool = Boolean(game?.general?.practiceGame);
-	const unlistedBool = Boolean(game?.general?.unlistedGame);
+	const casualBool = Boolean(game.general.casualGame); // Because Mongo is explicitly typed and integers are not truthy according to it
+	const practiceBool = Boolean(game.general.practiceGame);
+	const unlistedBool = Boolean(game.general.unlistedGame);
 	const objMap = (obj: any, f: Function) => new Map(Object.entries(obj || {})?.map(([k, v]) => [k, f(k, v)]));
 
-	if (game?.gameState && game?.gameState?.isCompleted) {
+	if (game.gameState && game.gameState.isCompleted) {
 		return {
-			uid: game?.general?.uid,
-			name: game?.general?.name,
+			uid: game.general.uid,
+			name: game.general.name,
 			date: new Date(),
-			guesses: objMap(game?.guesses, (_: any, g: any) => g?.toString()),
-			merlinGuesses: objMap(game?.merlinGuesses, (_: any, g: any) => g),
-			playerChats: game?.general?.playerChats as any[], // TODO: fix assertion
-			chats: game?.chats?.concat(game?.private?.unSeatedGameChats)?.concat(game?.private?.replayGameChats),
-			hiddenInfoChat: game?.private?.hiddenInfoChat,
-			isVerifiedOnly: game?.general?.isVerifiedOnly,
+			guesses: objMap(game.guesses, (_: any, g: any) => g?.toString()),
+			merlinGuesses: objMap(game.merlinGuesses, (_: any, g: any) => g),
+			playerChats: game.general.playerChats as any[], // TODO: fix assertion
+			chats: game.chats?.concat(game.private?.unSeatedGameChats)?.concat(game.private?.replayGameChats),
+			hiddenInfoChat: game.private?.hiddenInfoChat,
+			isVerifiedOnly: game.general.isVerifiedOnly,
 			season: CURRENT_SEASON_NUMBER,
-			winningPlayers: game?.private?.seatedPlayers
-				?.filter((player: any) => player?.wonGame)
-				?.map((player: any) => ({
+			winningPlayers: game.private.seatedPlayers
+				?.filter((player) => player?.wonGame)
+				?.map((player) => ({
 					userName: player?.userName,
 					team: player?.role?.team,
 					role: player?.role?.cardName,
 				})),
-			losingPlayers: game?.private?.seatedPlayers
-				?.filter((player: any) => !player?.wonGame)
-				?.map((player: any) => ({
+			losingPlayers: game.private.seatedPlayers
+				?.filter((player) => !player?.wonGame)
+				?.map((player) => ({
 					userName: player?.userName,
 					team: player?.role?.team,
 					role: player?.role?.cardName,
 				})),
-			winningTeam: game?.gameState?.isCompleted,
-			playerCount: game?.general?.playerCount,
-			rebalance6p: game?.general?.rebalance6p,
-			rebalance7p: game?.general?.rebalance7p,
-			rebalance9p2f: game?.general?.rebalance9p2f,
+			winningTeam: game.gameState.isCompleted,
+			playerCount: game.general.playerCount,
+			rebalance6p: game.general.rebalance6p,
+			rebalance7p: game.general.rebalance7p,
+			rebalance9p2f: game.general.rebalance9p2f,
 			casualGame: casualBool,
 			practiceGame: practiceBool,
-			customGame: game?.customGameSettings?.enabled,
+			customGame: game.customGameSettings?.enabled,
 			unlistedGame: unlistedBool,
-			isRainbow: game?.general?.rainbowgame,
-			isTournyFirstRound: game?.general?.isTourny && game?.general?.tournyInfo?.round === 1,
-			isTournySecondRound: game?.general?.isTourny && game?.general?.tournyInfo?.round === 2,
-			timedMode: game?.general?.timedMode,
-			blindMode: game?.general?.blindMode,
-			eloMinimum: game?.general?.eloMinimum,
-			xpMinimum: game?.general?.xpMinimum,
-			avalonSH: game?.general?.avalonSH,
-			noTopdecking: game?.general?.noTopdecking,
+			isRainbow: game.general.rainbowgame,
+			isTournyFirstRound: game.general.isTourny && game.general.tournyInfo?.round === 1,
+			isTournySecondRound: game.general.isTourny && game.general.tournyInfo?.round === 2,
+			timedMode: game.general.timedMode,
+			blindMode: game.general.blindMode,
+			eloMinimum: game.general.eloMinimum,
+			xpMinimum: game.general.xpMinimum,
+			avalonSH: game.general.avalonSH,
+			noTopdecking: game.general.noTopdecking,
 			completed: true,
 		};
 	}
@@ -82,37 +82,37 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 	 */
 
 	return {
-		uid: game?.general?.uid,
-		name: game?.general?.name,
+		uid: game.general.uid,
+		name: game.general.name,
 		date: new Date(),
-		guesses: objMap(game?.guesses, (_: any, g: any) => g?.toString()),
-		merlinGuesses: objMap(game?.merlinGuesses, (_: any, g: any) => g),
-		playerChats: game?.general?.playerChats as any[], // TODO: aahhhhhh
-		chats: game?.chats?.concat(game?.private?.unSeatedGameChats)?.concat(game?.private?.replayGameChats),
-		isVerifiedOnly: game?.general?.isVerifiedOnly,
+		guesses: objMap(game.guesses, (_: any, g: any) => g?.toString()),
+		merlinGuesses: objMap(game.merlinGuesses, (_: any, g: any) => g),
+		playerChats: game.general.playerChats as any[], // TODO: aahhhhhh
+		chats: game.chats?.concat(game.private?.unSeatedGameChats)?.concat(game.private?.replayGameChats),
+		isVerifiedOnly: game.general.isVerifiedOnly,
 		season: CURRENT_SEASON_NUMBER,
-		losingPlayers: game?.publicPlayersState.map((player: any) => ({
+		losingPlayers: game.publicPlayersState.map((player: any) => ({
 			// TODO: why is this player different??????
 			userName: player?.userName,
 			team: player?.role && player?.role?.team,
 			role: player?.role && player?.role?.cardName,
 		})),
-		playerCount: game?.general?.playerCount,
-		rebalance6p: game?.general?.rebalance6p,
-		rebalance7p: game?.general?.rebalance7p,
-		rebalance9p2f: game?.general?.rebalance9p2f,
+		playerCount: game.general.playerCount,
+		rebalance6p: game.general.rebalance6p,
+		rebalance7p: game.general.rebalance7p,
+		rebalance9p2f: game.general.rebalance9p2f,
 		casualGame: casualBool,
 		practiceGame: practiceBool,
-		customGame: game?.customGameSettings?.enabled,
+		customGame: game.customGameSettings?.enabled,
 		unlistedGame: unlistedBool,
-		isRainbow: game?.general?.rainbowgame,
-		isTournyFirstRound: game?.general?.isTourny && game?.general?.tournyInfo?.round === 1,
-		isTournySecondRound: game?.general?.isTourny && game?.general?.tournyInfo?.round === 2,
-		timedMode: game?.general?.timedMode,
-		blindMode: game?.general?.blindMode,
-		eloMinimum: game?.general?.eloMinimum,
-		xpMinimum: game?.general?.xpMinimum,
-		avalonSH: game?.general?.avalonSH,
+		isRainbow: game.general.rainbowgame,
+		isTournyFirstRound: game.general.isTourny && game.general.tournyInfo?.round === 1,
+		isTournySecondRound: game.general.isTourny && game.general.tournyInfo?.round === 2,
+		timedMode: game.general.timedMode,
+		blindMode: game.general.blindMode,
+		eloMinimum: game.general.eloMinimum,
+		xpMinimum: game.general.xpMinimum,
+		avalonSH: game.general.avalonSH,
 		noTopdecking: game.general?.noTopdecking,
 		completed: false,
 	};
@@ -244,7 +244,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 		],
 	};
 
-	const remainingPoliciesChat = {
+	const remainingPoliciesChat: GameChat = {
 		isRemainingPolicies: true,
 		timestamp: new Date(),
 		chat: [
@@ -396,12 +396,12 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 					});
 				});
 
-				for (const player of results as any[]) {
+				for (const player of results) {
 					const listUser = userList.find((user) => user.userName === player.username);
 
 					if (listUser) {
-						listUser.overall = player.overall;
-						listUser.season = player.season;
+						listUser.overall = player.overall || getDefaultStats();
+						listUser.season = player.seasons?.get(CURRENT_SEASON_NUMBER.toString()) || getDefaultStats();
 					}
 
 					const seatedPlayer = seatedPlayers.find((p) => p.userName === player.username);
@@ -417,10 +417,10 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 					for (let i = 0; i < seatedPlayers.length; i++) {
 						const eachPlayer = seatedPlayers[i];
 						const playerChange = eloAdjustments[eachPlayer.userName];
-						const activeChange = player.gameSettings.disableSeasonal ? playerChange?.change : playerChange?.changeSeason;
-						const activeChangeXP = player.gameSettings.disableSeasonal ? playerChange?.xpChange : playerChange?.xpChangeSeason;
+						const activeChange = player.gameSettings?.disableSeasonal ? playerChange?.change : playerChange?.changeSeason;
+						const activeChangeXP = player.gameSettings?.disableSeasonal ? playerChange?.xpChange : playerChange?.xpChangeSeason;
 
-						if (!player.gameSettings.disableElo) {
+						if (!player.gameSettings?.disableElo) {
 							seatedPlayer.gameChats.push({
 								gameChat: true,
 								timestamp: new Date(Date.now() + i),
@@ -468,26 +468,17 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 					let winner = false;
 
 					if (!player.overall) {
-						player.overall = {};
+						player.overall = getDefaultStats();
 					}
 
 					if (!player.seasons) {
 						player.seasons = new Map();
 					}
 
-					let currentSeason;
+					let currentSeason = player.seasons.get(CURRENT_SEASON_NUMBER.toString());
 
-					if (player.seasons.get(CURRENT_SEASON_NUMBER.toString())) {
-						currentSeason = player.seasons.get(CURRENT_SEASON_NUMBER.toString());
-					} else {
-						currentSeason = {
-							xp: 0,
-							elo: 1600,
-							wins: 0,
-							losses: 0,
-							rainbowWins: 0,
-							rainbowLosses: 0,
-						};
+					if (!currentSeason) {
+						currentSeason = getDefaultStats();
 					}
 
 					if (winningPlayerNames?.includes(player.username)) {
@@ -504,7 +495,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 						currentSeason.losses = currentSeason.losses ? currentSeason.losses : 0;
 
 						if (isTournamentFinalGame && !game.general.casualGame) {
-							player.gameSettings.tournyWins.push(Date.now());
+							player.gameSettings?.tournyWins.push(Date.now());
 
 							const playerSocketId = Object.keys(io.sockets.sockets).find((socketId) => {
 								const s = io.sockets.sockets.get(socketId);
@@ -534,7 +525,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 
 					player.seasons.set(CURRENT_SEASON_NUMBER.toString(), currentSeason);
 
-					player.games.push(game.general.uid);
+					player.games?.push(game.general.uid);
 					player.lastCompletedGame = new Date();
 					checkBadgesELO(player, game.general.uid);
 					checkBadgesXP(player, game.general.uid);
@@ -557,11 +548,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 								player.overall = defaultStats;
 							}
 
-							if (!player.season) {
-								player.season = defaultStats;
-							}
-
-							userEntry.season.xp = player.season.xp || 0;
+							userEntry.season.xp = currentSeason.xp || 0;
 							userEntry.overall.xp = player.overall.xp || 0;
 
 							if (winner) {
@@ -603,7 +590,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 	} else if (game.general.playerChats === 'disabled' || game.general.practiceGame) {
 		// 2 XP for win, 1 for loss
 		await Account.find({
-			username: { $in: seatedPlayers?.map((player: any) => player.userName) },
+			username: { $in: seatedPlayers?.map((player) => player.userName) },
 		}).then(async (results) => {
 			for (const player of results) {
 				if (!player.overall) {
@@ -707,7 +694,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 
 							const handshake = socket.handshake as any;
 
-							return handshake?.session?.passport && winningPrivatePlayers?.map((player: any) => player.userName).includes(handshake.session.passport.user);
+							return handshake?.session?.passport && winningPrivatePlayers?.map((player) => player.userName).includes(handshake.session.passport.user);
 						});
 
 						// crash here line 302 map of undefined.  Not sure how this didn't exist at this time.  Race condition in settimeout/interval?  Both games completed at almost the same time?  Dunno.
@@ -791,7 +778,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 				});
 
 				otherGame.general.tournyInfo.winningPlayersFirstCompletedGame = _.cloneDeep(game.private.seatedPlayers)?.filter(
-					(player: any) => player.role.team === winningTeamName,
+					(player) => player.role.team === winningTeamName,
 				);
 
 				sendInProgressGameUpdate(game);
@@ -912,7 +899,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 	}
 
 	if (!_.isEmpty(merlinGuesses)) {
-		const merlinSeat = (game.private.seatedPlayers?.findIndex((p: any) => p.role.cardName === 'merlin') || -1) + 1;
+		const merlinSeat = (game.private.seatedPlayers?.findIndex((p) => p.role.cardName === 'merlin') || -1) + 1;
 		const groupedGuesses = _.groupBy(Object.entries(merlinGuesses), ([_, g]) => g);
 
 		if (!game.chats) {
