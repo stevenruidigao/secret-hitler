@@ -35,8 +35,8 @@ export type GameChat = Chat &
 					type?: string;
 				}[];
 				uid?: string;
-				claim?: any;
-				claimState?: any;
+				claim?: string;
+				claimState?: string;
 		  }
 		| {
 				gameChat?: false;
@@ -87,7 +87,9 @@ export interface PublicPlayer {
 	cardStatus: {
 		cardDisplayed?: boolean;
 		cardFront?: string;
-		cardBack: any;
+		cardBack: {
+			cardName?: string;
+		};
 		isFlipped?: boolean;
 	};
 	governmentStatus?: string;
