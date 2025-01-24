@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
 
 import { completeGame } from './end-game.ts';
@@ -54,7 +54,7 @@ export const assassinateMerlin = (game: ActiveGame) => {
 					chat: [{ text: 'You must choose someone to assassinate.' }],
 				});
 
-				const chat = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -183,7 +183,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		publicTarget.cardStatus.isFlipped = true;
 		game.gameState.audioCue = winningTeam + 'sWin';
 
-		const winningChat = {
+		const winningChat: GameChat = {
 			gameChat: true,
 			timestamp: new Date(),
 			chat:

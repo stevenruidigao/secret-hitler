@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Socket } from 'socket.io';
 
-import { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
 import { saveAndDeleteGame } from '../game/end-game.ts';
@@ -36,7 +36,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 	const playerIndex = remakeData.findIndex((player: any) => player.userName === passport.user);
 	const realPlayerIndex = publicPlayersState.findIndex((player) => player.userName === passport.user);
 	const player = remakeData[playerIndex];
-	let chat;
+	let chat: GameChat;
 
 	game.general.playerCount = game.general.playerCount || 5;
 
@@ -111,9 +111,12 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 		};
 
 		newGame.chats = [];
+
+		// TODO: duplication in create-game - can we merge them?
 		if (newGame.customGameSettings.enabled) {
-			let chat = {
-				timestamp: new Date(),
+			const timestamp = new Date();
+			let chat: GameChat = {
+				timestamp: timestamp,
 				gameChat: true,
 				chat: [
 					{
@@ -135,10 +138,11 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					},
 				],
 			};
-			const t = chat.timestamp.getMilliseconds();
-			newGame.chats.push(chat);
+			const t = timestamp.getMilliseconds();
+			newGame.chats?.push(chat);
+			const newTimestamp = new Date();
 			chat = {
-				timestamp: new Date(),
+				timestamp: newTimestamp,
 				gameChat: true,
 				chat: [
 					{
@@ -160,8 +164,8 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					},
 				],
 			};
-			chat.timestamp.setMilliseconds(t + 1);
-			newGame.chats.push(chat);
+			newTimestamp.setMilliseconds(t + 1);
+			newGame.chats?.push(chat);
 		}
 		newGame.general.isRemade = false;
 		newGame.general.isRemaking = false;
@@ -365,10 +369,15 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 					game.general.remakeCount--;
 				} else {
 					clearInterval(game.private?.remakeTimer);
+
+					if (!game.private.policies) {
+						game.private.policies = [];
+					}
+
 					game.general.status = `Game has been ${game.general.isTourny ? 'cancelled' : 'remade'}.`;
 					game.general.isRemade = true;
 
-					const remainingPoliciesChat = {
+					const remainingPoliciesChat: GameChat = {
 						isRemainingPolicies: true,
 						timestamp: new Date(),
 						chat: [
@@ -376,7 +385,7 @@ export const handleUpdatedRemakeGame = (passport: any, game: ActiveGame, data: a
 								text: 'The remaining policies are ',
 							},
 							{
-								policies: game.private?.policies && game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
+								policies: game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
 							},
 							{
 								text: '.',

@@ -751,7 +751,7 @@ class GameChat extends React.Component<GameChatProps> {
 		};
 
 		if (gameInfo && gameInfo.chats && (!gameInfo.general.private || userInfo.isSeated || isStaff)) {
-			let list = gameInfo.chats.sort((a: any, b: any) =>
+			let list = gameInfo.chats.sort((a, b) =>
 				a.timestamp === b.timestamp ? compareChatStrings(a, b) : new Date(a.timestamp).valueOf() - new Date(b.timestamp).valueOf(),
 			); // TODO: used to not have valueOf()
 			const chatLength = (userInfo && userInfo.gameSettings && userInfo.gameSettings.truncatedSize) || 250;
@@ -780,7 +780,7 @@ class GameChat extends React.Component<GameChatProps> {
 				}
 				list = listAcc;
 			}
-			const processedChats = list.reduce((acc: any, chat: any, i: number) => {
+			const processedChats = list.reduce((acc: any, chat, i) => {
 				const playerListPlayer = Object.keys(userList).length ? userList.list.find((player: any) => player.userName === chat.userName) : undefined;
 				const isMod =
 					playerListPlayer &&
@@ -796,7 +796,7 @@ class GameChat extends React.Component<GameChatProps> {
 					userInfo && userInfo.staffRole && userInfo.staffRole !== '' && userInfo.staffRole !== 'altmod' && userInfo.staffRole !== 'veteran';
 				acc.push(
 					chat.gameChat ? (
-						<div className={chat.chat[1] && chat.chat[1].type ? `item game-chat ${chat.chat[1].type}` : 'item game-chat'} key={i}>
+						<div className={chat.gameChat && chat.chat[1] && chat.chat[1].type ? `item game-chat ${chat.chat[1].type}` : 'item game-chat'} key={i}>
 							{this.handleTimestamps(chat.timestamp)}
 							<span className="game-chat">
 								{chatContents.map((chatSegment: any, index: number) => {

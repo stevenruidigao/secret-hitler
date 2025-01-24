@@ -56,7 +56,7 @@ export const shufflePolicies = (game: ActiveGame, isStart?: boolean) => {
 	game.gameState.undrawnPolicyCount = game.private?.policies.length || 0;
 
 	if (!game.general.disableGamechat) {
-		const chat = {
+		const chat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [

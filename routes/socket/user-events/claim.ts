@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
 
 /**
@@ -355,17 +355,28 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 	})();
 
 	if (Number.isInteger(playerIndex) && seatedPlayers[playerIndex] && seatedPlayers[playerIndex].playersState[playerIndex].claim !== '') {
-		const claimChat = {
-			chat: chat,
-			isClaim: true,
-			timestamp: new Date(),
-			uid: game.general.uid,
-			userName: passport.user,
-			claim: data.claim,
-			claimState: data.claimState,
-		};
+		// const claimChat = {
+		// 	chat: chat,
+		// 	isClaim: true,
+		// 	timestamp: new Date(),
+		// 	uid: game.general.uid,
+		// 	userName: passport.user,
+		// 	claim: data.claim,
+		// 	claimState: data.claimState,
+		// };
 
-		if (claimChat && claimChat.chat) {
+		// if (claimChat && claimChat.chat) {
+		if (chat) {
+			const claimChat: GameChat = {
+				chat: chat,
+				isClaim: true,
+				timestamp: new Date(),
+				uid: game.general.uid,
+				userName: passport.user,
+				claim: data.claim,
+				claimState: data.claimState,
+			};
+
 			if (seatedPlayers[playerIndex]) seatedPlayers[playerIndex].playersState[playerIndex].claim = '';
 
 			if (!game.chats) {

@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 
 import Account from '@/models/account.ts';
-import { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import { User } from '@/shared/types/routes.ts';
 
 import { selectPlayerToAssassinate } from './game/assassination.ts';
@@ -637,7 +637,7 @@ commands.getCommand = function (name: string) {
 			],
 		});
 
-		const modOnlyChat = {
+		const modOnlyChat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [

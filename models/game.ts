@@ -7,7 +7,7 @@ export interface IGame {
 	name?: string;
 	flag?: string;
 	date?: Date;
-	playerChats?: any[];
+	playerChats?: string;
 	playerCount?: number;
 	winningPlayers?: any[];
 	losingPlayers?: any[];

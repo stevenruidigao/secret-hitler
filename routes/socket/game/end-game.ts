@@ -36,8 +36,8 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 			date: new Date(),
 			guesses: objMap(game.guesses, (_: any, g: any) => g?.toString()),
 			merlinGuesses: objMap(game.merlinGuesses, (_: any, g: any) => g),
-			playerChats: game.general.playerChats as any[], // TODO: fix assertion
-			chats: game.chats?.concat(game.private?.unSeatedGameChats)?.concat(game.private?.replayGameChats),
+			playerChats: game.general.playerChats, // TODO: fix assertion
+			chats: game.chats?.concat(game.private?.unSeatedGameChats || [])?.concat(game.private?.replayGameChats || []),
 			hiddenInfoChat: game.private?.hiddenInfoChat,
 			isVerifiedOnly: game.general.isVerifiedOnly,
 			season: CURRENT_SEASON_NUMBER,
@@ -87,8 +87,8 @@ export const generateGameObject = (game: ActiveGame): IGame => {
 		date: new Date(),
 		guesses: objMap(game.guesses, (_: any, g: any) => g?.toString()),
 		merlinGuesses: objMap(game.merlinGuesses, (_: any, g: any) => g),
-		playerChats: game.general.playerChats as any[], // TODO: aahhhhhh
-		chats: game.chats?.concat(game.private?.unSeatedGameChats)?.concat(game.private?.replayGameChats),
+		playerChats: game.general.playerChats, // TODO: aahhhhhh
+		chats: game.chats?.concat(game.private?.unSeatedGameChats || [])?.concat(game.private?.replayGameChats || []),
 		isVerifiedOnly: game.general.isVerifiedOnly,
 		season: CURRENT_SEASON_NUMBER,
 		losingPlayers: game.publicPlayersState.map((player: any) => ({
@@ -232,7 +232,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 	let { seatedPlayers } = game.private;
 	const { publicPlayersState } = game;
 
-	const chat = {
+	const chat: GameChat = {
 		gameChat: true,
 		timestamp: new Date(),
 		chat: [
@@ -244,6 +244,10 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 		],
 	};
 
+	if (!game.private.policies) {
+		game.private.policies = [];
+	}
+
 	const remainingPoliciesChat: GameChat = {
 		isRemainingPolicies: true,
 		timestamp: new Date(),
@@ -252,7 +256,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 				text: 'The remaining policies are ',
 			},
 			{
-				policies: game.private.policies?.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
+				policies: game.private.policies.map((policyName: string) => (policyName === 'liberal' ? 'b' : 'r')),
 			},
 			{
 				text: '.',
@@ -858,7 +862,7 @@ export const completeGame = async (game: ActiveGame, winningTeamName: string) =>
 			}
 		}
 
-		const guessesToChat = (prefix: string, guesses: any[]) => ({
+		const guessesToChat = (prefix: string, guesses: any[]): GameChat => ({
 			gameChat: true,
 			timestamp: now + guessOrder++,
 			chat: [

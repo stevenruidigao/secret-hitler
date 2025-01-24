@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Account from '@/models/account.ts';
 import GameSummaryBuilder from '@/models/game-summary/GameSummaryBuilder.ts';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { sendInProgressGameUpdate, sendInProgressModChatUpdate } from '../util.ts';
 
@@ -205,7 +205,7 @@ const beginGame = (game: ActiveGame) => {
 			});
 		}
 
-		const modOnlyChat = {
+		const modOnlyChat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
@@ -404,7 +404,7 @@ const beginGame = (game: ActiveGame) => {
 						}
 					}
 
-					const chat = {
+					const chat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
 						chat: [

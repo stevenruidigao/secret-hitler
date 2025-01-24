@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import { sendInProgressGameUpdate } from '../util.ts';
 
 import { selectVoting } from './election.ts';
@@ -143,7 +143,7 @@ export const selectChancellor = (passport: any, game: ActiveGame, data: any, soc
 			];
 		});
 
-		const unseatedChat = {
+		const unseatedChat: GameChat = {
 			gameChat: true,
 			timestamp: new Date(),
 			chat: [

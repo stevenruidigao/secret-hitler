@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
-import { ActiveGame } from '@/shared/types/game.ts';
+import { ActiveGame, GameChat } from '@/shared/types/game.ts';
 import adjectives from '@/utils/adjectives.ts';
 import animals from '@/utils/animals.ts';
 
@@ -245,7 +245,7 @@ export const handleSocketDisconnect = (socket: Socket) => {
 							game.general.status = 'Game remaking has been cancelled.';
 							clearInterval(game.private.remakeTimer);
 						}
-						const chat = {
+						const chat: GameChat = {
 							timestamp: new Date(),
 							gameChat: true,
 							chat: [
@@ -361,7 +361,7 @@ export const handleUserLeaveGame = (socket: Socket, game: ActiveGame, data: { is
 				game.general.status = 'Game remaking has been cancelled.';
 				clearInterval(game.private.remakeTimer);
 			}
-			const chat = {
+			const chat: GameChat = {
 				timestamp: new Date(),
 				gameChat: true,
 				chat: [

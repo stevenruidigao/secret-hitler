@@ -1,16 +1,76 @@
 export type Policy = 'fascist' | 'liberal';
 export type Hand = { reds: number; blues: number } & Policy[];
 
-export type GameChat = {
-	timestamp: Date;
-	gameChat?: boolean;
-	isRemainingPolicies?: boolean;
-	chat: {
-		text?: string;
-		type?: string;
-		policies?: any[];
-	}[];
+type Chat = {
+	timestamp: number | Date;
+	userName?: string;
+	tournyWins?: any;
+	previousSeasonAward?: string;
+	specialTournamentStatus?: any;
+	staffRole?: string;
+	hiddenUsername?: boolean;
 };
+
+export type GameChat = Chat &
+	(
+		| {
+				gameChat: true;
+				isClaim?: false;
+				isRemainingPolicies?: false;
+				isBroadcast?: false;
+				chat: {
+					text: string;
+					type?: string;
+				}[];
+				uid?: string;
+				inProgress?: boolean;
+		  }
+		| {
+				gameChat?: false;
+				isClaim: true;
+				isRemainingPolicies?: false;
+				isBroadcast?: false;
+				chat: {
+					text?: string;
+					type?: string;
+				}[];
+				uid?: string;
+				claim?: any;
+				claimState?: any;
+		  }
+		| {
+				gameChat?: false;
+				isClaim?: false;
+				isRemainingPolicies: true;
+				isBroadcast?: false;
+				chat: (
+					| {
+							text: string;
+							type?: string;
+					  }
+					| {
+							policies: string[];
+					  }
+				)[];
+		  }
+		| {
+				gameChat?: false;
+				isClaim?: false;
+				isRemainingPolicies?: false;
+				isBroadcast: true;
+				chat: string;
+		  }
+		| {
+				gameChat?: false;
+				isClaim?: false;
+				isRemainingPolicies?: false;
+				isBroadcast?: false;
+				chat: {
+					text: string;
+					type?: string;
+				}[];
+		  }
+	);
 
 // TODO: find common with User
 export interface PublicPlayer {
@@ -112,7 +172,7 @@ export type ActiveGame = {
 		replacementNames?: string[];
 		whitelistedPlayers: string[];
 		timeStarted?: number;
-		playerChats: string | any[];
+		playerChats: string;
 		isRecorded?: boolean;
 		timeCreated?: Date;
 		chatReplTime: number[];
@@ -132,8 +192,8 @@ export type ActiveGame = {
 		privatePassword: string;
 		reports: any;
 		policies: string[];
-		unSeatedGameChats: any[];
-		hiddenInfoChat: any[];
+		unSeatedGameChats: GameChat[];
+		hiddenInfoChat: GameChat[];
 		summary: any;
 		timerId: any;
 		invIndex: number;
@@ -213,7 +273,7 @@ export type ActiveGame = {
 			fas: number;
 		};
 	};
-	chats?: any[];
+	chats?: GameChat[];
 	guesses?: Record<string, any>;
 	merlinGuesses: Record<string, any>;
 	lastModPing?: number;

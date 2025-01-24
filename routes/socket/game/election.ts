@@ -179,7 +179,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 		() => {
 			game.gameState.audioCue = '';
 
-			const chat = {
+			const chat: GameChat = {
 				timestamp: new Date(),
 				gameChat: true,
 				chat: [
@@ -255,7 +255,7 @@ const enactPolicy = (game: ActiveGame, team?: keyof ActiveGame['trackState']['po
 					process.env.NODE_ENV === 'development' ? 100 : 2000,
 				);
 			} else if (powerToEnact && game.trackState.electionTrackerCount <= 2) {
-				const chat = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [{ text: powerToEnact[1] }],
@@ -462,7 +462,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: ActiveGame, data:
 
 		setTimeout(
 			() => {
-				const chat = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -491,7 +491,7 @@ export const selectPresidentVoteOnVeto = (passport: any, game: ActiveGame, data:
 
 				if (data.vote) {
 					game.trackState.electionTrackerCount++;
-					const chat = {
+					const chat: GameChat = {
 						gameChat: true,
 						timestamp: new Date(),
 						chat: [
@@ -659,7 +659,7 @@ export const selectChancellorVoteOnVeto = (passport: any, game: ActiveGame, data
 
 		setTimeout(
 			() => {
-				const chat = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -894,7 +894,7 @@ export const selectChancellorPolicy = (passport: any, game: ActiveGame, data: an
 			}
 		}
 
-		const modOnlyChat = {
+		const modOnlyChat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
@@ -950,7 +950,7 @@ export const selectChancellorPolicy = (passport: any, game: ActiveGame, data: an
 
 			setTimeout(
 				() => {
-					const chat = {
+					const chat: GameChat = {
 						gameChat: true,
 						timestamp: new Date(),
 						chat: [
@@ -1126,7 +1126,7 @@ export const selectPresidentPolicy = (passport: any, game: ActiveGame, data: any
 
 		const discarded = game.private.currentElectionPolicies && game.private.currentElectionPolicies[data.selection];
 
-		const modOnlyChat = {
+		const modOnlyChat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
@@ -1610,7 +1610,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 			);
 		}
 
-		const modOnlyChat = {
+		const modOnlyChat: GameChat = {
 			timestamp: new Date(),
 			gameChat: true,
 			chat: [
@@ -1804,7 +1804,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 				game.trackState.consecutiveTopdecks++;
 			}
 
-			const chat = {
+			const chat: GameChat = {
 				timestamp: new Date(),
 				gameChat: true,
 				chat: [
@@ -1960,7 +1960,7 @@ export const selectVoting = (passport: any, game: ActiveGame, data: any, socket?
 							return `${val}th`;
 						};
 
-						const chat = {
+						const chat: GameChat = {
 							timestamp: new Date(),
 							gameChat: true,
 							chat: [

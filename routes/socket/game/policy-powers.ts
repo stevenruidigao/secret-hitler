@@ -150,7 +150,7 @@ export const selectPolicies = (passport: any, game: ActiveGame, socket?: Socket)
 					console.warn('game.private.policies was not defined in selectPolicies, game:', game);
 				}
 
-				const modOnlyChat = {
+				const modOnlyChat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -330,7 +330,7 @@ export const selectBurnCard = (passport: any, game: ActiveGame, data: any, socke
 
 		setTimeout(
 			() => {
-				const chat = {
+				const chat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -482,7 +482,7 @@ export const selectOnePolicy = (passport: any, game: ActiveGame) => {
 					console.warn('game.private.policies was not defined in selectOnePolicy, game:', game);
 				}
 
-				const modOnlyChat = {
+				const modOnlyChat: GameChat = {
 					timestamp: new Date(),
 					gameChat: true,
 					chat: [
@@ -530,7 +530,7 @@ export const selectOnePolicy = (passport: any, game: ActiveGame) => {
 
 				setTimeout(
 					() => {
-						const chat = {
+						const chat: GameChat = {
 							gameChat: true,
 							timestamp: new Date(),
 							chat: [
@@ -654,7 +654,7 @@ export const investigateLoyalty = (game: ActiveGame) => {
 		const t = new Date();
 		t.setMilliseconds(t.getMilliseconds() + 1);
 
-		const chat = {
+		const chat: GameChat = {
 			timestamp: t,
 			gameChat: true,
 			chat: [
@@ -838,7 +838,7 @@ export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame
 						});
 					}
 
-					const modOnlyChat = {
+					const modOnlyChat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
 						chat: [
@@ -1076,7 +1076,7 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 						});
 					}
 
-					const modOnlyChat = {
+					const modOnlyChat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
 						chat: [
@@ -1388,7 +1388,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 		return;
 	}
 
-	const nonPresidentChat = {
+	const nonPresidentChat: GameChat = {
 		gameChat: true,
 		timestamp: new Date(),
 		chat: [
@@ -1470,7 +1470,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 				sendInProgressGameUpdate(game, true);
 
 				if (selectedPlayer.role.cardName === 'hitler') {
-					const chat = {
+					const chat: GameChat = {
 						timestamp: new Date(),
 						gameChat: true,
 						chat: [
@@ -1521,7 +1521,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 						if (p.role.team === 'liberal' && !p.isDead) libAlive = true;
 					});
 					if (!libAlive) {
-						const chat = {
+						const chat: GameChat = {
 							timestamp: new Date(),
 							gameChat: true,
 							chat: [
@@ -1573,7 +1573,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 							if (!p.isDead) playersAlive++;
 						});
 						if (playersAlive <= 2) {
-							const chat = {
+							const chat: GameChat = {
 								timestamp: new Date(),
 								gameChat: true,
 								chat: [
@@ -1660,7 +1660,7 @@ export const selectPlayerToExecute = (passport: any, game: ActiveGame, data: any
 									isFlipped: false,
 								});
 								game.trackState.enactedPolicies[index].isFlipped = true;
-								const chat = {
+								const chat: GameChat = {
 									timestamp: new Date(),
 									gameChat: true,
 									chat: [

@@ -6,7 +6,7 @@ import Account from '@/models/account.ts';
 import Game from '@/models/game.ts';
 
 import { LEGAL_CHARACTERS } from '@/shared/constants.ts';
-import type { ActiveGame } from '@/shared/types/game.ts';
+import type { ActiveGame, GameChat } from '@/shared/types/game.ts';
 
 import { chatReplacements } from '../chatReplacements.ts';
 import { gameCreationDisabled, limitNewPlayers, userList, games } from '../models.ts';
@@ -228,8 +228,9 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 	}
 
 	if (newGame.customGameSettings.enabled) {
-		let chat = {
-			timestamp: new Date(),
+		const timestamp = new Date();
+		let chat: GameChat = {
+			timestamp: timestamp,
 			gameChat: true,
 			chat: [
 				{
@@ -251,10 +252,11 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 				},
 			],
 		};
-		const t = chat.timestamp.getMilliseconds();
+		const t = timestamp.getMilliseconds();
 		newGame.chats?.push(chat);
+		const newTimestamp = new Date();
 		chat = {
-			timestamp: new Date(),
+			timestamp: newTimestamp,
 			gameChat: true,
 			chat: [
 				{
@@ -276,7 +278,7 @@ export const handleAddNewGame = async (socket: Socket, passport: any, data: any)
 				},
 			],
 		};
-		chat.timestamp.setMilliseconds(t + 1);
+		newTimestamp.setMilliseconds(t + 1);
 		newGame.chats?.push(chat);
 	}
 
