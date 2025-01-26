@@ -252,7 +252,7 @@ export const selectPlayerToAssassinate = (passport: any, game: ActiveGame, data:
 		game.publicPlayersState.forEach((player, i) => {
 			if (i !== data.playerIndex && i !== hitlerIndex) {
 				player.cardStatus.cardFront = 'secretrole';
-				player.cardStatus.cardBack = (game.private?.seatedPlayers && game.private.seatedPlayers[i].role) || '';
+				player.cardStatus.cardBack = (game.private?.seatedPlayers && game.private.seatedPlayers[i].role) || {};
 				player.cardStatus.cardDisplayed = true;
 				player.cardStatus.isFlipped = false;
 			}

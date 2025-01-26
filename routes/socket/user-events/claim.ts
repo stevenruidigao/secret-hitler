@@ -27,7 +27,9 @@ export const handleAddNewClaim = (socket: Socket, passport: any, game: ActiveGam
 		seatedPlayers[playerIndex] &&
 		seatedPlayers[playerIndex].playersState &&
 		seatedPlayers[playerIndex].playersState[playerIndex] &&
-		!/^(wasPresident|wasChancellor|didSinglePolicyPeek|didPolicyPeek|didInvestigateLoyalty)$/.exec(seatedPlayers[playerIndex].playersState[playerIndex].claim)
+		!/^(wasPresident|wasChancellor|didSinglePolicyPeek|didPolicyPeek|didInvestigateLoyalty)$/.exec(
+			seatedPlayers[playerIndex].playersState[playerIndex].claim || '',
+		)
 	) {
 		return;
 	}

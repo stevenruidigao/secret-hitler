@@ -857,7 +857,7 @@ export default (game: ActiveGame) => {
 	game.general.livingPlayerCount = game.publicPlayersState.length;
 	game.general.type = game.general.playerCount < 7 ? 0 : game.general.playerCount < 9 ? 1 : 2; // different fascist tracks
 	game.publicPlayersState = _.shuffle(game.publicPlayersState);
-	game.private.seatedPlayers = _.cloneDeep(game.publicPlayersState).map((publicPlayer) => ({ ...publicPlayer, gameChats: [], playersState: [] }));
+	game.private.seatedPlayers = _.cloneDeep(game.publicPlayersState).map((publicPlayer) => ({ ...publicPlayer, gameChats: [], playersState: [], role: {} }));
 
 	game.private.seatedPlayers?.forEach((player) => {
 		player.gameChats = [];

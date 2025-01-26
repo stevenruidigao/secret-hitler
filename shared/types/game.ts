@@ -106,9 +106,12 @@ export interface PublicPlayer {
 }
 
 export interface Player extends PublicPlayer {
-	staff?: any;
-	claim?: any;
-	role?: any;
+	staff?: {}; // TODO: check if this is used anywhere
+	claim?: string;
+	role: {
+		cardName?: string;
+		team?: string;
+	};
 	playersState: Player[];
 	gameChats: GameChat[];
 	wonGame?: boolean;

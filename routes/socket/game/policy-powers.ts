@@ -830,7 +830,7 @@ export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame
 								},
 								{ text: ' and determine that they are on the ' },
 								{
-									text: playersTeam,
+									text: playersTeam || '',
 									type: playersTeam,
 								},
 								{ text: ' team.' },
@@ -853,7 +853,7 @@ export const selectPartyMembershipInvestigate = (passport: any, game: ActiveGame
 								text: ' sees a ',
 							},
 							{
-								text: playersTeam,
+								text: playersTeam || '',
 								type: playersTeam,
 							},
 							{
@@ -1068,7 +1068,7 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 								},
 								{ text: ' has shown you their party membership, and you determine that they are on the ' },
 								{
-									text: playersTeam,
+									text: playersTeam || '',
 									type: playersTeam,
 								},
 								{ text: ' team.' },
@@ -1091,7 +1091,7 @@ export const selectPartyMembershipInvestigateReverse = (passport: any, game: Act
 								text: ' shows their ',
 							},
 							{
-								text: playersTeam,
+								text: playersTeam || '',
 								type: playersTeam,
 							},
 							{
