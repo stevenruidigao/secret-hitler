@@ -8,7 +8,7 @@ export const renderEmotesButton = (handleInsertEmote, allEmotes) => (
 			<div className="emotes-popup-content">
 				{Object.keys(allEmotes).map((keyName, index) => (
 					<div key={index} data-tooltip={keyName.replace(/:/g, '')} data-inverted onClick={() => handleInsertEmote(keyName)}>
-						<img src={allEmotes[keyName]} style={{ height: 28 }}></img>
+						<img src={allEmotes[keyName]} style={{ height: 28 }} />
 					</div>
 				))}
 			</div>
@@ -30,7 +30,7 @@ export function processEmotes(input, isMod, mapping) {
 		if (mapping[word]) {
 			formatedMsg.push(
 				<span key={index} data-tooltip={word} data-inverted>
-					<img src={mapping[word]} style={{ height: size, marginRight: 2 }}></img>
+					<img src={mapping[word]} style={{ height: size, marginRight: 2 }} />
 				</span>
 			);
 		} else if (validSiteURL.test(word)) {

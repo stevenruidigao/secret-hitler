@@ -13,7 +13,7 @@ const Segment = ({ segment }) => {
 	return (
 		<React.Fragment>
 			<span className={segment.type}>{segment.text + space}</span>
-			{isComma ? <span className={'normal'}>, </span> : <React.Fragment></React.Fragment>}
+			{isComma ? <span className={'normal'}>, </span> : <React.Fragment />}
 		</React.Fragment>
 	);
 };
